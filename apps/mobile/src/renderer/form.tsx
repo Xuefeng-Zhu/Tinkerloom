@@ -158,6 +158,21 @@ export function RecordForm({
           onChange={(value) => change(field.id, value)}
           control={view.options?.controls?.find((c) => c.fieldId === field.id)}
           members={members}
+          uploadContext={
+            action
+              ? {
+                  versionId: adapter.versionId,
+                  actionId: action.id,
+                  fieldId: field.id,
+                  ...(record
+                    ? {
+                        targetRecordId: record.id,
+                        expectedRecordRevision: record.revision,
+                      }
+                    : {}),
+                }
+              : undefined
+          }
           onBusyChange={(busy) =>
             setUploads((previous) => ({ ...previous, [field.id]: busy }))
           }

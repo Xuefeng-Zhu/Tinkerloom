@@ -3,6 +3,7 @@ import { Text, View } from "react-native";
 import { AppScreen } from "../../../../App";
 import { BuilderScreen } from "../../../live/BuilderScreen";
 import { styles } from "../../../live/LiveAppScreen";
+import { AppRouteGate } from "../../../live/AppRouteGate";
 import { useLiveApp } from "../../../live/useLiveApp";
 
 export default function BuilderRoute() {
@@ -12,6 +13,13 @@ export default function BuilderRoute() {
     /^[A-Za-z0-9][A-Za-z0-9._-]{0,35}$/.test(params.appId)
       ? params.appId
       : "";
+  return (
+    <AppRouteGate appId={appId} build>
+      <BoundedRoute appId={appId} />
+    </AppRouteGate>
+  );
+}
+function BoundedRoute({ appId }: { appId: string }) {
   const { controller, state } = useLiveApp(appId);
   if (!appId)
     return (

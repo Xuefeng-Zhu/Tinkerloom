@@ -2,6 +2,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
 import { AppScreen } from "../../../../App";
 import { LiveAppScreen, styles } from "../../../live/LiveAppScreen";
+import { AppRouteGate } from "../../../live/AppRouteGate";
 import { useLiveApp } from "../../../live/useLiveApp";
 
 export default function AppRoute() {
@@ -11,6 +12,13 @@ export default function AppRoute() {
     /^[A-Za-z0-9][A-Za-z0-9._-]{0,35}$/.test(params.appId)
       ? params.appId
       : "";
+  return (
+    <AppRouteGate appId={appId}>
+      <BoundedRoute appId={appId} />
+    </AppRouteGate>
+  );
+}
+function BoundedRoute({ appId }: { appId: string }) {
   const { controller, state } = useLiveApp(appId);
   if (!appId)
     return (

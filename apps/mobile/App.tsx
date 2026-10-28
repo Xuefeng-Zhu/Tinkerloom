@@ -136,6 +136,7 @@ export function AppScreen() {
           })
         }
         onEnterInvitation={() => router.push("/invite")}
+        onOpenInbox={() => router.push("/inbox")}
       />
       {state.creation?.open && (
         <CreateSheet

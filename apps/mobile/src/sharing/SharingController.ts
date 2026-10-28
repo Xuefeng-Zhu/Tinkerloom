@@ -1,7 +1,7 @@
 import { BackendError } from "../backend/errors";
 import type {
   AppBackend,
-  AppDocument,
+  MiniApp,
   AppMember,
   CreateInvitation,
   Invitation,
@@ -18,7 +18,7 @@ type Pending =
   | { kind: "archive"; command: ArchiveApp };
 
 export interface SharingState {
-  app: AppDocument | null;
+  app: MiniApp | null;
   members: AppMember[];
   invitations: Invitation[];
   memberCursor: string | null;
@@ -51,7 +51,7 @@ function errorMessage(error: unknown): string {
     : "This change could not be confirmed. Retry the same request.";
 }
 
-function canRecover(app: AppDocument, pending: Pending): boolean {
+function canRecover(app: MiniApp, pending: Pending): boolean {
   if (pending.kind === "archive")
     return (
       app.capabilities?.archive === true ||
@@ -62,6 +62,43 @@ function canRecover(app: AppDocument, pending: Pending): boolean {
   // Archived owners/builders can recover receipts for old writes. The server
   // still rejects new work, and a revoked sharing role cannot recover secrets.
   return app.capabilities?.revokeAccess === true;
+}
+
+/** Keep private candidate payloads out of the sharing state, including the
+ * bounded fallback used by older injected backends. */
+function metadata(app: MiniApp): MiniApp {
+  return {
+    id: app.id,
+    workspaceId: app.workspaceId,
+    name: app.name,
+    ...(app.engine === undefined ? {} : { engine: app.engine }),
+    ...(app.role === undefined ? {} : { role: app.role }),
+    ...(app.archived === undefined ? {} : { archived: app.archived }),
+    ...(app.capabilities === undefined
+      ? {}
+      : { capabilities: { ...app.capabilities } }),
+  };
+}
+
+function archiveAcknowledged(app: MiniApp | null): MiniApp | null {
+  if (!app) return null;
+  // A stored receipt confirms archival, not current roles, labels or drafts.
+  // Apply only the downward write restriction until a fresh authorized read.
+  return {
+    ...app,
+    archived: true,
+    ...(app.capabilities === undefined
+      ? {}
+      : {
+          capabilities: {
+            ...app.capabilities,
+            editDefinition: false,
+            share: false,
+            writeRecords: false,
+            archive: false,
+          },
+        }),
+  };
 }
 
 /** Account-scoped commands retain the original token, role, target and revision. */
@@ -111,7 +148,10 @@ export class SharingController {
     const generation = ++this.generation;
     this.set({ loading: true, error: null });
     try {
-      const app = await this.backend.getApp(this.appId);
+      const app = metadata(
+        await (this.backend.getAppAccess?.(this.appId) ??
+          this.backend.getApp(this.appId)),
+      );
       if (this.disposed || generation !== this.generation) return;
       const canManage = app.capabilities?.revokeAccess === true;
       // Apply confirmed access before another read can fail. In particular, a
@@ -320,7 +360,21 @@ export class SharingController {
       } else if (pending.kind === "grant") {
         await this.backend.setGrant(pending.command);
       } else {
-        app = await this.backend.archiveApp(pending.command);
+        const acknowledgement = await (this.backend.archiveAppAccess?.(
+          pending.command,
+        ) ?? this.backend.archiveApp(pending.command));
+        if (
+          acknowledgement.id !== this.appId ||
+          acknowledgement.archived !== true
+        ) {
+          throw new BackendError(
+            "The archive response could not be confirmed. Retry this same request.",
+            "invalid_response",
+            "invalid_response",
+            true,
+          );
+        }
+        app = archiveAcknowledged(app);
         createdInvite = null;
       }
       if (this.disposed || generation !== this.generation) return;

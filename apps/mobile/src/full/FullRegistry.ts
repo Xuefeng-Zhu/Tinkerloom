@@ -1,5 +1,14 @@
 import { BackendError } from "../backend/errors";
 import type { AppBackend } from "../backend/types";
+import { HostLifetime } from "../host/scope";
+import {
+  NotificationsController,
+  type VerifiedNotificationTarget,
+} from "../notifications/NotificationsController";
+import { AutomationRunsController } from "../notifications/AutomationRunsController";
+import type { NotificationsServices } from "../notifications/NotificationsContext";
+import { withReminders } from "../notifications/withReminders";
+import { FunctionRuntimeAdapter } from "../runtime/functionAdapter";
 import type { HostScope } from "../host/scope";
 import type { RuntimeTransport } from "../runtime/types";
 import { ensure } from "../runtime/errors";
@@ -59,6 +68,9 @@ export function accountTransport(options: {
 export class FullRegistry {
   private apps = new Map<string, FullAppController>();
   private workspaces = new Map<string, FullWorkspaceController>();
+  private inboxServices: NotificationsServices | null = null;
+  private accountLifetime: HostLifetime | null = null;
+  private runControllers = new Map<string, AutomationRunsController>();
   private key: string | null = null;
   private closed = false;
   constructor(
@@ -67,6 +79,7 @@ export class FullRegistry {
       scope: Pick<HostScope, "endpoint" | "projectId">;
       readSession: () => AccountSession;
       onUnauthenticated: () => void;
+      openNotification?: (target: VerifiedNotificationTarget) => void;
     },
   ) {}
 
@@ -82,6 +95,12 @@ export class FullRegistry {
     for (const workspace of this.workspaces.values()) workspace.dispose();
     this.apps.clear();
     this.workspaces.clear();
+    this.inboxServices?.inbox.dispose();
+    this.inboxServices = null;
+    for (const runs of this.runControllers.values()) runs.dispose();
+    this.runControllers.clear();
+    this.accountLifetime?.dispose();
+    this.accountLifetime = null;
   }
   private session(accountId: string) {
     this.syncSession();
@@ -117,6 +136,27 @@ export class FullRegistry {
         scope: { ...this.options.scope, accountId, appId },
         transport: this.transport(expected),
         newId: () => this.options.backend.newId(),
+        adapterFactory: (manifest, transport, context) => {
+          const lifetime = new HostLifetime(context.host.lifetime.scope);
+          const stop = context.host.lifetime.onDispose(() =>
+            lifetime.dispose(),
+          );
+          lifetime.onDispose(stop);
+          const adapter = withReminders(
+            new FunctionRuntimeAdapter(manifest, transport),
+            transport,
+            lifetime,
+            {
+              effects: context.platform?.effects ?? [],
+            },
+          );
+          const dispose = adapter.dispose.bind(adapter);
+          adapter.dispose = () => {
+            dispose();
+            lifetime.dispose();
+          };
+          return adapter;
+        },
       });
       this.apps.set(appId, app);
     }
@@ -140,6 +180,90 @@ export class FullRegistry {
       this.workspaces.set(workspaceId, workspace);
     }
     return workspace;
+  }
+  notifications(accountId: string): NotificationsServices {
+    const expected = this.session(accountId);
+    if (this.inboxServices) return this.inboxServices;
+    const transport = this.transport(expected);
+    const lifetime = new HostLifetime({
+      ...this.options.scope,
+      accountId,
+      appId: "account",
+    });
+    this.accountLifetime = lifetime;
+    const inbox = new NotificationsController({
+      scope: { ...this.options.scope, accountId },
+      transport,
+      lifetime,
+      newId: () => this.options.backend.newId(),
+      onUnauthenticated: this.options.onUnauthenticated,
+    });
+    this.inboxServices = {
+      inbox,
+      runs: (appId) => {
+        this.session(accountId);
+        lifetime.assertActive();
+        let runs = this.runControllers.get(appId);
+        if (!runs) {
+          runs = new AutomationRunsController({
+            appId,
+            transport,
+            lifetime,
+            onUnauthenticated: this.options.onUnauthenticated,
+          });
+          this.runControllers.set(appId, runs);
+        }
+        return runs;
+      },
+      resolveRuntime: async (appId) => {
+        this.session(accountId);
+        lifetime.assertActive();
+        const app = this.app(accountId, appId);
+        await app.load();
+        this.session(accountId);
+        lifetime.assertActive();
+        ensure(
+          app.runtime &&
+            app.runtime.canLeave &&
+            !app.getSnapshot().runtimeOutdated,
+          "target_unavailable",
+          "Finish the current edits or refresh this app before opening its notification.",
+        );
+        return app.runtime.adapter;
+      },
+      openTarget: (target) => {
+        this.session(accountId);
+        lifetime.assertActive();
+        const runtime = this.app(accountId, target.appId).runtime;
+        ensure(
+          runtime &&
+            runtime.adapter.versionId === target.versionId &&
+            runtime.canLeave,
+          "target_changed",
+          "The current app changed. Open the notification again.",
+        );
+        const definition = runtime.adapter.spec;
+        const detail = definition.views.find(
+          (view) =>
+            view.collectionId === target.collectionId &&
+            view.type === "details",
+        );
+        const page =
+          detail &&
+          definition.navigation?.pages.find((page) =>
+            page.viewIds.includes(detail.id),
+          );
+        if (page) runtime.navigate({ pageId: page.id });
+        runtime.focusRecord(target.record);
+        ensure(
+          this.options.openNotification,
+          "unavailable",
+          "Notification navigation is unavailable.",
+        );
+        this.options.openNotification(target);
+      },
+    };
+    return this.inboxServices;
   }
   refreshApp(appId: string) {
     this.syncSession();

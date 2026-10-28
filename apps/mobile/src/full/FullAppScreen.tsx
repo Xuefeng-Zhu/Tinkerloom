@@ -21,6 +21,7 @@ export interface FullAppScreenProps {
   controller: FullAppController;
   onBack: () => void;
   onShare?: () => void;
+  onRuns?: () => void;
   onOpenCreated?: (id: string) => void;
   initialMode?: "live" | "build" | "preview";
 }
@@ -28,6 +29,7 @@ export function FullAppScreen({
   controller,
   onBack,
   onShare,
+  onRuns,
   initialMode,
 }: FullAppScreenProps) {
   const state = useSyncExternalStore(
@@ -65,7 +67,7 @@ export function FullAppScreen({
     !!state.app &&
     !state.app.archived &&
     ["owner", "builder"].includes(state.app.role) &&
-    state.app.capabilities.build === true;
+    state.app.capabilities.editDefinition === true;
   const locked =
     state.busy || !!state.pending || state.conflict || !controller.canBuild;
   return (
@@ -96,6 +98,17 @@ export function FullAppScreen({
             }}
           />
         )}
+        {onRuns &&
+          state.app &&
+          ["owner", "builder"].includes(state.app.role) && (
+            <Button
+              label="Reminder runs"
+              variant="quiet"
+              onPress={() => {
+                void navigate(onRuns);
+              }}
+            />
+          )}
         <Button
           label="Refresh access"
           variant="quiet"

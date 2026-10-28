@@ -6,7 +6,11 @@ import { useFullApp } from "../../../full/useFullApp";
 import { styles } from "../../../full/ui";
 import { useAppContext } from "../../../state/AppContext";
 export default function FullAppRoute() {
-  const params = useLocalSearchParams<{ appId?: string; mode?: string }>();
+  const params = useLocalSearchParams<{
+    appId?: string;
+    mode?: string;
+    recordId?: string;
+  }>();
   const appId =
     typeof params.appId === "string" &&
     /^[A-Za-z0-9][A-Za-z0-9._-]{0,35}$/.test(params.appId)
@@ -31,10 +35,13 @@ export default function FullAppRoute() {
   }
   return (
     <FullAppScreen
-      key={`${context.controller?.sessionVersion}:${appId}`}
+      key={`${context.controller?.sessionVersion}:${appId}:${params.mode ?? "live"}:${params.recordId ?? ""}`}
       controller={controller}
       initialMode={params.mode === "build" ? "build" : "live"}
       onBack={() => router.replace("/")}
+      onRuns={() =>
+        router.push({ pathname: "/apps/[appId]/runs", params: { appId } })
+      }
       onShare={() =>
         router.push({ pathname: "/apps/[appId]/sharing", params: { appId } })
       }

@@ -7,13 +7,16 @@ const emptySnapshot = () => null;
 export function useLiveApp(appId: string) {
   const context = useAppContext();
   const userId =
-    context.state?.phase === "signedIn" ? context.state.user?.id : null;
+    context.state?.phase === "signedIn" && !context.state.authBusy
+      ? context.state.user?.id
+      : null;
+  const epoch = context.controller?.sessionVersion;
   const controller = useMemo(
     () =>
-      userId && appId && context.registry
+      typeof epoch === "number" && userId && appId && context.registry
         ? context.registry.get(userId, appId)
         : null,
-    [userId, context.registry, appId],
+    [userId, epoch, context.registry, appId],
   );
   const state = useSyncExternalStore(
     controller?.subscribe ?? emptySubscribe,

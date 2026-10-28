@@ -147,6 +147,7 @@ interface FieldInputProps {
   disabled?: boolean;
   members: readonly RuntimeMember[];
   onBusyChange?: (busy: boolean) => void;
+  uploadContext?: import("../runtime/types").RuntimeImageUploadContext;
 }
 export function FieldInput({
   field,
@@ -156,6 +157,7 @@ export function FieldInput({
   disabled = false,
   members,
   onBusyChange,
+  uploadContext,
 }: FieldInputProps) {
   const { controller, theme } = useRuntime(),
     [uploading, setUploading] = useState(false),
@@ -168,7 +170,15 @@ export function FieldInput({
     return () => {
       current.active = false;
     };
-  }, [controller.adapter]);
+  }, [
+    controller.adapter,
+    field.id,
+    uploadContext?.versionId,
+    uploadContext?.actionId,
+    uploadContext?.fieldId,
+    uploadContext?.targetRecordId,
+    uploadContext?.expectedRecordRevision,
+  ]);
   const kind =
     control?.control ??
     (field.type === "boolean"
@@ -203,7 +213,10 @@ export function FieldInput({
       const picked = await controller.adapter.pickImage();
       if (!active.active) return;
       if (picked) {
-        const assetId = await controller.adapter.uploadImage(picked);
+        const assetId = await controller.adapter.uploadImage(
+          picked,
+          uploadContext,
+        );
         if (active.active) onChange(assetId);
       }
     } catch {

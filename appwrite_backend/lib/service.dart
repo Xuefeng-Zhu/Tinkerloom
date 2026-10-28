@@ -587,6 +587,12 @@ class PlatformService {
         if (currentWorkspace['guard'] != workspace['guard'])
           throw const ServiceException('definition_conflict', 409);
         return {'apps': result};
+      case 'getAppAccess':
+        _inputKeys(input, {'op', 'appId'});
+        final access = await _access(actor, _validId(input['appId']));
+        final app = _appSummary(access);
+        await _readAgain(actor, access);
+        return {'app': app};
       case 'getApp':
         _inputKeys(input, {'op', 'appId'});
         final access = await _access(actor, _validId(input['appId']));

@@ -29,6 +29,7 @@ export interface HomeScreenProps {
   onPreview: () => void;
   onOpenApp: (id: string) => void;
   onEnterInvitation: () => void;
+  onOpenInbox?: () => void;
 }
 
 export function HomeScreen({
@@ -46,6 +47,7 @@ export function HomeScreen({
   onPreview,
   onOpenApp,
   onEnterInvitation,
+  onOpenInbox,
 }: HomeScreenProps) {
   const workspace = workspaces.find((item) => item.id === workspaceId);
   const [copyNotice, setCopyNotice] = useState<{
@@ -79,6 +81,14 @@ export function HomeScreen({
       <View style={styles.frame}>
         <View style={styles.header}>
           <Brand />
+          {onOpenInbox && (
+            <Button
+              label="Inbox"
+              variant="quiet"
+              onPress={onOpenInbox}
+              disabled={loading}
+            />
+          )}
           <Button
             label="Sign out"
             variant="quiet"

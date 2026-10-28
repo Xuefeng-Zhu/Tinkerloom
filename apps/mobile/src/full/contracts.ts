@@ -131,7 +131,7 @@ export function manifest(value: unknown, appId: string): FullManifest {
   const editor =
     !decoded.archived &&
     ["owner", "builder"].includes(decoded.role) &&
-    decoded.capabilities.build === true;
+    decoded.capabilities.editDefinition === true;
   return freezeValidated({
     ...decoded,
     draft: editor ? decoded.draft : null,

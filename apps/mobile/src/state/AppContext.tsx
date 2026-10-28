@@ -12,6 +12,8 @@ import type { AppBackend } from "../backend/types";
 import { AppController, AppState } from "./controller";
 import { LiveAppRegistry } from "./liveAppController";
 import { SharingRegistry } from "../sharing/SharingController";
+import { router } from "expo-router";
+import { NotificationsProvider } from "../notifications/NotificationsContext";
 import { FullRegistry } from "../full/FullRegistry";
 import type { HostScope } from "../host/scope";
 import { createInvitationToken } from "../sharing/secureInvitationToken";
@@ -90,6 +92,15 @@ export function RootProvider({
             };
           },
           onUnauthenticated: () => controller.expireSession(),
+          openNotification: (target) =>
+            router.push({
+              pathname: "/apps/[appId]/full",
+              params: {
+                appId: target.appId,
+                recordId: target.recordId,
+                mode: "live",
+              },
+            }),
         })
       : null;
   }, [connection.backend, connection.scope, controller]);
@@ -145,7 +156,23 @@ export function RootProvider({
       connection.issues,
     ],
   );
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  const accountId =
+    state?.phase === "signedIn" && !state.authBusy ? state.user?.id : null;
+  const epoch = controller?.sessionVersion;
+  const notifications = useMemo(
+    () =>
+      typeof epoch === "number" && accountId && full
+        ? full.notifications(accountId)
+        : null,
+    [accountId, epoch, full],
+  );
+  return (
+    <AppContext.Provider value={value}>
+      <NotificationsProvider services={notifications}>
+        {children}
+      </NotificationsProvider>
+    </AppContext.Provider>
+  );
 }
 
 export function useAppContext(): AppContextValue {

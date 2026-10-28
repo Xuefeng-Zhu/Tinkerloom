@@ -39,6 +39,7 @@ export interface FullAppOptions {
   adapterFactory?: (
     app: FullManifest,
     transport: RuntimeTransport,
+    context: { host: HostStorage; platform: PlatformCapabilities | null },
   ) => RuntimeAdapter;
   deviceFactory?: typeof createDeviceBridge;
   onAccessFailure?: (code: string) => void;
@@ -142,14 +143,14 @@ export class FullAppController {
       !this.state.refreshRequired &&
       !app.archived &&
       ["owner", "builder"].includes(app.role) &&
-      app.capabilities.build === true
+      app.capabilities.editDefinition === true
     );
   }
   private canRecover(app = this.state.app) {
     return (
       !!app &&
       ["owner", "builder"].includes(app.role) &&
-      (app.archived || app.capabilities.build === true)
+      (app.archived || app.capabilities.editDefinition === true)
     );
   }
   get canLeave() {
@@ -242,13 +243,17 @@ export class FullAppController {
     this.timers = null;
     this.device = null;
   }
-  private install(app: FullManifest, acceptCandidate = false) {
+  private install(
+    app: FullManifest,
+    acceptCandidate = false,
+    createRuntime = true,
+  ) {
     this.active();
     const prior = this.state.app;
     const build =
       !app.archived &&
       ["owner", "builder"].includes(app.role) &&
-      app.capabilities.build === true;
+      app.capabilities.editDefinition === true;
     if (!this.canRecover(app)) {
       this.stopAutosave();
       this.guidanceSequence++;
@@ -269,38 +274,41 @@ export class FullAppController {
         ? (app.draft?.spec ?? null)
         : this.state.candidate
       : null;
+    const existing = this.runtime?.adapter;
     const changedRuntime =
-      prior?.version?.id !== app.version?.id ||
-      prior?.role !== app.role ||
-      prior?.archived !== app.archived ||
-      prior?.controlRevision !== app.controlRevision;
+      existing?.versionId !== app.version?.id ||
+      existing?.role !== app.role ||
+      existing?.archived !== app.archived;
     const preserveRuntime =
       !!this.runtime &&
       !this.runtime.canLeave &&
-      prior?.role === app.role &&
-      prior?.archived === app.archived &&
-      prior?.controlRevision === app.controlRevision;
+      existing?.role === app.role &&
+      existing?.archived === app.archived;
     if (!app.version) {
       this.disposeRuntime();
     } else if (!this.runtime || (changedRuntime && !preserveRuntime)) {
       this.disposeRuntime();
-      const adapter =
-        this.options.adapterFactory?.(app, this.options.transport) ??
-        new FunctionRuntimeAdapter(app, this.options.transport);
-      this.runtime = new RuntimeController(
-        adapter,
-        this.options.newId,
-        undefined,
-        this.host.commands,
-        { onAccessFailure: (failure) => this.fail(failure) },
-      );
-      this.timers = new UtilityTimerController(this.host.timers);
-      this.device = (this.options.deviceFactory ?? createDeviceBridge)(
-        this.host.storage,
-        requestedDeviceCapabilities(app.version.spec),
-      );
-      void this.device.initialize().catch(() => {});
-      void this.runtime.recover().catch((error) => this.fail(error));
+      if (createRuntime) {
+        const adapter =
+          this.options.adapterFactory?.(app, this.options.transport, {
+            host: this.host,
+            platform: this.state.platform,
+          }) ?? new FunctionRuntimeAdapter(app, this.options.transport);
+        this.runtime = new RuntimeController(
+          adapter,
+          this.options.newId,
+          undefined,
+          this.host.commands,
+          { onAccessFailure: (failure) => this.fail(failure) },
+        );
+        this.timers = new UtilityTimerController(this.host.timers);
+        this.device = (this.options.deviceFactory ?? createDeviceBridge)(
+          this.host.storage,
+          requestedDeviceCapabilities(app.version.spec),
+        );
+        void this.device.initialize().catch(() => {});
+        void this.runtime.recover().catch((error) => this.fail(error));
+      }
     }
     const candidateChanged =
       !same(this.state.candidate, candidate) ||
@@ -333,6 +341,21 @@ export class FullAppController {
       );
       if (this.closed || sequence !== this.sequence) return;
       const app = manifest(response.app, this.options.scope.appId);
+      // Apply current authority before any optional capability request. Delay
+      // constructing a new runtime until its operational features are known.
+      this.install(app, false, false);
+      try {
+        const capabilities = platformCapabilities(
+          await this.options.transport({ op: "spec.capabilities" }),
+        );
+        if (this.closed || sequence !== this.sequence) return;
+        this.emit({ platform: capabilities });
+      } catch (error) {
+        if (this.closed || sequence !== this.sequence) return;
+        this.fail(error);
+        if (!this.state.app) return;
+        this.emit({ platform: null });
+      }
       this.install(app);
       this.emit({ refreshRequired: false });
       if (this.canRecover()) {
@@ -344,15 +367,6 @@ export class FullAppController {
         });
       }
       this.emit({ loading: false });
-      try {
-        const capabilities = platformCapabilities(
-          await this.options.transport({ op: "spec.capabilities" }),
-        );
-        if (!this.closed && sequence === this.sequence)
-          this.emit({ platform: capabilities });
-      } catch (error) {
-        if (!this.closed && sequence === this.sequence) this.fail(error);
-      }
     } catch (error) {
       if (sequence === this.sequence) this.fail(error, false, true);
     }
@@ -827,6 +841,7 @@ export class FullAppController {
   }
   setLiveActive(active: boolean) {
     this.device?.setActive(active);
+    this.runtime?.adapter.setActive?.(active);
   }
   dispose() {
     if (this.closed) return;

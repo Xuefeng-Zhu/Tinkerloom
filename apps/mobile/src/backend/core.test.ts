@@ -1117,3 +1117,122 @@ test("archive receipts require this app and its owner role with only access revo
     );
   }
 });
+
+test("engine-neutral access reads accept shared metadata and reject private payloads or policy-specific capability substitution", async () => {
+  const s = setup();
+  for (const engine of ["bounded.v1", "appspec.v1"] as const) {
+    for (const role of ["owner", "builder", "member", "viewer"] as const) {
+      for (const archived of [false, true]) {
+        const builder = role === "owner" || role === "builder";
+        const value = {
+          id: "app",
+          workspaceId: "workspace",
+          name: "Shared metadata",
+          engine,
+          role,
+          archived,
+          capabilities: {
+            editDefinition: builder && !archived,
+            share: builder && !archived,
+            writeRecords: builder && !archived,
+            archive: role === "owner" && !archived,
+            revokeAccess: builder,
+          },
+        };
+        s.succeed({ app: value });
+        assert.deepEqual(await s.backend.getAppAccess("app"), value);
+      }
+    }
+  }
+  const value = {
+    id: "app",
+    workspaceId: "workspace",
+    name: "Shared metadata",
+    engine: "appspec.v1",
+    role: "member",
+    archived: false,
+    capabilities: {
+      editDefinition: false,
+      share: false,
+      writeRecords: false,
+      archive: false,
+      revokeAccess: false,
+    },
+  };
+  for (const invalid of [
+    { ...value, draft: { private: "data" } },
+    { ...value, engine: undefined },
+    { ...value, id: "other" },
+    { ...value, capabilities: { ...value.capabilities, writeRecords: true } },
+    { ...value, role: undefined },
+  ]) {
+    s.succeed({ app: invalid });
+    await assert.rejects(
+      s.backend.getAppAccess("app"),
+      (error: unknown) => error instanceof BackendError && !error.uncertain,
+    );
+  }
+  assert.equal(JSON.parse(s.requests[0]).op, "getAppAccess");
+});
+
+test("generic archive extracts acknowledgement metadata from full AppSpec and historical bounded receipts", async () => {
+  const s = setup(),
+    command = { appId: "app", operationId: "generic-archive" };
+  const shared = {
+    id: "app",
+    workspaceId: "workspace",
+    name: "Archive",
+    role: "owner",
+    archived: true,
+    capabilities: {
+      editDefinition: false,
+      share: false,
+      writeRecords: false,
+      archive: false,
+      revokeAccess: true,
+    },
+  };
+  for (const body of [
+    {
+      ...shared,
+      draftRevision: 4,
+      publishedRevision: 2,
+      candidateRevision: 7,
+      basePublishedRevision: 2,
+      definition: { private: true },
+      publishedDefinition: { private: true },
+    },
+    {
+      ...shared,
+      engine: "appspec.v1",
+      allowedActions: [],
+      controlRevision: 44,
+      version: { spec: { private: "x".repeat(300_000) } },
+      draft: { spec: { private: true } },
+      generation: null,
+    },
+  ]) {
+    s.succeed({ app: body });
+    const result = await s.backend.archiveAppAccess(command);
+    assert.deepEqual(result, {
+      ...shared,
+      ...("engine" in body ? { engine: body.engine } : {}),
+    });
+    assert.equal("definition" in result, false);
+    assert.equal("draft" in result, false);
+    assert.equal("version" in result, false);
+  }
+  for (const body of [
+    { ...shared, id: "other" },
+    { ...shared, role: "builder" },
+    { ...shared, archived: false },
+    { ...shared, capabilities: { ...shared.capabilities, share: true } },
+  ]) {
+    s.succeed({ app: body });
+    await assert.rejects(
+      s.backend.archiveAppAccess(command),
+      (error: unknown) => error instanceof BackendError && error.uncertain,
+    );
+  }
+  assert.deepEqual(JSON.parse(s.requests[0]), { op: "archiveApp", ...command });
+});

@@ -49,7 +49,30 @@ function RuntimeRendererScope({
     [details, setDetails] = useState<{
       view: ViewSpec;
       record: RuntimeRecord;
-    } | null>(null),
+    } | null>(() => {
+      const current = controller.getSnapshot();
+      const record = current.record;
+      if (
+        !record ||
+        current.location.editing ||
+        controller.views.some(
+          (view) =>
+            view.type === "details" &&
+            view.collectionId === record.collectionId,
+        )
+      )
+        return null;
+      const view =
+        controller.views.find(
+          (view) =>
+            view.collectionId === record.collectionId && view.type !== "form",
+        ) ??
+        controller.adapter.spec.views.find(
+          (view) =>
+            view.collectionId === record.collectionId && view.type !== "form",
+        );
+      return view ? { view, record } : null;
+    }),
     [leave, setLeave] = useState<(() => void) | null>(null);
   useEffect(() => {
     void controller.refresh();

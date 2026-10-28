@@ -1,0 +1,13 @@
+# Engine-neutral access metadata
+
+`getAppAccess {appId}` returns `{app:{id,workspaceId,name,engine,role,archived,capabilities}}` through the authenticated core. It supports `bounded.v1` and `appspec.v1`, requires current workspace membership and app access, and rechecks authority before returning. It is read-only and does not hydrate an author draft, AppSpec, version, generation job or record.
+
+These are the existing shared access capabilities: `editDefinition`, `share`, `writeRecords`, `archive`, `revokeAccess`. Their generic `writeRecords` flag is builder-only. AppSpec action availability remains the versioned runtime's `allowedActions`/policy contract; do not substitute a `spec.appAccess` response into this shared metadata parser.
+
+The client exposes optional `AppBackend.getAppAccess` and `archiveAppAccess` methods. `SharingController` uses the small metadata read when present, with the old bounded `getApp` fallback for injected legacy backends. It explicitly extracts metadata into `SharingState.app`, so a bounded fallback cannot retain a private definition in sharing state.
+
+`archiveAppAccess` sends the existing exact `archiveApp` envelope. It accepts shared acknowledgment metadata from a historical bounded receipt or full AppSpec receipt without interpreting either as a fabricated bounded definition. Full receipts use the existing local full-response byte limit; that does not prove Cloud gateway acceptance. The old bounded `getApp`/`archiveApp` methods retain their strict document behavior.
+
+The sharing controller never installs historical archive names, roles, workspace IDs or private candidate bodies as fresh state. A confirmed receipt only applies the downward archive write restriction to already known metadata, preserving offline revocation controls. It then performs a fresh authorized metadata read. Unknown outcomes retain the same command for explicit retry; loading metadata never replays a mutation. Disposed account controllers cannot apply late results or start a post-archive refresh.
+
+Local verification: five new service tests on the actual Cloud-compatible Dart 3.11 SDK cover both engines, all shared roles, archive, read-only/private-table exclusion, membership/grant denial and a revocation during hydration. Seven new client groups cover strict metadata parsing, large historical/full receipts, every sharing role, bounded fallback, archive freshness, exact unknown retries and account disposal. The complete copied client suite passed 231 tests plus TypeScript and owned-file ESLint; 93 retained backend groups passed. These are synthetic/local checks, not live Cloud or mounted browser/device evidence.

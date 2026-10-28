@@ -486,6 +486,31 @@ export class AppwriteBackend implements AppBackend {
   setGrant(command: SetGrant) {
     return this.collaboration.setGrant(command);
   }
+  async archiveAppAccess(command: ArchiveApp): Promise<MiniApp> {
+    operation(command);
+    // Full AppSpec archive receipts can include two large immutable definition
+    // snapshots. Parse only shared metadata, never a fabricated bounded app.
+    const envelope = await this.request(
+      { op: "archiveApp", ...command },
+      true,
+      true,
+    );
+    if (
+      Object.keys(envelope).length !== 1 ||
+      !Object.prototype.hasOwnProperty.call(envelope, "app")
+    )
+      invalidResponse(true);
+    const row = object(envelope.app, true);
+    const result = app(row, id(row.workspaceId, true), true);
+    if (
+      result.id !== command.appId ||
+      result.role !== "owner" ||
+      result.archived !== true
+    )
+      invalidResponse(true);
+    return result;
+  }
+
   async archiveApp(command: ArchiveApp): Promise<AppDocument> {
     operation(command);
     const result = document(
@@ -618,7 +643,11 @@ export class AppwriteBackend implements AppBackend {
     }
   }
 
-  private async request(payload: Record<string, unknown>, mutation = false) {
+  private async request(
+    payload: Record<string, unknown>,
+    mutation = false,
+    fullResponse = false,
+  ) {
     try {
       const execution = await this.sdk.execute(JSON.stringify(payload));
       if (execution.status !== "completed") {
@@ -634,9 +663,13 @@ export class AppwriteBackend implements AppBackend {
       if (
         typeof execution.responseBody !== "string" ||
         execution.responseBody.length >
-          (String(payload.op).startsWith("spec.") ? 8_388_608 : 262_144) ||
+          (fullResponse || String(payload.op).startsWith("spec.")
+            ? 8_388_608
+            : 262_144) ||
         utf8Bytes(execution.responseBody) >
-          (String(payload.op).startsWith("spec.") ? 8_388_608 : 262_144) ||
+          (fullResponse || String(payload.op).startsWith("spec.")
+            ? 8_388_608
+            : 262_144) ||
         !Number.isInteger(execution.responseStatusCode)
       )
         invalidResponse(mutation);
@@ -758,6 +791,27 @@ export class AppwriteBackend implements AppBackend {
       (row.role !== undefined && (row.role !== "owner" || row.archived))
     )
       invalidResponse(true);
+  }
+
+  async getAppAccess(appId: string): Promise<MiniApp> {
+    if (!idPattern.test(appId))
+      throw new BackendError(
+        "That app is unavailable.",
+        "invalid_id",
+        "service",
+        false,
+        400,
+      );
+    const envelope = await this.request({ op: "getAppAccess", appId });
+    if (
+      Object.keys(envelope).length !== 1 ||
+      !Object.prototype.hasOwnProperty.call(envelope, "app")
+    )
+      invalidResponse();
+    const row = object(envelope.app);
+    const result = app(row, id(row.workspaceId), false, false, true);
+    if (result.id !== appId || result.engine === undefined) invalidResponse();
+    return result;
   }
 
   async getApp(appId: string): Promise<AppDocument> {

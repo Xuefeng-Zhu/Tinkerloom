@@ -333,3 +333,24 @@ workbench; existing bounded app routes remain available. Client verification:
 224 tests, lint, typecheck, formatting and all three Expo exports passed.
 Integrated live full-engine flows and final-source native interaction remain
 unverified; this checkpoint does not mark the migration complete.
+
+### Inbox, access metadata and wire-contract checkpoint
+
+The authenticated inbox and builder reminder-run routes are integrated with
+account-epoch-fenced transport and encrypted exact read-receipt recovery.
+Notification links hydrate and verify the current authorized record before
+navigation; closed accounts cannot receive late results. Pending reminder
+states remain distinct from confirmed scheduling or delivery. Engine-neutral
+metadata supports shared links, sharing and archived receipt recovery without
+hydrating author-private definitions. Full and bounded routes select the correct
+engine. Current operational capabilities initialize a new runtime; unrelated
+record changes preserve dirty forms, and a later publication stays marked
+outdated until explicitly resolved.
+
+A deterministic Dart exporter now produces the React Native service fixtures.
+CI checks them against the actual service; this caught and corrected an editor
+capability-name mismatch. The new wire tests use the simulated store and do not
+represent Cloud proof. Combined client verification passed253 tests with0skips,
+lint, typecheck, formatting and all three Expo exports. Five new metadata service
+tests and the wire comparison pass on Dart3.11. Live full-engine/inbox/worker/media
+and final-source native interaction remain required.

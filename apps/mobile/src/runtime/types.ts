@@ -74,8 +74,15 @@ export interface PickedImage {
   mimeType: "image/jpeg" | "image/png" | "image/webp";
   name: string;
 }
+export interface RuntimeImageUploadContext {
+  versionId: string;
+  actionId: string;
+  fieldId: string;
+  targetRecordId?: string;
+  expectedRecordRevision?: number;
+}
 export interface ReminderState {
-  kind: "scheduled" | "delivered" | "cancelled" | "none";
+  kind: "pending" | "scheduled" | "delivered" | "cancelled" | "none";
   label: string;
   synthetic?: true;
 }
@@ -120,7 +127,12 @@ export interface RuntimeAdapter {
   reminderState(recordId: string): Promise<ReminderState>;
   readImage(assetId: string): Promise<ImageAsset>;
   pickImage(): Promise<PickedImage | null>;
-  uploadImage(image: PickedImage): Promise<string>;
+  uploadImage(
+    image: PickedImage,
+    context?: RuntimeImageUploadContext,
+  ): Promise<string>;
+  /** Pause active transport and controls when this runtime leaves the foreground. */
+  setActive?(active: boolean): void;
   watch(listener: () => void): () => void;
   dispose(): void;
 }

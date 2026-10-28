@@ -1,0 +1,583 @@
+{
+  "proof": "Real Dart service DTOs with a simulated optimistic store; no Cloud evidence.",
+  "capabilities": {
+    "apiVersion": 1,
+    "formatVersions": [1],
+    "parserCapabilities": [
+      "collections.v1",
+      "views.list.v1",
+      "views.form.v1",
+      "views.details.v1",
+      "views.board.v1",
+      "views.summary.v1",
+      "views.capacity.v1",
+      "views.action.v1",
+      "views.table.v1",
+      "views.calendar.v1",
+      "views.timeline.v1",
+      "views.chart.v1",
+      "views.metric.v1",
+      "views.imageCards.v1",
+      "views.gallery.v1",
+      "views.richText.v1",
+      "views.banner.v1",
+      "views.checklist.v1",
+      "views.clock.v1",
+      "views.timer.v1",
+      "views.deviceInfo.v1",
+      "views.deviceControl.v1",
+      "fields.image.v1",
+      "views.interactive.v1",
+      "capacity.v1",
+      "workflow.v1",
+      "assignment.v1",
+      "notifications.inApp.v1",
+      "navigation.v1",
+      "appearance.v1",
+      "navigation.layouts.v1",
+      "views.configured.v1",
+      "notifications.owner.v1",
+      "automations.conditions.v1",
+      "records.create.v1",
+      "records.patch.v1",
+      "assignment.assign.v1",
+      "workflow.transition.v1",
+      "capacity.configure.v1",
+      "capacity.claim.v1",
+      "capacity.release.v1"
+    ],
+    "actionCapabilities": [
+      "records.create.v1",
+      "records.patch.v1",
+      "assignment.assign.v1",
+      "workflow.transition.v1",
+      "capacity.configure.v1",
+      "capacity.claim.v1",
+      "capacity.release.v1"
+    ],
+    "queryOperators": ["eq", "in", "contains", "gte", "lte", "lt"],
+    "effects": [],
+    "generation": false,
+    "guidance": false,
+    "privateMedia": false
+  },
+  "shell": {
+    "app": {
+      "id": "app",
+      "name": "Wire app",
+      "workspaceId": "ws",
+      "role": "owner",
+      "archived": false,
+      "capabilities": {
+        "editDefinition": true,
+        "share": true,
+        "writeRecords": false,
+        "archive": true,
+        "revokeAccess": true
+      },
+      "engine": "appspec.v1",
+      "allowedActions": [],
+      "generation": null,
+      "controlRevision": 1,
+      "version": null,
+      "draft": null
+    }
+  },
+  "draft": {
+    "app": {
+      "id": "app",
+      "name": "Wire app",
+      "workspaceId": "ws",
+      "role": "owner",
+      "archived": false,
+      "capabilities": {
+        "editDefinition": true,
+        "share": true,
+        "writeRecords": false,
+        "archive": true,
+        "revokeAccess": true
+      },
+      "engine": "appspec.v1",
+      "allowedActions": [],
+      "generation": null,
+      "controlRevision": 2,
+      "version": null,
+      "draft": {
+        "revision": 1,
+        "baseVersionId": null,
+        "candidateHash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
+        "publishedVersionId": null,
+        "spec": {
+          "formatVersion": 1,
+          "name": "Reading Journal",
+          "theme": "amber",
+          "icon": "book",
+          "requires": [
+            "collections.v1",
+            "records.create.v1",
+            "records.patch.v1",
+            "views.list.v1",
+            "views.summary.v1"
+          ],
+          "collections": [
+            {
+              "id": "books",
+              "label": "Books",
+              "fields": [
+                {
+                  "id": "title",
+                  "label": "Title",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "author",
+                  "label": "Author",
+                  "type": "text",
+                  "required": false
+                },
+                {
+                  "id": "status",
+                  "label": "Status",
+                  "type": "choice",
+                  "required": true,
+                  "choices": ["Want to read", "Reading", "Finished"]
+                },
+                {
+                  "id": "rating",
+                  "label": "Rating",
+                  "type": "integer",
+                  "required": false
+                },
+                {
+                  "id": "notes",
+                  "label": "Notes",
+                  "type": "text",
+                  "required": false
+                }
+              ],
+              "behaviors": []
+            }
+          ],
+          "views": [
+            {
+              "id": "library",
+              "type": "list",
+              "collectionId": "books",
+              "label": "Library",
+              "titleFieldId": "title",
+              "actionIds": ["addBook", "editBook"]
+            },
+            {
+              "id": "readingSummary",
+              "type": "summary",
+              "collectionId": "books",
+              "label": "Overview",
+              "groupByFieldId": "status",
+              "actionIds": []
+            }
+          ],
+          "actions": [
+            {
+              "id": "addBook",
+              "label": "Add book",
+              "capability": "records.create.v1",
+              "collectionId": "books"
+            },
+            {
+              "id": "editBook",
+              "label": "Edit book",
+              "capability": "records.patch.v1",
+              "collectionId": "books"
+            }
+          ],
+          "policyPresetRequest": "personalTracker.v1",
+          "automationRequests": []
+        }
+      }
+    }
+  },
+  "review": {
+    "review": {
+      "candidateHash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
+      "expectedRevision": 1,
+      "baseVersionId": null,
+      "currentVersionId": null,
+      "reviewHash": "6efb68d4c291773c9404a8eefc8d2a0ad356553ce9fe5855c6b197fd3576e5a4",
+      "changes": [
+        "Create Reading Journal",
+        "Policy: personalTracker.v1",
+        "Capability: collections.v1",
+        "Capability: records.create.v1",
+        "Capability: records.patch.v1",
+        "Capability: views.list.v1",
+        "Capability: views.summary.v1"
+      ],
+      "compatibilityErrors": [],
+      "enabledRuleIds": [],
+      "activateExistingRecordIds": []
+    }
+  },
+  "published": {
+    "app": {
+      "id": "app",
+      "name": "Reading Journal",
+      "workspaceId": "ws",
+      "role": "owner",
+      "archived": false,
+      "capabilities": {
+        "editDefinition": true,
+        "share": true,
+        "writeRecords": true,
+        "archive": true,
+        "revokeAccess": true
+      },
+      "engine": "appspec.v1",
+      "allowedActions": ["addBook", "editBook"],
+      "generation": null,
+      "controlRevision": 3,
+      "version": {
+        "id": "vc30ecaccf1cd3607ea97e1df3b75e098",
+        "number": 1,
+        "hash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
+        "spec": {
+          "formatVersion": 1,
+          "name": "Reading Journal",
+          "theme": "amber",
+          "icon": "book",
+          "requires": [
+            "collections.v1",
+            "records.create.v1",
+            "records.patch.v1",
+            "views.list.v1",
+            "views.summary.v1"
+          ],
+          "collections": [
+            {
+              "id": "books",
+              "label": "Books",
+              "fields": [
+                {
+                  "id": "title",
+                  "label": "Title",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "author",
+                  "label": "Author",
+                  "type": "text",
+                  "required": false
+                },
+                {
+                  "id": "status",
+                  "label": "Status",
+                  "type": "choice",
+                  "required": true,
+                  "choices": ["Want to read", "Reading", "Finished"]
+                },
+                {
+                  "id": "rating",
+                  "label": "Rating",
+                  "type": "integer",
+                  "required": false
+                },
+                {
+                  "id": "notes",
+                  "label": "Notes",
+                  "type": "text",
+                  "required": false
+                }
+              ],
+              "behaviors": []
+            }
+          ],
+          "views": [
+            {
+              "id": "library",
+              "type": "list",
+              "collectionId": "books",
+              "label": "Library",
+              "titleFieldId": "title",
+              "actionIds": ["addBook", "editBook"]
+            },
+            {
+              "id": "readingSummary",
+              "type": "summary",
+              "collectionId": "books",
+              "label": "Overview",
+              "groupByFieldId": "status",
+              "actionIds": []
+            }
+          ],
+          "actions": [
+            {
+              "id": "addBook",
+              "label": "Add book",
+              "capability": "records.create.v1",
+              "collectionId": "books"
+            },
+            {
+              "id": "editBook",
+              "label": "Edit book",
+              "capability": "records.patch.v1",
+              "collectionId": "books"
+            }
+          ],
+          "policyPresetRequest": "personalTracker.v1",
+          "automationRequests": []
+        }
+      },
+      "draft": {
+        "revision": 1,
+        "baseVersionId": null,
+        "candidateHash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
+        "publishedVersionId": "vc30ecaccf1cd3607ea97e1df3b75e098",
+        "spec": {
+          "formatVersion": 1,
+          "name": "Reading Journal",
+          "theme": "amber",
+          "icon": "book",
+          "requires": [
+            "collections.v1",
+            "records.create.v1",
+            "records.patch.v1",
+            "views.list.v1",
+            "views.summary.v1"
+          ],
+          "collections": [
+            {
+              "id": "books",
+              "label": "Books",
+              "fields": [
+                {
+                  "id": "title",
+                  "label": "Title",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "id": "author",
+                  "label": "Author",
+                  "type": "text",
+                  "required": false
+                },
+                {
+                  "id": "status",
+                  "label": "Status",
+                  "type": "choice",
+                  "required": true,
+                  "choices": ["Want to read", "Reading", "Finished"]
+                },
+                {
+                  "id": "rating",
+                  "label": "Rating",
+                  "type": "integer",
+                  "required": false
+                },
+                {
+                  "id": "notes",
+                  "label": "Notes",
+                  "type": "text",
+                  "required": false
+                }
+              ],
+              "behaviors": []
+            }
+          ],
+          "views": [
+            {
+              "id": "library",
+              "type": "list",
+              "collectionId": "books",
+              "label": "Library",
+              "titleFieldId": "title",
+              "actionIds": ["addBook", "editBook"]
+            },
+            {
+              "id": "readingSummary",
+              "type": "summary",
+              "collectionId": "books",
+              "label": "Overview",
+              "groupByFieldId": "status",
+              "actionIds": []
+            }
+          ],
+          "actions": [
+            {
+              "id": "addBook",
+              "label": "Add book",
+              "capability": "records.create.v1",
+              "collectionId": "books"
+            },
+            {
+              "id": "editBook",
+              "label": "Edit book",
+              "capability": "records.patch.v1",
+              "collectionId": "books"
+            }
+          ],
+          "policyPresetRequest": "personalTracker.v1",
+          "automationRequests": []
+        }
+      }
+    }
+  },
+  "launcher": {
+    "apps": [
+      {
+        "id": "app",
+        "name": "Reading Journal",
+        "workspaceId": "ws",
+        "role": "owner",
+        "archived": false,
+        "capabilities": {
+          "editDefinition": true,
+          "share": true,
+          "writeRecords": true,
+          "archive": true,
+          "revokeAccess": true
+        },
+        "engine": "appspec.v1",
+        "allowedActions": ["addBook", "editBook"],
+        "pinned": false,
+        "pinRevision": 0,
+        "createdAt": null,
+        "recordCount": 0,
+        "availablePlaces": 0,
+        "version": {
+          "id": "vc30ecaccf1cd3607ea97e1df3b75e098",
+          "number": 1,
+          "hash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
+          "name": "Reading Journal",
+          "theme": "amber",
+          "icon": "book",
+          "publisherId": "alice",
+          "createdAt": "2026-10-28T12:00:00.000Z"
+        },
+        "draft": null
+      }
+    ],
+    "nextCursor": null
+  },
+  "drafts": {
+    "drafts": [],
+    "nextCursor": null
+  },
+  "versions": {
+    "versions": [
+      {
+        "id": "vc30ecaccf1cd3607ea97e1df3b75e098",
+        "number": 1,
+        "hash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
+        "name": "Reading Journal",
+        "theme": "amber",
+        "icon": "book",
+        "publisherId": "alice",
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      }
+    ],
+    "currentVersionId": "vc30ecaccf1cd3607ea97e1df3b75e098",
+    "nextBeforeNumber": null
+  },
+  "version": {
+    "version": {
+      "id": "vc30ecaccf1cd3607ea97e1df3b75e098",
+      "number": 1,
+      "hash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
+      "name": "Reading Journal",
+      "theme": "amber",
+      "icon": "book",
+      "publisherId": "alice",
+      "createdAt": "2026-10-28T12:00:00.000Z",
+      "spec": {
+        "formatVersion": 1,
+        "name": "Reading Journal",
+        "theme": "amber",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.summary.v1"
+        ],
+        "collections": [
+          {
+            "id": "books",
+            "label": "Books",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "author",
+                "label": "Author",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": ["Want to read", "Reading", "Finished"]
+              },
+              {
+                "id": "rating",
+                "label": "Rating",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "library",
+            "type": "list",
+            "collectionId": "books",
+            "label": "Library",
+            "titleFieldId": "title",
+            "actionIds": ["addBook", "editBook"]
+          },
+          {
+            "id": "readingSummary",
+            "type": "summary",
+            "collectionId": "books",
+            "label": "Overview",
+            "groupByFieldId": "status",
+            "actionIds": []
+          }
+        ],
+        "actions": [
+          {
+            "id": "addBook",
+            "label": "Add book",
+            "capability": "records.create.v1",
+            "collectionId": "books"
+          },
+          {
+            "id": "editBook",
+            "label": "Edit book",
+            "capability": "records.patch.v1",
+            "collectionId": "books"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": []
+      }
+    },
+    "currentVersionId": "vc30ecaccf1cd3607ea97e1df3b75e098"
+  }
+}

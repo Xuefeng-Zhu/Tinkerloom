@@ -50,7 +50,7 @@ function app(revision = 1, candidate = spec) {
     engine: "appspec.v1",
     role: "owner",
     archived: false,
-    capabilities: { build: true },
+    capabilities: { editDefinition: true },
     controlRevision: 1,
     allowedActions: [],
     version: null,
@@ -200,7 +200,11 @@ test("confirmed role loss clears private candidate/review/retained payload in me
   await controller.load();
   controller.edit({ type: "RenameLabel", targetId: "app", label: "Secret" });
   await controller.save();
-  current = { ...app(), role: "viewer", capabilities: { build: false } };
+  current = {
+    ...app(),
+    role: "viewer",
+    capabilities: { editDefinition: false },
+  };
   const loading = controller.load();
   await new Promise((r) => setTimeout(r, 0));
   assert.equal(controller.getSnapshot().candidate, null);
@@ -411,7 +415,7 @@ test("archived exact receipt resolves journal without restoring historical permi
   const archived = {
     ...original,
     archived: true,
-    capabilities: { build: false },
+    capabilities: { editDefinition: false },
     draft: null,
   };
   const controller = factory(async (request) => {

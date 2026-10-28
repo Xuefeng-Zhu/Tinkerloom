@@ -165,6 +165,8 @@ export interface AppBackend {
   listApps(workspaceId: string): Promise<MiniApp[]>;
   createApp(command: CreateApp): Promise<void>;
   getApp(appId: string): Promise<AppDocument>;
+  /** Engine-neutral metadata; never includes an author draft or definition. */
+  getAppAccess?(appId: string): Promise<MiniApp>;
   saveDraft(command: SaveDraft): Promise<AppDocument>;
   publishApp(command: PublishApp): Promise<AppDocument>;
   listRecords(
@@ -181,4 +183,6 @@ export interface AppBackend {
   listMembers(appId: string, afterId?: string): Promise<MemberPage>;
   setGrant(command: SetGrant): Promise<AppMember>;
   archiveApp(command: ArchiveApp): Promise<AppDocument>;
+  /** Historical mutation acknowledgement only; refresh access metadata after it. */
+  archiveAppAccess?(command: ArchiveApp): Promise<MiniApp>;
 }

@@ -12,6 +12,7 @@ import type {
   InvitationPage,
   InvitationPreview,
   MemberPage,
+  MiniApp,
   RevokeInvitation,
   SetGrant,
 } from "../backend/types";
@@ -102,6 +103,8 @@ class Backend implements AppBackend {
   archives: ArchiveApp[] = [];
   acceptances: AcceptInvitation[] = [];
   getApp = async (): Promise<AppDocument> => app();
+  getAppAccess?: AppBackend["getAppAccess"];
+  archiveAppAccess?: AppBackend["archiveAppAccess"];
   listMembers = async (): Promise<MemberPage> => ({
     members: [owner, member],
     nextCursor: "member-page-2",
@@ -698,4 +701,166 @@ test("account replacement fences late invitation previews, acceptances and auth 
     );
     assert.notEqual(registry.invitation("account-b", token), controller);
   }
+});
+
+function appMetadata(
+  role: MiniApp["role"] = "owner",
+  archived = false,
+): MiniApp {
+  const value = app(role, archived);
+  return {
+    id: value.id,
+    workspaceId: value.workspaceId,
+    name: value.name,
+    role: value.role,
+    archived: value.archived,
+    engine: "appspec.v1",
+    capabilities: value.capabilities,
+  };
+}
+
+test("sharing uses engine-neutral metadata for every full AppSpec role without fetching a bounded document", async () => {
+  for (const role of ["owner", "builder", "member", "viewer"] as const) {
+    const backend = new Backend();
+    backend.getApp = async () => {
+      throw new Error("Bounded parser must not run");
+    };
+    backend.getAppAccess = async () => appMetadata(role);
+    const controller = new SharingController(
+      backend,
+      "app",
+      async () => token,
+      () => {},
+    );
+    await controller.load();
+    assert.equal(controller.getSnapshot().app?.engine, "appspec.v1");
+    assert.equal(controller.getSnapshot().app?.role, role);
+    assert.equal(controller.getSnapshot().error, null);
+    assert.equal(
+      backend.invitationsRead,
+      role === "owner" || role === "builder" ? 1 : 0,
+    );
+    assert.equal("definition" in controller.getSnapshot().app!, false);
+    assert.equal("draft" in controller.getSnapshot().app!, false);
+  }
+});
+
+test("the bounded sharing fallback keeps only metadata and never retains an author definition", async () => {
+  const backend = new Backend();
+  const controller = new SharingController(
+    backend,
+    "app",
+    async () => token,
+    () => {},
+  );
+  await controller.load();
+  assert.equal(controller.getSnapshot().app?.name, "Private planner");
+  assert.equal("definition" in controller.getSnapshot().app!, false);
+  assert.equal("draftRevision" in controller.getSnapshot().app!, false);
+});
+
+test("archive receipt metadata is only an acknowledgement until a fresh authorized metadata read", async () => {
+  const backend = new Backend(),
+    fresh = deferred<MiniApp>(),
+    started = deferred<void>();
+  let reads = 0;
+  backend.getApp = async () => {
+    throw new Error("Bounded document must not be requested");
+  };
+  backend.getAppAccess = async () => {
+    if (++reads === 1) return appMetadata();
+    started.resolve();
+    return fresh.promise;
+  };
+  backend.archiveAppAccess = async (command) => {
+    backend.archives.push({ ...command });
+    return {
+      ...appMetadata("owner", true),
+      name: "Historical title",
+      workspaceId: "historical-workspace",
+    };
+  };
+  const controller = new SharingController(
+    backend,
+    "app",
+    async () => token,
+    () => {},
+  );
+  await controller.load();
+  const saving = controller.archive();
+  await started.promise;
+  assert.equal(controller.getSnapshot().app?.name, "Private planner");
+  assert.equal(controller.getSnapshot().app?.workspaceId, "workspace");
+  assert.equal(controller.getSnapshot().app?.archived, true);
+  assert.equal(controller.getSnapshot().app?.capabilities?.share, false);
+  assert.equal(controller.getSnapshot().pending, null);
+  fresh.resolve({ ...appMetadata("owner", true), name: "Current title" });
+  await saving;
+  assert.equal(controller.getSnapshot().app?.name, "Current title");
+  assert.equal(backend.archives.length, 1);
+});
+
+test("an uncertain full-app archive retains its exact envelope across metadata reload and explicit retry", async () => {
+  const backend = new Backend();
+  let archived = false;
+  const commands: ArchiveApp[] = [];
+  backend.getAppAccess = async () => appMetadata("owner", archived);
+  backend.archiveAppAccess = async (command) => {
+    commands.push({ ...command });
+    archived = true;
+    if (commands.length === 1) throw unknownResult();
+    return appMetadata("owner", true);
+  };
+  const controller = new SharingController(
+    backend,
+    "app",
+    async () => token,
+    () => {},
+  );
+  await controller.load();
+  await controller.archive();
+  assert.equal(controller.getSnapshot().pending?.kind, "archive");
+  await controller.load();
+  assert.equal(commands.length, 1);
+  assert.equal(controller.getSnapshot().app?.archived, true);
+  await controller.retry();
+  assert.deepEqual(commands[1], commands[0]);
+  assert.equal(controller.getSnapshot().pending, null);
+});
+
+test("account disposal fences late metadata and prevents post-archive refresh from the old sharing controller", async () => {
+  const backend = new Backend(),
+    read = deferred<MiniApp>();
+  let reads = 0;
+  backend.getAppAccess = () => {
+    reads++;
+    return read.promise;
+  };
+  const registry = new SharingRegistry(
+    backend,
+    async () => token,
+    () => {},
+  );
+  const controller = registry.get("a", "app"),
+    loading = controller.load();
+  registry.keepUser("b");
+  read.resolve(appMetadata());
+  await loading;
+  assert.equal(controller.getSnapshot().app, null);
+  assert.equal(backend.invitationsRead, 0);
+  const current = registry.get("b", "app");
+  backend.getAppAccess = async () => {
+    reads++;
+    return appMetadata();
+  };
+  await current.load();
+  const ack = deferred<MiniApp>();
+  backend.archiveAppAccess = () => ack.promise;
+  const archiving = current.archive();
+  registry.keepUser("c");
+  const before = reads;
+  ack.resolve(appMetadata("owner", true));
+  await archiving;
+  assert.equal(reads, before);
+  assert.equal(current.getSnapshot().app, null);
 });
