@@ -11,13 +11,16 @@ import { colors, space } from "../components/theme";
 import { previewTemplates } from "./catalog";
 import { PreviewTemplate } from "./model";
 import { headingFont } from "./ui";
+import { Button } from "../components/Button";
 
 export function TemplateGallery({
   onClose,
   onSelect,
+  onFullTemplates,
 }: {
   onClose?: () => void;
   onSelect: (template: PreviewTemplate) => void;
+  onFullTemplates?: () => void;
 }) {
   const { width } = useWindowDimensions();
 
@@ -51,6 +54,13 @@ export function TemplateGallery({
           records in your Appwrite account.
         </Text>
       </View>
+      {onFullTemplates && (
+        <Button
+          label="Explore more mini-app templates"
+          variant="secondary"
+          onPress={onFullTemplates}
+        />
+      )}
       <View style={styles.shelf}>
         {previewTemplates.map((template, index) => (
           <Pressable

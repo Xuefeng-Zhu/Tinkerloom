@@ -4,6 +4,7 @@ import { TemplateGallery } from "../../preview/TemplateGallery";
 export default function PreviewGalleryRoute() {
   return (
     <TemplateGallery
+      onFullTemplates={() => router.push("/miniapps")}
       onClose={() => {
         if (router.canGoBack()) router.back();
         else router.replace("/");
