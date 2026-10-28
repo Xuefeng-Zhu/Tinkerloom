@@ -1,0 +1,369 @@
+{
+  "formatVersion": 1,
+  "name": "Daily Planner",
+  "theme": "blue",
+  "icon": "check",
+  "requires": [
+    "collections.v1",
+    "workflow.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "workflow.transition.v1",
+    "views.list.v1",
+    "views.summary.v1",
+    "views.details.v1",
+    "views.form.v1",
+    "navigation.v1",
+    "views.configured.v1",
+    "notifications.inApp.v1",
+    "notifications.owner.v1",
+    "automations.conditions.v1"
+  ],
+  "collections": [
+    {
+      "id": "tasks",
+      "label": "Tasks",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Task",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "status",
+          "label": "Status",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Open",
+            "Done"
+          ]
+        },
+        {
+          "id": "priority",
+          "label": "Priority",
+          "type": "choice",
+          "required": false,
+          "choices": [
+            "Low",
+            "Normal",
+            "High"
+          ]
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "dueAt",
+          "label": "Due",
+          "type": "timestamp",
+          "required": false
+        },
+        {
+          "id": "reminderAt",
+          "label": "Remind me",
+          "type": "timestamp",
+          "required": false
+        }
+      ],
+      "behaviors": [
+        {
+          "id": "taskProgress",
+          "type": "workflow.v1",
+          "fieldId": "status",
+          "transitions": {
+            "Open": [
+              "Done"
+            ],
+            "Done": [
+              "Open"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "todaySummary",
+      "type": "summary",
+      "collectionId": "tasks",
+      "label": "Today at a glance",
+      "groupByFieldId": "status",
+      "actionIds": [],
+      "dateFilter": {
+        "fieldId": "dueAt",
+        "period": "today"
+      }
+    },
+    {
+      "id": "todayTasks",
+      "type": "list",
+      "collectionId": "tasks",
+      "label": "Scheduled today",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addTask",
+        "editTask",
+        "moveTask"
+      ],
+      "presentation": "compact",
+      "fieldIds": [
+        "status",
+        "priority",
+        "dueAt"
+      ],
+      "query": {
+        "sort": [
+          {
+            "fieldId": "dueAt",
+            "descending": false
+          }
+        ],
+        "limit": 25
+      },
+      "dateFilter": {
+        "fieldId": "dueAt",
+        "period": "today"
+      },
+      "detailPageId": "taskDetailPage",
+      "formPageId": "taskEditorPage"
+    },
+    {
+      "id": "overdueTasks",
+      "type": "list",
+      "collectionId": "tasks",
+      "label": "Overdue",
+      "titleFieldId": "title",
+      "actionIds": [
+        "editTask",
+        "moveTask"
+      ],
+      "presentation": "compact",
+      "fieldIds": [
+        "priority",
+        "dueAt"
+      ],
+      "query": {
+        "filters": [
+          {
+            "fieldId": "status",
+            "operator": "eq",
+            "value": "Open"
+          }
+        ],
+        "sort": [
+          {
+            "fieldId": "dueAt",
+            "descending": false
+          }
+        ],
+        "limit": 25
+      },
+      "dateFilter": {
+        "fieldId": "dueAt",
+        "period": "overdue"
+      },
+      "detailPageId": "taskDetailPage",
+      "formPageId": "taskEditorPage"
+    },
+    {
+      "id": "allTasks",
+      "type": "list",
+      "collectionId": "tasks",
+      "label": "All tasks",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addTask",
+        "editTask",
+        "moveTask"
+      ],
+      "presentation": "cards",
+      "fieldIds": [
+        "status",
+        "priority",
+        "dueAt"
+      ],
+      "filterFieldIds": [
+        "status",
+        "priority"
+      ],
+      "query": {
+        "sort": [
+          {
+            "fieldId": "dueAt",
+            "descending": false
+          }
+        ],
+        "limit": 25
+      },
+      "detailPageId": "taskDetailPage",
+      "formPageId": "taskEditorPage"
+    },
+    {
+      "id": "todayProgress",
+      "type": "summary",
+      "collectionId": "tasks",
+      "label": "Today’s scheduled tasks",
+      "groupByFieldId": "status",
+      "actionIds": [],
+      "dateFilter": {
+        "fieldId": "dueAt",
+        "period": "today"
+      }
+    },
+    {
+      "id": "allProgress",
+      "type": "summary",
+      "collectionId": "tasks",
+      "label": "All tasks",
+      "groupByFieldId": "status",
+      "actionIds": []
+    },
+    {
+      "id": "taskDetails",
+      "type": "details",
+      "collectionId": "tasks",
+      "label": "Task details",
+      "titleFieldId": "title",
+      "actionIds": [
+        "editTask",
+        "moveTask"
+      ],
+      "fieldIds": [
+        "status",
+        "priority",
+        "notes",
+        "dueAt",
+        "reminderAt"
+      ],
+      "formPageId": "taskEditorPage"
+    },
+    {
+      "id": "taskEditor",
+      "type": "form",
+      "collectionId": "tasks",
+      "label": "Task editor",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addTask",
+        "editTask"
+      ],
+      "fieldIds": [
+        "title",
+        "priority",
+        "notes",
+        "dueAt",
+        "reminderAt"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "addTask",
+      "label": "Add task",
+      "capability": "records.create.v1",
+      "collectionId": "tasks"
+    },
+    {
+      "id": "editTask",
+      "label": "Edit task",
+      "capability": "records.patch.v1",
+      "collectionId": "tasks"
+    },
+    {
+      "id": "moveTask",
+      "label": "Complete or reopen",
+      "capability": "workflow.transition.v1",
+      "collectionId": "tasks",
+      "behaviorId": "taskProgress"
+    }
+  ],
+  "policyPresetRequest": "personalTracker.v1",
+  "automationRequests": [
+    {
+      "id": "taskReminder",
+      "trigger": {
+        "type": "beforeTimestamp",
+        "collectionId": "tasks",
+        "fieldId": "reminderAt",
+        "offsetSeconds": 0
+      },
+      "effect": {
+        "type": "notifyOwner",
+        "channel": "inApp"
+      },
+      "condition": {
+        "fieldId": "status",
+        "value": "Open"
+      }
+    }
+  ],
+  "navigation": {
+    "entryPageId": "todayPage",
+    "pages": [
+      {
+        "id": "todayPage",
+        "title": "Today",
+        "viewIds": [
+          "todaySummary",
+          "todayTasks",
+          "overdueTasks"
+        ],
+        "showDate": true,
+        "primaryActionId": "addTask"
+      },
+      {
+        "id": "tasksPage",
+        "title": "Tasks",
+        "viewIds": [
+          "allTasks"
+        ],
+        "primaryActionId": "addTask"
+      },
+      {
+        "id": "progressPage",
+        "title": "Progress",
+        "viewIds": [
+          "todayProgress",
+          "allProgress"
+        ]
+      },
+      {
+        "id": "taskDetailPage",
+        "title": "Task details",
+        "viewIds": [
+          "taskDetails"
+        ]
+      },
+      {
+        "id": "taskEditorPage",
+        "title": "Task editor",
+        "viewIds": [
+          "taskEditor"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "pageId": "todayPage",
+        "label": "Today",
+        "icon": "today"
+      },
+      {
+        "pageId": "tasksPage",
+        "label": "Tasks",
+        "icon": "list"
+      },
+      {
+        "pageId": "progressPage",
+        "label": "Progress",
+        "icon": "chart"
+      }
+    ]
+  }
+}

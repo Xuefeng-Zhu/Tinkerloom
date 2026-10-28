@@ -2,3 +2,7 @@ name: platform_function
 publish_to: none
 environment:
   sdk: '>=3.5.0 <4.0.0'
+dependencies:
+  crypto: ^3.0.7
+  appnest_spec:
+    path: packages/appnest_spec

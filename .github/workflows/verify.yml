@@ -13,6 +13,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  spec:
+    name: Full AppSpec contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: appwrite_backend/packages/appnest_spec
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Cloud-compatible Dart 3.11
+        uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
+        with:
+          sdk: "3.11"
+      - name: Resolve standalone contract dependencies
+        run: dart pub get
+      - name: Analyze the full definition language
+        run: dart analyze lib test
+      - name: Check portable contract formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Test full schema, fixtures, patches, and compatibility
+        run: dart test
+
   client:
     name: React Native client
     runs-on: ubuntu-24.04
