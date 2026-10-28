@@ -23,6 +23,12 @@
           "type": "varchar",
           "size": 128,
           "required": true
+        },
+        {
+          "key": "guard",
+          "type": "varchar",
+          "size": 36,
+          "required": false
         }
       ],
       "indexes": [
@@ -90,6 +96,18 @@
           "key": "publishedJson",
           "type": "mediumtext",
           "required": false
+        },
+        {
+          "key": "headRevision",
+          "type": "integer",
+          "required": false,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "archived",
+          "type": "boolean",
+          "required": false
         }
       ],
       "indexes": [
@@ -98,6 +116,13 @@
           "type": "key",
           "columns": [
             "ownerId",
+            "workspaceId"
+          ]
+        },
+        {
+          "key": "workspace",
+          "type": "key",
+          "columns": [
             "workspaceId"
           ]
         }
@@ -182,6 +207,311 @@
         }
       ],
       "indexes": []
+    },
+    {
+      "tableId": "memberships",
+      "name": "memberships",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "role",
+          "type": "varchar",
+          "size": 16,
+          "required": true
+        },
+        {
+          "key": "revision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "active",
+          "type": "boolean",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "workspace_actor",
+          "type": "unique",
+          "columns": [
+            "workspaceId",
+            "actorId"
+          ]
+        },
+        {
+          "key": "actor",
+          "type": "key",
+          "columns": [
+            "actorId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "grants",
+      "name": "grants",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "role",
+          "type": "varchar",
+          "size": 16,
+          "required": true
+        },
+        {
+          "key": "revision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "revoked",
+          "type": "boolean",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app_actor",
+          "type": "unique",
+          "columns": [
+            "appId",
+            "actorId"
+          ]
+        },
+        {
+          "key": "app",
+          "type": "key",
+          "columns": [
+            "appId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "drafts",
+      "name": "drafts",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "revision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "candidateRevision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "basePublishedRevision",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "definitionJson",
+          "type": "mediumtext",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app_actor",
+          "type": "unique",
+          "columns": [
+            "appId",
+            "actorId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "invitations",
+      "name": "invitations",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "issuerId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "issuerGrantRevision",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "tokenHash",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        },
+        {
+          "key": "role",
+          "type": "varchar",
+          "size": 16,
+          "required": true
+        },
+        {
+          "key": "recipientId",
+          "type": "varchar",
+          "size": 36,
+          "required": false
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "key": "expiresAt",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "key": "revoked",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "acceptedBy",
+          "type": "varchar",
+          "size": 36,
+          "required": false
+        },
+        {
+          "key": "acceptedAt",
+          "type": "datetime",
+          "required": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "token",
+          "type": "unique",
+          "columns": [
+            "tokenHash"
+          ]
+        },
+        {
+          "key": "app",
+          "type": "key",
+          "columns": [
+            "appId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "actor_limits",
+      "name": "actor_limits",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "guard",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "invitationTimesJson",
+          "type": "mediumtext",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "actor",
+          "type": "unique",
+          "columns": [
+            "actorId"
+          ]
+        }
+      ]
     }
   ]
 }

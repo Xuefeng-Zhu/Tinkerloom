@@ -1,0 +1,109 @@
+# Native compilation evidence — October 28, 2026
+
+Both native compilation commands completed successfully against an isolated
+snapshot of `apps/mobile`. This is a native build baseline, not acceptance of
+the completed migration. The snapshot predates the later Expo Crypto and
+Clipboard additions and concurrent sharing/publication work. Repeat native
+generation and compilation against the final source and dependencies before
+claiming final native coverage.
+
+## Source and toolchain
+
+- Source staging directory: `/private/tmp/tinkerloom-full-migration-pOaTwL/apps/mobile`.
+- Isolated native build directory: `/private/tmp/tinkerloom-native-build-69mSqY/app`.
+- Source/config/package-file snapshot SHA-256: `e5a497eb5c3aace1b330d472735d362a2a65ed82b548a8e7fa578fe6427cab5f`.
+- Expo 58.0.20, React Native 0.88.0, Node 24.14.1.
+- Xcode 27.1 (27A9275), iOS Simulator SDK 27.1, CocoaPods 1.17.0.
+- Android compile SDK 37, Build Tools 37.0.0, Gradle 9.4.1, Java 25.0.2.
+- Application identifier on both platforms: `com.tinkerloom.app`.
+
+The ignored `.env.local` was copied from the persistent client after verifying
+that it contained only public `EXPO_PUBLIC_APPWRITE_*` configuration. Values
+were not printed. The snapshot checksum excludes that ignored configuration.
+Native generation and package-script changes were confined to the isolated copy.
+
+Android SDK Platform 37.0 and Build Tools 37.0.0 were downloaded with the
+official installed Android tools. The current platform package name is
+`platforms/android-37.0`; the older `platforms;android-37` request did not resolve
+the platform. Input was disabled during installation, and the existing accepted
+license files were unchanged. No new terms were accepted.
+
+## Build commands and outcomes
+
+The native projects were generated using the installed official Expo template:
+
+```sh
+npx expo prebuild --platform all --no-install --skip-dependency-update react,react-native
+```
+
+`pod install` from the generated `ios/` directory completed with exit code 0.
+The iOS simulator app was then compiled from the isolated app directory:
+
+```sh
+xcodebuild \
+  -workspace ios/Tinkerloom.xcworkspace \
+  -scheme Tinkerloom \
+  -configuration Release \
+  -sdk iphonesimulator \
+  -destination 'generic/platform=iOS Simulator' \
+  -derivedDataPath /private/tmp/tinkerloom-native-build-69mSqY/ios-derived-data \
+  CODE_SIGNING_ALLOWED=NO build
+```
+
+Result: exit code **0**, `BUILD SUCCEEDED`, elapsed **1,409.52 seconds**.
+The app contains a universal Mach-O executable for **arm64 and x86_64** and
+embedded **Hermes bytecode version 99**. Its minimum iOS version is **16.4**.
+Code signing was disabled. This is a simulator build; it is not an iPhone
+distribution build or evidence of installation or execution.
+
+From the generated Android directory, with `ANDROID_HOME` pointing at the
+existing Android SDK:
+
+```sh
+./gradlew :app:assembleDebug --no-daemon --console=plain
+```
+
+Result: exit code **0**, `BUILD SUCCESSFUL`, elapsed **1,650.25 seconds**.
+The APK contains native libraries for **arm64-v8a, armeabi-v7a, x86, and x86_64**.
+Inspection with `aapt2` confirmed application ID `com.tinkerloom.app`, compile
+SDK **37**, minimum SDK **24**, and target SDK **36**. `apksigner verify --verbose`
+completed with exit code 0 and verified its APK v2 signature. It uses the
+generated project's development signing configuration, not a production
+signing identity. The **debug APK has no embedded JavaScript bundle** and needs
+the development Metro server to run the application code.
+
+Neither artifact was installed or launched. No simulator/device was booted,
+no EAS operation was used, and no paid hardware service was used.
+
+## Preserved artifacts and hashes
+
+Artifacts and sanitized JSON receipts are retained in the ignored directory
+`/Users/frank/mygit/Tinkerloom/output/native/2026-10-28/`:
+
+| Artifact | Size (bytes) | SHA-256 |
+| --- | ---: | --- |
+| `Tinkerloom-ios-simulator-e5a497eb.zip` | 21,874,588 | `24fd319360c273c6812186e6a2a5a1883f229f26bf1a6c12d3d2fb1d223ab90d` |
+| `Tinkerloom-android-debug-e5a497eb.apk` | 236,873,246 | `648b68e3c126745c72237e76e7fa43c311c0b0e2f2fc477f59132cdc9c6e4bdf` |
+
+The iOS zip contains the compiled `Tinkerloom.app`. The simulator executable
+SHA-256 is `58203b058dc923e79df6f37e25c3b61979f9c3a86cda619e7bde92fe2fafed99`;
+the embedded Hermes bundle SHA-256 is
+`6ba04f627ae41fdf5fe132746e385f025483a6a7db1ce1a719dbfdc6c82a57ad`.
+
+The receipts `ios-receipt-e5a497eb.json` and
+`android-receipt-e5a497eb.json` contain the executed commands, durations,
+source snapshot, architecture metadata, and artifact hashes. Raw build logs
+remain local under `/private/tmp/tinkerloom-native-build-69mSqY/logs/` and are
+not committed because Xcode logs contain extensive environment/build settings.
+
+## Runtime acceptance still outstanding
+
+The build log reported CoreSimulator service **1171.7.0**, older than Xcode's
+build **1174.9.2**, and disabled simulator device support. Generic simulator
+compilation succeeded despite that runtime problem. No service restart was
+performed. The local Android SDK has no emulator package or AVD configured.
+
+Compilation does not establish native Appwrite authentication, live CRUD,
+sharing, reminders, device capabilities, accessibility, or physical-device
+behavior. Those layers require separate execution against the final client
+and backend.
