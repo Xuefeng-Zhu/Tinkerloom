@@ -49,3 +49,14 @@ Rich-feature browser QA was still ongoing when this checkpoint was recorded. The
 The passing suite demonstrates the listed REST/session/Function invariants, including live concurrency and fresh-session persistence. The separately recorded browser flow identifies which saved builder/record paths were exercised at each hostname. Native builds/device behavior, forced network-response loss, full AppNest parity, and production acceptance remain separate checks.
 
 The [rich-feature browser flow](rich-browser-qa.md) separately verifies the rendered number/date/table/agenda client and one ten-to-eleven-record page boundary, including fresh-session persistence and the Unicode save correction.
+
+## Native custom-module compilation checkpoint
+
+The [fixed-snapshot report](native-module/README.md),
+[iOS receipt](native-module/ios-receipt.json),
+[Android receipt](native-module/android-receipt.json), and
+[toolchain/baseline-preservation receipt](native-module/toolchain-and-preservation.json)
+record successful local compilation and actual custom native class presence.
+The 169-file input and CNG-transformed source hashes bind this evidence; later
+full-host/final-source integration and device behavior are not established.
+Earlier native and service/browser evidence remains preserved.

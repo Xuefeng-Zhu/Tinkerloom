@@ -51,6 +51,10 @@ export class AppController {
 
   constructor(private readonly backend: AppBackend) {}
 
+  /** Changes on every authentication transition, even for the same account. */
+  get sessionVersion(): number {
+    return this.session;
+  }
   getSnapshot = (): AppState => this.state;
   subscribe = (listener: () => void): (() => void) => {
     this.listeners.add(listener);

@@ -1,0 +1,37 @@
+{
+  "command": [
+    "./gradlew",
+    ":app:assembleDebug",
+    "--no-daemon",
+    "--console=plain"
+  ],
+  "cwd": "/private/tmp/tinkerloom-native-module-4g365zp6/app/android",
+  "exitCode": 0,
+  "elapsedSeconds": 1756.77,
+  "log": "/private/tmp/tinkerloom-native-module-4g365zp6/logs/android.log",
+  "finishedAt": "2026-10-28T22:21:29.202947+00:00",
+  "simulatorOrDeviceBooted": false,
+  "installed": false,
+  "launched": false,
+  "inputSourceSha256": "cf37a644b4726d5df0fff3dac0df48875be49781c768ed2962ce1813d1f249f5",
+  "compiledSourceSha256": "2bc5f61585eeaee308da419a2de9b68180f4f24ac12bce5dd815bb8b5f9864d8",
+  "artifact": "/private/tmp/tinkerloom-native-module-4g365zp6/artifacts/Tinkerloom-android-debug-module-2bc5f615.apk",
+  "bytes": 263114861,
+  "sha256": "99b3c18a484ae9dc14eeb559106832e45aa47ab818fdd177d69d2ed5ef2c9bf5",
+  "architectures": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86",
+    "x86_64"
+  ],
+  "packageMetadata": [
+    "package: name='com.tinkerloom.app' versionCode='1' versionName='0.1.0' platformBuildVersionName='17' platformBuildVersionCode='37' compileSdkVersion='37' compileSdkVersionCodename='17'",
+    "minSdkVersion:'24'",
+    "targetSdkVersion:'36'"
+  ],
+  "embeddedJavaScript": false,
+  "deviceModuleInDex": true,
+  "signatureVerificationExitCode": 0,
+  "productionSigning": false,
+  "deviceRuntimeVerified": false
+}

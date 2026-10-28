@@ -1,3 +1,4 @@
+import { ownValue } from "../spec/ownValue";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { getCollection, getField } from "../spec/bindings";
@@ -129,7 +130,7 @@ export function ActionControl({
               key={member.id}
               subtle
               disabled={disabled}
-              selected={record.data[field!.id] === member.id}
+              selected={ownValue(record.data, field!.id) === member.id}
               onPress={() => void execute({ value: member.id })}
             >
               {member.label}

@@ -114,13 +114,26 @@ export function AppScreen() {
           void controller.refresh();
         }}
         onCreateWorkspace={() => controller.openCreation("workspace")}
-        onCreateApp={() => controller.openCreation("app")}
+        onCreateApp={() =>
+          state.workspaceId &&
+          router.push({
+            pathname: "/workbench",
+            params: { workspaceId: state.workspaceId },
+          })
+        }
         onSignOut={() => {
           void controller.signOut();
         }}
         onPreview={() => router.push("/preview")}
         onOpenApp={(appId) =>
-          router.push({ pathname: "/apps/[appId]", params: { appId } })
+          router.push({
+            pathname:
+              state.apps.find((app) => app.id === appId)?.engine ===
+              "appspec.v1"
+                ? "/apps/[appId]/full"
+                : "/apps/[appId]",
+            params: { appId },
+          })
         }
         onEnterInvitation={() => router.push("/invite")}
       />

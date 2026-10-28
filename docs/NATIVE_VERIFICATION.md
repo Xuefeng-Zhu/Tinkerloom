@@ -80,10 +80,10 @@ no EAS operation was used, and no paid hardware service was used.
 Artifacts and sanitized JSON receipts are retained in the ignored directory
 `/Users/frank/mygit/Tinkerloom/output/native/2026-10-28/`:
 
-| Artifact | Size (bytes) | SHA-256 |
-| --- | ---: | --- |
-| `Tinkerloom-ios-simulator-e5a497eb.zip` | 21,874,588 | `24fd319360c273c6812186e6a2a5a1883f229f26bf1a6c12d3d2fb1d223ab90d` |
-| `Tinkerloom-android-debug-e5a497eb.apk` | 236,873,246 | `648b68e3c126745c72237e76e7fa43c311c0b0e2f2fc477f59132cdc9c6e4bdf` |
+| Artifact                                | Size (bytes) | SHA-256                                                            |
+| --------------------------------------- | -----------: | ------------------------------------------------------------------ |
+| `Tinkerloom-ios-simulator-e5a497eb.zip` |   21,874,588 | `24fd319360c273c6812186e6a2a5a1883f229f26bf1a6c12d3d2fb1d223ab90d` |
+| `Tinkerloom-android-debug-e5a497eb.apk` |  236,873,246 | `648b68e3c126745c72237e76e7fa43c311c0b0e2f2fc477f59132cdc9c6e4bdf` |
 
 The iOS zip contains the compiled `Tinkerloom.app`. The simulator executable
 SHA-256 is `58203b058dc923e79df6f37e25c3b61979f9c3a86cda619e7bde92fe2fafed99`;
@@ -107,3 +107,36 @@ Compilation does not establish native Appwrite authentication, live CRUD,
 sharing, reminders, device capabilities, accessibility, or physical-device
 behavior. Those layers require separate execution against the final client
 and backend.
+
+## Custom native module and dependency checkpoint
+
+The later [module compilation report](evidence/2026-10-28/native-module/README.md)
+and [iOS](evidence/2026-10-28/native-module/ios-receipt.json) /
+[Android](evidence/2026-10-28/native-module/android-receipt.json) receipts record
+successful full local builds of the custom TinkerloomDevice module and current
+native dependencies. Both native classes were verified inside the resulting
+binaries; no Swift/Kotlin source fixes were needed. The iOS observer has one
+nonfatal capture-ownership warning. This checkpoint predates later full-host
+wiring and does not establish final-source or device acceptance.
+
+The fixed input snapshot contains **169 files** and has SHA-256
+`cf37a644b4726d5df0fff3dac0df48875be49781c768ed2962ce1813d1f249f5`.
+Expo CNG changed only copied package scripts, giving compiled-source SHA-256
+`2bc5f61585eeaee308da419a2de9b68180f4f24ac12bce5dd815bb8b5f9864d8`.
+All native module source hashes remained unchanged. Matching ignored public
+configuration was verified before copying; no values were printed.
+
+The same Xcode 27.1/Simulator SDK 27.1, Gradle 9.4.1/Android SDK 37/Java 25 toolchain
+was used. iOS Generic Simulator Release with signing disabled passed in
+**1,685.98s**; Android assembleDebug passed in **1,756.77s**. iOS contains arm64
+and x86_64 plus embedded Hermes bytecode 99. Android contains all four ABIs,
+minimum SDK 24/target 36/compile 37 and passes APK signature verification; its debug
+APK has no embedded JavaScript and requires Metro. Exact toolchain and baseline
+preservation hashes are in the [third receipt](evidence/2026-10-28/native-module/toolchain-and-preservation.json).
+
+The zip/APK are preserved under ignored `output/native/module/`; exact names,
+sizes and hashes are in the receipts. Earlier baseline artifacts and reports
+remain unchanged. No simulator/device was booted, no app was installed or
+launched, no OS permission was requested, and no EAS/paid service or new signing
+identity was used. The existing CoreSimulator version mismatch remains a
+runtime limitation despite successful generic compilation.

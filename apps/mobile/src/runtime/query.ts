@@ -1,3 +1,4 @@
+import { ownValue } from "../spec/ownValue";
 import { getCollection, getField } from "../spec/bindings";
 import { canonicalJson } from "../spec/schema";
 import {
@@ -190,7 +191,7 @@ export function matchingRecords(
       r.collectionId === collection.id &&
       query.filters!.every((f) => {
         const field = getField(collection, f.fieldId),
-          value = r.data[f.fieldId];
+          value = ownValue(r.data, f.fieldId);
         const compare = (candidate: JsonValue) =>
           compareTyped(field.type, value, candidate);
         switch (f.operator) {
@@ -216,8 +217,8 @@ export function matchingRecords(
   );
   return result.sort((a, b) => {
     for (const sort of query.sort!) {
-      const av = a.data[sort.fieldId],
-        bv = b.data[sort.fieldId],
+      const av = ownValue(a.data, sort.fieldId),
+        bv = ownValue(b.data, sort.fieldId),
         cmp = compareTyped(getField(collection, sort.fieldId).type, av, bv);
       if (cmp)
         return av === undefined || bv === undefined
@@ -247,7 +248,7 @@ export function aggregateRecords(
   const value = (items: readonly RuntimeRecord[]) => {
     if (aggregate.metric === "count") return items.length;
     const numbers = items
-      .map((r) => r.data[aggregate.fieldId!])
+      .map((r) => ownValue(r.data, aggregate.fieldId!))
       .filter((v): v is number => typeof v === "number");
     const sum = numbers.reduce((a, b) => a + b, 0);
     return aggregate.metric === "sum"
@@ -260,7 +261,9 @@ export function aggregateRecords(
   if (aggregate.groupFieldId) {
     const f = getField(collection, aggregate.groupFieldId);
     for (const key of [...(f.choices ?? []), ""]) {
-      const matches = rows.filter((r) => (r.data[f.id] ?? "") === key);
+      const matches = rows.filter(
+        (r) => (ownValue(r.data, f.id) ?? "") === key,
+      );
       if (key !== "" || matches.length)
         groups.push({ key, count: matches.length, value: value(matches) });
     }
@@ -269,15 +272,15 @@ export function aggregateRecords(
     for (const bucket of aggregate.buckets!) {
       const matches = rows.filter(
         (r) =>
-          r.data[aggregate.dateFieldId!] !== undefined &&
+          ownValue(r.data, aggregate.dateFieldId!) !== undefined &&
           compareTyped(
             "timestamp",
-            r.data[aggregate.dateFieldId!],
+            ownValue(r.data, aggregate.dateFieldId!),
             bucket.start,
           ) >= 0 &&
           compareTyped(
             "timestamp",
-            r.data[aggregate.dateFieldId!],
+            ownValue(r.data, aggregate.dateFieldId!),
             bucket.end,
           ) < 0,
       );

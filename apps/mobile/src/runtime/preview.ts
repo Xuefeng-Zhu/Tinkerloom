@@ -1,3 +1,4 @@
+import { ownValue } from "../spec/ownValue";
 import {
   getAction,
   getBehavior,
@@ -175,7 +176,10 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
   readonly versionId = "preview_v1";
   readonly preview = true;
   readonly archived = false;
-  readonly spec: AppSpec;
+  private currentSpec: AppSpec;
+  get spec(): AppSpec {
+    return this.currentSpec;
+  }
   readonly role: RuntimeRole;
   readonly approvedRuleIds: string[];
   readonly features = new Set([
@@ -194,8 +198,20 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
   private listeners = new Set<() => void>();
   private sequence = 0;
   private disposed = false;
+  /** Preserve this isolated sandbox only when the declaration changes presentation. */
+  applyPresentationSpec(input: AppSpec) {
+    const next = freezeValidated(decodeAppSpec(input));
+    ensure(!this.disposed, "disposed", "The preview is closed.");
+    ensure(
+      presentationFingerprint(this.spec) === presentationFingerprint(next),
+      "preview_behavior_changed",
+      "This change requires a new isolated preview.",
+    );
+    this.currentSpec = next;
+    for (const listener of this.listeners) listener();
+  }
   constructor(spec: AppSpec, options: PreviewOptions = {}) {
-    this.spec = freezeValidated(decodeAppSpec(spec));
+    this.currentSpec = freezeValidated(decodeAppSpec(spec));
     this.role = options.role ?? "owner";
     this.approvedRuleIds = this.spec.automationRequests.map((rule) => rule.id);
     for (const c of this.spec.collections)
@@ -287,7 +303,7 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
       groups: Object.fromEntries(
         f.choices!.map((choice) => [
           choice,
-          rows.filter((r) => r.data[f.id] === choice).length,
+          rows.filter((r) => ownValue(r.data, f.id) === choice).length,
         ]),
       ),
       versionId: this.versionId,
@@ -380,7 +396,7 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
       for (const behavior of c.behaviors)
         if (behavior.type === "workflow.v1")
           ensure(
-            values[behavior.fieldId!] ===
+            ownValue(values, behavior.fieldId!) ===
               getField(c, behavior.fieldId!).choices![0],
             "invalid_input",
             "New records must start in the initial workflow state.",
@@ -388,11 +404,11 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
       for (const field of c.fields)
         if (
           field.type === "member" &&
-          values[field.id] !== undefined &&
-          values[field.id] !== null
+          ownValue(values, field.id) !== undefined &&
+          ownValue(values, field.id) !== null
         )
           ensure(
-            values[field.id] === "preview_member",
+            ownValue(values, field.id) === "preview_member",
             "invalid_input",
             "Choose an eligible preview member.",
           );
@@ -477,7 +493,7 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
         case "workflow.transition.v1": {
           keys(["value"]);
           const behavior = getBehavior(c, action.behaviorId!),
-            current = String(row.data[behavior.fieldId!]);
+            current = String(ownValue(row.data, behavior.fieldId!));
           ensure(
             typeof data.value === "string" &&
               behavior.transitions?.[current]?.includes(data.value),
@@ -544,11 +560,11 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
     for (const field of c.fields)
       if (
         field.type === "member" &&
-        updated.data[field.id] !== undefined &&
-        updated.data[field.id] !== row?.data[field.id]
+        ownValue(updated.data, field.id) !== undefined &&
+        ownValue(updated.data, field.id) !== ownValue(row?.data, field.id)
       )
         ensure(
-          updated.data[field.id] === "preview_member",
+          ownValue(updated.data, field.id) === "preview_member",
           "invalid_input",
           "Choose an eligible preview member.",
         );
@@ -568,7 +584,7 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
     const matching = this.spec.automationRequests.some(
       (rule) =>
         rule.trigger.collectionId === row.collectionId &&
-        row.data[rule.trigger.fieldId] !== undefined,
+        ownValue(row.data, rule.trigger.fieldId) !== undefined,
     );
     return {
       kind: matching ? "scheduled" : "none",
@@ -616,4 +632,67 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
     this.receipts.clear();
     this.cursors.clear();
   }
+}
+
+/** Original preview presentation guard; semantic bindings and queries remain fixed. */
+export function presentationFingerprint(spec: AppSpec): string {
+  const value = JSON.parse(canonicalJson(spec));
+  delete value.name;
+  delete value.theme;
+  delete value.icon;
+  delete value.appearance;
+  value.collections = value.collections.map((c: Record<string, unknown>) => ({
+    ...c,
+    label: "",
+    fields: (c.fields as Record<string, unknown>[]).map((f) => ({
+      ...f,
+      label: "",
+    })),
+  }));
+  const keys: Record<string, string[]> = {
+    clock: ["style", "hourFormat", "showSeconds", "showDate"],
+    timer: ["durationMinutes"],
+    chart: ["style"],
+    metric: ["target"],
+    richText: ["markdown"],
+    banner: [
+      "title",
+      "body",
+      "imageAssetId",
+      "imageAlt",
+      "tone",
+      "imagePlacement",
+    ],
+    form: ["controls", "steps"],
+  };
+  value.views = value.views
+    .map((v: Record<string, unknown>) => {
+      const options = { ...((v.options as object) ?? {}) } as Record<
+        string,
+        unknown
+      >;
+      for (const key of keys[String(v.type)] ?? []) delete options[key];
+      return { ...v, label: "", presentation: null, options };
+    })
+    .sort((a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id));
+  if (value.navigation)
+    value.navigation.pages = value.navigation.pages.map(
+      (p: Record<string, unknown>) => ({
+        ...p,
+        title: "",
+        showDate: false,
+        layout: null,
+        viewIds: [...(p.viewIds as string[])].sort(),
+      }),
+    );
+  value.requires = value.requires.filter(
+    (cap: string) =>
+      ![
+        "views.configured.v1",
+        "views.interactive.v1",
+        "appearance.v1",
+        "navigation.layouts.v1",
+      ].includes(cap),
+  );
+  return canonicalJson(value);
 }

@@ -38,11 +38,21 @@ These probes are not mounted browser/native or full migration acceptance.
   no quota assertion was removed.
 - [Next attempt](appwrite-collaboration-rate-limited.json): Appwrite returned
   HTTP429 `general_rate_limit_exceeded` for new QA account creation. The
-  run stopped dependent checks and preserved the failed receipt. There is
-  **no complete passing collaboration run yet**; do not relabel these failures.
+  run stopped dependent checks and preserved the failed receipt. No passing
+  result was available at that checkpoint; this failed run remains retained.
 
 Natural seven-day expiry,100-workspace/app admission filling, and actual
 network-loss injection remain explicitly unverified live. Their local checks
 are separate. No rate-limit bypass, paid upgrade or production deployment
 was used. Resume the corrected probe only after the service allows normal
 account creation, or through an explicitly authorized test-account workflow.
+
+## Corrected passing run
+
+[Complete passing report](appwrite-collaboration-passed.json), run
+`qa-collab-mvso7okp-e9eac88e`, completed October28 at22:16:38UTC after the
+normal account-creation cooldown: **31 passed,0 failed,0 blocked,940 assertions,
+212 HTTP requests**. All five synthetic sessions were signed out. The full
+50-invitation rolling quota inventory included all three issuing apps and
+checked each issued ID/app. This used the same active deployment and source
+archive identified above. The previously listed live coverage exclusions remain.

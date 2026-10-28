@@ -1,0 +1,55 @@
+{
+  "command": [
+    "xcodebuild",
+    "-workspace",
+    "ios/Tinkerloom.xcworkspace",
+    "-scheme",
+    "Tinkerloom",
+    "-configuration",
+    "Release",
+    "-sdk",
+    "iphonesimulator",
+    "-destination",
+    "generic/platform=iOS Simulator",
+    "-derivedDataPath",
+    "/private/tmp/tinkerloom-native-module-4g365zp6/ios-derived-data",
+    "CODE_SIGNING_ALLOWED=NO",
+    "build"
+  ],
+  "cwd": "/private/tmp/tinkerloom-native-module-4g365zp6/app",
+  "exitCode": 0,
+  "elapsedSeconds": 1685.98,
+  "log": "/private/tmp/tinkerloom-native-module-4g365zp6/logs/ios.log",
+  "finishedAt": "2026-10-28T22:21:51.756374+00:00",
+  "simulatorOrDeviceBooted": false,
+  "installed": false,
+  "launched": false,
+  "inputSourceSha256": "cf37a644b4726d5df0fff3dac0df48875be49781c768ed2962ce1813d1f249f5",
+  "compiledSourceSha256": "2bc5f61585eeaee308da419a2de9b68180f4f24ac12bce5dd815bb8b5f9864d8",
+  "artifact": "/private/tmp/tinkerloom-native-module-4g365zp6/artifacts/Tinkerloom-ios-simulator-module-2bc5f615.zip",
+  "bytes": 23010191,
+  "sha256": "f3598617d49d0435a6c884b1288a398be17d7fc4c80cce519ddb176499d0e6c6",
+  "binarySha256": "6b64d4aafd65858b2491ba4f4893aafd65e92a593fa59538e05ba2b2de0cc05c",
+  "architectures": [
+    "x86_64",
+    "arm64"
+  ],
+  "bundleId": "com.tinkerloom.app",
+  "minimumOsVersion": "16.4",
+  "sdk": "iphonesimulator27.1",
+  "embeddedJavaScript": true,
+  "embeddedJavaScriptSha256": "feddce5c3ee50d97a91729c32e4c692de8dbe31d144a8b74778607176257d5a6",
+  "deviceModuleRegistered": true,
+  "deviceModuleLinkedSymbols": true,
+  "codeSigningAllowed": false,
+  "deviceRuntimeVerified": false,
+  "embeddedJavaScriptFormat": "Hermes bytecode version99",
+  "nativeWarnings": [
+    {
+      "path": "modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+      "line": 33,
+      "kind": "ImplicitStrongCapture",
+      "message": "Weak observer capture differs from outer OnCreate closure implicit strong capture; nonfatal."
+    }
+  ]
+}

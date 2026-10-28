@@ -1,3 +1,4 @@
+import { ownValue } from "../spec/ownValue";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import type { ViewSpecOf } from "../spec/types";
@@ -153,7 +154,7 @@ export function RecordForm({
         <FieldInput
           key={field.id}
           field={field}
-          value={values[field.id] ?? null}
+          value={ownValue(values, field.id) ?? null}
           onChange={(value) => change(field.id, value)}
           control={view.options?.controls?.find((c) => c.fieldId === field.id)}
           members={members}

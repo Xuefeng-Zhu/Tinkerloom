@@ -1,3 +1,4 @@
+import { ownValue } from "../spec/ownValue";
 import { useEffect, useState, useRef } from "react";
 import type { ComponentRef } from "react";
 import {
@@ -153,7 +154,7 @@ export function RecordCard({
         .filter(
           (field) =>
             field.id !== titleFieldId &&
-            record.data[field.id] !== undefined &&
+            ownValue(record.data, field.id) !== undefined &&
             (!["action", "capacity"].includes(view.type) ||
               Boolean(view.fieldIds?.length)),
         )
@@ -161,7 +162,7 @@ export function RecordCard({
           <FieldValue
             key={field.id}
             field={field}
-            value={record.data[field.id]}
+            value={ownValue(record.data, field.id)}
           />
         ))}
       {record.capacity !== null ? (
@@ -288,13 +289,15 @@ function RecordTable({ view }: { view: ViewSpecOf<"table"> }) {
             {fields.map((field) => (
               <View key={field.id} style={{ width: 160, padding: 12 }}>
                 {field.type === "image" &&
-                typeof record.data[field.id] === "string" ? (
+                typeof ownValue(record.data, field.id) === "string" ? (
                   <PrivateImage
-                    assetId={String(record.data[field.id])}
+                    assetId={String(ownValue(record.data, field.id))}
                     alt={field.label}
                   />
                 ) : (
-                  <Body>{displayField(field, record.data[field.id])}</Body>
+                  <Body>
+                    {displayField(field, ownValue(record.data, field.id))}
+                  </Body>
                 )}
               </View>
             ))}
@@ -316,7 +319,9 @@ function BoardView({ view }: { view: ViewSpecOf<"board"> }) {
     field = getField(collection, view.groupByFieldId!),
     groups = [
       ...(field.choices ?? []),
-      ...(data?.records.some((record) => record.data[field.id] === undefined)
+      ...(data?.records.some(
+        (record) => ownValue(record.data, field.id) === undefined,
+      )
         ? [""]
         : []),
     ];
@@ -375,7 +380,7 @@ function BoardView({ view }: { view: ViewSpecOf<"board"> }) {
               </Body>
               {(
                 data?.records.filter(
-                  (record) => (record.data[field.id] ?? "") === group,
+                  (record) => (ownValue(record.data, field.id) ?? "") === group,
                 ) ?? []
               ).map((record) => (
                 <DraggableBoardRecord
@@ -523,7 +528,7 @@ function TimelineView({ view }: { view: ViewSpecOf<"timeline"> }) {
     groups = new Map<string, RuntimeRecord[]>(),
     undated = controller.settingsFor(view.id).undated;
   for (const record of data?.records ?? []) {
-    const raw = record.data[view.options!.dateFieldId],
+    const raw = ownValue(record.data, view.options!.dateFieldId),
       key =
         raw === undefined
           ? "Undated"
@@ -669,13 +674,14 @@ function ImageCollectionView({
           key={record.id}
           style={{ width: view.type === "gallery" ? 220 : "100%", gap: 8 }}
         >
-          {typeof record.data[options.imageFieldId] === "string" ? (
+          {typeof ownValue(record.data, options.imageFieldId) === "string" ? (
             <PrivateImage
-              assetId={String(record.data[options.imageFieldId])}
+              assetId={String(ownValue(record.data, options.imageFieldId))}
               alt={
                 options.captionFieldId
                   ? String(
-                      record.data[options.captionFieldId] ?? "Private image",
+                      ownValue(record.data, options.captionFieldId) ??
+                        "Private image",
                     )
                   : "Private image"
               }
@@ -686,7 +692,7 @@ function ImageCollectionView({
           <Button subtle onPress={() => openRecord(view, record)}>
             {options.captionFieldId
               ? String(
-                  record.data[options.captionFieldId] ??
+                  ownValue(record.data, options.captionFieldId) ??
                     recordTitle(controller.adapter.spec, view, record),
                 )
               : recordTitle(controller.adapter.spec, view, record)}
@@ -775,7 +781,7 @@ export function DetailsView({
         <FieldValue
           key={field.id}
           field={field}
-          value={record.data[field.id]}
+          value={ownValue(record.data, field.id)}
         />
       ))}
       {record.capacity !== null ? (

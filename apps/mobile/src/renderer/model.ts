@@ -1,3 +1,4 @@
+import { ownValue } from "../spec/ownValue";
 import { collectionForView, fieldsForView, getField } from "../spec/bindings";
 import { normalizeFieldValue } from "../spec/values";
 import type {
@@ -32,7 +33,7 @@ export function initialEditorValues(
   return Object.fromEntries(
     fields.map((field) => {
       const value =
-        record?.data[field.id] ??
+        ownValue(record?.data, field.id) ??
         (field.required
           ? field.type === "choice"
             ? field.choices![0]
@@ -59,7 +60,7 @@ export function normalizedEditorData(
 ): Record<string, JsonValue> {
   return Object.fromEntries(
     fields.map((field) => {
-      const raw = values[field.id];
+      const raw = ownValue(values, field.id);
       let candidate: unknown = raw;
       if (field.type === "integer" || field.type === "number") {
         const text = typeof raw === "string" ? raw.trim() : "";
@@ -77,7 +78,7 @@ export function normalizedEditorData(
         typeof normalized === "number" &&
         control &&
         ["slider", "stepper", "rating"].includes(control.control) &&
-        normalized !== initial?.data[field.id]
+        normalized !== ownValue(initial?.data, field.id)
       ) {
         const min = control.control === "rating" ? 1 : control.min!,
           max = control.control === "rating" ? 5 : control.max!;
@@ -99,8 +100,8 @@ export function recordTitle(
   );
   return field?.type === "image"
     ? "Image record"
-    : field && record.data[field.id] !== undefined
-      ? String(record.data[field.id])
+    : field && ownValue(record.data, field.id) !== undefined
+      ? String(ownValue(record.data, field.id))
       : "Untitled";
 }
 export function displayField(field: FieldSpec, value: unknown): string {
@@ -168,14 +169,19 @@ export function transitionTargets(
   if (!action?.behaviorId) return [];
   const c = spec.collections.find((c) => c.id === action.collectionId)!,
     behavior = c.behaviors.find((b) => b.id === action.behaviorId)!;
-  return behavior.transitions?.[String(record.data[behavior.fieldId!])] ?? [];
+  return (
+    ownValue(
+      behavior.transitions,
+      String(ownValue(record.data, behavior.fieldId!)),
+    ) ?? []
+  );
 }
 export function checklistInput(
   view: ViewSpecOf<"checklist">,
   record: RuntimeRecord,
 ): Record<string, JsonValue> {
   const options = view.options!,
-    value = record.data[options.fieldId];
+    value = ownValue(record.data, options.fieldId);
   return {
     value:
       typeof value === "boolean"
@@ -190,8 +196,8 @@ export function checklistChecked(
   record: RuntimeRecord,
 ): boolean {
   return view.options?.checkedValue
-    ? record.data[view.options.fieldId] === view.options.checkedValue
-    : record.data[view.options!.fieldId] === true;
+    ? ownValue(record.data, view.options.fieldId) === view.options.checkedValue
+    : ownValue(record.data, view.options!.fieldId) === true;
 }
 export function checklistCommand(
   spec: AppSpec,

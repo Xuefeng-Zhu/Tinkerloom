@@ -1,0 +1,24 @@
+{
+  "xcode": "27.1 (27A9275)",
+  "iosSimulatorSdk": "27.1",
+  "cocoapods": "1.17.0",
+  "node": "24.14.1",
+  "expo": "58.0.20",
+  "reactNative": "0.88.0",
+  "gradle": "9.4.1",
+  "androidCompileSdk": 37,
+  "androidBuildTools": "37.0.0",
+  "java": "25.0.2",
+  "baselinePreserved": {
+    "androidApk": {
+      "sha256": "648b68e3c126745c72237e76e7fa43c311c0b0e2f2fc477f59132cdc9c6e4bdf",
+      "expectedSha256": "648b68e3c126745c72237e76e7fa43c311c0b0e2f2fc477f59132cdc9c6e4bdf",
+      "preserved": true
+    },
+    "iosExecutable": {
+      "sha256": "58203b058dc923e79df6f37e25c3b61979f9c3a86cda619e7bde92fe2fafed99",
+      "expectedSha256": "58203b058dc923e79df6f37e25c3b61979f9c3a86cda619e7bde92fe2fafed99",
+      "preserved": true
+    }
+  }
+}
