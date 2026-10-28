@@ -1,8 +1,23 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { readFileSync } from "node:fs";
 import { AppwriteBackend, type ExecutionResult, type SdkAdapter } from "./core";
 import { BackendError } from "./errors";
 import { validatePublicConfig } from "./config";
+import type { Definition } from "../preview/model";
+
+const richContract = JSON.parse(
+  readFileSync(
+    new URL(
+      "../../../../appwrite_backend/test/fixtures/rich_contract.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+) as {
+  validDefinitions: { name: string; input: Definition; expected: Definition }[];
+  invalidDefinitions: { name: string; input: Definition }[];
+};
 
 const user = { $id: "owner", email: "owner@example.test", name: "Owner" };
 
@@ -513,5 +528,169 @@ test("oversized UTF-8 record content is rejected before a mutation is sent", asy
       error.code === "content_too_large" &&
       !error.uncertain,
   );
+  assert.equal(scenario.requests.length, 0);
+});
+
+test("shared definition fixtures retain canonical views and do not add a legacy default", async () => {
+  for (const fixture of richContract.validDefinitions) {
+    const scenario = setup();
+    scenario.succeed({
+      app: {
+        ...appDocument,
+        draftRevision: 1,
+        publishedRevision: 0,
+        publishedDefinition: null,
+        definition: fixture.expected,
+      },
+    });
+    const result = await scenario.backend.saveDraft({
+      appId: "app",
+      expectedRevision: 0,
+      operationId: "rich-save",
+      definition: fixture.input,
+    });
+    assert.deepEqual(
+      result.definition?.view,
+      fixture.expected.view,
+      fixture.name,
+    );
+    assert.equal(
+      Object.prototype.hasOwnProperty.call(result.definition, "view"),
+      Object.prototype.hasOwnProperty.call(fixture.expected, "view"),
+      fixture.name,
+    );
+    const submitted = JSON.parse(scenario.requests[0]) as {
+      definition: Definition;
+    };
+    assert.equal(
+      Object.prototype.hasOwnProperty.call(submitted.definition, "view"),
+      Object.prototype.hasOwnProperty.call(fixture.input, "view"),
+      fixture.name,
+    );
+  }
+});
+
+test("malformed or unknown view properties are rejected by the API response parser", async () => {
+  const scenario = setup();
+  for (const fixture of richContract.invalidDefinitions) {
+    scenario.succeed({
+      app: {
+        ...appDocument,
+        definition: fixture.input,
+        publishedDefinition: fixture.input,
+      },
+    });
+    await assert.rejects(
+      scenario.backend.getApp("app"),
+      (error: unknown) =>
+        error instanceof BackendError && error.kind === "invalid_response",
+      fixture.name,
+    );
+  }
+  const agenda = richContract.validDefinitions.find(
+    (fixture) => fixture.name === "agenda-with-optional-date",
+  )!;
+  scenario.succeed({
+    app: {
+      ...appDocument,
+      draftRevision: 1,
+      publishedRevision: 0,
+      publishedDefinition: null,
+      definition: { ...agenda.expected, view: { kind: "table" } },
+    },
+  });
+  await assert.rejects(
+    scenario.backend.saveDraft({
+      appId: "app",
+      expectedRevision: 0,
+      operationId: "rich-save",
+      definition: agenda.input,
+    }),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+});
+
+test("numeric response values preserve zero while nonfinite or out-of-range numbers are rejected", async () => {
+  const scenario = setup();
+  for (const amount of [0, 12.75, -0.125, 1e15, -1e15]) {
+    scenario.succeed({
+      records: [
+        { id: "record", revision: 1, values: { title: "Ledger", amount } },
+      ],
+      definitionRevision: 1,
+      nextCursor: null,
+    });
+    assert.equal(
+      (await scenario.backend.listRecords("app", 1)).records[0].values.amount,
+      amount,
+    );
+    scenario.succeed({
+      record: {
+        id: "record",
+        revision: 1,
+        values: { title: "Ledger", amount },
+      },
+      definitionRevision: 1,
+    });
+    assert.equal(
+      (
+        await scenario.backend.saveRecord({
+          appId: "app",
+          id: "record",
+          expectedRevision: 0,
+          operationId: "numeric-save",
+          definitionRevision: 1,
+          values: { title: "Ledger", amount },
+        })
+      ).values.amount,
+      amount,
+    );
+  }
+  for (const literal of [
+    "1e309",
+    "-1e309",
+    "1000000000000001",
+    "-1000000000000001",
+    "null",
+    "[]",
+  ]) {
+    scenario.setExecution({
+      status: "completed",
+      responseStatusCode: 200,
+      responseBody: `{"records":[{"id":"record","revision":1,"values":{"title":"Ledger","amount":${literal}}}],"definitionRevision":1,"nextCursor":null}`,
+    });
+    await assert.rejects(
+      scenario.backend.listRecords("app", 1),
+      (error: unknown) =>
+        error instanceof BackendError && error.kind === "invalid_response",
+      literal,
+    );
+  }
+});
+
+test("nonfinite mutation values cannot be silently serialized to null", async () => {
+  const scenario = setup();
+  for (const amount of [
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+    1e15 + 1,
+    -1e15 - 1,
+  ]) {
+    await assert.rejects(
+      scenario.backend.saveRecord({
+        appId: "app",
+        id: "record",
+        expectedRevision: 0,
+        operationId: "numeric-save",
+        definitionRevision: 1,
+        values: { title: "Ledger", amount },
+      }),
+      (error: unknown) =>
+        error instanceof BackendError &&
+        error.code === "invalid_values" &&
+        !error.uncertain,
+    );
+  }
   assert.equal(scenario.requests.length, 0);
 });

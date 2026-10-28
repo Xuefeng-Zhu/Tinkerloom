@@ -13,8 +13,13 @@ import type {
   PublishApp,
   SaveRecord,
 } from "./types";
-import { validateDefinition } from "../preview/model";
-import type { Definition, Field, Values } from "../preview/model";
+import { NUMBER_LIMIT, validateDefinition } from "../preview/model";
+import type {
+  Definition,
+  DefinitionView,
+  Field,
+  Values,
+} from "../preview/model";
 
 export interface SdkAccount {
   get(): Promise<unknown>;
@@ -186,6 +191,24 @@ function definition(value: unknown, mutation = false): Definition {
       primaryFieldId: data.primaryFieldId,
       fields,
     };
+    if (data.view !== undefined) {
+      const rawView = object(data.view, mutation);
+      if (
+        Object.keys(rawView).some(
+          (key) => key !== "kind" && key !== "dateFieldId",
+        ) ||
+        !["list", "table", "agenda"].includes(rawView.kind as string)
+      )
+        invalidResponse(mutation);
+      if (rawView.kind === "agenda") {
+        if (typeof rawView.dateFieldId !== "string") invalidResponse(mutation);
+        result.view = { kind: "agenda", dateFieldId: rawView.dateFieldId };
+      } else {
+        if (Object.prototype.hasOwnProperty.call(rawView, "dateFieldId"))
+          invalidResponse(mutation);
+        result.view = { kind: rawView.kind } as DefinitionView;
+      }
+    }
     validateDefinition(result);
     return result;
   } catch {
@@ -217,19 +240,26 @@ function document(value: unknown, mutation = false): AppDocument {
   };
 }
 
-function record(value: unknown, mutation = false): LiveRecord {
-  const data = object(value, mutation);
-  const values = object(data.values, mutation);
-  if (
+function validPrimitiveValues(values: Record<string, unknown>): boolean {
+  return !(
     Object.keys(values).length > 10 ||
     Object.entries(values).some(
       ([key, value]) =>
         !/^[a-z][a-zA-Z0-9_]{0,31}$/.test(key) ||
-        (typeof value !== "string" && typeof value !== "boolean") ||
-        (typeof value === "string" && value.length > 4000),
+        (typeof value !== "string" &&
+          typeof value !== "boolean" &&
+          typeof value !== "number") ||
+        (typeof value === "string" && value.length > 4000) ||
+        (typeof value === "number" &&
+          (!Number.isFinite(value) || Math.abs(value) > NUMBER_LIMIT)),
     )
-  )
-    invalidResponse(mutation);
+  );
+}
+
+function record(value: unknown, mutation = false): LiveRecord {
+  const data = object(value, mutation);
+  const values = object(data.values, mutation);
+  if (!validPrimitiveValues(values)) invalidResponse(mutation);
   return {
     id: id(data.id, mutation),
     revision: revision(data.revision, 1, mutation),
@@ -612,6 +642,20 @@ export class AppwriteBackend implements AppBackend {
 
   async saveRecord(command: SaveRecord): Promise<LiveRecord> {
     validateOperation(command);
+    if (
+      !command.values ||
+      typeof command.values !== "object" ||
+      Array.isArray(command.values) ||
+      !validPrimitiveValues(command.values)
+    ) {
+      throw new BackendError(
+        "Please review the record fields before saving.",
+        "invalid_values",
+        "service",
+        false,
+        400,
+      );
+    }
     limitContent(command.values, "This record");
     if (
       !idPattern.test(command.id) ||

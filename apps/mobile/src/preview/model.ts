@@ -1,19 +1,24 @@
 export type Field = {
   id: string;
   label: string;
-  kind: "text" | "longText" | "boolean" | "choice";
+  kind: "text" | "longText" | "boolean" | "choice" | "number" | "date";
   required?: boolean;
   options?: string[];
 };
+
+export type DefinitionView =
+  | { kind: "list" | "table"; dateFieldId?: never }
+  | { kind: "agenda"; dateFieldId: string };
 
 export type Definition = {
   title: string;
   description: string;
   primaryFieldId: string;
   fields: Field[];
+  view?: DefinitionView;
 };
 
-export type Values = Record<string, string | boolean>;
+export type Values = Record<string, string | boolean | number>;
 export type PreviewRecord = { id: string; values: Values };
 export type PreviewTemplate = {
   id: string;
@@ -38,11 +43,50 @@ export class PreviewValidationError extends Error {
 
 const copyDefinition = (definition: Definition): Definition => ({
   ...definition,
+  ...(definition.view ? { view: { ...definition.view } } : {}),
   fields: definition.fields.map((field) => ({
     ...field,
     ...(field.options ? { options: [...field.options] } : {}),
   })),
 });
+
+export const NUMBER_LIMIT = 1e15;
+
+/** A civil date is validated arithmetically, without timezone or Date rollover. */
+export function isCivilDate(value: unknown): value is string {
+  if (
+    typeof value !== "string" ||
+    value.length !== 10 ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(value)
+  )
+    return false;
+  const year = Number(value.slice(0, 4));
+  const month = Number(value.slice(5, 7));
+  const day = Number(value.slice(8, 10));
+  if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1)
+    return false;
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return day <= days[month - 1];
+}
+
+/** Form-only conversion. The record validator itself never coerces strings. */
+export function parseNumericInput(input: string): number | "" {
+  const text = input.trim();
+  if (text === "") return "";
+  if (!/^-?(?:\d+(?:\.\d+)?|\.\d+)$/.test(text)) {
+    throw new PreviewValidationError(
+      "Enter a decimal number without exponents or separators.",
+    );
+  }
+  const value = Number(text);
+  if (!Number.isFinite(value) || Math.abs(value) > NUMBER_LIMIT) {
+    throw new PreviewValidationError(
+      `Use a number between -${NUMBER_LIMIT} and ${NUMBER_LIMIT}.`,
+    );
+  }
+  return Object.is(value, -0) ? 0 : value;
+}
 
 function boundedText(value: unknown, name: string, maximum: number): string {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -85,7 +129,11 @@ export function validateDefinition(definition: Definition): void {
     }
     ids.add(field.id);
     boundedText(field.label, "Field label", 64);
-    if (!["text", "longText", "boolean", "choice"].includes(field.kind)) {
+    if (
+      !["text", "longText", "boolean", "choice", "number", "date"].includes(
+        field.kind,
+      )
+    ) {
       throw new PreviewValidationError(
         "This preview cannot render that field type.",
       );
@@ -118,6 +166,36 @@ export function validateDefinition(definition: Definition): void {
       "The primary field must be required text.",
     );
   }
+  if (definition.view !== undefined) {
+    const view = definition.view;
+    if (
+      view === null ||
+      typeof view !== "object" ||
+      Array.isArray(view) ||
+      Object.keys(view).some(
+        (key) => key !== "kind" && key !== "dateFieldId",
+      ) ||
+      !["list", "table", "agenda"].includes(view.kind)
+    ) {
+      throw new PreviewValidationError("Choose a supported app view.");
+    }
+    if (view.kind === "agenda") {
+      if (
+        typeof view.dateFieldId !== "string" ||
+        !definition.fields.some(
+          (field) => field.id === view.dateFieldId && field.kind === "date",
+        )
+      ) {
+        throw new PreviewValidationError(
+          "An agenda needs an existing date field.",
+        );
+      }
+    } else if (Object.prototype.hasOwnProperty.call(view, "dateFieldId")) {
+      throw new PreviewValidationError(
+        "Only an agenda may select a date field.",
+      );
+    }
+  }
 }
 
 export function validateValues(definition: Definition, values: Values): Values {
@@ -143,6 +221,27 @@ export function validateValues(definition: Definition, values: Values): Values {
       if (field.required)
         throw new PreviewValidationError(`${field.label} is required.`);
       result[field.id] = "";
+      continue;
+    }
+    if (field.kind === "number") {
+      if (
+        typeof value !== "number" ||
+        !Number.isFinite(value) ||
+        Math.abs(value) > NUMBER_LIMIT
+      ) {
+        throw new PreviewValidationError(
+          `${field.label} must be a finite number between -${NUMBER_LIMIT} and ${NUMBER_LIMIT}.`,
+        );
+      }
+      result[field.id] = Object.is(value, -0) ? 0 : value;
+      continue;
+    }
+    if (field.kind === "date") {
+      if (!isCivilDate(value))
+        throw new PreviewValidationError(
+          `${field.label} must be a valid date in YYYY-MM-DD format.`,
+        );
+      result[field.id] = value;
       continue;
     }
     if (typeof value !== "string") {
