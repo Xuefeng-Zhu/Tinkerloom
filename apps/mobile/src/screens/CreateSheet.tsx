@@ -19,6 +19,7 @@ export interface CreateSheetProps {
   error: string | null;
   submittedName?: string;
   workspaceName?: string;
+  workspaceId?: string | null;
   onSubmit: (name: string) => void;
   onCancel: () => void;
 }
@@ -29,13 +30,20 @@ export function CreateSheet({
   error,
   submittedName,
   workspaceName,
+  workspaceId,
   onSubmit,
   onCancel,
 }: CreateSheetProps) {
   const [name, setName] = useState("");
   const [validation, setValidation] = useState<string | null>(null);
   const locked = submittedName !== undefined;
-  const title = kind === "workspace" ? "New workspace" : "New app";
+  const title = locked
+    ? kind === "workspace"
+      ? "Review workspace save"
+      : "Review app save"
+    : kind === "workspace"
+      ? "New workspace"
+      : "New app";
 
   function submit() {
     if (busy) return;
@@ -77,7 +85,9 @@ export function CreateSheet({
             </Text>
             {kind === "app" && (
               <Text style={styles.recovery}>
-                Workspace: {workspaceName ?? "the original workspace"}
+                {locked ? "Original workspace: " : "Workspace: "}
+                {workspaceName ?? workspaceId ?? "Unavailable"}
+                {workspaceName && workspaceId ? ` (${workspaceId})` : ""}
               </Text>
             )}
             <Field
@@ -98,8 +108,10 @@ export function CreateSheet({
             )}
             {locked && (
               <Text style={styles.recovery}>
-                This attempt keeps its original name and request ID. Retry save
-                to safely check the same creation.
+                {kind === "app"
+                  ? "This attempt keeps its original name, workspace, and request ID."
+                  : "This attempt keeps its original name and request ID."}{" "}
+                Retry save to safely check the same creation.
               </Text>
             )}
             <View style={styles.actions}>

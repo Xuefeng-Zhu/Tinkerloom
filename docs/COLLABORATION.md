@@ -85,3 +85,33 @@ The combined backend suite has 51 check groups: the preceding 22 builder/rich-re
 The [preserved rich-record evidence](evidence/2026-10-28/README.md) predates this collaboration backend. It does not establish live Appwrite acceptance, browser use, or native-device behavior for invitations, shared roles, or private builder drafts. Those remain separate deployment and acceptance checks.
 
 The guard design follows Appwrite's [atomic transaction and affected-row conflict semantics](https://appwrite.io/docs/products/databases/tablesdb/transactions). Empty table/row permissions follow its [default-deny permission model](https://appwrite.io/docs/products/databases/tablesdb/permissions). The workspace guard conservatively serializes supported writes across apps in one workspace; this is a bounded MVP correctness choice, not a throughput claim.
+
+## React Native client checkpoint
+
+The client includes people/sharing and invitation-entry/review routes, explicit
+acceptance, role-aware controls, member/invitation paging, grant removal, and
+owner archive review. The signed-in workbench exposes the account ID for
+recipient-bound invitations. A retained app-creation request names its original
+workspace even after another workspace is selected. Pasted invitation URLs are
+parsed locally; their origin is never opened or fetched. Sign-in and invitation
+inspection do not accept an invitation.
+
+Private draft counters and global publication candidates are independent. The
+client reviews and retains the exact private revision, candidate revision and
+published base for retry. Confirmed role loss immediately clears private editor
+and sharing state, including if a following refresh fails. An archived app blocks
+new changes while retaining authorized exact-command receipt recovery and access
+removal. Account-scoped controllers fence late responses after disposal.
+
+Invitation tokens use Expo Crypto's asynchronous native random-byte API with
+32 bytes and canonical unpadded base64url encoding. The synchronous API's
+development fallback is deliberately avoided. Android clipboard writes mark the
+invitation URL sensitive; copying is an explicit user action. See the official
+[Expo 58 Crypto](https://docs.expo.dev/versions/v58.0.0/sdk/crypto/) and
+[Clipboard](https://docs.expo.dev/versions/v58.0.0/sdk/clipboard/) contracts.
+
+On October 28, 2026, root `npm run verify` passed for this client checkpoint:
+TypeScript, Expo lint, **101 client tests**, Prettier, and web/iOS/Android bundle
+exports. These exports are not native builds. Live Cloud collaboration, rendered
+browser sharing, and native execution remain separate acceptance work; the older
+rich-slice deployment does not establish those checks.

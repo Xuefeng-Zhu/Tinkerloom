@@ -27,6 +27,9 @@ export default function AppRoute() {
       onEdit={() =>
         router.push({ pathname: "/apps/[appId]/edit", params: { appId } })
       }
+      onShare={() =>
+        router.push({ pathname: "/apps/[appId]/sharing", params: { appId } })
+      }
     />
   );
 }

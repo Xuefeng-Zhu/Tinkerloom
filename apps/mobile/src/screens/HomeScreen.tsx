@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { setStringAsync } from "expo-clipboard";
 import {
   ActivityIndicator,
   Pressable,
@@ -26,6 +28,7 @@ export interface HomeScreenProps {
   onSignOut: () => void;
   onPreview: () => void;
   onOpenApp: (id: string) => void;
+  onEnterInvitation: () => void;
 }
 
 export function HomeScreen({
@@ -42,8 +45,31 @@ export function HomeScreen({
   onSignOut,
   onPreview,
   onOpenApp,
+  onEnterInvitation,
 }: HomeScreenProps) {
   const workspace = workspaces.find((item) => item.id === workspaceId);
+  const [copyNotice, setCopyNotice] = useState<{
+    accountId: string;
+    message: string;
+  } | null>(null);
+  function copyAccountId() {
+    const accountId = user.id;
+    setCopyNotice(null);
+    void setStringAsync(accountId).then(
+      (copied) =>
+        setCopyNotice({
+          accountId,
+          message: copied
+            ? "Account ID copied."
+            : "Copy was unavailable. Select the account ID to copy it.",
+        }),
+      () =>
+        setCopyNotice({
+          accountId,
+          message: "Copy was unavailable. Select the account ID to copy it.",
+        }),
+    );
+  }
   return (
     <ScrollView
       style={styles.root}
@@ -72,6 +98,35 @@ export function HomeScreen({
           <Text style={styles.account} numberOfLines={2}>
             Signed in as {user.email}
           </Text>
+          <View style={styles.accountCard}>
+            <Text style={styles.accountLabel}>Your account ID</Text>
+            <Text selectable style={styles.accountId}>
+              {user.id}
+            </Text>
+            <Text style={styles.sectionDescription}>
+              Share this ID with someone who wants to invite this account.
+            </Text>
+            <View style={styles.accountActions}>
+              <Button
+                label="Copy account ID"
+                variant="secondary"
+                onPress={copyAccountId}
+              />
+              <Button
+                label="Open invitation"
+                variant="quiet"
+                onPress={onEnterInvitation}
+              />
+            </View>
+            {copyNotice?.accountId === user.id && (
+              <Text
+                accessibilityLiveRegion="polite"
+                style={styles.sectionDescription}
+              >
+                {copyNotice.message}
+              </Text>
+            )}
+          </View>
         </View>
         {error && <Notice text={error} error />}
         <View style={styles.section}>
@@ -273,6 +328,19 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: space.sm,
   },
+  accountCard: {
+    alignSelf: "stretch",
+    gap: space.sm,
+    padding: space.md,
+    marginTop: space.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    backgroundColor: colors.surface,
+  },
+  accountLabel: { color: colors.ink, fontSize: 14, fontWeight: "600" },
+  accountId: { color: colors.ink, fontSize: 15, lineHeight: 23 },
+  accountActions: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
   section: { gap: space.md },
   sectionHeader: {
     flexDirection: "row",

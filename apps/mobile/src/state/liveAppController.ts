@@ -14,6 +14,10 @@ export type PendingSave =
   | { kind: "draft"; command: SaveDraft }
   | { kind: "publish"; command: PublishApp }
   | { kind: "record"; command: SaveRecord };
+export type PublicationReview = Pick<
+  PublishApp,
+  "expectedRevision" | "candidateRevision" | "expectedPublishedRevision"
+>;
 export interface LiveAppState {
   app: AppDocument | null;
   records: LiveRecord[];
@@ -25,6 +29,7 @@ export interface LiveAppState {
   pending: PendingSave | null;
   editingDefinition: Definition | null;
   editingRevision: number | null;
+  editingPublishedRevision: number | null;
 }
 
 const initial = (): LiveAppState => ({
@@ -38,6 +43,7 @@ const initial = (): LiveAppState => ({
   pending: null,
   editingDefinition: null,
   editingRevision: null,
+  editingPublishedRevision: null,
 });
 const message = (error: unknown) =>
   error instanceof BackendError
@@ -76,7 +82,14 @@ export class LiveAppController {
       error instanceof BackendError &&
       (error.status === 403 || error.status === 404)
     ) {
-      this.set({ app: null, records: [], nextCursor: null });
+      this.set({
+        app: null,
+        records: [],
+        nextCursor: null,
+        editingDefinition: null,
+        editingRevision: null,
+        editingPublishedRevision: null,
+      });
     }
     this.set({ error: message(error), loading: false, busy: false });
   }
@@ -87,6 +100,17 @@ export class LiveAppController {
     try {
       const app = await this.backend.getApp(this.appId);
       if (this.disposed || generation !== this.generation) return;
+      // A confirmed downgrade takes effect even if the following record read
+      // loses its response. Never leave the former private editor available.
+      if (!app.capabilities?.editDefinition)
+        this.set({
+          app,
+          records: [],
+          nextCursor: null,
+          editingDefinition: null,
+          editingRevision: null,
+          editingPublishedRevision: null,
+        });
       const page = app.publishedDefinition
         ? await this.backend.listRecords(this.appId, app.publishedRevision)
         : null;
@@ -100,6 +124,13 @@ export class LiveAppController {
         records: page?.records ?? [],
         nextCursor: page?.nextCursor ?? null,
         loading: false,
+        ...(!app.capabilities?.editDefinition
+          ? {
+              editingDefinition: null,
+              editingRevision: null,
+              editingPublishedRevision: null,
+            }
+          : {}),
       });
     } catch (error) {
       if (!this.disposed && generation === this.generation) this.fail(error);
@@ -145,11 +176,18 @@ export class LiveAppController {
     }
   }
   editDefinition(definition: Definition): void {
-    if (!this.state.app || this.state.pending || this.state.busy) return;
+    if (
+      !this.state.app?.capabilities?.editDefinition ||
+      this.state.pending ||
+      this.state.busy
+    )
+      return;
     this.set({
       editingDefinition: snapshot(definition),
       editingRevision:
         this.state.editingRevision ?? this.state.app.draftRevision,
+      editingPublishedRevision:
+        this.state.editingPublishedRevision ?? this.state.app.publishedRevision,
       notice: null,
     });
   }
@@ -157,11 +195,15 @@ export class LiveAppController {
     if (this.state.pending || this.state.busy) return;
     await this.load();
     if (!this.state.error)
-      this.set({ editingDefinition: null, editingRevision: null });
+      this.set({
+        editingDefinition: null,
+        editingRevision: null,
+        editingPublishedRevision: null,
+      });
   }
   async saveDefinition(definition: Definition): Promise<void> {
     if (
-      !this.state.app ||
+      !this.state.app?.capabilities?.editDefinition ||
       this.state.pending ||
       this.state.busy ||
       this.state.loading
@@ -182,14 +224,18 @@ export class LiveAppController {
         operationId: this.backend.newId(),
         expectedRevision:
           this.state.editingRevision ?? this.state.app.draftRevision,
+        expectedPublishedRevision:
+          this.state.editingPublishedRevision ??
+          this.state.app.publishedRevision,
         definition: snapshot(definition),
       },
     });
   }
-  async publish(expectedRevision?: number): Promise<void> {
+  async publish(review: PublicationReview): Promise<void> {
     const app = this.state.app;
     if (
       !app?.definition ||
+      !app.capabilities?.editDefinition ||
       app.draftRevision < 1 ||
       this.state.pending ||
       this.state.busy ||
@@ -201,7 +247,7 @@ export class LiveAppController {
       command: {
         appId: this.appId,
         operationId: this.backend.newId(),
-        expectedRevision: expectedRevision ?? app.draftRevision,
+        ...snapshot(review),
       },
     });
   }
@@ -209,6 +255,7 @@ export class LiveAppController {
     const app = this.state.app;
     if (
       !app?.publishedDefinition ||
+      !app.capabilities?.writeRecords ||
       this.state.pending ||
       this.state.busy ||
       this.state.loading
@@ -288,7 +335,11 @@ export class LiveAppController {
               : "Record saved.",
       });
       if (pending.kind === "draft")
-        this.set({ editingDefinition: null, editingRevision: null });
+        this.set({
+          editingDefinition: null,
+          editingRevision: null,
+          editingPublishedRevision: null,
+        });
       await this.load();
     } catch (error) {
       if (this.disposed) return;

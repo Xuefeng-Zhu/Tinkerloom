@@ -71,6 +71,30 @@ class FakeBackend implements AppBackend {
     this.appCommands.push({ ...command });
     return this.createAppImpl(command);
   }
+  async createInvitation(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async acceptInvitation(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async inspectInvitation(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async listInvitations(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async revokeInvitation(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async listMembers(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async setGrant(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async archiveApp(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
   async getApp(): Promise<never> {
     throw new Error("Not used by home tests");
   }

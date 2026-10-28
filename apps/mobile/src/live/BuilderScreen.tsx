@@ -8,6 +8,7 @@ import type { Definition, Field as DefinitionField } from "../preview/model";
 import type {
   LiveAppController,
   LiveAppState,
+  PublicationReview,
 } from "../state/liveAppController";
 import { PendingSaveNotice, styles } from "./LiveAppScreen";
 import { RecordViewPicker } from "./RecordViewPicker";
@@ -21,11 +22,16 @@ export function BuilderScreen({
   controller: LiveAppController;
   onBack: () => void;
 }) {
-  const [reviewedRevision, setReviewedRevision] = useState<number | null>(null);
+  const [reviewedRevision, setReviewedRevision] =
+    useState<PublicationReview | null>(null);
   const app = state.app;
-  const definition = state.editingDefinition ?? app?.definition;
+  const definition =
+    state.editingDefinition ?? app?.definition ?? app?.publishedDefinition;
   const inactive = state.busy || state.loading || Boolean(state.pending);
   const dirty = state.editingDefinition !== null;
+  const staleBase = Boolean(
+    app?.definition && app.basePublishedRevision !== app.publishedRevision,
+  );
   function edit(next: Definition) {
     setReviewedRevision(null);
     controller.editDefinition(next);
@@ -53,6 +59,22 @@ export function BuilderScreen({
       ],
     });
   }
+  if (app && app.capabilities?.editDefinition !== true)
+    return (
+      <ScrollView contentContainerStyle={styles.content}>
+        <Button label="← App" variant="quiet" onPress={onBack} />
+        <Text accessibilityRole="header" style={styles.title}>
+          {app.name}
+        </Text>
+        <Notice
+          text={
+            app.archived
+              ? "This app is archived. Its published records are read only."
+              : "Your role can view the published app. Editing its structure needs builder access."
+          }
+        />
+      </ScrollView>
+    );
   return (
     <ScrollView
       contentContainerStyle={styles.content}
@@ -76,6 +98,19 @@ export function BuilderScreen({
       {state.error && <Notice error text={state.error} />}
       {state.notice && <Notice text={state.notice} />}
       <PendingSaveNotice state={state} controller={controller} />
+      {staleBase && (
+        <Notice
+          error
+          text="The live version changed after this private draft began. Start from the live version or reconcile your changes before saving and reviewing a new candidate."
+        />
+      )}
+      {app?.publishedDefinition && !state.busy && !state.pending && (
+        <Button
+          label="Use live version in my draft"
+          variant="quiet"
+          onPress={() => edit(app.publishedDefinition!)}
+        />
+      )}
       {!app ? (
         <Text style={styles.body}>
           {state.loading || !state.error
@@ -229,54 +264,69 @@ export function BuilderScreen({
           )}
           {!dirty &&
             app.definition &&
-            app.draftRevision > app.publishedRevision && (
+            app.candidateRevision !== app.publishedRevision && (
               <>
                 <Button
                   label="Review publication"
                   variant="secondary"
-                  disabled={inactive}
-                  onPress={() => setReviewedRevision(app.draftRevision)}
+                  disabled={
+                    inactive ||
+                    staleBase ||
+                    app.candidateRevision === undefined ||
+                    app.basePublishedRevision === undefined
+                  }
+                  onPress={() =>
+                    setReviewedRevision({
+                      expectedRevision: app.draftRevision,
+                      candidateRevision: app.candidateRevision!,
+                      expectedPublishedRevision: app.basePublishedRevision!,
+                    })
+                  }
                 />
-                {reviewedRevision === app.draftRevision && (
-                  <View style={styles.card}>
-                    <Text
-                      accessibilityRole="header"
-                      style={styles.sectionTitle}
-                    >
-                      Publish “{app.definition.title}”
-                    </Text>
-                    <Text style={styles.body}>
-                      This makes draft {reviewedRevision} the live version of
-                      this app. It includes {app.definition.fields.length}{" "}
-                      fields and preserves compatible existing records.
-                    </Text>
-                    <Text style={styles.hint}>
-                      Layout: {app.definition.view?.kind ?? "list"}
-                      {app.definition.view?.kind === "agenda"
-                        ? ` · Grouped by ${app.definition.fields.find((field) => field.id === app.definition?.view?.dateFieldId)?.label ?? "date"}`
-                        : ""}
-                    </Text>
-                    {app.definition.fields.map((field) => (
-                      <Text key={field.id} style={styles.hint}>
-                        {field.label} · {field.kind}
-                        {field.required ? " · required" : ""}
+                {reviewedRevision?.expectedRevision === app.draftRevision &&
+                  reviewedRevision.candidateRevision ===
+                    app.candidateRevision &&
+                  !staleBase && (
+                    <View style={styles.card}>
+                      <Text
+                        accessibilityRole="header"
+                        style={styles.sectionTitle}
+                      >
+                        Publish “{app.definition.title}”
                       </Text>
-                    ))}
-                    <Button
-                      label="Publish this version"
-                      disabled={inactive}
-                      busy={state.busy && state.pending?.kind === "publish"}
-                      onPress={() => {
-                        void controller.publish(reviewedRevision);
-                      }}
-                    />
-                  </View>
-                )}
+                      <Text style={styles.body}>
+                        This makes saved version{" "}
+                        {reviewedRevision.candidateRevision} the live version of
+                        this app. It includes {app.definition.fields.length}{" "}
+                        fields and preserves compatible existing records.
+                      </Text>
+                      <Text style={styles.hint}>
+                        Layout: {app.definition.view?.kind ?? "list"}
+                        {app.definition.view?.kind === "agenda"
+                          ? ` · Grouped by ${app.definition.fields.find((field) => field.id === app.definition?.view?.dateFieldId)?.label ?? "date"}`
+                          : ""}
+                      </Text>
+                      {app.definition.fields.map((field) => (
+                        <Text key={field.id} style={styles.hint}>
+                          {field.label} · {field.kind}
+                          {field.required ? " · required" : ""}
+                        </Text>
+                      ))}
+                      <Button
+                        label="Publish this version"
+                        disabled={inactive}
+                        busy={state.busy && state.pending?.kind === "publish"}
+                        onPress={() => {
+                          void controller.publish(reviewedRevision);
+                        }}
+                      />
+                    </View>
+                  )}
               </>
             )}
           {!dirty &&
             app.publishedRevision > 0 &&
-            app.publishedRevision === app.draftRevision && (
+            app.publishedRevision === app.candidateRevision && (
               <Notice text="The saved version is live. Open the app to use your records." />
             )}
         </>

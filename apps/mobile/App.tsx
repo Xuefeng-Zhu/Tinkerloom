@@ -4,6 +4,7 @@ import { colors, space } from "./src/components/theme";
 import { AuthScreen } from "./src/screens/AuthScreen";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { CreateSheet } from "./src/screens/CreateSheet";
+import { creationWorkspace } from "./src/screens/creationContext";
 import { useAppContext } from "./src/state/AppContext";
 
 function SetupScreen() {
@@ -68,6 +69,11 @@ export function AppScreen() {
       />
     );
   }
+  const originalWorkspace = creationWorkspace(
+    state.creation,
+    state.workspaceId,
+    state.workspaces,
+  );
   return (
     <View style={styles.fill}>
       {state.notice && (
@@ -80,6 +86,9 @@ export function AppScreen() {
           <Text style={styles.small}>
             A save is still unconfirmed. Review it before creating something
             else.
+            {state.creation.kind === "app" && originalWorkspace
+              ? ` Original workspace: ${originalWorkspace.name ?? originalWorkspace.id ?? "Unavailable"}.`
+              : ""}
           </Text>
           <Pressable
             accessibilityRole="button"
@@ -91,6 +100,7 @@ export function AppScreen() {
         </View>
       )}
       <HomeScreen
+        key={state.user!.id}
         user={state.user!}
         workspaces={state.workspaces}
         workspaceId={state.workspaceId}
@@ -112,6 +122,7 @@ export function AppScreen() {
         onOpenApp={(appId) =>
           router.push({ pathname: "/apps/[appId]", params: { appId } })
         }
+        onEnterInvitation={() => router.push("/invite")}
       />
       {state.creation?.open && (
         <CreateSheet
@@ -119,13 +130,8 @@ export function AppScreen() {
           busy={state.creation.busy}
           error={state.creation.error}
           submittedName={state.creation.command?.name}
-          workspaceName={
-            state.workspaces.find(
-              (workspace) =>
-                workspace.id ===
-                (state.creation?.command?.workspaceId ?? state.workspaceId),
-            )?.name
-          }
+          workspaceName={originalWorkspace?.name}
+          workspaceId={originalWorkspace?.id}
           onSubmit={(name) => {
             void controller.submitCreation(name);
           }}

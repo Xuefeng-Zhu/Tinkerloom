@@ -49,11 +49,13 @@ export function LiveAppScreen({
   controller,
   onBack,
   onEdit,
+  onShare,
 }: {
   state: LiveAppState;
   controller: LiveAppController;
   onBack: () => void;
   onEdit: () => void;
+  onShare: () => void;
 }) {
   const [editor, setEditor] = useState<{ record: LiveRecord | null } | null>(
     null,
@@ -103,12 +105,20 @@ export function LiveAppScreen({
                 "Choose a template, customize its fields, then publish it for your own live records."}
             </Text>
             <View style={styles.toolbar}>
+              {app.capabilities?.editDefinition === true && (
+                <Button
+                  label="Open builder"
+                  onPress={onEdit}
+                  disabled={state.busy}
+                />
+              )}
               <Button
-                label="Open builder"
-                onPress={onEdit}
+                label="People and sharing"
+                variant="quiet"
+                onPress={onShare}
                 disabled={state.busy}
               />
-              {definition && (
+              {definition && app.capabilities?.writeRecords === true && (
                 <Button
                   label="New record"
                   variant="secondary"
@@ -123,10 +133,13 @@ export function LiveAppScreen({
               <>
                 <Text style={styles.version}>
                   Published version {app.publishedRevision}
-                  {app.draftRevision > app.publishedRevision
+                  {(app.candidateRevision ?? 0) > app.publishedRevision
                     ? " · Newer draft available in the builder"
                     : ""}
                 </Text>
+                {app.archived && (
+                  <Notice text="This app is archived. Published records remain readable." />
+                )}
                 <Text style={styles.hint}>
                   These are live records saved through Appwrite. Local preview
                   samples are never copied here.
@@ -156,7 +169,10 @@ export function LiveAppScreen({
                     records={state.records}
                     onEdit={(record) => setEditor({ record })}
                     editDisabled={
-                      state.busy || state.loading || Boolean(state.pending)
+                      state.busy ||
+                      state.loading ||
+                      Boolean(state.pending) ||
+                      app.capabilities?.writeRecords !== true
                     }
                   />
                 )}
@@ -180,7 +196,7 @@ export function LiveAppScreen({
           </>
         )}
       </ScrollView>
-      {editor && definition && (
+      {editor && definition && app?.capabilities?.writeRecords === true && (
         <RecordEditor
           key={editor.record?.id ?? "new"}
           definition={definition}

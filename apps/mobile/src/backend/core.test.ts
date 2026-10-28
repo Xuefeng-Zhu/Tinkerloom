@@ -121,8 +121,8 @@ test("duplicate and cross-workspace rows are rejected before being returned", as
   const scenario = setup();
   scenario.succeed({
     workspaces: [
-      { id: "a", name: "A" },
-      { id: "a", name: "B" },
+      { id: "a", name: "A", role: "owner" },
+      { id: "a", name: "B", role: "owner" },
     ],
   });
   await assert.rejects(
@@ -131,7 +131,22 @@ test("duplicate and cross-workspace rows are rejected before being returned", as
       error instanceof BackendError && error.kind === "invalid_response",
   );
   scenario.succeed({
-    apps: [{ id: "a", name: "Private app", workspaceId: "another-workspace" }],
+    apps: [
+      {
+        id: "a",
+        name: "Private app",
+        workspaceId: "another-workspace",
+        role: "owner",
+        archived: false,
+        capabilities: {
+          editDefinition: true,
+          share: true,
+          writeRecords: true,
+          archive: true,
+          revokeAccess: true,
+        },
+      },
+    ],
   });
   await assert.rejects(
     scenario.backend.listApps("my-workspace"),
@@ -400,6 +415,17 @@ const appDocument = {
   id: "app",
   workspaceId: "workspace",
   name: "Notebook",
+  role: "owner",
+  archived: false,
+  capabilities: {
+    editDefinition: true,
+    share: true,
+    writeRecords: true,
+    archive: true,
+    revokeAccess: true,
+  },
+  candidateRevision: 1,
+  basePublishedRevision: 1,
   draftRevision: 1,
   publishedRevision: 1,
   definition,
@@ -444,6 +470,7 @@ test("a transaction conflict retains the original draft operation and input", as
     appId: "app",
     operationId: "operation",
     expectedRevision: 0,
+    expectedPublishedRevision: 0,
     definition,
   };
   scenario.setExecution({
@@ -459,7 +486,13 @@ test("a transaction conflict retains the original draft operation and input", as
       error.code === "transaction_conflict",
   );
   scenario.succeed({
-    app: { ...appDocument, publishedRevision: 0, publishedDefinition: null },
+    app: {
+      ...appDocument,
+      publishedRevision: 0,
+      basePublishedRevision: 0,
+      candidateRevision: 1,
+      publishedDefinition: null,
+    },
   });
   await scenario.backend.saveDraft(command);
   assert.equal(scenario.requests[0], scenario.requests[1]);
@@ -539,6 +572,8 @@ test("shared definition fixtures retain canonical views and do not add a legacy 
         ...appDocument,
         draftRevision: 1,
         publishedRevision: 0,
+        basePublishedRevision: 0,
+        candidateRevision: 1,
         publishedDefinition: null,
         definition: fixture.expected,
       },
@@ -546,6 +581,7 @@ test("shared definition fixtures retain canonical views and do not add a legacy 
     const result = await scenario.backend.saveDraft({
       appId: "app",
       expectedRevision: 0,
+      expectedPublishedRevision: 0,
       operationId: "rich-save",
       definition: fixture.input,
     });
@@ -595,6 +631,8 @@ test("malformed or unknown view properties are rejected by the API response pars
       ...appDocument,
       draftRevision: 1,
       publishedRevision: 0,
+      basePublishedRevision: 0,
+      candidateRevision: 1,
       publishedDefinition: null,
       definition: { ...agenda.expected, view: { kind: "table" } },
     },
@@ -603,6 +641,7 @@ test("malformed or unknown view properties are rejected by the API response pars
     scenario.backend.saveDraft({
       appId: "app",
       expectedRevision: 0,
+      expectedPublishedRevision: 0,
       operationId: "rich-save",
       definition: agenda.input,
     }),
@@ -779,6 +818,7 @@ test("draft replay confirms canonical NEL title, labels, and choices without tri
   const command = {
     appId: "app",
     expectedRevision: 0,
+    expectedPublishedRevision: 0,
     operationId: "unicode-draft",
     definition: input,
   };
@@ -792,6 +832,8 @@ test("draft replay confirms canonical NEL title, labels, and choices without tri
       ...appDocument,
       draftRevision: 1,
       publishedRevision: 0,
+      basePublishedRevision: 0,
+      candidateRevision: 1,
       publishedDefinition: null,
       definition: expected,
     },
@@ -821,4 +863,257 @@ test("workspace and app names use the same canonical NEL trimming as the Functio
     name: "\u0085Notes\u0085",
   });
   assert.equal(JSON.parse(scenario.requests[1]).name, "Notes");
+});
+
+test("private draft counters are independent from global candidates and published versions", async () => {
+  const s = setup();
+  const builder = {
+    ...appDocument,
+    role: "builder",
+    draftRevision: 2,
+    candidateRevision: 5,
+    publishedRevision: 9,
+    basePublishedRevision: 1,
+    capabilities: {
+      editDefinition: true,
+      share: true,
+      writeRecords: true,
+      archive: false,
+      revokeAccess: true,
+    },
+  };
+  s.succeed({ app: builder });
+  const result = await s.backend.getApp("app");
+  assert.equal(result.draftRevision, 2);
+  assert.equal(result.candidateRevision, 5);
+  assert.equal(result.publishedRevision, 9);
+  s.succeed({
+    app: {
+      ...builder,
+      draftRevision: 0,
+      candidateRevision: 0,
+      basePublishedRevision: 9,
+      definition: null,
+    },
+  });
+  assert.equal((await s.backend.getApp("app")).definition, null);
+});
+
+test("ordinary reads reject missing access, inconsistent capabilities and leaked nonbuilder drafts", async () => {
+  const s = setup();
+  const legacy = { ...appDocument } as Record<string, unknown>;
+  for (const key of [
+    "role",
+    "archived",
+    "capabilities",
+    "candidateRevision",
+    "basePublishedRevision",
+  ])
+    delete legacy[key];
+  for (const value of [
+    legacy,
+    { ...appDocument, capabilities: undefined },
+    { ...appDocument, role: "viewer" },
+    { ...appDocument, archived: true },
+    { ...appDocument, candidateRevision: 0 },
+    { ...appDocument, basePublishedRevision: 2 },
+    { ...appDocument, publishedRevision: 2_147_483_647 },
+    { ...appDocument, ownerPrivateDraft: definition },
+  ]) {
+    s.succeed({ app: value });
+    await assert.rejects(
+      s.backend.getApp("app"),
+      (error: unknown) =>
+        error instanceof BackendError && error.kind === "invalid_response",
+    );
+  }
+  const readOnly = {
+    ...appDocument,
+    role: "viewer",
+    draftRevision: 0,
+    candidateRevision: 0,
+    definition: null,
+    capabilities: {
+      editDefinition: false,
+      share: false,
+      writeRecords: false,
+      archive: false,
+      revokeAccess: false,
+    },
+  };
+  s.succeed({ app: readOnly });
+  assert.equal((await s.backend.getApp("app")).role, "viewer");
+  s.succeed({
+    app: { ...readOnly, draftRevision: 1, candidateRevision: 1, definition },
+  });
+  await assert.rejects(s.backend.getApp("app"));
+});
+
+test("workspace and app summaries require explicit access without carrying private definitions", async () => {
+  const s = setup();
+  s.succeed({
+    workspaces: [{ id: "workspace", name: "Shared", role: "member" }],
+  });
+  assert.equal((await s.backend.listWorkspaces())[0].role, "member");
+  s.succeed({ workspaces: [{ id: "workspace", name: "Shared" }] });
+  await assert.rejects(s.backend.listWorkspaces());
+  const { id, workspaceId, name, role, archived, capabilities } = appDocument;
+  const summary = { id, workspaceId, name, role, archived, capabilities };
+  s.succeed({ apps: [summary] });
+  assert.equal(
+    (await s.backend.listApps("workspace"))[0].capabilities?.share,
+    true,
+  );
+  s.succeed({ apps: [{ ...summary, definition }] });
+  await assert.rejects(s.backend.listApps("workspace"));
+  s.succeed({ apps: [{ id, workspaceId, name }] });
+  await assert.rejects(s.backend.listApps("workspace"));
+});
+
+test("draft receipts confirm their original publication base and a fresh global candidate", async () => {
+  const s = setup();
+  const command = {
+    appId: "app",
+    expectedRevision: 1,
+    expectedPublishedRevision: 9,
+    operationId: "private-draft",
+    definition,
+  };
+  const saved = {
+    ...appDocument,
+    draftRevision: 2,
+    publishedRevision: 9,
+    candidateRevision: 12,
+    basePublishedRevision: 9,
+  };
+  s.failExecution(new TypeError("Commit response lost"));
+  await assert.rejects(
+    s.backend.saveDraft(command),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+  s.succeed({ app: saved });
+  assert.equal((await s.backend.saveDraft(command)).candidateRevision, 12);
+  assert.equal(s.requests[0], s.requests[1]);
+  for (const overrides of [
+    { candidateRevision: 9 },
+    { basePublishedRevision: 8 },
+    { publishedRevision: 10 },
+    { draftRevision: 3 },
+  ]) {
+    s.succeed({ app: { ...saved, ...overrides } });
+    await assert.rejects(
+      s.backend.saveDraft(command),
+      (error: unknown) => error instanceof BackendError && error.uncertain,
+    );
+  }
+});
+
+test("publication receipts match the reviewed private counter and exact global candidate", async () => {
+  const s = setup();
+  const command = {
+    appId: "app",
+    expectedRevision: 2,
+    expectedPublishedRevision: 9,
+    candidateRevision: 12,
+    operationId: "publish-reviewed",
+  };
+  const published = {
+    ...appDocument,
+    draftRevision: 2,
+    candidateRevision: 12,
+    publishedRevision: 12,
+    basePublishedRevision: 12,
+  };
+  s.failExecution(new TypeError("Commit response lost"));
+  await assert.rejects(
+    s.backend.publishApp(command),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+  s.succeed({ app: published });
+  assert.equal((await s.backend.publishApp(command)).publishedRevision, 12);
+  assert.equal(s.requests[0], s.requests[1]);
+  for (const overrides of [
+    { candidateRevision: 13, publishedRevision: 13, basePublishedRevision: 13 },
+    { publishedRevision: 2, basePublishedRevision: 2 },
+    { draftRevision: 3 },
+    { basePublishedRevision: 9 },
+    { publishedDefinition: { ...definition, title: "Wrong content" } },
+  ]) {
+    s.succeed({ app: { ...published, ...overrides } });
+    await assert.rejects(
+      s.backend.publishApp(command),
+      (error: unknown) => error instanceof BackendError && error.uncertain,
+    );
+  }
+});
+
+test("historical acknowledgments remain exact legacy data and never invent capabilities", async () => {
+  const s = setup();
+  const legacy = {
+    id: "app",
+    workspaceId: "workspace",
+    name: "Notebook",
+    draftRevision: 1,
+    publishedRevision: 0,
+    definition,
+    publishedDefinition: null,
+  };
+  const command = {
+    appId: "app",
+    expectedRevision: 0,
+    expectedPublishedRevision: 0,
+    operationId: "legacy-receipt",
+    definition,
+  };
+  s.succeed({ app: legacy });
+  const result = await s.backend.saveDraft(command);
+  assert.equal(result.role, undefined);
+  assert.equal(result.capabilities, undefined);
+  assert.equal(result.candidateRevision, undefined);
+  s.succeed({ app: { ...legacy, candidateRevision: 1 } });
+  await assert.rejects(
+    s.backend.saveDraft(command),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+  s.succeed({
+    app: { ...legacy, publishedRevision: 1, publishedDefinition: definition },
+  });
+  const published = await s.backend.publishApp({
+    appId: "app",
+    expectedRevision: 1,
+    expectedPublishedRevision: 0,
+    candidateRevision: 1,
+    operationId: "legacy-publish",
+  });
+  assert.equal(published.capabilities, undefined);
+});
+
+test("archive receipts require this app and its owner role with only access revocation enabled", async () => {
+  const s = setup();
+  const command = { appId: "app", operationId: "archive" };
+  const archived = {
+    ...appDocument,
+    archived: true,
+    capabilities: {
+      editDefinition: false,
+      share: false,
+      writeRecords: false,
+      archive: false,
+      revokeAccess: true,
+    },
+  };
+  s.succeed({ app: archived });
+  assert.equal((await s.backend.archiveApp(command)).archived, true);
+  for (const value of [
+    appDocument,
+    { ...archived, id: "another" },
+    { ...archived, role: "builder" },
+    { ...archived, capabilities: appDocument.capabilities },
+  ]) {
+    s.succeed({ app: value });
+    await assert.rejects(
+      s.backend.archiveApp(command),
+      (error: unknown) => error instanceof BackendError && error.uncertain,
+    );
+  }
 });

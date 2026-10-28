@@ -1,5 +1,16 @@
 import { BackendError, normalizeError } from "./errors";
 import { canonicalText } from "../preview/canonicalText";
+import { access } from "./access";
+import { CollaborationRpc } from "./collaboration";
+import {
+  idPattern,
+  invalidResponse,
+  object,
+  id,
+  revision,
+  validRevision,
+  operation,
+} from "./validation";
 import type {
   AppBackend,
   CreateApp,
@@ -13,6 +24,11 @@ import type {
   SaveDraft,
   PublishApp,
   SaveRecord,
+  CreateInvitation,
+  AcceptInvitation,
+  RevokeInvitation,
+  SetGrant,
+  ArchiveApp,
 } from "./types";
 import { NUMBER_LIMIT, validateDefinition } from "../preview/model";
 import type {
@@ -49,31 +65,6 @@ export interface SdkAdapter {
   newId(): string;
 }
 
-const idPattern = /^[A-Za-z0-9][A-Za-z0-9._-]{0,35}$/;
-
-function invalidResponse(mutation = false): never {
-  throw new BackendError(
-    mutation
-      ? "The server response could not be confirmed. Retry this same request."
-      : "The server returned an invalid response.",
-    "invalid_response",
-    "invalid_response",
-    mutation,
-  );
-}
-
-function object(value: unknown, mutation = false): Record<string, unknown> {
-  if (!value || typeof value !== "object" || Array.isArray(value))
-    invalidResponse(mutation);
-  return value as Record<string, unknown>;
-}
-
-function id(value: unknown, mutation = false): string {
-  if (typeof value !== "string" || !idPattern.test(value))
-    invalidResponse(mutation);
-  return value;
-}
-
 function title(value: unknown, mutation = false): string {
   if (
     typeof value !== "string" ||
@@ -86,16 +77,55 @@ function title(value: unknown, mutation = false): string {
   return value;
 }
 
-function workspace(value: unknown, mutation = false): Workspace {
+function workspace(
+  value: unknown,
+  mutation = false,
+  legacy = false,
+): Workspace {
   const row = object(value, mutation);
-  return { id: id(row.id, mutation), name: title(row.name, mutation) };
+  if (Object.keys(row).some((key) => !["id", "name", "role"].includes(key)))
+    invalidResponse(mutation);
+  if (
+    !(legacy && row.role === undefined) &&
+    row.role !== "owner" &&
+    row.role !== "member"
+  )
+    invalidResponse(mutation);
+  return {
+    id: id(row.id, mutation),
+    name: title(row.name, mutation),
+    ...(row.role === undefined ? {} : { role: row.role as Workspace["role"] }),
+  };
 }
 
-function app(value: unknown, workspaceId: string, mutation = false): MiniApp {
+function app(
+  value: unknown,
+  workspaceId: string,
+  mutation = false,
+  legacy = false,
+  summary = false,
+): MiniApp {
   const row = object(value, mutation);
+  if (
+    summary &&
+    Object.keys(row).some(
+      (key) =>
+        ![
+          "id",
+          "name",
+          "workspaceId",
+          "role",
+          "archived",
+          "capabilities",
+        ].includes(key),
+    )
+  )
+    invalidResponse(mutation);
   const parsed = {
-    ...workspace(row, mutation),
+    id: id(row.id, mutation),
+    name: title(row.name, mutation),
     workspaceId: id(row.workspaceId, mutation),
+    ...access(row, mutation, legacy),
   };
   if (parsed.workspaceId !== workspaceId) invalidResponse(mutation);
   return parsed;
@@ -138,12 +168,6 @@ function validateCommand(command: CreateWorkspace): CreateWorkspace {
     );
   }
   return { id: command.id, name };
-}
-
-function revision(value: unknown, minimum = 0, mutation = false): number {
-  if (!Number.isSafeInteger(value) || (value as number) < minimum)
-    invalidResponse(mutation);
-  return value as number;
 }
 
 function definition(value: unknown, mutation = false): Definition {
@@ -217,19 +241,72 @@ function definition(value: unknown, mutation = false): Definition {
   }
 }
 
-function document(value: unknown, mutation = false): AppDocument {
+function document(
+  value: unknown,
+  mutation = false,
+  legacy = false,
+): AppDocument {
   const data = object(value, mutation);
-  const base = app(data, id(data.workspaceId, mutation), mutation);
+  if (
+    Object.keys(data).some(
+      (key) =>
+        ![
+          "id",
+          "name",
+          "workspaceId",
+          "role",
+          "archived",
+          "capabilities",
+          "draftRevision",
+          "candidateRevision",
+          "basePublishedRevision",
+          "publishedRevision",
+          "definition",
+          "publishedDefinition",
+        ].includes(key),
+    )
+  )
+    invalidResponse(mutation);
+  const base = app(data, id(data.workspaceId, mutation), mutation, legacy);
   const draftRevision = revision(data.draftRevision, 0, mutation);
   const publishedRevision = revision(data.publishedRevision, 0, mutation);
+  const oldReceipt = base.role === undefined;
   if (
-    publishedRevision > draftRevision ||
     (draftRevision === 0) !== (data.definition === null) ||
     (publishedRevision === 0) !== (data.publishedDefinition === null)
   )
     invalidResponse(mutation);
+  let candidate: Pick<
+    AppDocument,
+    "candidateRevision" | "basePublishedRevision"
+  > = {};
+  if (oldReceipt) {
+    if (
+      publishedRevision > draftRevision ||
+      Object.prototype.hasOwnProperty.call(data, "candidateRevision") ||
+      Object.prototype.hasOwnProperty.call(data, "basePublishedRevision")
+    )
+      invalidResponse(mutation);
+  } else {
+    const candidateRevision = revision(data.candidateRevision, 0, mutation);
+    const basePublishedRevision = revision(
+      data.basePublishedRevision,
+      0,
+      mutation,
+    );
+    if (
+      (draftRevision === 0) !== (candidateRevision === 0) ||
+      basePublishedRevision > publishedRevision ||
+      (draftRevision === 0 && basePublishedRevision !== publishedRevision) ||
+      ((base.role === "member" || base.role === "viewer") &&
+        draftRevision !== 0)
+    )
+      invalidResponse(mutation);
+    candidate = { candidateRevision, basePublishedRevision };
+  }
   return {
     ...base,
+    ...candidate,
     draftRevision,
     publishedRevision,
     definition:
@@ -268,13 +345,13 @@ function record(value: unknown, mutation = false): LiveRecord {
   };
 }
 
-function validateOperation(command: PublishApp): void {
-  if (
-    !idPattern.test(command.appId) ||
-    !idPattern.test(command.operationId) ||
-    !Number.isSafeInteger(command.expectedRevision) ||
-    command.expectedRevision < 0
-  ) {
+function validateOperation(command: {
+  appId: string;
+  operationId: string;
+  expectedRevision: number;
+}): void {
+  operation(command);
+  if (!validRevision(command.expectedRevision)) {
     throw new BackendError(
       "This save is invalid. Reload the app and try again.",
       "invalid_request",
@@ -317,7 +394,48 @@ function limitContent(value: unknown, label: string): void {
 }
 
 export class AppwriteBackend implements AppBackend {
-  constructor(private readonly sdk: SdkAdapter) {}
+  private readonly collaboration: CollaborationRpc;
+  constructor(private readonly sdk: SdkAdapter) {
+    this.collaboration = new CollaborationRpc((payload, mutation) =>
+      this.request(payload, mutation),
+    );
+  }
+
+  createInvitation(command: CreateInvitation) {
+    return this.collaboration.createInvitation(command);
+  }
+  acceptInvitation(command: AcceptInvitation) {
+    return this.collaboration.acceptInvitation(command);
+  }
+  inspectInvitation(token: string) {
+    return this.collaboration.inspectInvitation(token);
+  }
+  listInvitations(appId: string, afterId?: string) {
+    return this.collaboration.listInvitations(appId, afterId);
+  }
+  revokeInvitation(command: RevokeInvitation) {
+    return this.collaboration.revokeInvitation(command);
+  }
+  listMembers(appId: string, afterId?: string) {
+    return this.collaboration.listMembers(appId, afterId);
+  }
+  setGrant(command: SetGrant) {
+    return this.collaboration.setGrant(command);
+  }
+  async archiveApp(command: ArchiveApp): Promise<AppDocument> {
+    operation(command);
+    const result = document(
+      (await this.request({ op: "archiveApp", ...command }, true)).app,
+      true,
+    );
+    if (
+      result.id !== command.appId ||
+      result.role !== "owner" ||
+      result.archived !== true
+    )
+      invalidResponse(true);
+    return result;
+  }
 
   newId() {
     return this.sdk.newId();
@@ -473,20 +591,29 @@ export class AppwriteBackend implements AppBackend {
           code === "id_conflict"
             ? "This request ID was already used for different data."
             : code === "not_found"
-              ? "That workspace is unavailable."
-              : code === "transaction_conflict"
-                ? "Another save happened at the same time. Retry this same save."
-                : code === "revision_conflict" || code === "definition_conflict"
-                  ? "This app changed. Refresh it before saving again."
-                  : code === "incompatible_definition"
-                    ? "This update would invalidate existing records. Keep existing fields and choices."
-                    : code === "not_published"
-                      ? "Publish the app before adding live records."
-                      : status === 401
-                        ? "Please sign in again."
-                        : status === 429
-                          ? "Too many requests. Wait a moment and try again."
-                          : "The server could not complete the request.",
+              ? "That item is unavailable."
+              : code === "invitation_unavailable"
+                ? "This invitation is unavailable or has expired. Ask for a new invitation."
+                : code === "app_archived"
+                  ? "This app is archived and read-only."
+                  : code === "forbidden" || status === 403
+                    ? "You do not have permission to do that."
+                    : code === "operation_conflict"
+                      ? "This request ID was already used for different data."
+                      : code === "transaction_conflict"
+                        ? "Another save happened at the same time. Retry this same save."
+                        : code === "revision_conflict" ||
+                            code === "definition_conflict"
+                          ? "This app changed. Refresh it before saving again."
+                          : code === "incompatible_definition"
+                            ? "This update would invalidate existing records. Keep existing fields and choices."
+                            : code === "not_published"
+                              ? "Publish the app before adding live records."
+                              : status === 401
+                                ? "Please sign in again."
+                                : status === 429
+                                  ? "Too many requests. Wait a moment and try again."
+                                  : "The server could not complete the request.",
           code,
           status === 401 ? "unauthenticated" : "service",
           mutation && (status >= 500 || code === "transaction_conflict"),
@@ -511,8 +638,14 @@ export class AppwriteBackend implements AppBackend {
     const row = workspace(
       (await this.request({ op: "createWorkspace", ...valid }, true)).workspace,
       true,
+      true,
     );
-    if (row.id !== valid.id || row.name !== valid.name) invalidResponse(true);
+    if (
+      row.id !== valid.id ||
+      row.name !== valid.name ||
+      (row.role !== undefined && row.role !== "owner")
+    )
+      invalidResponse(true);
   }
 
   async listApps(workspaceId: string): Promise<MiniApp[]> {
@@ -526,7 +659,7 @@ export class AppwriteBackend implements AppBackend {
       );
     return list(
       (await this.request({ op: "listApps", workspaceId })).apps,
-      (row) => app(row, workspaceId),
+      (row) => app(row, workspaceId, false, false, true),
     );
   }
 
@@ -549,8 +682,15 @@ export class AppwriteBackend implements AppBackend {
       ).app,
       command.workspaceId,
       true,
+      true,
+      true,
     );
-    if (row.id !== valid.id || row.name !== valid.name) invalidResponse(true);
+    if (
+      row.id !== valid.id ||
+      row.name !== valid.name ||
+      (row.role !== undefined && (row.role !== "owner" || row.archived))
+    )
+      invalidResponse(true);
   }
 
   async getApp(appId: string): Promise<AppDocument> {
@@ -569,15 +709,30 @@ export class AppwriteBackend implements AppBackend {
 
   async saveDraft(command: SaveDraft): Promise<AppDocument> {
     validateOperation(command);
+    if (!validRevision(command.expectedPublishedRevision))
+      throw new BackendError(
+        "Refresh the published app before saving the draft.",
+        "invalid_request",
+        "service",
+        false,
+        400,
+      );
     const candidate = definition(command.definition);
     limitContent(candidate, "This app definition");
     const result = document(
       (await this.request({ op: "saveDraft", ...command }, true)).app,
       true,
+      true,
     );
     if (
       result.id !== command.appId ||
       result.draftRevision !== command.expectedRevision + 1 ||
+      (result.role !== undefined &&
+        (result.publishedRevision !== command.expectedPublishedRevision ||
+          result.basePublishedRevision !== command.expectedPublishedRevision ||
+          !result.candidateRevision ||
+          result.candidateRevision <= command.expectedPublishedRevision ||
+          !result.capabilities?.editDefinition)) ||
       JSON.stringify(result.definition) !== JSON.stringify(candidate)
     )
       invalidResponse(true);
@@ -586,14 +741,35 @@ export class AppwriteBackend implements AppBackend {
 
   async publishApp(command: PublishApp): Promise<AppDocument> {
     validateOperation(command);
+    if (
+      !validRevision(command.expectedPublishedRevision) ||
+      !validRevision(command.candidateRevision, 1) ||
+      command.expectedRevision < 1
+    )
+      throw new BackendError(
+        "Review the saved draft before publication.",
+        "invalid_request",
+        "service",
+        false,
+        400,
+      );
     const result = document(
       (await this.request({ op: "publishApp", ...command }, true)).app,
+      true,
       true,
     );
     if (
       result.id !== command.appId ||
       result.draftRevision !== command.expectedRevision ||
-      result.publishedRevision !== command.expectedRevision
+      (result.role === undefined
+        ? result.publishedRevision !== command.expectedRevision ||
+          command.candidateRevision !== command.expectedRevision
+        : result.publishedRevision !== command.candidateRevision ||
+          result.candidateRevision !== command.candidateRevision ||
+          result.basePublishedRevision !== command.candidateRevision ||
+          !result.capabilities?.editDefinition) ||
+      JSON.stringify(result.definition) !==
+        JSON.stringify(result.publishedDefinition)
     )
       invalidResponse(true);
     return result;
@@ -606,8 +782,7 @@ export class AppwriteBackend implements AppBackend {
   ): Promise<RecordPage> {
     if (
       !idPattern.test(appId) ||
-      !Number.isSafeInteger(definitionRevision) ||
-      definitionRevision < 1 ||
+      !validRevision(definitionRevision, 1) ||
       (afterId !== undefined && !idPattern.test(afterId))
     ) {
       throw new BackendError(
@@ -660,8 +835,7 @@ export class AppwriteBackend implements AppBackend {
     limitContent(command.values, "This record");
     if (
       !idPattern.test(command.id) ||
-      !Number.isSafeInteger(command.definitionRevision) ||
-      command.definitionRevision < 1
+      !validRevision(command.definitionRevision, 1)
     ) {
       throw new BackendError(
         "Refresh the published app before saving records.",

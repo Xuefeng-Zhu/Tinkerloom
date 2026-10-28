@@ -10,12 +10,15 @@ import { createBackend, readPublicConfig } from "../backend";
 import type { AppBackend } from "../backend/types";
 import { AppController, AppState } from "./controller";
 import { LiveAppRegistry } from "./liveAppController";
+import { SharingRegistry } from "../sharing/SharingController";
+import { createInvitationToken } from "../sharing/secureInvitationToken";
 
 interface AppContextValue {
   controller: AppController | null;
   state: AppState | null;
   configurationIssues: string[];
   registry: LiveAppRegistry | null;
+  sharing: SharingRegistry | null;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -53,25 +56,37 @@ export function RootProvider({
         : null,
     [connection.backend, controller],
   );
+  const sharing = useMemo(
+    () =>
+      connection.backend && controller
+        ? new SharingRegistry(connection.backend, createInvitationToken, () =>
+            controller.expireSession(),
+          )
+        : null,
+    [connection.backend, controller],
+  );
   useEffect(() => {
     registry?.keepUser(state?.user?.id ?? null);
-  }, [registry, state?.user?.id]);
+    sharing?.keepUser(state?.user?.id ?? null);
+  }, [registry, sharing, state?.user?.id]);
   useEffect(() => {
     if (!controller) return;
     void controller.bootstrap();
     return () => {
       registry?.dispose();
+      sharing?.dispose();
       controller.dispose();
     };
-  }, [controller, registry]);
+  }, [controller, registry, sharing]);
   const value = useMemo(
     () => ({
       controller,
       state,
       registry,
+      sharing,
       configurationIssues: connection.issues,
     }),
-    [controller, state, registry, connection.issues],
+    [controller, state, registry, sharing, connection.issues],
   );
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

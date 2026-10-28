@@ -8,20 +8,7 @@ import type { AppBackend } from "./types";
 export { readPublicConfig, validatePublicConfig } from "./config";
 export type { PublicConfig } from "./config";
 export { BackendError } from "./errors";
-export type {
-  AppBackend,
-  MiniApp,
-  User,
-  Workspace,
-  CreateApp,
-  CreateWorkspace,
-  AppDocument,
-  LiveRecord,
-  RecordPage,
-  SaveDraft,
-  PublishApp,
-  SaveRecord,
-} from "./types";
+export type * from "./types";
 
 export function createBackend(config: PublicConfig): AppBackend {
   const checked = validatePublicConfig(config);
