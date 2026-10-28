@@ -1,8 +1,8 @@
 # Tinkerloom
 
-Tinkerloom is a mini-app platform built with **React Native, Expo, TypeScript, and Appwrite**. Start with Notes, Tasks, or Reading, customize a saved draft, review and publish its exact version, then create and edit live records.
+Tinkerloom is a mini-app platform built with **React Native, Expo, TypeScript, and Appwrite**. Start with Planner, Notes, Tasks, or Reading, customize a saved draft, review and publish its exact version, then create and edit live records in a list, table, or agenda.
 
-The current migration delivers an owner-only vertical slice: accounts, workspaces, apps, a bounded field builder, publication, and persistent records. The Appwrite development deployment passed **26 live checks and 181 assertions** on October 28, 2026, including two-account isolation, direct-table denial, stale revisions, command receipts, concurrent writes, and fresh-session persistence. See the [preserved receipts](docs/evidence/2026-10-28/README.md) and [migration status](docs/REACT_NATIVE_MIGRATION.md) for coverage and remaining work. Existing AppNest accounts and data have not been transferred.
+The current migration delivers an owner-only vertical slice: accounts, workspaces, apps, a bounded field builder, publication, and persistent records. The expanded Appwrite development suite passed **34 live checks and 314 assertions** on October 28, 2026, including typed numbers/dates and view changes, two-account isolation, direct-table denial, stale revisions, command receipts, concurrent writes, and fresh-session persistence. See the [preserved receipts](docs/evidence/2026-10-28/README.md), [rich-record contract](docs/RICH_RECORDS.md), and [migration status](docs/REACT_NATIVE_MIGRATION.md) for coverage and remaining work. Existing AppNest accounts and data have not been transferred.
 
 A separate manual browser flow verified sign-up, template customization, first publication, and record creation/editing on `127.0.0.1`; after moving to `localhost`, it verified a compatible field addition, version 2 publication, full reload, and sign-out/sign-in persistence. Native-device testing remains pending.
 
@@ -32,7 +32,9 @@ The Appwrite Free development project is in SFO, with database `tinkerloom`. Its
 
 ## Build and use an app
 
-Sign in, create a workspace and app, then open its builder. Choose a template, edit its title, description, field labels and choice options, and add optional text, long-text, boolean, or choice fields, up to ten fields. Save the draft, review the saved revision, and publish it before adding live records. Live lists support pagination and record editing.
+Sign in, create a workspace and app, then open its builder. Choose a template, edit its title, description, field labels and choice options, and add optional text, long-text, boolean, choice, number, or date fields, up to ten fields. Choose a list, table, or agenda layout; an agenda groups records by a date field. Save the draft, review the saved revision and layout, and publish it before adding live records. Views support pagination and record editing.
+
+Numbers preserve zero and blank optional values separately. Dates use exact civil `YYYY-MM-DD` text without a time zone. Tables and agendas display loaded records; use Load more to fetch additional pages. Full collection sorting, calendar counts, and aggregates remain to be migrated.
 
 The trusted Function validates ownership, definitions, compatibility, and expected revisions. Supported mutations commit their changes and operation receipts in Appwrite transactions. A stale write is rejected, and retrying an unconfirmed save retains the original operation ID, input, and versions. Unsaved edits and pending commands last for the current signed-in app session; reloads and process termination do not preserve them.
 

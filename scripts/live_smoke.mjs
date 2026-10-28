@@ -424,6 +424,18 @@ async function main() {
     ],
   };
   let draftCommand, publishCommand, createRecordCommand, editRecordCommand;
+  let richApp, richRecord, richCreatedResponse, richCreateCommand;
+  const richRecordId = randomId("rnr");
+  const richDefinition = {
+    ...definition,
+    title: "QA dated tracker " + report.runId,
+    fields: [
+      ...definition.fields,
+      { id: "amount", label: "Amount", kind: "number" },
+      { id: "day", label: "Day", kind: "date" },
+    ],
+    view: { kind: "table" },
+  };
 
   await check("qa_account_a_and_session", [], async () => {
     credentialsA = await createAccount(a, "A");
@@ -1046,6 +1058,339 @@ async function main() {
       return { recordId, revision: 3, winnerCount: 1 };
     },
   );
+  await check(
+    "rich_legacy_baseline",
+    ["owner_a_workspace_and_app_creation"],
+    async () => {
+      richApp = randomId("rapp");
+      expectFunction(
+        await a.execute({
+          op: "createApp",
+          id: richApp,
+          workspaceId: workspaceA,
+          name: "QA typed fields " + report.runId,
+        }),
+      );
+      expectFunction(
+        await a.execute({
+          op: "saveDraft",
+          appId: richApp,
+          expectedRevision: 0,
+          operationId: randomId("rdf"),
+          definition,
+        }),
+      );
+      expectFunction(
+        await a.execute({
+          op: "publishApp",
+          appId: richApp,
+          expectedRevision: 1,
+          operationId: randomId("rpb"),
+        }),
+      );
+      const legacy = expectFunction(
+        await a.execute({
+          op: "saveRecord",
+          appId: richApp,
+          id: randomId("old"),
+          expectedRevision: 0,
+          definitionRevision: 1,
+          operationId: randomId("rrc"),
+          values: {
+            title: "QA legacy record",
+            body: "Before typed fields.",
+            done: false,
+            category: "QA",
+          },
+        }),
+      ).record;
+      verify(legacy.revision === 1, "rich_legacy_record_not_created");
+      report.resources.richApp = richApp;
+      report.resources.richRecordId = richRecordId;
+      return { appId: richApp };
+    },
+  );
+  await check(
+    "rich_compatible_fields_and_table_publication",
+    ["rich_legacy_baseline"],
+    async () => {
+      const draft = expectFunction(
+        await a.execute({
+          op: "saveDraft",
+          appId: richApp,
+          expectedRevision: 1,
+          operationId: randomId("rdf"),
+          definition: richDefinition,
+        }),
+      ).app;
+      verify(
+        draft.draftRevision === 2 &&
+          draft.publishedRevision === 1 &&
+          isDeepStrictEqual(draft.publishedDefinition, definition),
+        "rich_draft_changed_published_definition",
+      );
+      const published = expectFunction(
+        await a.execute({
+          op: "publishApp",
+          appId: richApp,
+          expectedRevision: 2,
+          operationId: randomId("rpb"),
+        }),
+      ).app;
+      verify(
+        published.publishedRevision === 2 &&
+          isDeepStrictEqual(published.publishedDefinition, richDefinition),
+        "rich_table_publication_mismatch",
+      );
+      const page = expectFunction(
+        await a.execute({
+          op: "listRecords",
+          appId: richApp,
+          definitionRevision: 2,
+        }),
+      );
+      verify(
+        page.records.length === 1 &&
+          page.records[0].values.title === "QA legacy record" &&
+          page.records[0].values.amount === "" &&
+          page.records[0].values.day === "",
+        "rich_optional_additions_changed_legacy_record",
+      );
+      return { appId: richApp, publishedRevision: 2 };
+    },
+  );
+  await check(
+    "rich_typed_record_and_exact_replay",
+    ["rich_compatible_fields_and_table_publication"],
+    async () => {
+      richCreateCommand = {
+        op: "saveRecord",
+        appId: richApp,
+        id: richRecordId,
+        expectedRevision: 0,
+        definitionRevision: 2,
+        operationId: randomId("rrc"),
+        values: {
+          title: "QA zero on leap day",
+          body: "Synthetic typed values.",
+          done: false,
+          category: "QA",
+          amount: 0,
+          day: "2028-02-29",
+        },
+      };
+      richCreatedResponse = expectFunction(await a.execute(richCreateCommand));
+      richRecord = richCreatedResponse.record;
+      verify(
+        richRecord.id === richRecordId &&
+          richRecord.revision === 1 &&
+          isDeepStrictEqual(richRecord.values, richCreateCommand.values),
+        "rich_typed_values_changed",
+      );
+      const replay = expectFunction(await a.execute(richCreateCommand));
+      verify(
+        isDeepStrictEqual(replay, richCreatedResponse),
+        "rich_typed_replay_changed",
+      );
+      return { recordId: richRecordId, revision: 1 };
+    },
+  );
+  await check(
+    "rich_invalid_values_preserve_record",
+    ["rich_typed_record_and_exact_replay"],
+    async () => {
+      for (const change of [
+        { amount: "0" },
+        { amount: 1e15 + 1 },
+        { amount: null },
+        { day: "2027-02-29" },
+        { day: "1900-02-29" },
+        { day: "0000-01-01" },
+        { day: "2028-02-30" },
+        { day: "2028-02-29T00:00:00Z" },
+      ]) {
+        expectFunction(
+          await a.execute({
+            ...richCreateCommand,
+            expectedRevision: 1,
+            operationId: randomId("bad"),
+            values: { ...richCreateCommand.values, ...change },
+          }),
+          400,
+          "invalid_values",
+        );
+      }
+      const page = expectFunction(
+        await a.execute({
+          op: "listRecords",
+          appId: richApp,
+          definitionRevision: 2,
+        }),
+      );
+      verify(
+        page.records.length === 2 &&
+          isDeepStrictEqual(
+            page.records.find((row) => row.id === richRecordId),
+            richRecord,
+          ),
+        "rich_invalid_values_mutated_record",
+      );
+    },
+  );
+  await check(
+    "rich_agenda_publication_and_receipt_after_view_change",
+    ["rich_typed_record_and_exact_replay"],
+    async () => {
+      const agenda = {
+        ...richDefinition,
+        view: { kind: "agenda", dateFieldId: "day" },
+      };
+      expectFunction(
+        await a.execute({
+          op: "saveDraft",
+          appId: richApp,
+          expectedRevision: 2,
+          operationId: randomId("rdf"),
+          definition: agenda,
+        }),
+      );
+      const published = expectFunction(
+        await a.execute({
+          op: "publishApp",
+          appId: richApp,
+          expectedRevision: 3,
+          operationId: randomId("rpb"),
+        }),
+      ).app;
+      verify(
+        published.publishedRevision === 3 &&
+          isDeepStrictEqual(published.publishedDefinition, agenda),
+        "rich_agenda_definition_mismatch",
+      );
+      expectFunction(
+        await a.execute({
+          op: "listRecords",
+          appId: richApp,
+          definitionRevision: 2,
+        }),
+        409,
+        "definition_conflict",
+      );
+      const replay = expectFunction(await a.execute(richCreateCommand));
+      verify(
+        isDeepStrictEqual(replay, richCreatedResponse),
+        "rich_old_receipt_changed_after_view_publication",
+      );
+      const page = expectFunction(
+        await a.execute({
+          op: "listRecords",
+          appId: richApp,
+          definitionRevision: 3,
+        }),
+      );
+      verify(
+        page.records.length === 2 &&
+          isDeepStrictEqual(
+            page.records.find((row) => row.id === richRecordId),
+            richRecord,
+          ),
+        "rich_view_publication_mutated_records",
+      );
+      return { publishedRevision: 3 };
+    },
+  );
+  await check(
+    "rich_invalid_view_preserves_draft",
+    ["rich_agenda_publication_and_receipt_after_view_change"],
+    async () => {
+      for (const view of [
+        { kind: "agenda" },
+        { kind: "agenda", dateFieldId: "amount" },
+        { kind: "table", dateFieldId: "day" },
+        { kind: "agenda", dateFieldId: "day", source: "other-app" },
+      ]) {
+        expectFunction(
+          await a.execute({
+            op: "saveDraft",
+            appId: richApp,
+            expectedRevision: 3,
+            operationId: randomId("bad"),
+            definition: { ...richDefinition, view },
+          }),
+          400,
+          "invalid_definition",
+        );
+      }
+      const app = expectFunction(
+        await a.execute({ op: "getApp", appId: richApp }),
+      ).app;
+      verify(
+        app.draftRevision === 3 &&
+          app.publishedRevision === 3 &&
+          app.definition.view.kind === "agenda",
+        "rich_invalid_view_changed_saved_state",
+      );
+    },
+  );
+  await check(
+    "rich_cross_account_denial",
+    ["rich_typed_record_and_exact_replay", "qa_account_b_and_session"],
+    async () => {
+      expectFunction(
+        await b.execute({ op: "getApp", appId: richApp }),
+        404,
+        "not_found",
+      );
+      expectFunction(
+        await b.execute({
+          ...richCreateCommand,
+          definitionRevision: 3,
+          expectedRevision: 1,
+          operationId: randomId("bad"),
+        }),
+        404,
+        "not_found",
+      );
+    },
+  );
+  await check(
+    "unicode_record_normalization_and_exact_replay",
+    ["rich_agenda_publication_and_receipt_after_view_change"],
+    async () => {
+      const command = {
+        ...richCreateCommand,
+        expectedRevision: 1,
+        definitionRevision: 3,
+        operationId: randomId("uni"),
+        values: {
+          ...richCreateCommand.values,
+          title: "\u0085QA Unicode edge\u0085",
+          body: " \u0085Synthetic Unicode trim.\u0085 ",
+        },
+      };
+      const response = expectFunction(await a.execute(command));
+      verify(
+        response.record?.revision === 2 &&
+          response.record.values.title === "QA Unicode edge" &&
+          response.record.values.body === "Synthetic Unicode trim." &&
+          response.record.values.amount === 0 &&
+          response.record.values.day === "2028-02-29",
+        "unicode_text_normalization_mismatch",
+      );
+      const replay = expectFunction(await a.execute(command));
+      verify(
+        isDeepStrictEqual(replay, response),
+        "unicode_receipt_replay_changed_outcome",
+      );
+      verify(
+        command.values.title === "\u0085QA Unicode edge\u0085" &&
+          command.values.body === " \u0085Synthetic Unicode trim.\u0085 ",
+        "unicode_probe_changed_original_command",
+      );
+      richRecord = response.record;
+      return { recordId: richRecordId, revision: 2 };
+    },
+  );
   await check("fresh_session_persistence", ["live_record_edit"], async () => {
     const signedOut = await a.request("DELETE", "/account/sessions/current");
     verify(
@@ -1077,6 +1422,35 @@ async function main() {
         isDeepStrictEqual(page.records[0], currentRecord),
       "record_not_persistent_across_session",
     );
+    if (
+      outcomes.get("rich_agenda_publication_and_receipt_after_view_change") ===
+      "passed"
+    ) {
+      const typedApp = expectFunction(
+        await fresh.execute({ op: "getApp", appId: richApp }),
+      ).app;
+      verify(
+        typedApp.publishedRevision === 3 &&
+          typedApp.publishedDefinition.view.kind === "agenda" &&
+          typedApp.publishedDefinition.view.dateFieldId === "day",
+        "rich_view_not_persistent_across_session",
+      );
+      const typedPage = expectFunction(
+        await fresh.execute({
+          op: "listRecords",
+          appId: richApp,
+          definitionRevision: 3,
+        }),
+      );
+      verify(
+        typedPage.records.length === 2 &&
+          isDeepStrictEqual(
+            typedPage.records.find((row) => row.id === richRecordId),
+            richRecord,
+          ),
+        "rich_values_not_persistent_across_session",
+      );
+    }
     const logout = await fresh.request("DELETE", "/account/sessions/current");
     verify(logout.status === 204, "fresh_session_logout_failed", {
       httpStatus: logout.status,

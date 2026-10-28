@@ -9,7 +9,7 @@ npm ci
 npm run web
 ```
 
-Without configuration, the app shows an explicitly local template preview. Notes, Tasks, and Reading can be edited with sample records, required text/choice/boolean validation, title/field-label customization, and reset. Preview records are not persisted and never call Appwrite.
+Without configuration, the app shows an explicitly local template preview. Planner, Notes, Tasks, and Reading can be edited with sample records, strict field validation, title/field-label/layout customization, and reset. Preview records are not persisted and never call Appwrite.
 
 For iOS and Android, start Expo with `npm start`, or use `npm run ios` / `npm run android`. Expo Go must support the selected SDK. A local development build can be made with `npx expo run:ios` or `npx expo run:android` when Xcode/Android tooling is installed; no cloud build account is required. Neither native compilation nor device installation has been verified for this rewrite.
 
@@ -32,7 +32,9 @@ After an auth response is lost, sign-in makes one read-only account check and ac
 
 ## Build and use a saved app
 
-Open an app from the workbench at `/apps/:appId`, then open its builder at `/apps/:appId/edit`. Choose Notes, Tasks, or Reading, customize the title, description, field labels and choice options, and add optional text/long-text/boolean/choice fields. Saving a draft does not publish it or copy preview samples into live storage. Review and publish the exact saved revision before creating live records.
+Open an app from the workbench at `/apps/:appId`, then open its builder at `/apps/:appId/edit`. Choose Planner, Notes, Tasks, or Reading, customize the title, description, field labels and choice options, and add optional text/long-text/boolean/choice/number/date fields. Select list, table, or agenda layout; an agenda needs a date-field binding. Saving a draft does not publish it or copy preview samples into live storage. Review and publish the exact saved revision, including its layout, before creating live records.
+
+Number inputs retain unfinished text until Save, then become finite numeric JSON within ±1e15; blank optional values remain empty rather than zero. Civil dates use exact Gregorian `YYYY-MM-DD` text without a time zone. Table/agenda views show loaded records only, and Load more uses the original server cursor. Full collection sorting, calendar counts, and aggregates are pending; see [the rich-record contract](../../docs/RICH_RECORDS.md).
 
 Live records are created, read in pages, and edited through authenticated Function operations. The server owns schema validation, expected revisions, compatibility, and transaction receipts. A stale definition or record revision is rejected rather than overwritten. Unknown saves and transaction conflicts keep the same operation ID, input, and expected versions for explicit retry. Local draft edits and pending saves survive navigation during the current signed-in app session, but not a reload/process termination; they are cleared when the account changes. Refreshing the saved app does not silently advance the original revision of unsaved edits.
 

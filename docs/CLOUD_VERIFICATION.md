@@ -2,7 +2,7 @@
 
 This checklist separates local checks from actual Appwrite acceptance. An unchecked item is pending until a result and non-secret receipt are recorded. The checklist itself does not establish that a resource was created, a deployment succeeded, or a live probe passed.
 
-The current development deployment has [dated receipts](evidence/2026-10-28/README.md): the corrected REST suite passed 26 checks/181 assertions. A separate browser flow verified initial sign-up/builder/record operations on `127.0.0.1`, then version 2 publication, reload, and sign-out/sign-in persistence on `localhost`. The initial failed REST report is also retained. The checklist below remains broader than those exercised cases; forced network-response loss, native builds/devices, and full feature parity are still pending.
+The current development deployment has [dated receipts](evidence/2026-10-28/README.md): the latest expanded REST suite passed 34 checks/314 assertions. A separate browser flow verified initial sign-up/builder/record operations on `127.0.0.1`, then version 2 publication, reload, and sign-out/sign-in persistence on `localhost`. The [rich browser flow](evidence/2026-10-28/rich-browser-qa.md) additionally verifies number/date input, table/agenda publication, Unicode save confirmation, and the ten-record page boundary on localhost. The initial failed REST report is also retained. The checklist below remains broader than those exercised cases; forced network-response loss, native builds/devices, and full feature parity are still pending.
 
 ## What CI checks
 

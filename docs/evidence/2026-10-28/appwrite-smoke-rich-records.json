@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "runId": "qa-mvsf6xr0-ab0cf7f6",
+  "startedAt": "2026-10-28T18:00:33.372Z",
+  "completedAt": "2026-10-28T18:01:21.916Z",
+  "status": "passed",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "origin": "http://localhost:8426",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "databaseId": "tinkerloom"
+  },
+  "accounts": [
+    {
+      "label": "QA A",
+      "id": "qa-4975a4a17053d8222315e6c2da19",
+      "creationStatus": "created"
+    },
+    {
+      "label": "QA B",
+      "id": "qa-6f1cfb29b16cb737b9551665127c",
+      "creationStatus": "created"
+    }
+  ],
+  "resources": {
+    "workspaceA": "wsa-c7ff6bb0392c51713912785d1711",
+    "appA": "apa-1cc488631f5e58704c3cb862062d",
+    "recordId": "rec-1098875c9239f8750850371e474c",
+    "workspaceB": "wsb-1a1c9cb0e2ce5cca151f4b939514",
+    "appB": "apb-e9be9e858e32c25e68f0ab4f4f00",
+    "raceApp": "rac-9c2cf1ed3c9178e0edefbd45ec52",
+    "richApp": "rap-cdb5ab48aac9eb4f223e36ec469c",
+    "richRecordId": "rnr-e6b07201c5b76c1a7ad3522e75fd"
+  },
+  "checks": [
+    {
+      "name": "qa_account_a_and_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 647,
+      "source": "real_client_session"
+    },
+    {
+      "name": "qa_account_b_and_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 368,
+      "source": "real_client_session"
+    },
+    {
+      "name": "owner_a_workspace_and_app_creation",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 4015,
+      "workspaceId": "wsa-c7ff6bb0392c51713912785d1711",
+      "appId": "apa-1cc488631f5e58704c3cb862062d"
+    },
+    {
+      "name": "owner_b_workspace_and_app_creation",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 784,
+      "workspaceId": "wsb-1a1c9cb0e2ce5cca151f4b939514",
+      "appId": "apb-e9be9e858e32c25e68f0ab4f4f00"
+    },
+    {
+      "name": "owned_lists_are_isolated",
+      "status": "passed",
+      "assertions": 12,
+      "durationMs": 1087
+    },
+    {
+      "name": "cross_account_workspace_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 378,
+      "httpStatus": 201,
+      "functionStatus": 404,
+      "executionStatus": "completed",
+      "observedCode": "not_found"
+    },
+    {
+      "name": "anonymous_function_denial",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 56,
+      "httpStatus": 401,
+      "executionStatus": "unavailable",
+      "observedCode": "user_unauthorized"
+    },
+    {
+      "name": "direct_table_read_denial",
+      "status": "passed",
+      "assertions": 2,
+      "durationMs": 159,
+      "httpStatus": 404,
+      "observedCode": "row_not_found"
+    },
+    {
+      "name": "direct_table_create_denial",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 67,
+      "httpStatus": 401,
+      "observedCode": "user_unauthorized"
+    },
+    {
+      "name": "fresh_app_has_no_published_definition",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 773
+    },
+    {
+      "name": "parallel_initial_draft_writes",
+      "status": "passed",
+      "assertions": 14,
+      "durationMs": 2286,
+      "appId": "rac-9c2cf1ed3c9178e0edefbd45ec52",
+      "draftRevision": 1,
+      "winnerCount": 1
+    },
+    {
+      "name": "save_draft",
+      "status": "passed",
+      "assertions": 9,
+      "durationMs": 1652,
+      "draftRevision": 1,
+      "operationId": "op-d6573033d17b2757351c64ccdc6b"
+    },
+    {
+      "name": "invalid_draft_preserves_previous",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 681
+    },
+    {
+      "name": "stale_draft_revision_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 1121
+    },
+    {
+      "name": "publish_reviewed_revision",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1643,
+      "publishedRevision": 1,
+      "operationId": "pub-2edff5ba41d32bf8769a573a4ff9"
+    },
+    {
+      "name": "draft_receipt_replay_after_publication",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 403
+    },
+    {
+      "name": "draft_receipt_changed_payload_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 386
+    },
+    {
+      "name": "live_record_create_and_query",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1855,
+      "recordId": "rec-1098875c9239f8750850371e474c",
+      "revision": 1,
+      "operationId": "rec-952575e2eb0d03b467797dac07c5"
+    },
+    {
+      "name": "live_record_edit",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1635,
+      "recordId": "rec-1098875c9239f8750850371e474c",
+      "revision": 2
+    },
+    {
+      "name": "stale_record_revision_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 1020
+    },
+    {
+      "name": "record_receipt_changed_payload_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 407
+    },
+    {
+      "name": "record_create_receipt_replay_after_edit",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 609
+    },
+    {
+      "name": "cross_account_app_and_record_denial",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 1342
+    },
+    {
+      "name": "parallel_same_revision_writes",
+      "status": "passed",
+      "assertions": 14,
+      "durationMs": 1970,
+      "recordId": "rec-1098875c9239f8750850371e474c",
+      "revision": 3,
+      "winnerCount": 1
+    },
+    {
+      "name": "rich_legacy_baseline",
+      "status": "passed",
+      "assertions": 13,
+      "durationMs": 3586,
+      "appId": "rap-cdb5ab48aac9eb4f223e36ec469c"
+    },
+    {
+      "name": "rich_compatible_fields_and_table_publication",
+      "status": "passed",
+      "assertions": 12,
+      "durationMs": 3068,
+      "appId": "rap-cdb5ab48aac9eb4f223e36ec469c",
+      "publishedRevision": 2
+    },
+    {
+      "name": "rich_typed_record_and_exact_replay",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1529,
+      "recordId": "rnr-e6b07201c5b76c1a7ad3522e75fd",
+      "revision": 1
+    },
+    {
+      "name": "rich_invalid_values_preserve_record",
+      "status": "passed",
+      "assertions": 36,
+      "durationMs": 7748
+    },
+    {
+      "name": "rich_agenda_publication_and_receipt_after_view_change",
+      "status": "passed",
+      "assertions": 19,
+      "durationMs": 3433,
+      "publishedRevision": 3
+    },
+    {
+      "name": "rich_invalid_view_preserves_draft",
+      "status": "passed",
+      "assertions": 20,
+      "durationMs": 1014
+    },
+    {
+      "name": "rich_cross_account_denial",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 655
+    },
+    {
+      "name": "fresh_session_persistence",
+      "status": "passed",
+      "assertions": 21,
+      "durationMs": 2084,
+      "recordId": "rec-1098875c9239f8750850371e474c",
+      "revision": 3,
+      "source": "fresh_client_session"
+    },
+    {
+      "name": "qa_account_b_signout",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 80
+    }
+  ],
+  "coverage": "Real REST client sessions and Function operations; not browser, native-device, or full-feature acceptance.",
+  "summary": {
+    "passed": 33,
+    "failed": 0,
+    "blocked": 0,
+    "assertions": 305
+  }
+}
