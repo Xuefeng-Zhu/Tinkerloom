@@ -1,0 +1,10 @@
+class: AppShortcut
+table: nest_shortcut
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  actorId: String
+indexes:
+  shortcut_unique:
+    fields: appId, actorId
+    unique: true

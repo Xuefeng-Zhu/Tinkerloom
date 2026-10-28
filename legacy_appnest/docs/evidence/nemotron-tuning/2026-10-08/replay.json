@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-10-08T16:16:43.799235+00:00",
+  "providerCalls": 0,
+  "scoringScope": "Accepted synthetic responses rescored by unchanged Dart scenario scorer and candidates compared exactly. Failed attempts were not rescored by this CLI.",
+  "checkpoints": [
+    {
+      "path": "phase1/baseline.json",
+      "sha256": "2262f8ad30639fd770278a846d107177243244e7ba6537b85f2ce8dda871aad6",
+      "acceptedResponsesReplayed": 3,
+      "exitCode": 0
+    },
+    {
+      "path": "phase1/bounded-reasoning.json",
+      "sha256": "9d3222f69ef919e814b396fc4ee9c8ee1bf9495ea8972f2fad3359d1e788a832",
+      "acceptedResponsesReplayed": 5,
+      "exitCode": 0
+    },
+    {
+      "path": "phase1/contract-reasoning.json",
+      "sha256": "369375941b9044e9c61b9e037c6ddfa4c3afca4186aaee0b7ee9d163de414dd9",
+      "acceptedResponsesReplayed": 5,
+      "exitCode": 0
+    },
+    {
+      "path": "phase2/contract-only.json",
+      "sha256": "538b83ca7fc952a1a25ec57883caa85a6dc6351c6f973778867fcecbe588cfb0",
+      "acceptedResponsesReplayed": 5,
+      "exitCode": 0
+    },
+    {
+      "path": "phase2/efficient-creation.json",
+      "sha256": "0f231150378c7140d03ffd587ec1dcdce919a9d68018ddf936ef96d08f795f38",
+      "acceptedResponsesReplayed": 6,
+      "exitCode": 0
+    },
+    {
+      "path": "phase3/publisher-creation.json",
+      "sha256": "fceab8047e05bb3170905933d08ad974983cbdd993b750d538001e9d5b9f43b8",
+      "acceptedResponsesReplayed": 6,
+      "exitCode": 0
+    }
+  ]
+}

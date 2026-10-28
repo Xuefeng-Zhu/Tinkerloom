@@ -1,0 +1,10 @@
+class: InboxItem
+fields:
+  id: int
+  appId: int
+  title: String
+  body: String
+  createdAt: DateTime
+  isRead: bool
+  recordId: int?
+  collectionId: String?

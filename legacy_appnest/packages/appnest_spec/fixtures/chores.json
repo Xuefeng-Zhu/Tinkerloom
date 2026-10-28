@@ -1,0 +1,158 @@
+{
+  "formatVersion": 1,
+  "name": "Chore Board",
+  "theme": "sage",
+  "icon": "board",
+  "requires": [
+    "collections.v1",
+    "workflow.v1",
+    "assignment.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "assignment.assign.v1",
+    "workflow.transition.v1",
+    "views.board.v1",
+    "views.list.v1",
+    "notifications.inApp.v1"
+  ],
+  "collections": [
+    {
+      "id": "chores",
+      "label": "Chores",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Chore",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "assignee",
+          "label": "Assigned to",
+          "type": "member",
+          "required": false
+        },
+        {
+          "id": "dueAt",
+          "label": "Due date",
+          "type": "timestamp",
+          "required": false
+        },
+        {
+          "id": "status",
+          "label": "Status",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Open",
+            "Doing",
+            "Done"
+          ]
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "behaviors": [
+        {
+          "id": "progress",
+          "type": "workflow.v1",
+          "fieldId": "status",
+          "transitions": {
+            "Open": [
+              "Doing"
+            ],
+            "Doing": [
+              "Open",
+              "Done"
+            ],
+            "Done": [
+              "Open"
+            ]
+          }
+        },
+        {
+          "id": "assignment",
+          "type": "assignment.v1",
+          "fieldId": "assignee"
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "board",
+      "type": "board",
+      "collectionId": "chores",
+      "label": "Board",
+      "titleFieldId": "title",
+      "groupByFieldId": "status",
+      "actionIds": [
+        "addChore",
+        "editChore",
+        "assignChore",
+        "moveChore"
+      ]
+    },
+    {
+      "id": "allChores",
+      "type": "list",
+      "collectionId": "chores",
+      "label": "All chores",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addChore",
+        "editChore",
+        "assignChore",
+        "moveChore"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "addChore",
+      "label": "Add chore",
+      "capability": "records.create.v1",
+      "collectionId": "chores"
+    },
+    {
+      "id": "editChore",
+      "label": "Edit notes",
+      "capability": "records.patch.v1",
+      "collectionId": "chores"
+    },
+    {
+      "id": "assignChore",
+      "label": "Assign",
+      "capability": "assignment.assign.v1",
+      "collectionId": "chores",
+      "behaviorId": "assignment"
+    },
+    {
+      "id": "moveChore",
+      "label": "Change status",
+      "capability": "workflow.transition.v1",
+      "collectionId": "chores",
+      "behaviorId": "progress"
+    }
+  ],
+  "policyPresetRequest": "groupWorkflow.v1",
+  "automationRequests": [
+    {
+      "id": "dueReminder",
+      "trigger": {
+        "type": "beforeTimestamp",
+        "collectionId": "chores",
+        "fieldId": "dueAt",
+        "offsetSeconds": 3600
+      },
+      "effect": {
+        "type": "notifyAssignee",
+        "channel": "inApp"
+      }
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "formatVersion": 1,
+  "name": "My Calendar",
+  "theme": "blue",
+  "icon": "spark",
+  "requires": [
+    "collections.v1",
+    "navigation.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "views.calendar.v1",
+    "views.details.v1",
+    "views.form.v1",
+    "views.configured.v1",
+    "views.interactive.v1"
+  ],
+  "collections": [
+    {
+      "id": "events",
+      "label": "Entries",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Event",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "startsAt",
+          "label": "When",
+          "type": "timestamp",
+          "required": true
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "category",
+          "label": "Category",
+          "type": "choice",
+          "required": false,
+          "choices": [
+            "Personal",
+            "Work",
+            "Family"
+          ]
+        }
+      ],
+      "behaviors": []
+    }
+  ],
+  "views": [
+    {
+      "id": "allEntries",
+      "type": "calendar",
+      "collectionId": "events",
+      "label": "Calendar",
+      "options": {
+        "dateFieldId": "startsAt"
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "fieldIds": [
+        "startsAt",
+        "category"
+      ],
+      "filterFieldIds": [
+        "category"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "entryDetails",
+      "type": "details",
+      "collectionId": "events",
+      "label": "Details",
+      "titleFieldId": "title",
+      "actionIds": [
+        "editRecord"
+      ],
+      "fieldIds": [
+        "title",
+        "startsAt",
+        "notes",
+        "category"
+      ],
+      "formPageId": "formPage"
+    },
+    {
+      "id": "entryEditor",
+      "type": "form",
+      "collectionId": "events",
+      "label": "Edit entry",
+      "options": {
+        "controls": [
+          {
+            "fieldId": "notes",
+            "control": "multiline"
+          }
+        ]
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "fieldIds": [
+        "title",
+        "startsAt",
+        "notes",
+        "category"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "addRecord",
+      "label": "Add entry",
+      "capability": "records.create.v1",
+      "collectionId": "events"
+    },
+    {
+      "id": "editRecord",
+      "label": "Edit entry",
+      "capability": "records.patch.v1",
+      "collectionId": "events"
+    }
+  ],
+  "policyPresetRequest": "personalTracker.v1",
+  "automationRequests": [],
+  "navigation": {
+    "entryPageId": "homePage",
+    "pages": [
+      {
+        "id": "homePage",
+        "title": "My Calendar",
+        "viewIds": [
+          "allEntries"
+        ],
+        "primaryActionId": "addRecord"
+      },
+      {
+        "id": "detailPage",
+        "title": "Details",
+        "viewIds": [
+          "entryDetails"
+        ]
+      },
+      {
+        "id": "formPage",
+        "title": "Edit entry",
+        "viewIds": [
+          "entryEditor"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "pageId": "homePage",
+        "label": "My Calendar",
+        "icon": "list"
+      }
+    ]
+  }
+}

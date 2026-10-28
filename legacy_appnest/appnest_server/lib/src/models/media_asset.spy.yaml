@@ -1,0 +1,32 @@
+class: MediaAsset
+table: nest_media_asset
+serverOnly: true
+fields:
+  assetId: String
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  uploaderId: String
+  idempotencyKey: String
+  requestHash: String
+  requestJson: String
+  uploadDescription: String?
+  status: String
+  contentType: String
+  byteLength: int
+  storedBytes: int
+  originalRemoved: bool, default=false
+  width: int, default=0
+  height: int, default=0
+  expiresAt: DateTime
+  leaseUntil: DateTime?
+  createdAt: DateTime
+  updatedAt: DateTime
+indexes:
+  media_asset_identity:
+    fields: assetId
+    unique: true
+  media_upload_receipt:
+    fields: appId, uploaderId, idempotencyKey
+    unique: true
+  media_cleanup:
+    fields: status, updatedAt

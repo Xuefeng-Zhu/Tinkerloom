@@ -1,0 +1,6 @@
+class: TemplateInfo
+fields:
+  key: String
+  name: String
+  specJson: String
+  description: String

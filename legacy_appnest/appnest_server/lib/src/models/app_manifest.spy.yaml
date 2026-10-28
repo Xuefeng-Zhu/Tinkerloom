@@ -1,0 +1,13 @@
+class: AppManifest
+fields:
+  appId: int
+  workspaceId: int
+  name: String
+  versionId: int?
+  specJson: String?
+  role: String
+  archived: bool
+  pinned: bool
+  recordCount: int
+  availablePlaces: int
+  approvedRuleIds: List<String>?

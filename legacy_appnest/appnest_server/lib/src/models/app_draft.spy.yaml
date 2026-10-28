@@ -1,0 +1,14 @@
+class: AppDraft
+table: nest_draft
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  actorId: String
+  baseVersionId: int?, relation(parent=nest_version)
+  candidateJson: String
+  candidateHash: String
+  mutation: int, default=0
+  activeJobId: int?, relation(parent=nest_generation)
+  publishedVersionId: int?, relation(parent=nest_version)
+  updatedAt: DateTime

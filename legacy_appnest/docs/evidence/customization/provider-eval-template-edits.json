@@ -1,0 +1,1274 @@
+{
+  "recordedAt": "2026-09-23T20:33:45.297023Z",
+  "layer": "live provider + schema + exact synthetic scenario assertions",
+  "assertionVersion": 3,
+  "requestContract": "appnest-v1-typed-customization-2",
+  "plannedOperations": 3,
+  "baselineSource": "explicit synthetic template fixtures",
+  "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "queueTimingMeasured": false,
+  "connectedAppVerified": false,
+  "operations": [
+    {
+      "case": "notes-fields",
+      "operation": "edit",
+      "success": true,
+      "totalMs": 5778,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 5778,
+          "success": true,
+          "usage": {
+            "completion_tokens": 1278,
+            "prompt_tokens": 17760,
+            "total_tokens": 19038,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1234,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 13056,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 13056,
+            "prompt_cache_miss_tokens": 4704
+          },
+          "syntheticResponse": "{\"patches\":[{\"type\":\"AddField\",\"collectionId\":\"notes\",\"field\":{\"label\":\"Source\",\"type\":\"text\",\"required\":false},\"viewIds\":[\"entryDetails\",\"entryEditor\"]}]}"
+        }
+      ],
+      "candidateHash": "cb274cec442d69116c3158ae979a72bd2239d537d503d8ecd735bc06d43bf6ed",
+      "candidate": {
+        "formatVersion": 1,
+        "name": "My Notes",
+        "theme": "amber",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Ideas",
+                  "Personal",
+                  "Work"
+                ]
+              },
+              {
+                "id": "eval_1",
+                "label": "Source",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "body",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category",
+              "eval_1"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "control": "multiline",
+                  "fieldId": "body"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category",
+              "eval_1"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Notes",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Notes",
+              "icon": "list"
+            }
+          ]
+        }
+      },
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Notes",
+        "theme": "amber",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Ideas",
+                  "Personal",
+                  "Work"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "body",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "body",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Notes",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Notes",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "reminders-timing",
+      "operation": "edit",
+      "success": true,
+      "totalMs": 4258,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 4258,
+          "success": true,
+          "usage": {
+            "completion_tokens": 789,
+            "prompt_tokens": 18660,
+            "total_tokens": 19449,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 714,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 13056,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 13056,
+            "prompt_cache_miss_tokens": 5604
+          },
+          "syntheticResponse": "{\"patches\":[{\"type\":\"UpdateReminder\",\"ruleId\":\"taskReminder\",\"rule\":{\"trigger\":{\"type\":\"beforeTimestamp\",\"collectionId\":\"tasks\",\"fieldId\":\"reminderAt\",\"offsetSeconds\":600},\"effect\":{\"type\":\"notifyOwner\",\"channel\":\"inApp\"},\"condition\":{\"fieldId\":\"status\",\"value\":\"Open\"}}}]}"
+        }
+      ],
+      "candidateHash": "3c270d20648f635aad04cf5eafb80809a6831c4de9341835d9f5606fb2938b1f",
+      "candidate": {
+        "formatVersion": 1,
+        "name": "My Reminders",
+        "theme": "blue",
+        "icon": "check",
+        "requires": [
+          "collections.v1",
+          "workflow.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "workflow.transition.v1",
+          "views.list.v1",
+          "views.summary.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "navigation.v1",
+          "views.configured.v1",
+          "notifications.inApp.v1",
+          "notifications.owner.v1",
+          "automations.conditions.v1"
+        ],
+        "collections": [
+          {
+            "id": "tasks",
+            "label": "Tasks",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Task",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Open",
+                  "Done"
+                ]
+              },
+              {
+                "id": "priority",
+                "label": "Priority",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Low",
+                  "Normal",
+                  "High"
+                ]
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "dueAt",
+                "label": "Due",
+                "type": "timestamp",
+                "required": false
+              },
+              {
+                "id": "reminderAt",
+                "label": "Remind me",
+                "type": "timestamp",
+                "required": false
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "taskProgress",
+                "type": "workflow.v1",
+                "fieldId": "status",
+                "transitions": {
+                  "Done": [
+                    "Open"
+                  ],
+                  "Open": [
+                    "Done"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "views": [
+          {
+            "id": "todaySummary",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "Today at a glance",
+            "groupByFieldId": "status",
+            "actionIds": [],
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            }
+          },
+          {
+            "id": "todayTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "Scheduled today",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "compact",
+            "fieldIds": [
+              "status",
+              "priority",
+              "dueAt"
+            ],
+            "query": {
+              "limit": 25,
+              "sort": [
+                {
+                  "descending": false,
+                  "fieldId": "dueAt"
+                }
+              ]
+            },
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "overdueTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "Overdue",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "compact",
+            "fieldIds": [
+              "priority",
+              "dueAt"
+            ],
+            "query": {
+              "filters": [
+                {
+                  "fieldId": "status",
+                  "operator": "eq",
+                  "value": "Open"
+                }
+              ],
+              "limit": 25,
+              "sort": [
+                {
+                  "descending": false,
+                  "fieldId": "dueAt"
+                }
+              ]
+            },
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "overdue"
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "allTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "All tasks",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "status",
+              "priority",
+              "dueAt"
+            ],
+            "filterFieldIds": [
+              "status",
+              "priority"
+            ],
+            "query": {
+              "limit": 25,
+              "sort": [
+                {
+                  "descending": false,
+                  "fieldId": "dueAt"
+                }
+              ]
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "todayProgress",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "Today’s scheduled tasks",
+            "groupByFieldId": "status",
+            "actionIds": [],
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            }
+          },
+          {
+            "id": "allProgress",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "All tasks",
+            "groupByFieldId": "status",
+            "actionIds": []
+          },
+          {
+            "id": "taskDetails",
+            "type": "details",
+            "collectionId": "tasks",
+            "label": "Task details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editTask",
+              "moveTask"
+            ],
+            "fieldIds": [
+              "status",
+              "priority",
+              "notes",
+              "dueAt",
+              "reminderAt"
+            ],
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "taskEditor",
+            "type": "form",
+            "collectionId": "tasks",
+            "label": "Task editor",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask"
+            ],
+            "fieldIds": [
+              "title",
+              "priority",
+              "notes",
+              "dueAt",
+              "reminderAt"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addTask",
+            "label": "Add task",
+            "capability": "records.create.v1",
+            "collectionId": "tasks"
+          },
+          {
+            "id": "editTask",
+            "label": "Edit task",
+            "capability": "records.patch.v1",
+            "collectionId": "tasks"
+          },
+          {
+            "id": "moveTask",
+            "label": "Complete or reopen",
+            "capability": "workflow.transition.v1",
+            "collectionId": "tasks",
+            "behaviorId": "taskProgress"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [
+          {
+            "id": "taskReminder",
+            "trigger": {
+              "type": "beforeTimestamp",
+              "collectionId": "tasks",
+              "fieldId": "reminderAt",
+              "offsetSeconds": 600
+            },
+            "effect": {
+              "type": "notifyOwner",
+              "channel": "inApp"
+            },
+            "condition": {
+              "fieldId": "status",
+              "value": "Open"
+            }
+          }
+        ],
+        "navigation": {
+          "entryPageId": "tasksPage",
+          "pages": [
+            {
+              "id": "todayPage",
+              "title": "Today",
+              "viewIds": [
+                "todaySummary",
+                "todayTasks",
+                "overdueTasks"
+              ],
+              "showDate": true,
+              "primaryActionId": "addTask"
+            },
+            {
+              "id": "tasksPage",
+              "title": "Reminders",
+              "viewIds": [
+                "allTasks"
+              ],
+              "primaryActionId": "addTask"
+            },
+            {
+              "id": "progressPage",
+              "title": "Progress",
+              "viewIds": [
+                "todayProgress",
+                "allProgress"
+              ]
+            },
+            {
+              "id": "taskDetailPage",
+              "title": "Task details",
+              "viewIds": [
+                "taskDetails"
+              ]
+            },
+            {
+              "id": "taskEditorPage",
+              "title": "Task editor",
+              "viewIds": [
+                "taskEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "tasksPage",
+              "label": "Reminders",
+              "icon": "list"
+            },
+            {
+              "pageId": "progressPage",
+              "label": "Progress",
+              "icon": "chart"
+            }
+          ]
+        }
+      },
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Reminders",
+        "theme": "blue",
+        "icon": "check",
+        "requires": [
+          "collections.v1",
+          "workflow.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "workflow.transition.v1",
+          "views.list.v1",
+          "views.summary.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "navigation.v1",
+          "views.configured.v1",
+          "notifications.inApp.v1",
+          "notifications.owner.v1",
+          "automations.conditions.v1"
+        ],
+        "collections": [
+          {
+            "id": "tasks",
+            "label": "Tasks",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Task",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Open",
+                  "Done"
+                ]
+              },
+              {
+                "id": "priority",
+                "label": "Priority",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Low",
+                  "Normal",
+                  "High"
+                ]
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "dueAt",
+                "label": "Due",
+                "type": "timestamp",
+                "required": false
+              },
+              {
+                "id": "reminderAt",
+                "label": "Remind me",
+                "type": "timestamp",
+                "required": false
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "taskProgress",
+                "type": "workflow.v1",
+                "fieldId": "status",
+                "transitions": {
+                  "Open": [
+                    "Done"
+                  ],
+                  "Done": [
+                    "Open"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "views": [
+          {
+            "id": "todaySummary",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "Today at a glance",
+            "groupByFieldId": "status",
+            "actionIds": [],
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            }
+          },
+          {
+            "id": "todayTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "Scheduled today",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "compact",
+            "fieldIds": [
+              "status",
+              "priority",
+              "dueAt"
+            ],
+            "query": {
+              "sort": [
+                {
+                  "fieldId": "dueAt",
+                  "descending": false
+                }
+              ],
+              "limit": 25
+            },
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "overdueTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "Overdue",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "compact",
+            "fieldIds": [
+              "priority",
+              "dueAt"
+            ],
+            "query": {
+              "filters": [
+                {
+                  "fieldId": "status",
+                  "operator": "eq",
+                  "value": "Open"
+                }
+              ],
+              "sort": [
+                {
+                  "fieldId": "dueAt",
+                  "descending": false
+                }
+              ],
+              "limit": 25
+            },
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "overdue"
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "allTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "All tasks",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "status",
+              "priority",
+              "dueAt"
+            ],
+            "filterFieldIds": [
+              "status",
+              "priority"
+            ],
+            "query": {
+              "sort": [
+                {
+                  "fieldId": "dueAt",
+                  "descending": false
+                }
+              ],
+              "limit": 25
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "todayProgress",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "Today’s scheduled tasks",
+            "groupByFieldId": "status",
+            "actionIds": [],
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            }
+          },
+          {
+            "id": "allProgress",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "All tasks",
+            "groupByFieldId": "status",
+            "actionIds": []
+          },
+          {
+            "id": "taskDetails",
+            "type": "details",
+            "collectionId": "tasks",
+            "label": "Task details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editTask",
+              "moveTask"
+            ],
+            "fieldIds": [
+              "status",
+              "priority",
+              "notes",
+              "dueAt",
+              "reminderAt"
+            ],
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "taskEditor",
+            "type": "form",
+            "collectionId": "tasks",
+            "label": "Task editor",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask"
+            ],
+            "fieldIds": [
+              "title",
+              "priority",
+              "notes",
+              "dueAt",
+              "reminderAt"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addTask",
+            "label": "Add task",
+            "capability": "records.create.v1",
+            "collectionId": "tasks"
+          },
+          {
+            "id": "editTask",
+            "label": "Edit task",
+            "capability": "records.patch.v1",
+            "collectionId": "tasks"
+          },
+          {
+            "id": "moveTask",
+            "label": "Complete or reopen",
+            "capability": "workflow.transition.v1",
+            "collectionId": "tasks",
+            "behaviorId": "taskProgress"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [
+          {
+            "id": "taskReminder",
+            "trigger": {
+              "type": "beforeTimestamp",
+              "collectionId": "tasks",
+              "fieldId": "reminderAt",
+              "offsetSeconds": 0
+            },
+            "effect": {
+              "type": "notifyOwner",
+              "channel": "inApp"
+            },
+            "condition": {
+              "fieldId": "status",
+              "value": "Open"
+            }
+          }
+        ],
+        "navigation": {
+          "entryPageId": "tasksPage",
+          "pages": [
+            {
+              "id": "todayPage",
+              "title": "Today",
+              "viewIds": [
+                "todaySummary",
+                "todayTasks",
+                "overdueTasks"
+              ],
+              "showDate": true,
+              "primaryActionId": "addTask"
+            },
+            {
+              "id": "tasksPage",
+              "title": "Reminders",
+              "viewIds": [
+                "allTasks"
+              ],
+              "primaryActionId": "addTask"
+            },
+            {
+              "id": "progressPage",
+              "title": "Progress",
+              "viewIds": [
+                "todayProgress",
+                "allProgress"
+              ]
+            },
+            {
+              "id": "taskDetailPage",
+              "title": "Task details",
+              "viewIds": [
+                "taskDetails"
+              ]
+            },
+            {
+              "id": "taskEditorPage",
+              "title": "Task editor",
+              "viewIds": [
+                "taskEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "tasksPage",
+              "label": "Reminders",
+              "icon": "list"
+            },
+            {
+              "pageId": "progressPage",
+              "label": "Progress",
+              "icon": "chart"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "focus-duration",
+      "operation": "edit",
+      "success": true,
+      "totalMs": 5718,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 5718,
+          "success": true,
+          "usage": {
+            "completion_tokens": 1645,
+            "prompt_tokens": 17123,
+            "total_tokens": 18768,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1605,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 13056,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 13056,
+            "prompt_cache_miss_tokens": 4067
+          },
+          "syntheticResponse": "{\"patches\":[{\"type\":\"UpdateView\",\"viewId\":\"focusTimer\",\"view\":{\"type\":\"timer\",\"label\":\"Focus timer\",\"options\":{\"durationMinutes\":40}}}]}"
+        }
+      ],
+      "candidateHash": "f5c980d89b12f50ef74768f1abbe49ba503901f94f2ce92601c951f160ce94b6",
+      "candidate": {
+        "formatVersion": 1,
+        "name": "My Focus Clock",
+        "theme": "teal",
+        "icon": "spark",
+        "requires": [
+          "navigation.v1",
+          "views.clock.v1",
+          "views.timer.v1",
+          "views.configured.v1"
+        ],
+        "collections": [],
+        "views": [
+          {
+            "id": "localClock",
+            "type": "clock",
+            "label": "Local time",
+            "actionIds": []
+          },
+          {
+            "id": "focusTimer",
+            "type": "timer",
+            "label": "Focus timer",
+            "options": {
+              "durationMinutes": 40
+            },
+            "actionIds": []
+          }
+        ],
+        "actions": [],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "focusPage",
+          "pages": [
+            {
+              "id": "focusPage",
+              "title": "Time for yourself",
+              "viewIds": [
+                "localClock",
+                "focusTimer"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "focusPage",
+              "label": "Focus",
+              "icon": "today"
+            }
+          ]
+        }
+      },
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Focus Clock",
+        "theme": "teal",
+        "icon": "spark",
+        "requires": [
+          "navigation.v1",
+          "views.clock.v1",
+          "views.timer.v1"
+        ],
+        "collections": [],
+        "views": [
+          {
+            "id": "localClock",
+            "type": "clock",
+            "label": "Local time",
+            "actionIds": []
+          },
+          {
+            "id": "focusTimer",
+            "type": "timer",
+            "label": "Focus timer",
+            "actionIds": []
+          }
+        ],
+        "actions": [],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "focusPage",
+          "pages": [
+            {
+              "id": "focusPage",
+              "title": "Time for yourself",
+              "viewIds": [
+                "localClock",
+                "focusTimer"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "focusPage",
+              "label": "Focus",
+              "icon": "today"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

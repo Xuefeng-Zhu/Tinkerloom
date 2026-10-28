@@ -1,0 +1,2806 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "appnest-nemotron-v2",
+  "provider": "nvidia",
+  "nemotronProfile": "baseline",
+  "benchmarkLabel": "AppNest Nemotron evaluation",
+  "modelFamilies": {
+    "nvidia/nemotron-3-super-120b-a12b": "Nemotron"
+  },
+  "apiBase": "https://integrate.api.nvidia.com/v1",
+  "models": [
+    "nvidia/nemotron-3-super-120b-a12b"
+  ],
+  "scenarios": [
+    {
+      "id": "create-notes-fields",
+      "operation": "create",
+      "prompt": "Make a personal notes app with titles, multiline notes, categories, search, add/edit forms, and a details page for each note.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Notes",
+        "theme": "amber",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Ideas",
+                  "Personal",
+                  "Work"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "body",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "body",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Notes",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Notes",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-calendar-category",
+      "operation": "create",
+      "prompt": "Create a personal calendar for my events with title, start time, notes, and a Category choice of Personal or Work. Include monthly calendar with daily agenda and add/edit screens.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Calendar",
+        "theme": "blue",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.calendar.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "events",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Event",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "startsAt",
+                "label": "When",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Personal",
+                  "Work",
+                  "Family"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "calendar",
+            "collectionId": "events",
+            "label": "Calendar",
+            "options": {
+              "dateFieldId": "startsAt"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "startsAt",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "events",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "startsAt",
+              "notes",
+              "category"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "events",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "notes",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "startsAt",
+              "notes",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "events"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "events"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Calendar",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Calendar",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-calendar-appearance",
+      "operation": "create",
+      "prompt": "Make an events calendar with a monthly calendar and selected-day agenda, event titles, date and time, notes, and add/edit screens.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Calendar",
+        "theme": "blue",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.calendar.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "events",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Event",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "startsAt",
+                "label": "When",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Personal",
+                  "Work",
+                  "Family"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "calendar",
+            "collectionId": "events",
+            "label": "Calendar",
+            "options": {
+              "dateFieldId": "startsAt"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "startsAt",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "events",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "startsAt",
+              "notes",
+              "category"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "events",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "notes",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "startsAt",
+              "notes",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "events"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "events"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Calendar",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Calendar",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-rich-dashboard",
+      "operation": "create",
+      "prompt": "Create a personal activity dashboard. Log a title, timestamp, numeric minutes, a Category choice, and multiline notes through reachable add/edit forms. Show a checklist of entries, a metric summing minutes with target 150, and a daily line chart summing minutes over the most recent 14 days. Include entry details. No reminders.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Habit Tracker",
+        "theme": "teal",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.metric.v1",
+          "views.chart.v1",
+          "views.checklist.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "checkins",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Activity",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "loggedAt",
+                "label": "Logged at",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "minutes",
+                "label": "Minutes",
+                "type": "number",
+                "required": false
+              },
+              {
+                "id": "energy",
+                "label": "Energy",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Move",
+                  "Learn",
+                  "Rest"
+                ]
+              },
+              {
+                "id": "completed",
+                "label": "Completed",
+                "type": "boolean",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "minutesMetric",
+            "type": "metric",
+            "collectionId": "checkins",
+            "label": "Minutes invested",
+            "options": {
+              "metric": "sum",
+              "valueFieldId": "minutes",
+              "target": 150
+            },
+            "titleFieldId": "title",
+            "actionIds": []
+          },
+          {
+            "id": "dailyMinutes",
+            "type": "chart",
+            "collectionId": "checkins",
+            "label": "Minutes over time",
+            "options": {
+              "style": "line",
+              "metric": "sum",
+              "valueFieldId": "minutes",
+              "dateFieldId": "loggedAt",
+              "bucket": "day",
+              "periods": 14
+            },
+            "titleFieldId": "title",
+            "actionIds": []
+          },
+          {
+            "id": "energyChart",
+            "type": "chart",
+            "collectionId": "checkins",
+            "label": "Average energy by week",
+            "options": {
+              "style": "bar",
+              "metric": "average",
+              "valueFieldId": "energy",
+              "dateFieldId": "loggedAt",
+              "bucket": "week",
+              "periods": 8
+            },
+            "titleFieldId": "title",
+            "actionIds": []
+          },
+          {
+            "id": "categoryChart",
+            "type": "chart",
+            "collectionId": "checkins",
+            "label": "Balance",
+            "options": {
+              "style": "donut",
+              "metric": "count"
+            },
+            "titleFieldId": "title",
+            "groupByFieldId": "category",
+            "actionIds": []
+          },
+          {
+            "id": "checkins",
+            "type": "checklist",
+            "collectionId": "checkins",
+            "label": "Check-ins",
+            "options": {
+              "fieldId": "completed",
+              "actionId": "editRecord"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "loggedAt",
+              "minutes"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "details",
+            "type": "details",
+            "collectionId": "checkins",
+            "label": "Check-in details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ]
+          },
+          {
+            "id": "editor",
+            "type": "form",
+            "collectionId": "checkins",
+            "label": "Check-in",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "minutes",
+                  "control": "slider",
+                  "min": 0,
+                  "max": 180,
+                  "step": 5
+                },
+                {
+                  "fieldId": "energy",
+                  "control": "rating"
+                },
+                {
+                  "fieldId": "category",
+                  "control": "segmented"
+                },
+                {
+                  "fieldId": "completed",
+                  "control": "checkbox"
+                },
+                {
+                  "fieldId": "notes",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "checkins"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "checkins"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "overviewPage",
+          "pages": [
+            {
+              "id": "overviewPage",
+              "title": "Your progress",
+              "viewIds": [
+                "minutesMetric",
+                "dailyMinutes"
+              ]
+            },
+            {
+              "id": "patternsPage",
+              "title": "Patterns",
+              "viewIds": [
+                "energyChart",
+                "categoryChart"
+              ]
+            },
+            {
+              "id": "checkinsPage",
+              "title": "Daily check-ins",
+              "viewIds": [
+                "checkins"
+              ]
+            },
+            {
+              "id": "detailPage",
+              "title": "Check-in details",
+              "viewIds": [
+                "details"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Add check-in",
+              "viewIds": [
+                "editor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "overviewPage",
+              "label": "Progress",
+              "icon": "chart"
+            },
+            {
+              "pageId": "patternsPage",
+              "label": "Patterns",
+              "icon": "spark"
+            },
+            {
+              "pageId": "checkinsPage",
+              "label": "Check-ins",
+              "icon": "check"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-multistep-form",
+      "operation": "create",
+      "prompt": "Create a personal photo journal with title, private photo, moment timestamp, caption, rating and favorite fields. Use a two-step add/edit form: first title, photo and moment timestamp; then multiline caption, rating and favorite. Include image cards, a gallery and linked entry details. No reminders.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Photo Journal",
+        "theme": "rose",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "fields.image.v1",
+          "views.richText.v1",
+          "views.imageCards.v1",
+          "views.gallery.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "memories",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "photo",
+                "label": "Photo",
+                "type": "image",
+                "required": false
+              },
+              {
+                "id": "caption",
+                "label": "Caption",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "takenAt",
+                "label": "Moment",
+                "type": "timestamp",
+                "required": false
+              },
+              {
+                "id": "rating",
+                "label": "Rating",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "favorite",
+                "label": "Favorite",
+                "type": "boolean",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "intro",
+            "type": "richText",
+            "label": "Your journal",
+            "options": {
+              "markdown": "## Small moments, kept close\nCollect the places, people, and everyday details you want to remember.\n\n- Add a photo\n- Write a few words\n- Make it your own"
+            },
+            "actionIds": []
+          },
+          {
+            "id": "photoCards",
+            "type": "imageCards",
+            "collectionId": "memories",
+            "label": "Recent moments",
+            "options": {
+              "imageFieldId": "photo",
+              "captionFieldId": "caption"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "takenAt",
+              "rating"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "photoGallery",
+            "type": "gallery",
+            "collectionId": "memories",
+            "label": "Gallery",
+            "options": {
+              "imageFieldId": "photo",
+              "captionFieldId": "caption"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "details",
+            "type": "details",
+            "collectionId": "memories",
+            "label": "Memory details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ]
+          },
+          {
+            "id": "editor",
+            "type": "form",
+            "collectionId": "memories",
+            "label": "Add a moment",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "photo",
+                  "control": "imageUpload"
+                },
+                {
+                  "fieldId": "caption",
+                  "control": "multiline"
+                },
+                {
+                  "fieldId": "rating",
+                  "control": "rating"
+                },
+                {
+                  "fieldId": "favorite",
+                  "control": "switch"
+                }
+              ],
+              "steps": [
+                {
+                  "id": "moment",
+                  "title": "The moment",
+                  "fieldIds": [
+                    "title",
+                    "photo",
+                    "takenAt"
+                  ]
+                },
+                {
+                  "id": "story",
+                  "title": "The story",
+                  "fieldIds": [
+                    "caption",
+                    "rating",
+                    "favorite"
+                  ]
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "memories"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "memories"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "journalPage",
+          "pages": [
+            {
+              "id": "journalPage",
+              "title": "Journal",
+              "viewIds": [
+                "intro",
+                "photoCards"
+              ]
+            },
+            {
+              "id": "galleryPage",
+              "title": "Your collection",
+              "viewIds": [
+                "photoGallery"
+              ]
+            },
+            {
+              "id": "detailPage",
+              "title": "Memory",
+              "viewIds": [
+                "details"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Capture a moment",
+              "viewIds": [
+                "editor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "journalPage",
+              "label": "Journal",
+              "icon": "book"
+            },
+            {
+              "pageId": "galleryPage",
+              "label": "Gallery",
+              "icon": "spark"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-capacity-signup",
+      "operation": "create",
+      "prompt": "Build shared volunteer shift signups using the group capacity signup policy. Each shift has a title, required start timestamp and preparation notes. Expose shift list, capacity summary, reachable add/edit form, set-capacity, join and cancel-signup controls. Use one capacity pool per shift and an AppNest inbox reminder for active claimants one hour before the start.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Volunteer Shifts",
+        "theme": "teal",
+        "icon": "people",
+        "requires": [
+          "collections.v1",
+          "capacity.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "capacity.configure.v1",
+          "capacity.claim.v1",
+          "capacity.release.v1",
+          "views.list.v1",
+          "views.capacity.v1",
+          "notifications.inApp.v1",
+          "navigation.v1",
+          "views.form.v1",
+          "views.configured.v1"
+        ],
+        "collections": [
+          {
+            "id": "shifts",
+            "label": "Shifts",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Shift",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "startsAt",
+                "label": "Starts",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "notes",
+                "label": "Preparation notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "places",
+                "type": "capacity.v1"
+              }
+            ]
+          }
+        ],
+        "views": [
+          {
+            "id": "allShifts",
+            "type": "list",
+            "collectionId": "shifts",
+            "label": "Shifts",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addShift",
+              "editShift",
+              "join",
+              "leave",
+              "configure"
+            ],
+            "formPageId": "shiftFormPage"
+          },
+          {
+            "id": "placesSummary",
+            "type": "capacity",
+            "collectionId": "shifts",
+            "label": "Places",
+            "titleFieldId": "title",
+            "actionIds": [
+              "join",
+              "leave"
+            ]
+          },
+          {
+            "id": "shiftEditor",
+            "type": "form",
+            "collectionId": "shifts",
+            "label": "Shift editor",
+            "actionIds": [
+              "addShift",
+              "editShift"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addShift",
+            "label": "Create shift",
+            "capability": "records.create.v1",
+            "collectionId": "shifts"
+          },
+          {
+            "id": "editShift",
+            "label": "Edit shift",
+            "capability": "records.patch.v1",
+            "collectionId": "shifts"
+          },
+          {
+            "id": "configure",
+            "label": "Set capacity",
+            "capability": "capacity.configure.v1",
+            "collectionId": "shifts",
+            "behaviorId": "places"
+          },
+          {
+            "id": "join",
+            "label": "Join shift",
+            "capability": "capacity.claim.v1",
+            "collectionId": "shifts",
+            "behaviorId": "places"
+          },
+          {
+            "id": "leave",
+            "label": "Cancel sign-up",
+            "capability": "capacity.release.v1",
+            "collectionId": "shifts",
+            "behaviorId": "places"
+          }
+        ],
+        "policyPresetRequest": "groupCapacitySignup.v1",
+        "automationRequests": [
+          {
+            "id": "shiftReminder",
+            "trigger": {
+              "type": "beforeTimestamp",
+              "collectionId": "shifts",
+              "fieldId": "startsAt",
+              "offsetSeconds": 3600
+            },
+            "effect": {
+              "type": "notifyActiveClaimants",
+              "channel": "inApp"
+            }
+          }
+        ],
+        "navigation": {
+          "entryPageId": "shiftHome",
+          "pages": [
+            {
+              "id": "shiftHome",
+              "title": "Shifts",
+              "viewIds": [
+                "allShifts",
+                "placesSummary"
+              ]
+            },
+            {
+              "id": "shiftFormPage",
+              "title": "Shift editor",
+              "viewIds": [
+                "shiftEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "shiftHome",
+              "label": "Shifts",
+              "icon": "spark"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-reminders-name",
+      "operation": "create",
+      "prompt": "I want a simple personal task reminder app with optional due dates and independent reminder times, Open and Done states, and owner inbox reminders only for open tasks. Let me add and edit tasks.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Reminders",
+        "theme": "blue",
+        "icon": "check",
+        "requires": [
+          "collections.v1",
+          "workflow.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "workflow.transition.v1",
+          "views.list.v1",
+          "views.summary.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "navigation.v1",
+          "views.configured.v1",
+          "notifications.inApp.v1",
+          "notifications.owner.v1",
+          "automations.conditions.v1"
+        ],
+        "collections": [
+          {
+            "id": "tasks",
+            "label": "Tasks",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Task",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Open",
+                  "Done"
+                ]
+              },
+              {
+                "id": "priority",
+                "label": "Priority",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Low",
+                  "Normal",
+                  "High"
+                ]
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "dueAt",
+                "label": "Due",
+                "type": "timestamp",
+                "required": false
+              },
+              {
+                "id": "reminderAt",
+                "label": "Remind me",
+                "type": "timestamp",
+                "required": false
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "taskProgress",
+                "type": "workflow.v1",
+                "fieldId": "status",
+                "transitions": {
+                  "Open": [
+                    "Done"
+                  ],
+                  "Done": [
+                    "Open"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "views": [
+          {
+            "id": "todaySummary",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "Today at a glance",
+            "groupByFieldId": "status",
+            "actionIds": [],
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            }
+          },
+          {
+            "id": "todayTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "Scheduled today",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "compact",
+            "fieldIds": [
+              "status",
+              "priority",
+              "dueAt"
+            ],
+            "query": {
+              "sort": [
+                {
+                  "fieldId": "dueAt",
+                  "descending": false
+                }
+              ],
+              "limit": 25
+            },
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "overdueTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "Overdue",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "compact",
+            "fieldIds": [
+              "priority",
+              "dueAt"
+            ],
+            "query": {
+              "filters": [
+                {
+                  "fieldId": "status",
+                  "operator": "eq",
+                  "value": "Open"
+                }
+              ],
+              "sort": [
+                {
+                  "fieldId": "dueAt",
+                  "descending": false
+                }
+              ],
+              "limit": 25
+            },
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "overdue"
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "allTasks",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "All tasks",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask",
+              "moveTask"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "status",
+              "priority",
+              "dueAt"
+            ],
+            "filterFieldIds": [
+              "status",
+              "priority"
+            ],
+            "query": {
+              "sort": [
+                {
+                  "fieldId": "dueAt",
+                  "descending": false
+                }
+              ],
+              "limit": 25
+            },
+            "detailPageId": "taskDetailPage",
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "todayProgress",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "Today’s scheduled tasks",
+            "groupByFieldId": "status",
+            "actionIds": [],
+            "dateFilter": {
+              "fieldId": "dueAt",
+              "period": "today"
+            }
+          },
+          {
+            "id": "allProgress",
+            "type": "summary",
+            "collectionId": "tasks",
+            "label": "All tasks",
+            "groupByFieldId": "status",
+            "actionIds": []
+          },
+          {
+            "id": "taskDetails",
+            "type": "details",
+            "collectionId": "tasks",
+            "label": "Task details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editTask",
+              "moveTask"
+            ],
+            "fieldIds": [
+              "status",
+              "priority",
+              "notes",
+              "dueAt",
+              "reminderAt"
+            ],
+            "formPageId": "taskEditorPage"
+          },
+          {
+            "id": "taskEditor",
+            "type": "form",
+            "collectionId": "tasks",
+            "label": "Task editor",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask"
+            ],
+            "fieldIds": [
+              "title",
+              "priority",
+              "notes",
+              "dueAt",
+              "reminderAt"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addTask",
+            "label": "Add task",
+            "capability": "records.create.v1",
+            "collectionId": "tasks"
+          },
+          {
+            "id": "editTask",
+            "label": "Edit task",
+            "capability": "records.patch.v1",
+            "collectionId": "tasks"
+          },
+          {
+            "id": "moveTask",
+            "label": "Complete or reopen",
+            "capability": "workflow.transition.v1",
+            "collectionId": "tasks",
+            "behaviorId": "taskProgress"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [
+          {
+            "id": "taskReminder",
+            "trigger": {
+              "type": "beforeTimestamp",
+              "collectionId": "tasks",
+              "fieldId": "reminderAt",
+              "offsetSeconds": 0
+            },
+            "effect": {
+              "type": "notifyOwner",
+              "channel": "inApp"
+            },
+            "condition": {
+              "fieldId": "status",
+              "value": "Open"
+            }
+          }
+        ],
+        "navigation": {
+          "entryPageId": "tasksPage",
+          "pages": [
+            {
+              "id": "todayPage",
+              "title": "Today",
+              "viewIds": [
+                "todaySummary",
+                "todayTasks",
+                "overdueTasks"
+              ],
+              "showDate": true,
+              "primaryActionId": "addTask"
+            },
+            {
+              "id": "tasksPage",
+              "title": "Reminders",
+              "viewIds": [
+                "allTasks"
+              ],
+              "primaryActionId": "addTask"
+            },
+            {
+              "id": "progressPage",
+              "title": "Progress",
+              "viewIds": [
+                "todayProgress",
+                "allProgress"
+              ]
+            },
+            {
+              "id": "taskDetailPage",
+              "title": "Task details",
+              "viewIds": [
+                "taskDetails"
+              ]
+            },
+            {
+              "id": "taskEditorPage",
+              "title": "Task editor",
+              "viewIds": [
+                "taskEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "tasksPage",
+              "label": "Reminders",
+              "icon": "list"
+            },
+            {
+              "pageId": "progressPage",
+              "label": "Progress",
+              "icon": "chart"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-focus-clock",
+      "operation": "create",
+      "prompt": "Build my focus app with a digital local clock showing seconds and a 25-minute countdown timer. It needs no notes, tasks, or record collections.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Focus Clock",
+        "theme": "teal",
+        "icon": "spark",
+        "requires": [
+          "navigation.v1",
+          "views.clock.v1",
+          "views.timer.v1",
+          "views.configured.v1"
+        ],
+        "collections": [],
+        "views": [
+          {
+            "id": "localClock",
+            "type": "clock",
+            "label": "Local time",
+            "options": {
+              "showSeconds": true
+            },
+            "actionIds": []
+          },
+          {
+            "id": "focusTimer",
+            "type": "timer",
+            "label": "Focus timer",
+            "actionIds": []
+          }
+        ],
+        "actions": [],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "focusPage",
+          "pages": [
+            {
+              "id": "focusPage",
+              "title": "Time for yourself",
+              "viewIds": [
+                "localClock",
+                "focusTimer"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "focusPage",
+              "label": "Focus",
+              "icon": "today"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "source": {
+    "commit": "93f0291683bbcdf299ffd6276b2e9e7ccdc78496",
+    "dirtyTrackedSha256": "f732a608cb02e94f7f52a763dd3f6be8ba26fb9ddb535dd914e6a320a83a92fd",
+    "contractSourceSha256": "02ae9e4be259621b37ab35947243c2337f6731e9431196656e66935707e031cf",
+    "dartVersion": "3.13.0 (stable) (Wed Aug 5 00:28:05 2026 -0700) on \"macos_arm64\"",
+    "files": {
+      "appnest_server/lib/src/evaluation/nemotron_case_selection.dart": "961faa1d8bdcf2ff2aeec6b928c872767935464c4f5a3caae645053c934fdd2b",
+      "appnest_server/lib/src/evaluation/nemotron_parallel_scheduler.dart": "b932baa426f122e915bcd16c4688ab9a1464380e423e316cd0884aa97be9bba4",
+      "appnest_server/lib/src/evaluation/nvidia_model_profiles.dart": "3ca973be5959338ecbe935f15d7cf84786d53efdfbae182413501aee4bc888ae",
+      "appnest_server/lib/src/modules/builder/builder.dart": "520ba357c52158fb4279e8ece468ec06b12470a588a9371b6d504a789c60de4f",
+      "appnest_server/lib/src/modules/builder/creation_compiler.dart": "b8f9f642fc3cb7ad0c9b0b7102a5f874c95da6d5ff32844c3229b665310907d0",
+      "appnest_server/lib/src/modules/builder/customization_evaluation.dart": "4b460730522dd375b3323bb78ac71f60b6aacfabfc23f32a7427916700c608b6",
+      "appnest_server/lib/src/modules/builder/generation_quality.dart": "10b42800a230065346a400569ad9f1673a51e5530940d4d91c2c01d474849b91",
+      "appnest_server/lib/src/modules/builder/generation_requirements.dart": "9a469805b406612f331ecab63fdf96292b396acb81770f89029aa5bd79d9812f",
+      "appnest_server/lib/src/modules/builder/nemotron_evaluation.dart": "7d7a2d62cb4c68b7048679c5f613c73c8f8dbc408cdaf9ad13f92d02214c46dd",
+      "appnest_server/lib/src/modules/builder/nemotron_prompt.dart": "c5dcc3a849f375a492503046abb3c8d9cc966f2a9f8ef5e826e9f0a35644c388",
+      "appnest_server/lib/src/modules/builder/nemotron_report.dart": "92b1252cb23519ea6458ad5e98358d28b4fd62dfb9c87e29e348a7d478b851f5",
+      "appnest_server/lib/src/modules/builder/nemotron_routes.dart": "5c3767032281b9d1029f26170269917dd22b27d0b2761f3fa2dcf82a9944f4cf",
+      "appnest_server/lib/src/modules/builder/nemotron_scenarios.dart": "29b7f710ccc67d7c037daa5f318916a611350f5fdd2cbc441f0b26329e968237",
+      "appnest_server/lib/src/modules/builder/provider.dart": "5f92d76946429f8c69e2e06cf7d27a93f1284d3dc44bf47dd9e03b7ef7fb3ac7",
+      "appnest_server/lib/src/modules/builder/repair_bindings.dart": "f24f5e0d40fec992aa546106f9ac186fa130ad8606011cd22002bd651d52de12",
+      "appnest_server/pubspec.yaml": "7b3827ec18181e59e32c92a356220ce02e33c81360aa3ed125d4966d6b87e2de",
+      "packages/appnest_spec/lib/appnest_spec.dart": "189085c4cbf30423002e1e3acb6d8367c649a58292da00a641f659e59baabf2c",
+      "packages/appnest_spec/lib/src/appearance.dart": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e",
+      "packages/appnest_spec/lib/src/device_spec.dart": "ad79778c211c67c074c1bf522e8bdd2a4f6ffd66e28793e3bb9359e5653a7029",
+      "packages/appnest_spec/lib/src/rich_spec.dart": "7aae7c81de7a5708b6184320abc50f24e0d64f00cda3c6d76b521f4d5d063e5a",
+      "packages/appnest_spec/lib/src/rich_templates.dart": "c6a4ab1d72859d41425b03b18f1e4340e870694a79954483566627b5ba721d98",
+      "packages/appnest_spec/lib/src/schema.dart": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24",
+      "packages/appnest_spec/lib/src/spec.dart": "df491ed854b45a7fbd06130784ca305245ba9efa842f127249b06012ff8bf4a2",
+      "packages/appnest_spec/lib/src/templates.dart": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3",
+      "packages/appnest_spec/lib/src/utility_spec.dart": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442",
+      "packages/appnest_spec/lib/src/utility_templates.dart": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18",
+      "packages/appnest_spec/pubspec.yaml": "74e0dd05a42046744392f1e43fa9b395dac1ea5a82b2e15cbcfa03e4c2aec23a",
+      "pubspec.lock": "098981397295b030cdf11c48c14e898bb0419ad6c38bc6797519d169b3f77f99",
+      "pubspec.yaml": "24c0edf2a3ef601e43f6086db95d44aeaff678965f4eedef2ad5b96856c3a6b4",
+      "scripts/nemotron_eval.dart": "b68325936d2ccc24f7ccc7e096e6a1edcf5fc132cb6f142d6558da8b6a4068e9"
+    }
+  },
+  "maxAttempts": 3,
+  "execution": {
+    "concurrency": 1,
+    "requestIntervalMs": 4000,
+    "pacing": "serial-delay",
+    "perModelSequential": true
+  },
+  "transportProfiles": {
+    "nvidia/nemotron-3-super-120b-a12b": {
+      "profile": "nvidia-instruction-schema-thinking-off-v1",
+      "family": "Nemotron",
+      "catalogUrl": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b",
+      "reasoning": "thinking disabled",
+      "requestOverrides": {
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard"
+      ],
+      "parameterSources": {
+        "chat_template_kwargs.enable_thinking": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard",
+        "stream": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b"
+      },
+      "limitations": []
+    }
+  },
+  "runFingerprint": "ab0c586ef192ea482e35b0de7233a56d56c569a2a7e7b18cbf8d668740f6d045",
+  "createdAt": "2026-10-08T15:04:00.677549Z",
+  "updatedAt": "2026-10-08T15:08:50.373023Z",
+  "status": "completed",
+  "catalog": [
+    {
+      "id": "nvidia/nemotron-3-super-120b-a12b",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b",
+      "family": "Nemotron",
+      "pricingVerified": false,
+      "supportedParameters": null
+    }
+  ],
+  "freeOnly": true,
+  "queueTimingMeasured": false,
+  "connectedAppVerified": false,
+  "operations": [
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-notes-fields",
+      "operation": "create",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 12040,
+          "dispatchedAt": "2026-10-08T15:04:00.847766Z",
+          "completedAt": "2026-10-08T15:04:12.888578Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "On a reachable record view such as notesList, set titleFieldId:\"title\" and filterFieldIds:[\"category\"]. The search control requires BOTH view.titleFieldId referencing the existing text title and view.filterFieldIds:[EXISTING_CATEGORY_FIELD_ID]. Include views.configured.v1 in requires; do not create another title or category field.",
+          "usage": {
+            "prompt_tokens": 16898,
+            "completion_tokens": 1112,
+            "total_tokens": 18010,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Notes\",\n  \"theme\": \"sage\",\n  \"icon\": \"book\",\n  \"appearance\": {\n    \"style\": \"editorial\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"appearance.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"workflow.v1\",\n    \"workflow.transition.v1\",\n    \"views.interactive.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"notes\",\n      \"label\": \"Notes\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"body\",\n          \"label\": \"Note\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": false,\n          \"choices\": [\n            \"Personal\",\n            \"Work\",\n            \"Ideas\",\n            \"Other\"\n          ]\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Archived\"\n          ]\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"noteStatus\",\n          \"type\": \"workflow.v1\",\n          \"fieldId\": \"status\",\n          \"transitions\": {\n            \"Open\": [\n              \"Archived\"\n            ],\n            \"Archived\": [\n              \"Open\"\n            ]\n          }\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addNote\",\n      \"label\": \"Add note\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"notes\"\n    },\n    {\n      \"id\": \"editNote\",\n      \"label\": \"Edit note\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"notes\"\n    },\n    {\n      \"id\": \"changeNoteStatus\",\n      \"label\": \"Change status\",\n      \"capability\": \"workflow.transition.v1\",\n      \"collectionId\": \"notes\",\n      \"behaviorId\": \"noteStatus\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"notesList\",\n      \"type\": \"list\",\n      \"collectionId\": \"notes\",\n      \"label\": \"Notes\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"category\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"addNote\",\n        \"editNote\",\n        \"changeNoteStatus\"\n      ],\n      \"detailPageId\": \"noteDetailsPage\",\n      \"formPageId\": \"noteFormPage\",\n      \"query\": {\n        \"filters\": [],\n        \"sort\": [\n          {\n            \"fieldId\": \"title\",\n            \"descending\": false\n          }\n        ],\n        \"limit\": 50\n      }\n    },\n    {\n      \"id\": \"noteDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"notes\",\n      \"label\": \"Note\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"body\",\n        \"category\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"editNote\",\n        \"changeNoteStatus\"\n      ],\n      \"formPageId\": \"noteFormPage\"\n    },\n    {\n      \"id\": \"noteForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"notes\",\n      \"label\": \"Note\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"body\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addNote\",\n        \"editNote\"\n      ],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"body\",\n            \"control\": \"multiline\",\n            \"hint\": \"Write your note here\"\n          }\n        ]\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"notesPage\",\n    \"pages\": [\n      {\n        \"id\": \"notesPage\",\n        \"title\": \"Notes\",\n        \"viewIds\": [\n          \"notesList\"\n        ],\n        \"primaryActionId\": \"addNote\"\n      },\n      {\n        \"id\": \"noteDetailsPage\",\n        \"title\": \"Note details\",\n        \"viewIds\": [\n          \"noteDetails\"\n        ]\n      },\n      {\n        \"id\": \"noteFormPage\",\n        \"title\": \"Edit note\",\n        \"viewIds\": [\n          \"noteForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"notesPage\",\n        \"label\": \"Notes\",\n        \"icon\": \"book\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 9320,
+          "dispatchedAt": "2026-10-08T15:04:16.908525Z",
+          "completedAt": "2026-10-08T15:04:26.229106Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 18440,
+            "completion_tokens": 1125,
+            "total_tokens": 19565,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Notes\",\n  \"theme\": \"sage\",\n  \"icon\": \"book\",\n  \"appearance\": {\n    \"style\": \"editorial\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"appearance.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"workflow.v1\",\n    \"workflow.transition.v1\",\n    \"views.interactive.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"notes\",\n      \"label\": \"Notes\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"body\",\n          \"label\": \"Note\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": false,\n          \"choices\": [\n            \"Personal\",\n            \"Work\",\n            \"Ideas\",\n            \"Other\"\n          ]\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Archived\"\n          ]\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"noteStatus\",\n          \"type\": \"workflow.v1\",\n          \"fieldId\": \"status\",\n          \"transitions\": {\n            \"Open\": [\n              \"Archived\"\n            ],\n            \"Archived\": [\n              \"Open\"\n            ]\n          }\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addNote\",\n      \"label\": \"Add note\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"notes\"\n    },\n    {\n      \"id\": \"editNote\",\n      \"label\": \"Edit note\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"notes\"\n    },\n    {\n      \"id\": \"changeNoteStatus\",\n      \"label\": \"Change status\",\n      \"capability\": \"workflow.transition.v1\",\n      \"collectionId\": \"notes\",\n      \"behaviorId\": \"noteStatus\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"notesList\",\n      \"type\": \"list\",\n      \"collectionId\": \"notes\",\n      \"label\": \"Notes\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"category\",\n        \"status\"\n      ],\n      \"filterFieldIds\": [\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addNote\",\n        \"editNote\",\n        \"changeNoteStatus\"\n      ],\n      \"detailPageId\": \"noteDetailsPage\",\n      \"formPageId\": \"noteFormPage\",\n      \"query\": {\n        \"filters\": [],\n        \"sort\": [\n          {\n            \"fieldId\": \"title\",\n            \"descending\": false\n          }\n        ],\n        \"limit\": 50\n      }\n    },\n    {\n      \"id\": \"noteDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"notes\",\n      \"label\": \"Note\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"body\",\n        \"category\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"editNote\",\n        \"changeNoteStatus\"\n      ],\n      \"formPageId\": \"noteFormPage\"\n    },\n    {\n      \"id\": \"noteForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"notes\",\n      \"label\": \"Note\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"body\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addNote\",\n        \"editNote\"\n      ],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"body\",\n            \"control\": \"multiline\",\n            \"hint\": \"Write your note here\"\n          }\n        ]\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"notesPage\",\n    \"pages\": [\n      {\n        \"id\": \"notesPage\",\n        \"title\": \"Notes\",\n        \"viewIds\": [\n          \"notesList\"\n        ],\n        \"primaryActionId\": \"addNote\"\n      },\n      {\n        \"id\": \"noteDetailsPage\",\n        \"title\": \"Note details\",\n        \"viewIds\": [\n          \"noteDetails\"\n        ]\n      },\n      {\n        \"id\": \"noteFormPage\",\n        \"title\": \"Edit note\",\n        \"viewIds\": [\n          \"noteForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"notesPage\",\n        \"label\": \"Notes\",\n        \"icon\": \"book\"\n      }\n    ]\n  }\n}"
+        }
+      ],
+      "totalMs": 21360,
+      "diagnostic": "On a reachable record view such as notesList, set titleFieldId:\"title\" and filterFieldIds:[\"category\"]. The search control requires BOTH view.titleFieldId referencing the existing text title and view.filterFieldIds:[EXISTING_CATEGORY_FIELD_ID]. Include views.configured.v1 in requires; do not create another title or category field.",
+      "candidate": {
+        "formatVersion": 1,
+        "name": "Notes",
+        "theme": "sage",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "views.list.v1",
+          "views.form.v1",
+          "views.details.v1",
+          "navigation.v1",
+          "views.configured.v1",
+          "appearance.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "workflow.v1",
+          "workflow.transition.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Notes",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Personal",
+                  "Work",
+                  "Ideas",
+                  "Other"
+                ]
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Open",
+                  "Archived"
+                ]
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "noteStatus",
+                "type": "workflow.v1",
+                "fieldId": "status",
+                "transitions": {
+                  "Open": [
+                    "Archived"
+                  ],
+                  "Archived": [
+                    "Open"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "views": [
+          {
+            "id": "notesList",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addNote",
+              "editNote",
+              "changeNoteStatus"
+            ],
+            "fieldIds": [
+              "category",
+              "status"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "query": {
+              "filters": [],
+              "sort": [
+                {
+                  "fieldId": "title",
+                  "descending": false
+                }
+              ],
+              "limit": 50
+            },
+            "detailPageId": "noteDetailsPage",
+            "formPageId": "noteFormPage"
+          },
+          {
+            "id": "noteDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Note",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editNote",
+              "changeNoteStatus"
+            ],
+            "fieldIds": [
+              "body",
+              "category",
+              "status"
+            ],
+            "formPageId": "noteFormPage"
+          },
+          {
+            "id": "noteForm",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Note",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "body",
+                  "control": "multiline",
+                  "hint": "Write your note here"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addNote",
+              "editNote"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addNote",
+            "label": "Add note",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editNote",
+            "label": "Edit note",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "changeNoteStatus",
+            "label": "Change status",
+            "capability": "workflow.transition.v1",
+            "collectionId": "notes",
+            "behaviorId": "noteStatus"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "notesPage",
+          "pages": [
+            {
+              "id": "notesPage",
+              "title": "Notes",
+              "viewIds": [
+                "notesList"
+              ],
+              "primaryActionId": "addNote"
+            },
+            {
+              "id": "noteDetailsPage",
+              "title": "Note details",
+              "viewIds": [
+                "noteDetails"
+              ]
+            },
+            {
+              "id": "noteFormPage",
+              "title": "Edit note",
+              "viewIds": [
+                "noteForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "notesPage",
+              "label": "Notes",
+              "icon": "book"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "editorial"
+        }
+      }
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-calendar-category",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 12726,
+          "dispatchedAt": "2026-10-08T15:04:30.264622Z",
+          "completedAt": "2026-10-08T15:04:42.990982Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Choose an approved theme and icon",
+          "usage": {
+            "prompt_tokens": 16905,
+            "completion_tokens": 1042,
+            "total_tokens": 17947,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"My Calendar\",\n  \"theme\": \"teal\",\n  \"icon\": \"calendar\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.calendar.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"events\",\n      \"label\": \"Events\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"startTime\",\n          \"label\": \"Start time\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Personal\",\n            \"Work\"\n          ]\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addEvent\",\n      \"label\": \"Add event\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"events\"\n    },\n    {\n      \"id\": \"editEvent\",\n      \"label\": \"Edit event\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"events\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"eventCalendar\",\n      \"type\": \"calendar\",\n      \"collectionId\": \"events\",\n      \"label\": \"Calendar\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"options\": {\n        \"dateFieldId\": \"startTime\"\n      }\n    },\n    {\n      \"id\": \"eventList\",\n      \"type\": \"list\",\n      \"collectionId\": \"events\",\n      \"label\": \"Daily agenda\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"startTime\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"dateFilter\": {\n        \"fieldId\": \"startTime\",\n        \"period\": \"today\"\n      }\n    },\n    {\n      \"id\": \"eventDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"startTime\",\n        \"notes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"editEvent\"\n      ],\n      \"formPageId\": \"eventFormPage\"\n    },\n    {\n      \"id\": \"eventForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"startTime\",\n        \"notes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"calendarPage\",\n    \"pages\": [\n      {\n        \"id\": \"calendarPage\",\n        \"title\": \"Calendar\",\n        \"viewIds\": [\n          \"eventCalendar\"\n        ],\n        \"primaryActionId\": \"addEvent\"\n      },\n      {\n        \"id\": \"agendaPage\",\n        \"title\": \"Daily agenda\",\n        \"viewIds\": [\n          \"eventList\"\n        ]\n      },\n      {\n        \"id\": \"eventDetailsPage\",\n        \"title\": \"Event details\",\n        \"viewIds\": [\n          \"eventDetails\"\n        ]\n      },\n      {\n        \"id\": \"eventFormPage\",\n        \"title\": \"Event editor\",\n        \"viewIds\": [\n          \"eventForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"calendarPage\",\n        \"label\": \"Calendar\",\n        \"icon\": \"calendar\"\n      },\n      {\n        \"pageId\": \"agendaPage\",\n        \"label\": \"Agenda\",\n        \"icon\": \"list\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 9114,
+          "dispatchedAt": "2026-10-08T15:04:47.014640Z",
+          "completedAt": "2026-10-08T15:04:56.128833Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Choose an approved theme and icon",
+          "usage": {
+            "prompt_tokens": 18281,
+            "completion_tokens": 1042,
+            "total_tokens": 19323,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"My Calendar\",\n  \"theme\": \"teal\",\n  \"icon\": \"calendar\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.calendar.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"events\",\n      \"label\": \"Events\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"startTime\",\n          \"label\": \"Start time\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Personal\",\n            \"Work\"\n          ]\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addEvent\",\n      \"label\": \"Add event\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"events\"\n    },\n    {\n      \"id\": \"editEvent\",\n      \"label\": \"Edit event\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"events\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"eventCalendar\",\n      \"type\": \"calendar\",\n      \"collectionId\": \"events\",\n      \"label\": \"Calendar\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"options\": {\n        \"dateFieldId\": \"startTime\"\n      }\n    },\n    {\n      \"id\": \"eventList\",\n      \"type\": \"list\",\n      \"collectionId\": \"events\",\n      \"label\": \"Daily agenda\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"startTime\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"dateFilter\": {\n        \"fieldId\": \"startTime\",\n        \"period\": \"today\"\n      }\n    },\n    {\n      \"id\": \"eventDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"startTime\",\n        \"notes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"editEvent\"\n      ],\n      \"formPageId\": \"eventFormPage\"\n    },\n    {\n      \"id\": \"eventForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"startTime\",\n        \"notes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"calendarPage\",\n    \"pages\": [\n      {\n        \"id\": \"calendarPage\",\n        \"title\": \"Calendar\",\n        \"viewIds\": [\n          \"eventCalendar\"\n        ],\n        \"primaryActionId\": \"addEvent\"\n      },\n      {\n        \"id\": \"agendaPage\",\n        \"title\": \"Daily agenda\",\n        \"viewIds\": [\n          \"eventList\"\n        ]\n      },\n      {\n        \"id\": \"eventDetailsPage\",\n        \"title\": \"Event details\",\n        \"viewIds\": [\n          \"eventDetails\"\n        ]\n      },\n      {\n        \"id\": \"eventFormPage\",\n        \"title\": \"Event editor\",\n        \"viewIds\": [\n          \"eventForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"calendarPage\",\n        \"label\": \"Calendar\",\n        \"icon\": \"calendar\"\n      },\n      {\n        \"pageId\": \"agendaPage\",\n        \"label\": \"Agenda\",\n        \"icon\": \"list\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 7390,
+          "dispatchedAt": "2026-10-08T15:05:00.152334Z",
+          "completedAt": "2026-10-08T15:05:07.542759Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Choose an approved theme and icon",
+          "usage": {
+            "prompt_tokens": 18281,
+            "completion_tokens": 1042,
+            "total_tokens": 19323,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"My Calendar\",\n  \"theme\": \"teal\",\n  \"icon\": \"calendar\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.calendar.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"events\",\n      \"label\": \"Events\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"startTime\",\n          \"label\": \"Start time\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Personal\",\n            \"Work\"\n          ]\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addEvent\",\n      \"label\": \"Add event\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"events\"\n    },\n    {\n      \"id\": \"editEvent\",\n      \"label\": \"Edit event\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"events\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"eventCalendar\",\n      \"type\": \"calendar\",\n      \"collectionId\": \"events\",\n      \"label\": \"Calendar\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"options\": {\n        \"dateFieldId\": \"startTime\"\n      }\n    },\n    {\n      \"id\": \"eventList\",\n      \"type\": \"list\",\n      \"collectionId\": \"events\",\n      \"label\": \"Daily agenda\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"startTime\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"dateFilter\": {\n        \"fieldId\": \"startTime\",\n        \"period\": \"today\"\n      }\n    },\n    {\n      \"id\": \"eventDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"startTime\",\n        \"notes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"editEvent\"\n      ],\n      \"formPageId\": \"eventFormPage\"\n    },\n    {\n      \"id\": \"eventForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"startTime\",\n        \"notes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"addEvent\",\n        \"editEvent\"\n      ]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"calendarPage\",\n    \"pages\": [\n      {\n        \"id\": \"calendarPage\",\n        \"title\": \"Calendar\",\n        \"viewIds\": [\n          \"eventCalendar\"\n        ],\n        \"primaryActionId\": \"addEvent\"\n      },\n      {\n        \"id\": \"agendaPage\",\n        \"title\": \"Daily agenda\",\n        \"viewIds\": [\n          \"eventList\"\n        ]\n      },\n      {\n        \"id\": \"eventDetailsPage\",\n        \"title\": \"Event details\",\n        \"viewIds\": [\n          \"eventDetails\"\n        ]\n      },\n      {\n        \"id\": \"eventFormPage\",\n        \"title\": \"Event editor\",\n        \"viewIds\": [\n          \"eventForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"calendarPage\",\n        \"label\": \"Calendar\",\n        \"icon\": \"calendar\"\n      },\n      {\n        \"pageId\": \"agendaPage\",\n        \"label\": \"Agenda\",\n        \"icon\": \"list\"\n      }\n    ]\n  }\n}"
+        }
+      ],
+      "totalMs": 29230,
+      "diagnostic": "Choose an approved theme and icon"
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-calendar-appearance",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 6948,
+          "dispatchedAt": "2026-10-08T15:05:15.571255Z",
+          "completedAt": "2026-10-08T15:05:22.519470Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Choose an approved theme and icon",
+          "usage": {
+            "prompt_tokens": 16897,
+            "completion_tokens": 933,
+            "total_tokens": 17830,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Events Calendar\",\n  \"theme\": \"teal\",\n  \"icon\": \"calendar\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.calendar.v1\",\n    \"views.list.v1\",\n    \"views.details.v1\",\n    \"views.form.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"events\",\n      \"label\": \"Events\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"dateTime\",\n          \"label\": \"Date and Time\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addEvent\",\n      \"label\": \"Add event\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"events\"\n    },\n    {\n      \"id\": \"editEvent\",\n      \"label\": \"Edit event\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"events\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"eventsCalendar\",\n      \"type\": \"calendar\",\n      \"collectionId\": \"events\",\n      \"label\": \"Calendar\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\"addEvent\", \"editEvent\"],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"options\": {\n        \"dateFieldId\": \"dateTime\"\n      }\n    },\n    {\n      \"id\": \"eventList\",\n      \"type\": \"list\",\n      \"collectionId\": \"events\",\n      \"label\": \"Agenda\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\"addEvent\", \"editEvent\"],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"query\": {\n        \"filters\": [\n          {\n            \"fieldId\": \"dateTime\",\n            \"operator\": \"gte\",\n            \"value\": \"2024-01-01T00:00:00Z\"\n          }\n        ],\n        \"sort\": [\n          {\n            \"fieldId\": \"dateTime\",\n            \"descending\": false\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"eventDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"dateTime\", \"notes\"],\n      \"actionIds\": [\"editEvent\"],\n      \"formPageId\": \"eventFormPage\"\n    },\n    {\n      \"id\": \"eventForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"fieldIds\": [\"title\", \"dateTime\", \"notes\"],\n      \"actionIds\": [\"addEvent\", \"editEvent\"]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"eventsPage\",\n    \"pages\": [\n      {\n        \"id\": \"eventsPage\",\n        \"title\": \"Events\",\n        \"viewIds\": [\"eventsCalendar\", \"eventList\"],\n        \"primaryActionId\": \"addEvent\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"eventDetailsPage\",\n        \"title\": \"Event details\",\n        \"viewIds\": [\"eventDetails\"]\n      },\n      {\n        \"id\": \"eventFormPage\",\n        \"title\": \"Event editor\",\n        \"viewIds\": [\"eventForm\"]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"eventsPage\",\n        \"label\": \"Events\",\n        \"icon\": \"calendar\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 7965,
+          "dispatchedAt": "2026-10-08T15:05:26.543186Z",
+          "completedAt": "2026-10-08T15:05:34.508307Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Choose an approved theme and icon",
+          "usage": {
+            "prompt_tokens": 18111,
+            "completion_tokens": 933,
+            "total_tokens": 19044,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Events Calendar\",\n  \"theme\": \"teal\",\n  \"icon\": \"calendar\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.calendar.v1\",\n    \"views.list.v1\",\n    \"views.details.v1\",\n    \"views.form.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"events\",\n      \"label\": \"Events\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"dateTime\",\n          \"label\": \"Date and Time\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addEvent\",\n      \"label\": \"Add event\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"events\"\n    },\n    {\n      \"id\": \"editEvent\",\n      \"label\": \"Edit event\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"events\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"eventsCalendar\",\n      \"type\": \"calendar\",\n      \"collectionId\": \"events\",\n      \"label\": \"Calendar\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\"addEvent\", \"editEvent\"],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"options\": {\n        \"dateFieldId\": \"dateTime\"\n      }\n    },\n    {\n      \"id\": \"eventList\",\n      \"type\": \"list\",\n      \"collectionId\": \"events\",\n      \"label\": \"Agenda\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\"addEvent\", \"editEvent\"],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"query\": {\n        \"filters\": [\n          {\n            \"fieldId\": \"dateTime\",\n            \"operator\": \"gte\",\n            \"value\": \"2024-01-01T00:00:00Z\"\n          }\n        ],\n        \"sort\": [\n          {\n            \"fieldId\": \"dateTime\",\n            \"descending\": false\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"eventDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"dateTime\", \"notes\"],\n      \"actionIds\": [\"editEvent\"],\n      \"formPageId\": \"eventFormPage\"\n    },\n    {\n      \"id\": \"eventForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"fieldIds\": [\"title\", \"dateTime\", \"notes\"],\n      \"actionIds\": [\"addEvent\", \"editEvent\"]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"eventsPage\",\n    \"pages\": [\n      {\n        \"id\": \"eventsPage\",\n        \"title\": \"Events\",\n        \"viewIds\": [\"eventsCalendar\", \"eventList\"],\n        \"primaryActionId\": \"addEvent\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"eventDetailsPage\",\n        \"title\": \"Event details\",\n        \"viewIds\": [\"eventDetails\"]\n      },\n      {\n        \"id\": \"eventFormPage\",\n        \"title\": \"Event editor\",\n        \"viewIds\": [\"eventForm\"]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"eventsPage\",\n        \"label\": \"Events\",\n        \"icon\": \"calendar\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 6405,
+          "dispatchedAt": "2026-10-08T15:05:38.531941Z",
+          "completedAt": "2026-10-08T15:05:44.937082Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Choose an approved theme and icon",
+          "usage": {
+            "prompt_tokens": 18111,
+            "completion_tokens": 933,
+            "total_tokens": 19044,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Events Calendar\",\n  \"theme\": \"teal\",\n  \"icon\": \"calendar\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.calendar.v1\",\n    \"views.list.v1\",\n    \"views.details.v1\",\n    \"views.form.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"events\",\n      \"label\": \"Events\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"dateTime\",\n          \"label\": \"Date and Time\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addEvent\",\n      \"label\": \"Add event\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"events\"\n    },\n    {\n      \"id\": \"editEvent\",\n      \"label\": \"Edit event\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"events\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"eventsCalendar\",\n      \"type\": \"calendar\",\n      \"collectionId\": \"events\",\n      \"label\": \"Calendar\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\"addEvent\", \"editEvent\"],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"options\": {\n        \"dateFieldId\": \"dateTime\"\n      }\n    },\n    {\n      \"id\": \"eventList\",\n      \"type\": \"list\",\n      \"collectionId\": \"events\",\n      \"label\": \"Agenda\",\n      \"titleFieldId\": \"title\",\n      \"actionIds\": [\"addEvent\", \"editEvent\"],\n      \"detailPageId\": \"eventDetailsPage\",\n      \"formPageId\": \"eventFormPage\",\n      \"query\": {\n        \"filters\": [\n          {\n            \"fieldId\": \"dateTime\",\n            \"operator\": \"gte\",\n            \"value\": \"2024-01-01T00:00:00Z\"\n          }\n        ],\n        \"sort\": [\n          {\n            \"fieldId\": \"dateTime\",\n            \"descending\": false\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"eventDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"dateTime\", \"notes\"],\n      \"actionIds\": [\"editEvent\"],\n      \"formPageId\": \"eventFormPage\"\n    },\n    {\n      \"id\": \"eventForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"events\",\n      \"label\": \"Event\",\n      \"fieldIds\": [\"title\", \"dateTime\", \"notes\"],\n      \"actionIds\": [\"addEvent\", \"editEvent\"]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"eventsPage\",\n    \"pages\": [\n      {\n        \"id\": \"eventsPage\",\n        \"title\": \"Events\",\n        \"viewIds\": [\"eventsCalendar\", \"eventList\"],\n        \"primaryActionId\": \"addEvent\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"eventDetailsPage\",\n        \"title\": \"Event details\",\n        \"viewIds\": [\"eventDetails\"]\n      },\n      {\n        \"id\": \"eventFormPage\",\n        \"title\": \"Event editor\",\n        \"viewIds\": [\"eventForm\"]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"eventsPage\",\n        \"label\": \"Events\",\n        \"icon\": \"calendar\"\n      }\n    ]\n  }\n}"
+        }
+      ],
+      "totalMs": 21318,
+      "diagnostic": "Choose an approved theme and icon"
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-rich-dashboard",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 11972,
+          "dispatchedAt": "2026-10-08T15:05:52.977048Z",
+          "completedAt": "2026-10-08T15:06:04.949387Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Page dashboardPage primaryActionId addActivity must reference a records.create.v1 action. Include addActivity in actionIds of a view on this page and set that view formPageId to its form page (unless the view is itself a form).",
+          "usage": {
+            "prompt_tokens": 16941,
+            "completion_tokens": 1480,
+            "total_tokens": 18421,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Activity Dashboard\",\n  \"theme\": \"teal\",\n  \"icon\": \"spark\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"workflow.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"workflow.transition.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.checklist.v1\",\n    \"views.metric.v1\",\n    \"views.chart.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"views.interactive.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"activities\",\n      \"label\": \"Activities\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"timestamp\",\n          \"label\": \"Timestamp\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"minutes\",\n          \"label\": \"Minutes\",\n          \"type\": \"number\",\n          \"required\": true\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Work\",\n            \"Exercise\",\n            \"Study\",\n            \"Leisure\"\n          ]\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Done\"\n          ]\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"activityStatus\",\n          \"type\": \"workflow.v1\",\n          \"fieldId\": \"status\",\n          \"transitions\": {\n            \"Open\": [\n              \"Done\"\n            ],\n            \"Done\": [\n              \"Open\"\n            ]\n          }\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addActivity\",\n      \"label\": \"Add activity\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"activities\"\n    },\n    {\n      \"id\": \"editActivity\",\n      \"label\": \"Edit activity\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"activities\"\n    },\n    {\n      \"id\": \"toggleActivityStatus\",\n      \"label\": \"Toggle status\",\n      \"capability\": \"workflow.transition.v1\",\n      \"collectionId\": \"activities\",\n      \"behaviorId\": \"activityStatus\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"activityList\",\n      \"type\": \"list\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activities\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"addActivity\",\n        \"editActivity\",\n        \"toggleActivityStatus\"\n      ],\n      \"detailPageId\": \"activityDetailsPage\",\n      \"formPageId\": \"activityFormPage\"\n    },\n    {\n      \"id\": \"activityDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity details\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"notes\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"editActivity\",\n        \"toggleActivityStatus\"\n      ],\n      \"formPageId\": \"activityFormPage\"\n    },\n    {\n      \"id\": \"activityForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity form\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"notes\"\n      ],\n      \"actionIds\": [\n        \"addActivity\",\n        \"editActivity\"\n      ],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"notes\",\n            \"control\": \"multiline\",\n            \"hint\": \"Enter detailed notes about the activity\"\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"activityChecklist\",\n      \"type\": \"checklist\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity checklist\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"toggleActivityStatus\"\n      ],\n      \"options\": {\n        \"fieldId\": \"status\",\n        \"actionId\": \"toggleActivityStatus\",\n        \"checkedValue\": \"Done\",\n        \"uncheckedValue\": \"Open\"\n      }\n    },\n    {\n      \"id\": \"activityMetric\",\n      \"type\": \"metric\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Total minutes\",\n      \"actionIds\": [],\n      \"options\": {\n        \"metric\": \"sum\",\n        \"valueFieldId\": \"minutes\",\n        \"target\": 150\n      }\n    },\n    {\n      \"id\": \"activityChart\",\n      \"type\": \"chart\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Minutes trend\",\n      \"actionIds\": [],\n      \"options\": {\n        \"style\": \"line\",\n        \"metric\": \"sum\",\n        \"valueFieldId\": \"minutes\",\n        \"dateFieldId\": \"timestamp\",\n        \"bucket\": \"day\",\n        \"periods\": 14\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"dashboardPage\",\n    \"pages\": [\n      {\n        \"id\": \"dashboardPage\",\n        \"title\": \"Dashboard\",\n        \"viewIds\": [\n          \"activityChecklist\",\n          \"activityMetric\",\n          \"activityChart\"\n        ],\n        \"primaryActionId\": \"addActivity\"\n      },\n      {\n        \"id\": \"activityDetailsPage\",\n        \"title\": \"Activity details\",\n        \"viewIds\": [\n          \"activityDetails\"\n        ]\n      },\n      {\n        \"id\": \"activityFormPage\",\n        \"title\": \"Add activity\",\n        \"viewIds\": [\n          \"activityForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"dashboardPage\",\n        \"label\": \"Dashboard\",\n        \"icon\": \"spark\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 14410,
+          "dispatchedAt": "2026-10-08T15:06:08.977853Z",
+          "completedAt": "2026-10-08T15:06:23.388255Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Page dashboardPage primaryActionId addActivity must reference a records.create.v1 action. Include addActivity in actionIds of a view on this page and set that view formPageId to its form page (unless the view is itself a form).",
+          "usage": {
+            "prompt_tokens": 19035,
+            "completion_tokens": 1480,
+            "total_tokens": 20515,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Activity Dashboard\",\n  \"theme\": \"teal\",\n  \"icon\": \"spark\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"workflow.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"workflow.transition.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.checklist.v1\",\n    \"views.metric.v1\",\n    \"views.chart.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"views.interactive.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"activities\",\n      \"label\": \"Activities\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"timestamp\",\n          \"label\": \"Timestamp\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"minutes\",\n          \"label\": \"Minutes\",\n          \"type\": \"number\",\n          \"required\": true\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Work\",\n            \"Exercise\",\n            \"Study\",\n            \"Leisure\"\n          ]\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Done\"\n          ]\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"activityStatus\",\n          \"type\": \"workflow.v1\",\n          \"fieldId\": \"status\",\n          \"transitions\": {\n            \"Open\": [\n              \"Done\"\n            ],\n            \"Done\": [\n              \"Open\"\n            ]\n          }\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addActivity\",\n      \"label\": \"Add activity\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"activities\"\n    },\n    {\n      \"id\": \"editActivity\",\n      \"label\": \"Edit activity\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"activities\"\n    },\n    {\n      \"id\": \"toggleActivityStatus\",\n      \"label\": \"Toggle status\",\n      \"capability\": \"workflow.transition.v1\",\n      \"collectionId\": \"activities\",\n      \"behaviorId\": \"activityStatus\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"activityList\",\n      \"type\": \"list\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activities\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"addActivity\",\n        \"editActivity\",\n        \"toggleActivityStatus\"\n      ],\n      \"detailPageId\": \"activityDetailsPage\",\n      \"formPageId\": \"activityFormPage\"\n    },\n    {\n      \"id\": \"activityDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity details\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"notes\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"editActivity\",\n        \"toggleActivityStatus\"\n      ],\n      \"formPageId\": \"activityFormPage\"\n    },\n    {\n      \"id\": \"activityForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity form\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"notes\"\n      ],\n      \"actionIds\": [\n        \"addActivity\",\n        \"editActivity\"\n      ],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"notes\",\n            \"control\": \"multiline\",\n            \"hint\": \"Enter detailed notes about the activity\"\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"activityChecklist\",\n      \"type\": \"checklist\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity checklist\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"toggleActivityStatus\"\n      ],\n      \"options\": {\n        \"fieldId\": \"status\",\n        \"actionId\": \"toggleActivityStatus\",\n        \"checkedValue\": \"Done\",\n        \"uncheckedValue\": \"Open\"\n      }\n    },\n    {\n      \"id\": \"activityMetric\",\n      \"type\": \"metric\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Total minutes\",\n      \"actionIds\": [],\n      \"options\": {\n        \"metric\": \"sum\",\n        \"valueFieldId\": \"minutes\",\n        \"target\": 150\n      }\n    },\n    {\n      \"id\": \"activityChart\",\n      \"type\": \"chart\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Minutes trend\",\n      \"actionIds\": [],\n      \"options\": {\n        \"style\": \"line\",\n        \"metric\": \"sum\",\n        \"valueFieldId\": \"minutes\",\n        \"dateFieldId\": \"timestamp\",\n        \"bucket\": \"day\",\n        \"periods\": 14\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"dashboardPage\",\n    \"pages\": [\n      {\n        \"id\": \"dashboardPage\",\n        \"title\": \"Dashboard\",\n        \"viewIds\": [\n          \"activityChecklist\",\n          \"activityMetric\",\n          \"activityChart\"\n        ],\n        \"primaryActionId\": \"addActivity\"\n      },\n      {\n        \"id\": \"activityDetailsPage\",\n        \"title\": \"Activity details\",\n        \"viewIds\": [\n          \"activityDetails\"\n        ]\n      },\n      {\n        \"id\": \"activityFormPage\",\n        \"title\": \"Add activity\",\n        \"viewIds\": [\n          \"activityForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"dashboardPage\",\n        \"label\": \"Dashboard\",\n        \"icon\": \"spark\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 11101,
+          "dispatchedAt": "2026-10-08T15:06:27.416490Z",
+          "completedAt": "2026-10-08T15:06:38.517681Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Page dashboardPage primaryActionId addActivity must reference a records.create.v1 action. Include addActivity in actionIds of a view on this page and set that view formPageId to its form page (unless the view is itself a form).",
+          "usage": {
+            "prompt_tokens": 19035,
+            "completion_tokens": 1480,
+            "total_tokens": 20515,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 18304
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Activity Dashboard\",\n  \"theme\": \"teal\",\n  \"icon\": \"spark\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"workflow.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"workflow.transition.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.checklist.v1\",\n    \"views.metric.v1\",\n    \"views.chart.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"views.interactive.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"activities\",\n      \"label\": \"Activities\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"timestamp\",\n          \"label\": \"Timestamp\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"minutes\",\n          \"label\": \"Minutes\",\n          \"type\": \"number\",\n          \"required\": true\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Work\",\n            \"Exercise\",\n            \"Study\",\n            \"Leisure\"\n          ]\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Done\"\n          ]\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"activityStatus\",\n          \"type\": \"workflow.v1\",\n          \"fieldId\": \"status\",\n          \"transitions\": {\n            \"Open\": [\n              \"Done\"\n            ],\n            \"Done\": [\n              \"Open\"\n            ]\n          }\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addActivity\",\n      \"label\": \"Add activity\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"activities\"\n    },\n    {\n      \"id\": \"editActivity\",\n      \"label\": \"Edit activity\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"activities\"\n    },\n    {\n      \"id\": \"toggleActivityStatus\",\n      \"label\": \"Toggle status\",\n      \"capability\": \"workflow.transition.v1\",\n      \"collectionId\": \"activities\",\n      \"behaviorId\": \"activityStatus\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"activityList\",\n      \"type\": \"list\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activities\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"addActivity\",\n        \"editActivity\",\n        \"toggleActivityStatus\"\n      ],\n      \"detailPageId\": \"activityDetailsPage\",\n      \"formPageId\": \"activityFormPage\"\n    },\n    {\n      \"id\": \"activityDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity details\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"notes\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"editActivity\",\n        \"toggleActivityStatus\"\n      ],\n      \"formPageId\": \"activityFormPage\"\n    },\n    {\n      \"id\": \"activityForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity form\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"timestamp\",\n        \"minutes\",\n        \"category\",\n        \"notes\"\n      ],\n      \"actionIds\": [\n        \"addActivity\",\n        \"editActivity\"\n      ],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"notes\",\n            \"control\": \"multiline\",\n            \"hint\": \"Enter detailed notes about the activity\"\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"activityChecklist\",\n      \"type\": \"checklist\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Activity checklist\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"timestamp\",\n        \"minutes\",\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"toggleActivityStatus\"\n      ],\n      \"options\": {\n        \"fieldId\": \"status\",\n        \"actionId\": \"toggleActivityStatus\",\n        \"checkedValue\": \"Done\",\n        \"uncheckedValue\": \"Open\"\n      }\n    },\n    {\n      \"id\": \"activityMetric\",\n      \"type\": \"metric\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Total minutes\",\n      \"actionIds\": [],\n      \"options\": {\n        \"metric\": \"sum\",\n        \"valueFieldId\": \"minutes\",\n        \"target\": 150\n      }\n    },\n    {\n      \"id\": \"activityChart\",\n      \"type\": \"chart\",\n      \"collectionId\": \"activities\",\n      \"label\": \"Minutes trend\",\n      \"actionIds\": [],\n      \"options\": {\n        \"style\": \"line\",\n        \"metric\": \"sum\",\n        \"valueFieldId\": \"minutes\",\n        \"dateFieldId\": \"timestamp\",\n        \"bucket\": \"day\",\n        \"periods\": 14\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"dashboardPage\",\n    \"pages\": [\n      {\n        \"id\": \"dashboardPage\",\n        \"title\": \"Dashboard\",\n        \"viewIds\": [\n          \"activityChecklist\",\n          \"activityMetric\",\n          \"activityChart\"\n        ],\n        \"primaryActionId\": \"addActivity\"\n      },\n      {\n        \"id\": \"activityDetailsPage\",\n        \"title\": \"Activity details\",\n        \"viewIds\": [\n          \"activityDetails\"\n        ]\n      },\n      {\n        \"id\": \"activityFormPage\",\n        \"title\": \"Add activity\",\n        \"viewIds\": [\n          \"activityForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"dashboardPage\",\n        \"label\": \"Dashboard\",\n        \"icon\": \"spark\"\n      }\n    ]\n  }\n}"
+        }
+      ],
+      "totalMs": 37483,
+      "diagnostic": "Page dashboardPage primaryActionId addActivity must reference a records.create.v1 action. Include addActivity in actionIds of a view on this page and set that view formPageId to its form page (unless the view is itself a form)."
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-multistep-form",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 8734,
+          "dispatchedAt": "2026-10-08T15:06:46.568334Z",
+          "completedAt": "2026-10-08T15:06:55.302666Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Expose private image upload, timestamp, multiline caption, rating and favorite controls.",
+          "usage": {
+            "prompt_tokens": 16931,
+            "completion_tokens": 1259,
+            "total_tokens": 18190,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Photo Journal\",\n  \"theme\": \"sage\",\n  \"icon\": \"people\",\n  \"appearance\": {\n    \"style\": \"editorial\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.imageCards.v1\",\n    \"views.gallery.v1\",\n    \"views.interactive.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"navigation.layouts.v1\",\n    \"appearance.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"fields.image.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"photos\",\n      \"label\": \"Photos\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"photo\",\n          \"label\": \"Photo\",\n          \"type\": \"image\",\n          \"required\": true\n        },\n        {\n          \"id\": \"moment\",\n          \"label\": \"Moment\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"caption\",\n          \"label\": \"Caption\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"rating\",\n          \"label\": \"Rating\",\n          \"type\": \"integer\",\n          \"required\": false\n        },\n        {\n          \"id\": \"favorite\",\n          \"label\": \"Favorite\",\n          \"type\": \"boolean\",\n          \"required\": false\n        }\n      ],\n      \"behaviors\": []\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addPhoto\",\n      \"label\": \"Add photo\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"photos\"\n    },\n    {\n      \"id\": \"editPhoto\",\n      \"label\": \"Edit photo\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"photos\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"photoList\",\n      \"type\": \"list\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photos\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"moment\"],\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\"\n    },\n    {\n      \"id\": \"photoDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photo\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"title\", \"moment\", \"caption\", \"rating\", \"favorite\"],\n      \"actionIds\": [\"editPhoto\"],\n      \"formPageId\": \"photoFormPage\"\n    },\n    {\n      \"id\": \"photoForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photo\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"title\", \"photo\", \"moment\", \"caption\", \"rating\", \"favorite\"],\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"title\",\n            \"control\": \"text\"\n          },\n          {\n            \"fieldId\": \"photo\",\n            \"control\": \"imageUpload\"\n          },\n          {\n            \"fieldId\": \"moment\",\n            \"control\": \"dateTime\"\n          }\n        ],\n        \"steps\": [\n          {\n            \"id\": \"step1\",\n            \"title\": \"Basic Info\",\n            \"fieldIds\": [\"title\", \"photo\", \"moment\"]\n          },\n          {\n            \"id\": \"step2\",\n            \"title\": \"Details\",\n            \"fieldIds\": [\"caption\", \"rating\", \"favorite\"]\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"photoImageCards\",\n      \"type\": \"imageCards\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Image Cards\",\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\",\n      \"options\": {\n        \"imageFieldId\": \"photo\",\n        \"captionFieldId\": \"title\"\n      }\n    },\n    {\n      \"id\": \"photoGallery\",\n      \"type\": \"gallery\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Gallery\",\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\",\n      \"options\": {\n        \"imageFieldId\": \"photo\",\n        \"captionFieldId\": \"title\"\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"photosPage\",\n    \"pages\": [\n      {\n        \"id\": \"photosPage\",\n        \"title\": \"Photos\",\n        \"viewIds\": [\"photoList\", \"photoImageCards\", \"photoGallery\"],\n        \"primaryActionId\": \"addPhoto\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"photoDetailsPage\",\n        \"title\": \"Photo details\",\n        \"viewIds\": [\"photoDetails\"]\n      },\n      {\n        \"id\": \"photoFormPage\",\n        \"title\": \"Photo editor\",\n        \"viewIds\": [\"photoForm\"]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"photosPage\",\n        \"label\": \"Photos\",\n        \"icon\": \"people\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 9521,
+          "dispatchedAt": "2026-10-08T15:06:59.328962Z",
+          "completedAt": "2026-10-08T15:07:08.850084Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Expose private image upload, timestamp, multiline caption, rating and favorite controls.",
+          "usage": {
+            "prompt_tokens": 18574,
+            "completion_tokens": 1259,
+            "total_tokens": 19833,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Photo Journal\",\n  \"theme\": \"sage\",\n  \"icon\": \"people\",\n  \"appearance\": {\n    \"style\": \"editorial\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.imageCards.v1\",\n    \"views.gallery.v1\",\n    \"views.interactive.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"navigation.layouts.v1\",\n    \"appearance.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"fields.image.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"photos\",\n      \"label\": \"Photos\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"photo\",\n          \"label\": \"Photo\",\n          \"type\": \"image\",\n          \"required\": true\n        },\n        {\n          \"id\": \"moment\",\n          \"label\": \"Moment\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"caption\",\n          \"label\": \"Caption\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"rating\",\n          \"label\": \"Rating\",\n          \"type\": \"integer\",\n          \"required\": false\n        },\n        {\n          \"id\": \"favorite\",\n          \"label\": \"Favorite\",\n          \"type\": \"boolean\",\n          \"required\": false\n        }\n      ],\n      \"behaviors\": []\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addPhoto\",\n      \"label\": \"Add photo\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"photos\"\n    },\n    {\n      \"id\": \"editPhoto\",\n      \"label\": \"Edit photo\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"photos\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"photoList\",\n      \"type\": \"list\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photos\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"moment\"],\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\"\n    },\n    {\n      \"id\": \"photoDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photo\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"title\", \"moment\", \"caption\", \"rating\", \"favorite\"],\n      \"actionIds\": [\"editPhoto\"],\n      \"formPageId\": \"photoFormPage\"\n    },\n    {\n      \"id\": \"photoForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photo\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"title\", \"photo\", \"moment\", \"caption\", \"rating\", \"favorite\"],\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"title\",\n            \"control\": \"text\"\n          },\n          {\n            \"fieldId\": \"photo\",\n            \"control\": \"imageUpload\"\n          },\n          {\n            \"fieldId\": \"moment\",\n            \"control\": \"dateTime\"\n          }\n        ],\n        \"steps\": [\n          {\n            \"id\": \"step1\",\n            \"title\": \"Basic Info\",\n            \"fieldIds\": [\"title\", \"photo\", \"moment\"]\n          },\n          {\n            \"id\": \"step2\",\n            \"title\": \"Details\",\n            \"fieldIds\": [\"caption\", \"rating\", \"favorite\"]\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"photoImageCards\",\n      \"type\": \"imageCards\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Image Cards\",\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\",\n      \"options\": {\n        \"imageFieldId\": \"photo\",\n        \"captionFieldId\": \"title\"\n      }\n    },\n    {\n      \"id\": \"photoGallery\",\n      \"type\": \"gallery\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Gallery\",\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\",\n      \"options\": {\n        \"imageFieldId\": \"photo\",\n        \"captionFieldId\": \"title\"\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"photosPage\",\n    \"pages\": [\n      {\n        \"id\": \"photosPage\",\n        \"title\": \"Photos\",\n        \"viewIds\": [\"photoList\", \"photoImageCards\", \"photoGallery\"],\n        \"primaryActionId\": \"addPhoto\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"photoDetailsPage\",\n        \"title\": \"Photo details\",\n        \"viewIds\": [\"photoDetails\"]\n      },\n      {\n        \"id\": \"photoFormPage\",\n        \"title\": \"Photo editor\",\n        \"viewIds\": [\"photoForm\"]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"photosPage\",\n        \"label\": \"Photos\",\n        \"icon\": \"people\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 18989,
+          "dispatchedAt": "2026-10-08T15:07:12.881677Z",
+          "completedAt": "2026-10-08T15:07:31.871595Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Expose private image upload, timestamp, multiline caption, rating and favorite controls.",
+          "usage": {
+            "prompt_tokens": 18574,
+            "completion_tokens": 1259,
+            "total_tokens": 19833,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 18304
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Photo Journal\",\n  \"theme\": \"sage\",\n  \"icon\": \"people\",\n  \"appearance\": {\n    \"style\": \"editorial\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.imageCards.v1\",\n    \"views.gallery.v1\",\n    \"views.interactive.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"navigation.layouts.v1\",\n    \"appearance.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"fields.image.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"photos\",\n      \"label\": \"Photos\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"photo\",\n          \"label\": \"Photo\",\n          \"type\": \"image\",\n          \"required\": true\n        },\n        {\n          \"id\": \"moment\",\n          \"label\": \"Moment\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"caption\",\n          \"label\": \"Caption\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"rating\",\n          \"label\": \"Rating\",\n          \"type\": \"integer\",\n          \"required\": false\n        },\n        {\n          \"id\": \"favorite\",\n          \"label\": \"Favorite\",\n          \"type\": \"boolean\",\n          \"required\": false\n        }\n      ],\n      \"behaviors\": []\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addPhoto\",\n      \"label\": \"Add photo\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"photos\"\n    },\n    {\n      \"id\": \"editPhoto\",\n      \"label\": \"Edit photo\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"photos\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"photoList\",\n      \"type\": \"list\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photos\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"moment\"],\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\"\n    },\n    {\n      \"id\": \"photoDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photo\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"title\", \"moment\", \"caption\", \"rating\", \"favorite\"],\n      \"actionIds\": [\"editPhoto\"],\n      \"formPageId\": \"photoFormPage\"\n    },\n    {\n      \"id\": \"photoForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Photo\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"title\", \"photo\", \"moment\", \"caption\", \"rating\", \"favorite\"],\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"title\",\n            \"control\": \"text\"\n          },\n          {\n            \"fieldId\": \"photo\",\n            \"control\": \"imageUpload\"\n          },\n          {\n            \"fieldId\": \"moment\",\n            \"control\": \"dateTime\"\n          }\n        ],\n        \"steps\": [\n          {\n            \"id\": \"step1\",\n            \"title\": \"Basic Info\",\n            \"fieldIds\": [\"title\", \"photo\", \"moment\"]\n          },\n          {\n            \"id\": \"step2\",\n            \"title\": \"Details\",\n            \"fieldIds\": [\"caption\", \"rating\", \"favorite\"]\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"photoImageCards\",\n      \"type\": \"imageCards\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Image Cards\",\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\",\n      \"options\": {\n        \"imageFieldId\": \"photo\",\n        \"captionFieldId\": \"title\"\n      }\n    },\n    {\n      \"id\": \"photoGallery\",\n      \"type\": \"gallery\",\n      \"collectionId\": \"photos\",\n      \"label\": \"Gallery\",\n      \"actionIds\": [\"addPhoto\", \"editPhoto\"],\n      \"detailPageId\": \"photoDetailsPage\",\n      \"formPageId\": \"photoFormPage\",\n      \"options\": {\n        \"imageFieldId\": \"photo\",\n        \"captionFieldId\": \"title\"\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"photosPage\",\n    \"pages\": [\n      {\n        \"id\": \"photosPage\",\n        \"title\": \"Photos\",\n        \"viewIds\": [\"photoList\", \"photoImageCards\", \"photoGallery\"],\n        \"primaryActionId\": \"addPhoto\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"photoDetailsPage\",\n        \"title\": \"Photo details\",\n        \"viewIds\": [\"photoDetails\"]\n      },\n      {\n        \"id\": \"photoFormPage\",\n        \"title\": \"Photo editor\",\n        \"viewIds\": [\"photoForm\"]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"photosPage\",\n        \"label\": \"Photos\",\n        \"icon\": \"people\"\n      }\n    ]\n  }\n}"
+        }
+      ],
+      "totalMs": 37244,
+      "diagnostic": "Expose private image upload, timestamp, multiline caption, rating and favorite controls."
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-capacity-signup",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 11042,
+          "dispatchedAt": "2026-10-08T15:07:39.920766Z",
+          "completedAt": "2026-10-08T15:07:50.963660Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Create forms must include required fields: Status",
+          "usage": {
+            "prompt_tokens": 16945,
+            "completion_tokens": 1303,
+            "total_tokens": 18248,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Volunteer Shifts\",\n  \"theme\": \"teal\",\n  \"icon\": \"people\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.summary.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"appearance.v1\",\n    \"capacity.v1\",\n    \"capacity.configure.v1\",\n    \"capacity.claim.v1\",\n    \"capacity.release.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"notifications.inApp.v1\",\n    \"automations.conditions.v1\",\n    \"notifications.owner.v1\"\n  ],\n  \"policyPresetRequest\": \"groupCapacitySignup.v1\",\n  \"automationRequests\": [\n    {\n      \"id\": \"remindBeforeShift\",\n      \"trigger\": {\n        \"type\": \"beforeTimestamp\",\n        \"collectionId\": \"shifts\",\n        \"fieldId\": \"start\",\n        \"offsetSeconds\": 3600\n      },\n      \"effect\": {\n        \"type\": \"notifyActiveClaimants\",\n        \"channel\": \"inApp\"\n      },\n      \"condition\": {\n        \"fieldId\": \"status\",\n        \"value\": \"Open\"\n      }\n    }\n  ],\n  \"collections\": [\n    {\n      \"id\": \"shifts\",\n      \"label\": \"Shifts\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"start\",\n          \"label\": \"Start\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Preparation Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Full\"\n          ]\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"shiftCapacity\",\n          \"type\": \"capacity.v1\"\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addShift\",\n      \"label\": \"Add Shift\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"shifts\"\n    },\n    {\n      \"id\": \"editShift\",\n      \"label\": \"Edit Shift\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"shifts\"\n    },\n    {\n      \"id\": \"configureCapacity\",\n      \"label\": \"Set Capacity\",\n      \"capability\": \"capacity.configure.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    },\n    {\n      \"id\": \"claimShift\",\n      \"label\": \"Join Shift\",\n      \"capability\": \"capacity.claim.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    },\n    {\n      \"id\": \"releaseShift\",\n      \"label\": \"Cancel Signup\",\n      \"capability\": \"capacity.release.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"shiftList\",\n      \"type\": \"list\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shifts\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"start\", \"status\"],\n      \"actionIds\": [\"addShift\", \"editShift\", \"configureCapacity\", \"claimShift\", \"releaseShift\"],\n      \"detailPageId\": \"shiftDetailsPage\",\n      \"formPageId\": \"shiftFormPage\",\n      \"query\": {\n        \"filters\": [\n          {\n            \"fieldId\": \"status\",\n            \"operator\": \"eq\",\n            \"value\": \"Open\"\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"shiftSummary\",\n      \"type\": \"summary\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Capacity\",\n      \"groupByFieldId\": \"status\",\n      \"actionIds\": []\n    },\n    {\n      \"id\": \"shiftDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shift Details\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"start\", \"notes\", \"status\"],\n      \"actionIds\": [\"editShift\", \"configureCapacity\", \"claimShift\", \"releaseShift\"],\n      \"formPageId\": \"shiftFormPage\"\n    },\n    {\n      \"id\": \"shiftForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shift Editor\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\"title\", \"start\", \"notes\"],\n      \"actionIds\": [\"addShift\", \"editShift\"]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"shiftsPage\",\n    \"pages\": [\n      {\n        \"id\": \"shiftsPage\",\n        \"title\": \"Volunteer Shifts\",\n        \"viewIds\": [\"shiftList\", \"shiftSummary\"],\n        \"primaryActionId\": \"addShift\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"shiftDetailsPage\",\n        \"title\": \"Shift Details\",\n        \"viewIds\": [\"shiftDetails\"]\n      },\n      {\n        \"id\": \"shiftFormPage\",\n        \"title\": \"Edit Shift\",\n        \"viewIds\": [\"shiftForm\"]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"shiftsPage\",\n        \"label\": \"Shifts\",\n        \"icon\": \"people\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 9419,
+          "dispatchedAt": "2026-10-08T15:07:54.994206Z",
+          "completedAt": "2026-10-08T15:08:04.413387Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Missing required capabilities: navigation.layouts.v1",
+          "usage": {
+            "prompt_tokens": 18622,
+            "completion_tokens": 1357,
+            "total_tokens": 19979,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Volunteer Shifts\",\n  \"theme\": \"teal\",\n  \"icon\": \"people\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.summary.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"appearance.v1\",\n    \"capacity.v1\",\n    \"capacity.configure.v1\",\n    \"capacity.claim.v1\",\n    \"capacity.release.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"notifications.inApp.v1\",\n    \"automations.conditions.v1\",\n    \"notifications.owner.v1\"\n  ],\n  \"policyPresetRequest\": \"groupCapacitySignup.v1\",\n  \"automationRequests\": [\n    {\n      \"id\": \"remindBeforeShift\",\n      \"trigger\": {\n        \"type\": \"beforeTimestamp\",\n        \"collectionId\": \"shifts\",\n        \"fieldId\": \"start\",\n        \"offsetSeconds\": 3600\n      },\n      \"effect\": {\n        \"type\": \"notifyActiveClaimants\",\n        \"channel\": \"inApp\"\n      },\n      \"condition\": {\n        \"fieldId\": \"status\",\n        \"value\": \"Open\"\n      }\n    }\n  ],\n  \"collections\": [\n    {\n      \"id\": \"shifts\",\n      \"label\": \"Shifts\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"start\",\n          \"label\": \"Start\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Preparation Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Full\"\n          ]\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"shiftCapacity\",\n          \"type\": \"capacity.v1\"\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addShift\",\n      \"label\": \"Add Shift\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"shifts\"\n    },\n    {\n      \"id\": \"editShift\",\n      \"label\": \"Edit Shift\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"shifts\"\n    },\n    {\n      \"id\": \"configureCapacity\",\n      \"label\": \"Set Capacity\",\n      \"capability\": \"capacity.configure.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    },\n    {\n      \"id\": \"claimShift\",\n      \"label\": \"Join Shift\",\n      \"capability\": \"capacity.claim.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    },\n    {\n      \"id\": \"releaseShift\",\n      \"label\": \"Cancel Signup\",\n      \"capability\": \"capacity.release.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"shiftList\",\n      \"type\": \"list\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shifts\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"start\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"addShift\",\n        \"editShift\",\n        \"configureCapacity\",\n        \"claimShift\",\n        \"releaseShift\"\n      ],\n      \"detailPageId\": \"shiftDetailsPage\",\n      \"formPageId\": \"shiftFormPage\",\n      \"query\": {\n        \"filters\": [\n          {\n            \"fieldId\": \"status\",\n            \"operator\": \"eq\",\n            \"value\": \"Open\"\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"shiftSummary\",\n      \"type\": \"summary\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Capacity\",\n      \"groupByFieldId\": \"status\",\n      \"actionIds\": []\n    },\n    {\n      \"id\": \"shiftDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shift Details\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"start\",\n        \"notes\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"editShift\",\n        \"configureCapacity\",\n        \"claimShift\",\n        \"releaseShift\"\n      ],\n      \"formPageId\": \"shiftFormPage\"\n    },\n    {\n      \"id\": \"shiftForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shift Editor\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"start\",\n        \"notes\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"addShift\",\n        \"editShift\"\n      ]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"shiftsPage\",\n    \"pages\": [\n      {\n        \"id\": \"shiftsPage\",\n        \"title\": \"Volunteer Shifts\",\n        \"viewIds\": [\n          \"shiftList\",\n          \"shiftSummary\"\n        ],\n        \"primaryActionId\": \"addShift\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"shiftDetailsPage\",\n        \"title\": \"Shift Details\",\n        \"viewIds\": [\n          \"shiftDetails\"\n        ]\n      },\n      {\n        \"id\": \"shiftFormPage\",\n        \"title\": \"Edit Shift\",\n        \"viewIds\": [\n          \"shiftForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"shiftsPage\",\n        \"label\": \"Shifts\",\n        \"icon\": \"people\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 9281,
+          "dispatchedAt": "2026-10-08T15:08:08.442557Z",
+          "completedAt": "2026-10-08T15:08:17.724307Z",
+          "success": false,
+          "kind": "validation",
+          "diagnostic": "Expose shift list, capacity summary, configure, join and release controls.",
+          "usage": {
+            "prompt_tokens": 18901,
+            "completion_tokens": 1365,
+            "total_tokens": 20266,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Volunteer Shifts\",\n  \"theme\": \"teal\",\n  \"icon\": \"people\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.summary.v1\",\n    \"views.form.v1\",\n    \"views.details.v1\",\n    \"views.configured.v1\",\n    \"navigation.v1\",\n    \"navigation.layouts.v1\",\n    \"appearance.v1\",\n    \"capacity.v1\",\n    \"capacity.configure.v1\",\n    \"capacity.claim.v1\",\n    \"capacity.release.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"notifications.inApp.v1\",\n    \"automations.conditions.v1\",\n    \"notifications.owner.v1\"\n  ],\n  \"policyPresetRequest\": \"groupCapacitySignup.v1\",\n  \"automationRequests\": [\n    {\n      \"id\": \"remindBeforeShift\",\n      \"trigger\": {\n        \"type\": \"beforeTimestamp\",\n        \"collectionId\": \"shifts\",\n        \"fieldId\": \"start\",\n        \"offsetSeconds\": 3600\n      },\n      \"effect\": {\n        \"type\": \"notifyActiveClaimants\",\n        \"channel\": \"inApp\"\n      },\n      \"condition\": {\n        \"fieldId\": \"status\",\n        \"value\": \"Open\"\n      }\n    }\n  ],\n  \"collections\": [\n    {\n      \"id\": \"shifts\",\n      \"label\": \"Shifts\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"start\",\n          \"label\": \"Start\",\n          \"type\": \"timestamp\",\n          \"required\": true\n        },\n        {\n          \"id\": \"notes\",\n          \"label\": \"Preparation Notes\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Full\"\n          ]\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"shiftCapacity\",\n          \"type\": \"capacity.v1\"\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addShift\",\n      \"label\": \"Add Shift\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"shifts\"\n    },\n    {\n      \"id\": \"editShift\",\n      \"label\": \"Edit Shift\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"shifts\"\n    },\n    {\n      \"id\": \"configureCapacity\",\n      \"label\": \"Set Capacity\",\n      \"capability\": \"capacity.configure.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    },\n    {\n      \"id\": \"claimShift\",\n      \"label\": \"Join Shift\",\n      \"capability\": \"capacity.claim.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    },\n    {\n      \"id\": \"releaseShift\",\n      \"label\": \"Cancel Signup\",\n      \"capability\": \"capacity.release.v1\",\n      \"collectionId\": \"shifts\",\n      \"behaviorId\": \"shiftCapacity\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"shiftList\",\n      \"type\": \"list\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shifts\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"start\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"addShift\",\n        \"editShift\",\n        \"configureCapacity\",\n        \"claimShift\",\n        \"releaseShift\"\n      ],\n      \"detailPageId\": \"shiftDetailsPage\",\n      \"formPageId\": \"shiftFormPage\",\n      \"query\": {\n        \"filters\": [\n          {\n            \"fieldId\": \"status\",\n            \"operator\": \"eq\",\n            \"value\": \"Open\"\n          }\n        ]\n      }\n    },\n    {\n      \"id\": \"shiftSummary\",\n      \"type\": \"summary\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Capacity\",\n      \"groupByFieldId\": \"status\",\n      \"actionIds\": []\n    },\n    {\n      \"id\": \"shiftDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shift Details\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"start\",\n        \"notes\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"editShift\",\n        \"configureCapacity\",\n        \"claimShift\",\n        \"releaseShift\"\n      ],\n      \"formPageId\": \"shiftFormPage\"\n    },\n    {\n      \"id\": \"shiftForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"shifts\",\n      \"label\": \"Shift Editor\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"start\",\n        \"notes\",\n        \"status\"\n      ],\n      \"actionIds\": [\n        \"addShift\",\n        \"editShift\"\n      ]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"shiftsPage\",\n    \"pages\": [\n      {\n        \"id\": \"shiftsPage\",\n        \"title\": \"Volunteer Shifts\",\n        \"viewIds\": [\n          \"shiftList\",\n          \"shiftSummary\"\n        ],\n        \"primaryActionId\": \"addShift\",\n        \"layout\": \"twoColumn\"\n      },\n      {\n        \"id\": \"shiftDetailsPage\",\n        \"title\": \"Shift Details\",\n        \"viewIds\": [\n          \"shiftDetails\"\n        ]\n      },\n      {\n        \"id\": \"shiftFormPage\",\n        \"title\": \"Edit Shift\",\n        \"viewIds\": [\n          \"shiftForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"shiftsPage\",\n        \"label\": \"Shifts\",\n        \"icon\": \"people\"\n      }\n    ]\n  }\n}"
+        }
+      ],
+      "totalMs": 29742,
+      "diagnostic": "Expose shift list, capacity summary, configure, join and release controls."
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-reminders-name",
+      "operation": "create",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 8861,
+          "dispatchedAt": "2026-10-08T15:08:25.777460Z",
+          "completedAt": "2026-10-08T15:08:34.639457Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 17054,
+            "completion_tokens": 1135,
+            "total_tokens": 18189,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Task Reminder\",\n  \"theme\": \"teal\",\n  \"icon\": \"check\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"workflow.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"workflow.transition.v1\",\n    \"views.list.v1\",\n    \"views.details.v1\",\n    \"views.form.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"appearance.v1\",\n    \"notifications.inApp.v1\",\n    \"notifications.owner.v1\",\n    \"automations.conditions.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [\n    {\n      \"id\": \"remindOpenTask\",\n      \"trigger\": {\n        \"type\": \"beforeTimestamp\",\n        \"collectionId\": \"tasks\",\n        \"fieldId\": \"reminderAt\",\n        \"offsetSeconds\": 0\n      },\n      \"effect\": {\n        \"type\": \"notifyOwner\",\n        \"channel\": \"inApp\"\n      },\n      \"condition\": {\n        \"fieldId\": \"status\",\n        \"value\": \"Open\"\n      }\n    }\n  ],\n  \"collections\": [\n    {\n      \"id\": \"tasks\",\n      \"label\": \"Tasks\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"status\",\n          \"label\": \"Status\",\n          \"type\": \"choice\",\n          \"required\": true,\n          \"choices\": [\n            \"Open\",\n            \"Done\"\n          ]\n        },\n        {\n          \"id\": \"dueAt\",\n          \"label\": \"Due Date\",\n          \"type\": \"timestamp\",\n          \"required\": false\n        },\n        {\n          \"id\": \"reminderAt\",\n          \"label\": \"Reminder Time\",\n          \"type\": \"timestamp\",\n          \"required\": false\n        }\n      ],\n      \"behaviors\": [\n        {\n          \"id\": \"taskStatus\",\n          \"type\": \"workflow.v1\",\n          \"fieldId\": \"status\",\n          \"transitions\": {\n            \"Open\": [\n              \"Done\"\n            ],\n            \"Done\": [\n              \"Open\"\n            ]\n          }\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"addTask\",\n      \"label\": \"Add task\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"tasks\"\n    },\n    {\n      \"id\": \"editTask\",\n      \"label\": \"Edit task\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"tasks\"\n    },\n    {\n      \"id\": \"changeTaskStatus\",\n      \"label\": \"Change status\",\n      \"capability\": \"workflow.transition.v1\",\n      \"collectionId\": \"tasks\",\n      \"behaviorId\": \"taskStatus\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"taskList\",\n      \"type\": \"list\",\n      \"collectionId\": \"tasks\",\n      \"label\": \"Tasks\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"status\",\n        \"dueAt\",\n        \"reminderAt\"\n      ],\n      \"actionIds\": [\n        \"addTask\",\n        \"editTask\",\n        \"changeTaskStatus\"\n      ],\n      \"detailPageId\": \"taskDetailsPage\",\n      \"formPageId\": \"taskFormPage\"\n    },\n    {\n      \"id\": \"taskDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"tasks\",\n      \"label\": \"Task\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"status\",\n        \"dueAt\",\n        \"reminderAt\"\n      ],\n      \"actionIds\": [\n        \"editTask\",\n        \"changeTaskStatus\"\n      ],\n      \"formPageId\": \"taskFormPage\"\n    },\n    {\n      \"id\": \"taskForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"tasks\",\n      \"label\": \"Task\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"title\",\n        \"dueAt\",\n        \"reminderAt\"\n      ],\n      \"actionIds\": [\n        \"addTask\",\n        \"editTask\"\n      ]\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"tasksPage\",\n    \"pages\": [\n      {\n        \"id\": \"tasksPage\",\n        \"title\": \"Tasks\",\n        \"viewIds\": [\n          \"taskList\"\n        ],\n        \"primaryActionId\": \"addTask\"\n      },\n      {\n        \"id\": \"taskDetailsPage\",\n        \"title\": \"Task details\",\n        \"viewIds\": [\n          \"taskDetails\"\n        ]\n      },\n      {\n        \"id\": \"taskFormPage\",\n        \"title\": \"Task editor\",\n        \"viewIds\": [\n          \"taskForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"tasksPage\",\n        \"label\": \"Tasks\",\n        \"icon\": \"check\"\n      }\n    ]\n  }\n}"
+        }
+      ],
+      "totalMs": 8861,
+      "candidate": {
+        "formatVersion": 1,
+        "name": "Task Reminder",
+        "theme": "teal",
+        "icon": "check",
+        "requires": [
+          "collections.v1",
+          "workflow.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "workflow.transition.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "navigation.v1",
+          "views.configured.v1",
+          "appearance.v1",
+          "notifications.inApp.v1",
+          "notifications.owner.v1",
+          "automations.conditions.v1"
+        ],
+        "collections": [
+          {
+            "id": "tasks",
+            "label": "Tasks",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Open",
+                  "Done"
+                ]
+              },
+              {
+                "id": "dueAt",
+                "label": "Due Date",
+                "type": "timestamp",
+                "required": false
+              },
+              {
+                "id": "reminderAt",
+                "label": "Reminder Time",
+                "type": "timestamp",
+                "required": false
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "taskStatus",
+                "type": "workflow.v1",
+                "fieldId": "status",
+                "transitions": {
+                  "Open": [
+                    "Done"
+                  ],
+                  "Done": [
+                    "Open"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "views": [
+          {
+            "id": "taskList",
+            "type": "list",
+            "collectionId": "tasks",
+            "label": "Tasks",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask",
+              "changeTaskStatus"
+            ],
+            "fieldIds": [
+              "status",
+              "dueAt",
+              "reminderAt"
+            ],
+            "detailPageId": "taskDetailsPage",
+            "formPageId": "taskFormPage"
+          },
+          {
+            "id": "taskDetails",
+            "type": "details",
+            "collectionId": "tasks",
+            "label": "Task",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editTask",
+              "changeTaskStatus"
+            ],
+            "fieldIds": [
+              "status",
+              "dueAt",
+              "reminderAt"
+            ],
+            "formPageId": "taskFormPage"
+          },
+          {
+            "id": "taskForm",
+            "type": "form",
+            "collectionId": "tasks",
+            "label": "Task",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addTask",
+              "editTask"
+            ],
+            "fieldIds": [
+              "title",
+              "dueAt",
+              "reminderAt"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addTask",
+            "label": "Add task",
+            "capability": "records.create.v1",
+            "collectionId": "tasks"
+          },
+          {
+            "id": "editTask",
+            "label": "Edit task",
+            "capability": "records.patch.v1",
+            "collectionId": "tasks"
+          },
+          {
+            "id": "changeTaskStatus",
+            "label": "Change status",
+            "capability": "workflow.transition.v1",
+            "collectionId": "tasks",
+            "behaviorId": "taskStatus"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [
+          {
+            "id": "remindOpenTask",
+            "trigger": {
+              "type": "beforeTimestamp",
+              "collectionId": "tasks",
+              "fieldId": "reminderAt",
+              "offsetSeconds": 0
+            },
+            "effect": {
+              "type": "notifyOwner",
+              "channel": "inApp"
+            },
+            "condition": {
+              "fieldId": "status",
+              "value": "Open"
+            }
+          }
+        ],
+        "navigation": {
+          "entryPageId": "tasksPage",
+          "pages": [
+            {
+              "id": "tasksPage",
+              "title": "Tasks",
+              "viewIds": [
+                "taskList"
+              ],
+              "primaryActionId": "addTask"
+            },
+            {
+              "id": "taskDetailsPage",
+              "title": "Task details",
+              "viewIds": [
+                "taskDetails"
+              ]
+            },
+            {
+              "id": "taskFormPage",
+              "title": "Task editor",
+              "viewIds": [
+                "taskForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "tasksPage",
+              "label": "Tasks",
+              "icon": "check"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "clean"
+        }
+      }
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-focus-clock",
+      "operation": "create",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 7665,
+          "dispatchedAt": "2026-10-08T15:08:38.689186Z",
+          "completedAt": "2026-10-08T15:08:46.355062Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 16902,
+            "completion_tokens": 323,
+            "total_tokens": 17225,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16016
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Focus App\",\n  \"theme\": \"teal\",\n  \"icon\": \"check\",\n  \"requires\": [\n    \"navigation.v1\",\n    \"views.clock.v1\",\n    \"views.timer.v1\",\n    \"views.configured.v1\",\n    \"appearance.v1\"\n  ],\n  \"collections\": [],\n  \"actions\": [],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"navigation\": {\n    \"entryPageId\": \"focusPage\",\n    \"pages\": [\n      {\n        \"id\": \"focusPage\",\n        \"title\": \"Focus\",\n        \"viewIds\": [\"clockView\", \"timerView\"]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"focusPage\",\n        \"label\": \"Focus\",\n        \"icon\": \"check\"\n      }\n    ]\n  },\n  \"views\": [\n    {\n      \"id\": \"clockView\",\n      \"type\": \"clock\",\n      \"label\": \"Clock\",\n      \"options\": {\n        \"style\": \"digital\",\n        \"hourFormat\": \"system\",\n        \"showSeconds\": true,\n        \"showDate\": false\n      }\n    },\n    {\n      \"id\": \"timerView\",\n      \"type\": \"timer\",\n      \"label\": \"Timer\",\n      \"options\": {\n        \"durationMinutes\": 25\n      }\n    }\n  ],\n  \"appearance\": {\n    \"style\": \"clean\"\n  }\n}"
+        }
+      ],
+      "totalMs": 7665,
+      "candidate": {
+        "formatVersion": 1,
+        "name": "Focus App",
+        "theme": "teal",
+        "icon": "check",
+        "requires": [
+          "navigation.v1",
+          "views.clock.v1",
+          "views.timer.v1",
+          "views.configured.v1",
+          "appearance.v1"
+        ],
+        "collections": [],
+        "views": [
+          {
+            "id": "clockView",
+            "type": "clock",
+            "label": "Clock",
+            "options": {
+              "style": "digital",
+              "hourFormat": "system",
+              "showSeconds": true,
+              "showDate": false
+            },
+            "actionIds": []
+          },
+          {
+            "id": "timerView",
+            "type": "timer",
+            "label": "Timer",
+            "options": {
+              "durationMinutes": 25
+            },
+            "actionIds": []
+          }
+        ],
+        "actions": [],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "focusPage",
+          "pages": [
+            {
+              "id": "focusPage",
+              "title": "Focus",
+              "viewIds": [
+                "clockView",
+                "timerView"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "focusPage",
+              "label": "Focus",
+              "icon": "check"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "clean"
+        }
+      }
+    }
+  ],
+  "quota": {
+    "authenticatedCatalogVerified": true,
+    "accountLimitsKnown": false,
+    "freeRequests": null,
+    "completionCallsMade": false,
+    "checkedAt": "2026-10-08T15:04:00.818282Z"
+  }
+}

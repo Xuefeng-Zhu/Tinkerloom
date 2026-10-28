@@ -1,0 +1,933 @@
+{
+  "schemaVersion": 1,
+  "audit": "independent-python-creation-pipeline-bookkeeping-v1",
+  "status": "complete",
+  "requireComplete": true,
+  "protocolPlan": "plan.json",
+  "protocolPlanSha256": "f4efb99c17c4fa34b4aa58bd3a8158c1d06602d702266aae4e7f9c4dcbcafe17",
+  "expectedCheckpointFiles": {
+    "controls": "controls.json",
+    "scoped": "scoped.json",
+    "plan": "plan-pipeline.json",
+    "repair": "repair.json",
+    "cascade": "cascade.json"
+  },
+  "pendingOrMissing": [],
+  "source": {
+    "sourceTarSha256": "553ccbd229760002a17277173615e53b3c2fef01a0b955336b3fa6e1b33fc6f6",
+    "matchedSnapshotFiles": 35,
+    "currentFrozenFilesMatching": 35,
+    "unrelatedFilesUnchanged": 5,
+    "unrelatedReceipt": "/private/tmp/appnest-pipeline-unrelated-hashes.json",
+    "unrelatedReceiptEmbeddedForReproducibility": true
+  },
+  "runs": {
+    "controls": {
+      "status": "completed",
+      "checkpoint": "controls.json",
+      "runFingerprintVerified": "7a2880e1a66c0a3a248e13e665da9ebb863ffc37bb2a5ad6d9f948d2e6b42fc1",
+      "modelsOrPipeline": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "planned": 6,
+          "completed": 6,
+          "passed": 3,
+          "failed": 3,
+          "correctnessScored": 6,
+          "availabilityOnlyFailures": 0,
+          "firstAttemptPassed": 2,
+          "attemptCount": 13,
+          "retryCount": 7,
+          "states": {
+            "failed": 3,
+            "passed": 3
+          },
+          "attemptFailureKinds": {
+            "validation": 8,
+            "truncated": 2
+          },
+          "availabilityFailureAttempts": 0,
+          "operationLatencyMs": {
+            "sampleCount": 6,
+            "median": 78576.0,
+            "p95": 141828,
+            "quantileMethod": "median midpoint; p95 nearest rank",
+            "scope": "Completed operation attempt durations; excludes inter-request pacing sleeps"
+          },
+          "usage": {
+            "promptTokens": 231890,
+            "completionTokens": 65326,
+            "totalTokens": 297216,
+            "reasoningTokens": 54848,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 13,
+              "completionTokens": 13,
+              "totalTokens": 13,
+              "reasoningTokens": 13
+            },
+            "attemptCount": 13,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          },
+          "cases": [
+            {
+              "case": "create-rich-dashboard",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 112081,
+              "lastDiagnostic": "Boolean checklists need a record patch action"
+            },
+            {
+              "case": "create-multistep-form",
+              "status": "passed",
+              "firstAttemptPassed": false,
+              "attempts": 2,
+              "retries": 1,
+              "operationMs": 45071,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-capacity-signup",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 123476,
+              "lastDiagnostic": "Reminder condition needs a valid choice value"
+            },
+            {
+              "case": "create-transfer-reading",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 141828,
+              "lastDiagnostic": "Boolean checklists need a record patch action"
+            },
+            {
+              "case": "create-transfer-team",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 20718,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "unsupported-executable",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 3776,
+              "lastDiagnostic": null
+            }
+          ]
+        },
+        "z-ai/glm-5.3": {
+          "planned": 6,
+          "completed": 6,
+          "passed": 6,
+          "failed": 0,
+          "correctnessScored": 6,
+          "availabilityOnlyFailures": 0,
+          "firstAttemptPassed": 5,
+          "attemptCount": 7,
+          "retryCount": 1,
+          "states": {
+            "passed": 6
+          },
+          "attemptFailureKinds": {
+            "validation": 1
+          },
+          "availabilityFailureAttempts": 0,
+          "operationLatencyMs": {
+            "sampleCount": 6,
+            "median": 8426.5,
+            "p95": 19766,
+            "quantileMethod": "median midpoint; p95 nearest rank",
+            "scope": "Completed operation attempt durations; excludes inter-request pacing sleeps"
+          },
+          "usage": {
+            "promptTokens": 106772,
+            "completionTokens": 4946,
+            "totalTokens": 111718,
+            "reasoningTokens": 1157,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 7,
+              "completionTokens": 7,
+              "totalTokens": 7,
+              "reasoningTokens": 7
+            },
+            "attemptCount": 7,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          },
+          "cases": [
+            {
+              "case": "create-rich-dashboard",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 16061,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-multistep-form",
+              "status": "passed",
+              "firstAttemptPassed": false,
+              "attempts": 2,
+              "retries": 1,
+              "operationMs": 19766,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-capacity-signup",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 9554,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-transfer-reading",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 6460,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-transfer-team",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 7299,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "unsupported-executable",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 1228,
+              "lastDiagnostic": null
+            }
+          ]
+        }
+      },
+      "actualServingAttempts": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "attempts": 13,
+          "usage": {
+            "promptTokens": 231890,
+            "completionTokens": 65326,
+            "totalTokens": 297216,
+            "reasoningTokens": 54848,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 13,
+              "completionTokens": 13,
+              "totalTokens": 13,
+              "reasoningTokens": 13
+            },
+            "attemptCount": 13,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        },
+        "z-ai/glm-5.3": {
+          "attempts": 7,
+          "usage": {
+            "promptTokens": 106772,
+            "completionTokens": 4946,
+            "totalTokens": 111718,
+            "reasoningTokens": 1157,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 7,
+              "completionTokens": 7,
+              "totalTokens": 7,
+              "reasoningTokens": 7
+            },
+            "attemptCount": 7,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        }
+      },
+      "pipelineEvidence": {},
+      "repairBaseHashesVerified": [],
+      "timing": {
+        "completedAttempts": 20,
+        "minimumGlobalStartGapMs": 4013.619,
+        "clientPeakConcurrent": 2,
+        "actualModelOverlapCount": 0
+      },
+      "summaryBookkeepingVerified": true
+    },
+    "scoped": {
+      "status": "completed",
+      "checkpoint": "scoped.json",
+      "runFingerprintVerified": "c01e7ac5414ff876fd66b2df6ff6eadbdd5774b39b6c22d8186db0416d66033f",
+      "modelsOrPipeline": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "planned": 6,
+          "completed": 6,
+          "passed": 1,
+          "failed": 5,
+          "correctnessScored": 6,
+          "availabilityOnlyFailures": 0,
+          "firstAttemptPassed": 1,
+          "attemptCount": 16,
+          "retryCount": 10,
+          "states": {
+            "failed": 5,
+            "passed": 1
+          },
+          "attemptFailureKinds": {
+            "truncated": 9,
+            "validation": 6
+          },
+          "availabilityFailureAttempts": 0,
+          "operationLatencyMs": {
+            "sampleCount": 6,
+            "median": 143579.0,
+            "p95": 187627,
+            "quantileMethod": "median midpoint; p95 nearest rank",
+            "scope": "Completed operation attempt durations; excludes inter-request pacing sleeps"
+          },
+          "usage": {
+            "promptTokens": 224384,
+            "completionTokens": 122834,
+            "totalTokens": 347218,
+            "reasoningTokens": 115881,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 16,
+              "completionTokens": 16,
+              "totalTokens": 16,
+              "reasoningTokens": 16
+            },
+            "attemptCount": 16,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          },
+          "cases": [
+            {
+              "case": "create-rich-dashboard",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 142031,
+              "lastDiagnostic": "AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens."
+            },
+            {
+              "case": "create-multistep-form",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 145127,
+              "lastDiagnostic": "The AI response was not valid JSON. Return exactly one complete JSON object without commentary or markdown."
+            },
+            {
+              "case": "create-capacity-signup",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 123278,
+              "lastDiagnostic": "Record details and forms need dedicated non-tab pages"
+            },
+            {
+              "case": "create-transfer-reading",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 187627,
+              "lastDiagnostic": "AI output reached the token limit before finishing. Return a smaller complete JSON definition within 12000 tokens."
+            },
+            {
+              "case": "create-transfer-team",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 168793,
+              "lastDiagnostic": "Unknown page view_details"
+            },
+            {
+              "case": "unsupported-executable",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 1816,
+              "lastDiagnostic": null
+            }
+          ]
+        }
+      },
+      "actualServingAttempts": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "attempts": 16,
+          "usage": {
+            "promptTokens": 224384,
+            "completionTokens": 122834,
+            "totalTokens": 347218,
+            "reasoningTokens": 115881,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 16,
+              "completionTokens": 16,
+              "totalTokens": 16,
+              "reasoningTokens": 16
+            },
+            "attemptCount": 16,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        }
+      },
+      "pipelineEvidence": {
+        "attemptsWithEvidence": 16,
+        "rawResponsesPresent": 7,
+        "rawHashesVerified": 7,
+        "derivedHashesVerified": 7
+      },
+      "repairBaseHashesVerified": [],
+      "timing": {
+        "completedAttempts": 16,
+        "minimumGlobalStartGapMs": 19390.366,
+        "clientPeakConcurrent": 1,
+        "actualModelOverlapCount": 0
+      },
+      "summaryBookkeepingVerified": true
+    },
+    "plan": {
+      "status": "completed",
+      "checkpoint": "plan-pipeline.json",
+      "runFingerprintVerified": "9bf047d1f6e7e752753127774fabb5661c7f264918ea15f0064ce2c6b8266cbc",
+      "modelsOrPipeline": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "planned": 6,
+          "completed": 6,
+          "passed": 2,
+          "failed": 4,
+          "correctnessScored": 6,
+          "availabilityOnlyFailures": 0,
+          "firstAttemptPassed": 2,
+          "attemptCount": 14,
+          "retryCount": 8,
+          "states": {
+            "failed": 4,
+            "passed": 2
+          },
+          "attemptFailureKinds": {
+            "pipeline_validation": 12
+          },
+          "availabilityFailureAttempts": 0,
+          "operationLatencyMs": {
+            "sampleCount": 6,
+            "median": 47696.5,
+            "p95": 55479,
+            "quantileMethod": "median midpoint; p95 nearest rank",
+            "scope": "Completed operation attempt durations; excludes inter-request pacing sleeps"
+          },
+          "usage": {
+            "promptTokens": 83633,
+            "completionTokens": 34131,
+            "totalTokens": 117764,
+            "reasoningTokens": 23098,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 14,
+              "completionTokens": 14,
+              "totalTokens": 14,
+              "reasoningTokens": 14
+            },
+            "attemptCount": 14,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          },
+          "cases": [
+            {
+              "case": "create-rich-dashboard",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 51066,
+              "lastDiagnostic": "Boolean checklists need a record patch action"
+            },
+            {
+              "case": "create-multistep-form",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 55479,
+              "lastDiagnostic": "Navigation needs pages and one to five tabs"
+            },
+            {
+              "case": "create-capacity-signup",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 14459,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-transfer-reading",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 45751,
+              "lastDiagnostic": "Record components need collection routes"
+            },
+            {
+              "case": "create-transfer-team",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 49642,
+              "lastDiagnostic": "Form v0 field estimate has type integer, but control text requires text."
+            },
+            {
+              "case": "unsupported-executable",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 6721,
+              "lastDiagnostic": null
+            }
+          ]
+        }
+      },
+      "actualServingAttempts": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "attempts": 14,
+          "usage": {
+            "promptTokens": 83633,
+            "completionTokens": 34131,
+            "totalTokens": 117764,
+            "reasoningTokens": 23098,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 14,
+              "completionTokens": 14,
+              "totalTokens": 14,
+              "reasoningTokens": 14
+            },
+            "attemptCount": 14,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        }
+      },
+      "pipelineEvidence": {
+        "attemptsWithEvidence": 14,
+        "rawResponsesPresent": 14,
+        "rawHashesVerified": 14,
+        "derivedHashesVerified": 2
+      },
+      "repairBaseHashesVerified": [],
+      "timing": {
+        "completedAttempts": 14,
+        "minimumGlobalStartGapMs": 17224.297,
+        "clientPeakConcurrent": 1,
+        "actualModelOverlapCount": 0
+      },
+      "summaryBookkeepingVerified": true
+    },
+    "repair": {
+      "status": "completed",
+      "checkpoint": "repair.json",
+      "runFingerprintVerified": "fe9486effdf891a896ffc253945a43cfd99f4359bbc7dd58df6ccc9ab5d615e7",
+      "modelsOrPipeline": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "planned": 6,
+          "completed": 6,
+          "passed": 3,
+          "failed": 3,
+          "correctnessScored": 6,
+          "availabilityOnlyFailures": 0,
+          "firstAttemptPassed": 1,
+          "attemptCount": 16,
+          "retryCount": 10,
+          "states": {
+            "passed": 3,
+            "failed": 3
+          },
+          "attemptFailureKinds": {
+            "truncated": 4,
+            "validation": 8,
+            "timeout": 1
+          },
+          "availabilityFailureAttempts": 1,
+          "operationLatencyMs": {
+            "sampleCount": 6,
+            "median": 84632.0,
+            "p95": 190536,
+            "quantileMethod": "median midpoint; p95 nearest rank",
+            "scope": "Completed operation attempt durations; excludes inter-request pacing sleeps"
+          },
+          "usage": {
+            "promptTokens": 197355,
+            "completionTokens": 70872,
+            "totalTokens": 268227,
+            "reasoningTokens": 64440,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 15,
+              "completionTokens": 15,
+              "totalTokens": 15,
+              "reasoningTokens": 15
+            },
+            "attemptCount": 16,
+            "missingUsageAttempts": 1,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          },
+          "cases": [
+            {
+              "case": "create-rich-dashboard",
+              "status": "passed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 140341,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-multistep-form",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 63858,
+              "lastDiagnostic": "Display an editable text title on a visible record view."
+            },
+            {
+              "case": "create-capacity-signup",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 78660,
+              "lastDiagnostic": "AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens."
+            },
+            {
+              "case": "create-transfer-reading",
+              "status": "failed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 190536,
+              "lastDiagnostic": "Boolean checklists need a record patch action"
+            },
+            {
+              "case": "create-transfer-team",
+              "status": "passed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 90604,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "unsupported-executable",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 1184,
+              "lastDiagnostic": null
+            }
+          ]
+        }
+      },
+      "actualServingAttempts": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "attempts": 16,
+          "usage": {
+            "promptTokens": 197355,
+            "completionTokens": 70872,
+            "totalTokens": 268227,
+            "reasoningTokens": 64440,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 15,
+              "completionTokens": 15,
+              "totalTokens": 15,
+              "reasoningTokens": 15
+            },
+            "attemptCount": 16,
+            "missingUsageAttempts": 1,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        }
+      },
+      "pipelineEvidence": {
+        "attemptsWithEvidence": 16,
+        "rawResponsesPresent": 12,
+        "rawHashesVerified": 11,
+        "derivedHashesVerified": 11,
+        "patchAssembliesVerified": 5
+      },
+      "repairBaseHashesVerified": [
+        {
+          "case": "create-rich-dashboard",
+          "attempt": 3,
+          "sha256": "58198174251469801f6527203784d8a8ef2c9e49650ca045ef328d0f2afcfc55",
+          "bytes": 3008
+        },
+        {
+          "case": "create-multistep-form",
+          "attempt": 2,
+          "sha256": "4e8c5d2bb8872516d01a6d126f82ae9a0c47dbd5590566308db188a4211a0131",
+          "bytes": 2794
+        },
+        {
+          "case": "create-multistep-form",
+          "attempt": 3,
+          "sha256": "c97685ea204ed62a24499a1defe70ec64241539e78e3faa204485ece503a0108",
+          "bytes": 2836
+        },
+        {
+          "case": "create-capacity-signup",
+          "attempt": 2,
+          "sha256": "8f3f8e953ccdd96d47cf8b2b321ea0e00c3c9ff186cc43faa696b4fd00ff449b",
+          "bytes": 2922
+        },
+        {
+          "case": "create-capacity-signup",
+          "attempt": 3,
+          "sha256": "40cf9663ced1fbfd0981c57225ec29c466e46e4277aa31c1db23146aadb69a6c",
+          "bytes": 2958
+        },
+        {
+          "case": "create-transfer-team",
+          "attempt": 3,
+          "sha256": "11fa0653ec7c1c060f48efad62eb7df6d68bd96db0efd10be4ddc4b55766b7dc",
+          "bytes": 2561
+        }
+      ],
+      "timing": {
+        "completedAttempts": 16,
+        "minimumGlobalStartGapMs": 9238.59,
+        "clientPeakConcurrent": 1,
+        "actualModelOverlapCount": 0
+      },
+      "summaryBookkeepingVerified": true
+    },
+    "cascade": {
+      "status": "completed",
+      "checkpoint": "cascade.json",
+      "runFingerprintVerified": "944fcc2455514399fb4131f1a98f11209fc26d38ef0e496966bc449ccd4f18f5",
+      "modelsOrPipeline": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "planned": 6,
+          "completed": 6,
+          "passed": 6,
+          "failed": 0,
+          "correctnessScored": 6,
+          "availabilityOnlyFailures": 0,
+          "firstAttemptPassed": 2,
+          "attemptCount": 12,
+          "retryCount": 6,
+          "states": {
+            "passed": 6
+          },
+          "attemptFailureKinds": {
+            "truncated": 2,
+            "validation": 3,
+            "timeout": 1
+          },
+          "availabilityFailureAttempts": 1,
+          "operationLatencyMs": {
+            "sampleCount": 6,
+            "median": 53795.5,
+            "p95": 202346,
+            "quantileMethod": "median midpoint; p95 nearest rank",
+            "scope": "Completed operation attempt durations; excludes inter-request pacing sleeps"
+          },
+          "usage": {
+            "promptTokens": 180181,
+            "completionTokens": 32552,
+            "totalTokens": 212733,
+            "reasoningTokens": 25870,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 11,
+              "completionTokens": 11,
+              "totalTokens": 11,
+              "reasoningTokens": 11
+            },
+            "attemptCount": 12,
+            "missingUsageAttempts": 1,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          },
+          "cases": [
+            {
+              "case": "create-rich-dashboard",
+              "status": "passed",
+              "firstAttemptPassed": false,
+              "attempts": 2,
+              "retries": 1,
+              "operationMs": 75096,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-multistep-form",
+              "status": "passed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 76061,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-capacity-signup",
+              "status": "passed",
+              "firstAttemptPassed": false,
+              "attempts": 3,
+              "retries": 2,
+              "operationMs": 202346,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-transfer-reading",
+              "status": "passed",
+              "firstAttemptPassed": false,
+              "attempts": 2,
+              "retries": 1,
+              "operationMs": 32495,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "create-transfer-team",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 20368,
+              "lastDiagnostic": null
+            },
+            {
+              "case": "unsupported-executable",
+              "status": "passed",
+              "firstAttemptPassed": true,
+              "attempts": 1,
+              "retries": 0,
+              "operationMs": 1787,
+              "lastDiagnostic": null
+            }
+          ]
+        }
+      },
+      "actualServingAttempts": {
+        "nvidia/nemotron-3-super-120b-a12b": {
+          "attempts": 6,
+          "usage": {
+            "promptTokens": 103624,
+            "completionTokens": 28223,
+            "totalTokens": 131847,
+            "reasoningTokens": 24721,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 6,
+              "completionTokens": 6,
+              "totalTokens": 6,
+              "reasoningTokens": 6
+            },
+            "attemptCount": 6,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        },
+        "z-ai/glm-5.3": {
+          "attempts": 6,
+          "usage": {
+            "promptTokens": 76557,
+            "completionTokens": 4329,
+            "totalTokens": 80886,
+            "reasoningTokens": 1149,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 5,
+              "completionTokens": 5,
+              "totalTokens": 5,
+              "reasoningTokens": 5
+            },
+            "attemptCount": 6,
+            "missingUsageAttempts": 1,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        }
+      },
+      "pipelineEvidence": {
+        "attemptsWithEvidence": 12,
+        "rawResponsesPresent": 10,
+        "rawHashesVerified": 9,
+        "derivedHashesVerified": 9
+      },
+      "repairBaseHashesVerified": [],
+      "timing": {
+        "completedAttempts": 12,
+        "minimumGlobalStartGapMs": 11794.556999999999,
+        "clientPeakConcurrent": 1,
+        "actualModelOverlapCount": 0
+      },
+      "summaryBookkeepingVerified": true
+    }
+  },
+  "actualModelOverlapAcrossRuns": 0,
+  "limitations": [
+    "Bookkeeping, source bytes, manifest fingerprints, raw/derived hashes and patch assembly only.",
+    "Strict AppSpec/request assertions and plan compilation require separate frozen Dart offline replay.",
+    "servedByModel identifies the configured API route; provider-internal execution is not independently observed.",
+    "Missing usage/cost remains unknown. Operation latency sums attempt durations and excludes pacing sleeps.",
+    "A partial audit ignores live in-flight calls whose completion records do not yet exist."
+  ]
+}

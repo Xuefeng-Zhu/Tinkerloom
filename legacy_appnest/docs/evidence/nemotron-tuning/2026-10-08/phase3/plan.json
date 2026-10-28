@@ -1,0 +1,82 @@
+{
+  "recordedAt": "2026-10-08T15:57:35.534395+00:00",
+  "intent": "Improve Nemotron AppNest contract compliance and measure against GLM without weakening validation",
+  "provider": "nvidia",
+  "targetModel": "nvidia/nemotron-3-super-120b-a12b",
+  "controlModel": "z-ai/glm-5.3",
+  "screeningProfiles": [
+    "publisher-creation"
+  ],
+  "screeningCases": [
+    "create-notes-fields",
+    "create-calendar-category",
+    "create-calendar-appearance",
+    "create-rich-dashboard",
+    "create-multistep-form",
+    "create-capacity-signup",
+    "create-reminders-name",
+    "create-focus-clock"
+  ],
+  "screeningOrder": "One fresh publisher-creation checkpoint, after both round2 checkpoints are terminal; no overlapping evaluator invocations.",
+  "candidateGate": {
+    "complete": true,
+    "minEventualPasses": 7,
+    "plannedCases": 8,
+    "availabilityOnlyFailuresAllowed": 0,
+    "regressionCasesMustPass": [
+      "create-reminders-name",
+      "create-focus-clock"
+    ],
+    "mustImproveBaselineOnAtLeastOne": [
+      "eventualPasses",
+      "firstAttemptPasses",
+      "fewerAttempts"
+    ],
+    "eventualPassesMustNotRegressBaseline": true
+  },
+  "selectionOrder": [
+    "highest eventual passes",
+    "highest first-attempt passes",
+    "fewest attempts",
+    "lowest median operation time"
+  ],
+  "fullPhase": "At most one fresh 36-case comparison across all three rounds for a qualifying publisher-creation candidate plus contemporaneous GLM 5.3, concurrency 2, maximum 216 dispatches. No full comparison if the candidate fails the same gate.",
+  "limits": {
+    "maxAttemptsPerCase": 3,
+    "generationSeconds": 90,
+    "guidanceSeconds": 20,
+    "initialGenerationTokens": 8000,
+    "recognizedTruncationTokens": 12000,
+    "reasoningTokens": "No explicit reasoning_budget in round3. Completion-token and deadline limits are unchanged.",
+    "globalRequestStartIntervalSeconds": 4,
+    "screeningMaxDispatchesPerProfile": 24,
+    "fullMaxDispatches": 216
+  },
+  "stopConditions": [
+    "Existing auth/quota/nonzero reported cost/HTTP202 behavior stops or blocks the evaluator; do not auto-resume",
+    "If a screening profile returns only availability failures on its first operation, stop that profile and exclude it; record any interrupted dispatch outcome as unknown",
+    "No automatic credit purchase or paid fallback"
+  ],
+  "scope": [
+    "Synthetic saved responses; no private records",
+    "Default configured application model and transport remain unchanged",
+    "One exploratory adaptive selection trial, no statistical or universal parity claim",
+    "Do not reinterpret or overwrite historical checkpoints"
+  ],
+  "round": 3,
+  "rationale": "A primary-source review after reasoning-only completion exhaustion identified an untested publisher recommendation: temperature1.0, top_p0.95. Earlier trials fixed temperature0 and omitted top_p. One additional published-recipe candidate tests this material parameter gap, not case-specific prompt changes. Greedy decoding as a cause remains unproven.",
+  "baselineReference": "../nemotron-tuning-2026-10-08/baseline.json",
+  "baselineReuse": "Historical within-session reference across frozen source snapshots. Verify baseline and GLM initial eight request bodies byte-identical via archived SHA256 receipts and unchanged scenario/scorer files. Not a simultaneous randomized causal baseline. Full selected-vs-GLM run must use same new frozen source.",
+  "profileDefinitions": {
+    "publisher-creation": "Same creation checklist; Super low / Ultra medium effort with no hard reasoning budget; temperature 1.0 and top_p 0.95 for creation and unsupported ideas only. Edits and sequences retain baseline temperature 0; guidance retains baseline omitted temperature. All three omit top_p. GLM is unchanged."
+  },
+  "baselineCheckpoint": "../phase1/baseline.json",
+  "amends": "Round2 stopping protocol extended before any round3 requests; both round2 candidates failed the unchanged gate. Original plans and all failed results remain preserved. At most one full36candidate+GLM run across the task remains.",
+  "publisherSources": [
+    "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard",
+    "https://build.nvidia.com/nvidia/nemotron-3-ultra-550b-a55b/modelcard"
+  ],
+  "sourceBaselineCheckpoint": "../nemotron-tuning-2026-10-08/baseline.json",
+  "archiveBaselineCheckpoint": "../phase1/baseline.json",
+  "baselineCheckpointMeaning": "Archive-relative path, resolved after copying into evidence/phase3; sourceBaselineCheckpoint identifies the live output reference."
+}

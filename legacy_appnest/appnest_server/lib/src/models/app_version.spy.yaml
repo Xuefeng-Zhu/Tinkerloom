@@ -1,0 +1,15 @@
+class: AppVersion
+table: nest_version
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  number: int
+  specJson: String
+  candidateHash: String
+  publisherId: String
+  createdAt: DateTime
+indexes:
+  version_unique:
+    fields: appId, number
+    unique: true

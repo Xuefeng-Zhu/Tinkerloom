@@ -1,0 +1,14 @@
+class: ActionReceipt
+table: nest_receipt
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  actorId: String
+  idempotencyKey: String
+  requestHash: String
+  outcomeJson: String
+  createdAt: DateTime
+indexes:
+  receipt_unique:
+    fields: appId, actorId, idempotencyKey
+    unique: true

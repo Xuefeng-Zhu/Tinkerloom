@@ -1,0 +1,7 @@
+class: MediaInfo
+fields:
+  assetId: String
+  contentType: String
+  width: int
+  height: int
+  byteLength: int

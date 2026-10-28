@@ -1,0 +1,556 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-08T23:08:06.802630+00:00",
+  "scope": "Read-only independent repair evidence audit; no network, new inference, candidate edits, scorer changes, or score overrides.",
+  "checkpoint": {
+    "path": "repair.json",
+    "sha256": "75bc721d2936407426dcc10619d7bb0466781e06ee42c40a4a07d8c67bf7e0f3",
+    "runFingerprint": "fe9486effdf891a896ffc253945a43cfd99f4359bbc7dd58df6ccc9ab5d615e7",
+    "status": "completed",
+    "contractSourceSha256": "5963eb0a037c15673a6be0cbae4b99253e0ad4e086cd19f3e5e61f4e39063a51"
+  },
+  "sourceSnapshot": {
+    "archive": "source.tar.gz",
+    "archiveSha256": "553ccbd229760002a17277173615e53b3c2fef01a0b955336b3fa6e1b33fc6f6",
+    "manifest": "source-files.json",
+    "manifestSha256": "983a95855a662e3ec1161c84577d3ed8e88aa7e0cfdf8b0c5bcca1017d3e111a",
+    "currentSourceFilesMatchRecordedHashes": 35
+  },
+  "independentChecks": {
+    "recordedRawAndDerivedHashesVerified": true,
+    "boundedBaseLinksVerified": 6,
+    "boundedResponsesReassembledExactly": 5,
+    "checkpointBytesUnmodified": true,
+    "strictAcceptedCandidateReplay": "Handled separately by root Dart replay; this receipt does not substitute for that scorer."
+  },
+  "recordedOutcomes": {
+    "operations": 6,
+    "creations": 5,
+    "creationPassed": 2,
+    "unsupportedPassed": 1,
+    "passed": 3,
+    "failed": 3,
+    "firstAttemptPassed": 1,
+    "attempts": 16,
+    "responseProtocols": {
+      "AppSpec": 10,
+      "boundedCreationChanges": 6
+    },
+    "rawResponsesAvailable": 12,
+    "usageKnownAttempts": 15,
+    "usageUnknownAttempts": 1,
+    "knownUsage": {
+      "prompt_tokens": 197355,
+      "completion_tokens": 70872,
+      "total_tokens": 268227,
+      "reasoning_tokens": 64440
+    },
+    "providerCost": "Unknown; no reported cost field in saved usage."
+  },
+  "caseFindings": [
+    {
+      "case": "create-rich-dashboard",
+      "recordedStatus": "passed",
+      "sequence": [
+        "AppSpec truncated, all 8000 completion tokens reasoning",
+        "AppSpec missing checklist option IDs",
+        "24-change bounded patch accepted on attempt 3"
+      ],
+      "minimality": "Model renamed valid collection act to activities and actions addAct/editAct to addActivity/editActivity; removed/re-added the optional Completed boolean under a new ID and updated references. Operation bounds do not guarantee a minimal semantic repair. No posthoc smaller patch was tried."
+    },
+    {
+      "case": "create-multistep-form",
+      "recordedStatus": "failed",
+      "sequence": [
+        "AppSpec failed visible editable title requirement",
+        "2-change bounded patch added fieldIds on imageCards/gallery",
+        "1-change bounded patch replaced form controls"
+      ],
+      "remainingFailure": "Visible imageCards/gallery still omit titleFieldId. Changing fieldIds and a form control does not satisfy the visible title binding; identical diagnostic persisted through all 3 attempts."
+    },
+    {
+      "case": "create-capacity-signup",
+      "recordedStatus": "failed",
+      "sequence": [
+        "AppSpec missed capacity.v1 and views.configured.v1",
+        "2 append changes supplied declarations; scorer then rejected capacity component controls",
+        "Final bounded attempt consumed all 8000 completion tokens as reasoning with no final response"
+      ],
+      "remainingFailure": "Saved capacitySummary has actionIds:[] despite configure/claim/release actions elsewhere. The saved reminder also adds a condition; the run stopped on the earlier control failure, so no later fidelity acceptance is claimed."
+    },
+    {
+      "case": "create-transfer-reading",
+      "recordedStatus": "failed",
+      "sequence": [
+        "Truncated full AppSpec; partial raw JSON saved",
+        "Full-generation timeout with unknown usage",
+        "Full AppSpec still invalid boolean checklist"
+      ],
+      "remainingFailure": "Checklist uses a boolean Finished field and records.patch action but includes workflow-only checkedValue/uncheckedValue strings. It never had a parseable rejected AppSpec before its final attempt, so all 3 requests remained full-generation rather than bounded repair."
+    },
+    {
+      "case": "create-transfer-team",
+      "recordedStatus": "passed",
+      "sequence": [
+        "Full AppSpec truncated with all 8000 completion tokens as reasoning",
+        "Full AppSpec put a text control on integer Estimate",
+        "Single remove change deleted that incorrect control; accepted on attempt 3"
+      ],
+      "minimality": "One explicitly targeted control removal; ordinary numeric input remained available."
+    },
+    {
+      "case": "unsupported-executable",
+      "recordedStatus": "passed",
+      "sequence": [
+        "Unsupported-only full protocol response accepted on first attempt"
+      ]
+    }
+  ],
+  "limitations": [
+    "Single trial on 5 creation cases plus 1 unsupported case; no general reliability or GLM parity claim.",
+    "No app UI, authenticated persistence or publication verification.",
+    "One timeout has unknown usage; known token sums are lower bounds.",
+    "A bounded patch can still spend most completion tokens on reasoning and can change more correct properties than needed.",
+    "Failed and truncated attempts remain failures; no output stripping, feature inference or score changes were applied."
+  ],
+  "attemptEvidence": [
+    {
+      "case": "create-rich-dashboard",
+      "attempt": 1,
+      "success": false,
+      "kind": "truncated",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens.",
+      "requestSha256": "622a15cd43955eeea9ec83feec095ef5b0e1a423e772248302c06b241a8b00d6",
+      "requestBytes": 67902,
+      "controlRequestBytes": 67902,
+      "rawResponseAvailable": false
+    },
+    {
+      "case": "create-rich-dashboard",
+      "attempt": 2,
+      "success": false,
+      "kind": "validation",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "id must be nonempty text (maximum 64 characters)",
+      "requestSha256": "227dd67952e1e8c77cd2c73712f492e00e44d5a0ad0205b56993357a541bb089",
+      "requestBytes": 68021,
+      "controlRequestBytes": 68021,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "63a98a51210fd004090056241ddf6fa969088eb91f4a52ecea5137283d9b5d9b",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "63a98a51210fd004090056241ddf6fa969088eb91f4a52ecea5137283d9b5d9b",
+      "recordedDerivedHashVerified": true
+    },
+    {
+      "case": "create-rich-dashboard",
+      "attempt": 3,
+      "success": true,
+      "kind": "received",
+      "responseProtocol": "boundedCreationChanges",
+      "diagnostic": null,
+      "requestSha256": "036594b8e44521804c81c0748520d8c1b60bd189b8679535f003ffe14da73164",
+      "requestBytes": 33288,
+      "controlRequestBytes": 73028,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "6ccf3a13ef365b2477efd9785cf188ad1cf981a096ed773efebc98763f351ed3",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "92e8d9c254f19108cb32fe67d969c063fb5ae1f0836a62318e134e5492a1cb2d",
+      "recordedDerivedHashVerified": true,
+      "repairBaseEqualsPreviousDerivedResponse": true,
+      "repairBaseSha256": "58198174251469801f6527203784d8a8ef2c9e49650ca045ef328d0f2afcfc55",
+      "independentPatchAssemblyExact": true,
+      "changeCount": 24,
+      "operations": {
+        "set": 20,
+        "remove": 3,
+        "append": 1
+      },
+      "paths": [
+        [
+          "collections",
+          0,
+          "id"
+        ],
+        [
+          "actions",
+          0,
+          "collectionId"
+        ],
+        [
+          "actions",
+          1,
+          "collectionId"
+        ],
+        [
+          "views",
+          0,
+          "collectionId"
+        ],
+        [
+          "views",
+          1,
+          "collectionId"
+        ],
+        [
+          "views",
+          2,
+          "collectionId"
+        ],
+        [
+          "views",
+          3,
+          "collectionId"
+        ],
+        [
+          "views",
+          4,
+          "collectionId"
+        ],
+        [
+          "views",
+          5,
+          "collectionId"
+        ],
+        [
+          "actions",
+          0,
+          "id"
+        ],
+        [
+          "actions",
+          1,
+          "id"
+        ],
+        [
+          "views",
+          0,
+          "actionIds"
+        ],
+        [
+          "views",
+          1,
+          "actionIds"
+        ],
+        [
+          "views",
+          4,
+          "actionIds"
+        ],
+        [
+          "views",
+          5,
+          "actionIds"
+        ],
+        [
+          "navigation",
+          "pages",
+          0,
+          "primaryActionId"
+        ],
+        [
+          "collections",
+          0,
+          "fields",
+          5
+        ],
+        [
+          "collections",
+          0,
+          "fields"
+        ],
+        [
+          "views",
+          4,
+          "fieldIds"
+        ],
+        [
+          "views",
+          5,
+          "fieldIds"
+        ],
+        [
+          "views",
+          5,
+          "options",
+          "controls"
+        ],
+        [
+          "views",
+          1,
+          "options"
+        ],
+        [
+          "views",
+          2,
+          "presentation"
+        ],
+        [
+          "views",
+          3,
+          "presentation"
+        ]
+      ]
+    },
+    {
+      "case": "create-multistep-form",
+      "attempt": 1,
+      "success": false,
+      "kind": "validation",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "Display an editable text title on a visible record view.",
+      "requestSha256": "7a27a3d9bc9e1d08153e46f6c485730412128a8e34aef8660a3158d4fe01f652",
+      "requestBytes": 67874,
+      "controlRequestBytes": 67874,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "9359281dd80d795273191acc360ff9830f3b390fc721dab4521b8f1af7602c64",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "9359281dd80d795273191acc360ff9830f3b390fc721dab4521b8f1af7602c64",
+      "recordedDerivedHashVerified": true
+    },
+    {
+      "case": "create-multistep-form",
+      "attempt": 2,
+      "success": false,
+      "kind": "validation",
+      "responseProtocol": "boundedCreationChanges",
+      "diagnostic": "Display an editable text title on a visible record view.",
+      "requestSha256": "2e24a4fb8726e4ccbc16418936c0cf2fd33cedd3f858963316fc48dff497faae",
+      "requestBytes": 33850,
+      "controlRequestBytes": 73590,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "78f081002f2ebca43ef0cacda50fb1cbcc9c600f872826e8233cff427b76d9b9",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "c97685ea204ed62a24499a1defe70ec64241539e78e3faa204485ece503a0108",
+      "recordedDerivedHashVerified": true,
+      "repairBaseEqualsPreviousDerivedResponse": true,
+      "repairBaseSha256": "4e8c5d2bb8872516d01a6d126f82ae9a0c47dbd5590566308db188a4211a0131",
+      "independentPatchAssemblyExact": true,
+      "changeCount": 2,
+      "operations": {
+        "set": 2
+      },
+      "paths": [
+        [
+          "views",
+          0,
+          "fieldIds"
+        ],
+        [
+          "views",
+          1,
+          "fieldIds"
+        ]
+      ]
+    },
+    {
+      "case": "create-multistep-form",
+      "attempt": 3,
+      "success": false,
+      "kind": "validation",
+      "responseProtocol": "boundedCreationChanges",
+      "diagnostic": "Display an editable text title on a visible record view.",
+      "requestSha256": "4187d40ec2be07096f7b007399141d913a0829b4e979208b5cbd1d3ea15860e6",
+      "requestBytes": 32592,
+      "controlRequestBytes": 72332,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "fcb1c2c64666258dc3879650812cf3b10e3aeb2f1d28faa9e64ba254c698deb2",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "12f839b0673a7cdae04b82de9f6f731ff21c917c82a7197a57d00f12bd84a4ee",
+      "recordedDerivedHashVerified": true,
+      "repairBaseEqualsPreviousDerivedResponse": true,
+      "repairBaseSha256": "c97685ea204ed62a24499a1defe70ec64241539e78e3faa204485ece503a0108",
+      "independentPatchAssemblyExact": true,
+      "changeCount": 1,
+      "operations": {
+        "set": 1
+      },
+      "paths": [
+        [
+          "views",
+          3,
+          "options",
+          "controls"
+        ]
+      ]
+    },
+    {
+      "case": "create-capacity-signup",
+      "attempt": 1,
+      "success": false,
+      "kind": "validation",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "Missing required capabilities: capacity.v1, views.configured.v1",
+      "requestSha256": "5ad5e2c930d38cb8d184b87d7818af18e725d2b45504ea32357c2ef85932704e",
+      "requestBytes": 67941,
+      "controlRequestBytes": 67941,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "99d672cb4d77dd45c3d21464a99c0d7b4de3ec8f87b63d2c8bfc89b4108bf19b",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "99d672cb4d77dd45c3d21464a99c0d7b4de3ec8f87b63d2c8bfc89b4108bf19b",
+      "recordedDerivedHashVerified": true
+    },
+    {
+      "case": "create-capacity-signup",
+      "attempt": 2,
+      "success": false,
+      "kind": "validation",
+      "responseProtocol": "boundedCreationChanges",
+      "diagnostic": "Expose shift list, capacity summary, configure, join and release controls.",
+      "requestSha256": "1885eed3c27a651b0db10672102726390df0bb4d13182e4f121738ff16454ad5",
+      "requestBytes": 34176,
+      "controlRequestBytes": 73916,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "b136c43c4c61fd151de3421a361d7d0d85fc8fc361c6cf991c2585ab6fe630fa",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "40cf9663ced1fbfd0981c57225ec29c466e46e4277aa31c1db23146aadb69a6c",
+      "recordedDerivedHashVerified": true,
+      "repairBaseEqualsPreviousDerivedResponse": true,
+      "repairBaseSha256": "8f3f8e953ccdd96d47cf8b2b321ea0e00c3c9ff186cc43faa696b4fd00ff449b",
+      "independentPatchAssemblyExact": true,
+      "changeCount": 2,
+      "operations": {
+        "append": 2
+      },
+      "paths": [
+        [
+          "requires"
+        ],
+        [
+          "requires"
+        ]
+      ]
+    },
+    {
+      "case": "create-capacity-signup",
+      "attempt": 3,
+      "success": false,
+      "kind": "truncated",
+      "responseProtocol": "boundedCreationChanges",
+      "diagnostic": "AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens.",
+      "requestSha256": "7577bdd600f27ba80ed44a62c56248f762a7ee8068c823824786c7ab994a1b61",
+      "requestBytes": 32727,
+      "controlRequestBytes": 72467,
+      "rawResponseAvailable": false,
+      "repairBaseEqualsPreviousDerivedResponse": true,
+      "repairBaseSha256": "40cf9663ced1fbfd0981c57225ec29c466e46e4277aa31c1db23146aadb69a6c"
+    },
+    {
+      "case": "create-transfer-reading",
+      "attempt": 1,
+      "success": false,
+      "kind": "truncated",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens.",
+      "requestSha256": "6e8e90dcce5426878cfd79c2127757bc9d359cacd7946135ed6b81ba12547e36",
+      "requestBytes": 68089,
+      "controlRequestBytes": 68089,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "e3bcb80ee268d89e440303489b31d59316e68efa62caba6d925796657c4ed356"
+    },
+    {
+      "case": "create-transfer-reading",
+      "attempt": 2,
+      "success": false,
+      "kind": "timeout",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "The AI provider did not finish within the bounded response deadline. Try again later.",
+      "requestSha256": "a202cbaa44143445d6c0b9381e881d7efec0e9234154410a3ea6b88075b875b5",
+      "requestBytes": 69830,
+      "controlRequestBytes": 69830,
+      "rawResponseAvailable": false
+    },
+    {
+      "case": "create-transfer-reading",
+      "attempt": 3,
+      "success": false,
+      "kind": "validation",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "Boolean checklists need a record patch action",
+      "requestSha256": "dda4cabfc74415fdc4ed447023de16ec27a50e241cd28c5f67423003ea8dc9e4",
+      "requestBytes": 68178,
+      "controlRequestBytes": 68178,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "ae8235f549962b1861db8f89093dcbc8da01c890cbd58841c89c79c377aca73e",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "ae8235f549962b1861db8f89093dcbc8da01c890cbd58841c89c79c377aca73e",
+      "recordedDerivedHashVerified": true
+    },
+    {
+      "case": "create-transfer-team",
+      "attempt": 1,
+      "success": false,
+      "kind": "truncated",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens.",
+      "requestSha256": "86058d54b055a7290230f3f4f3fa48a9de211f64862514ba161f81aae30c48c2",
+      "requestBytes": 68102,
+      "controlRequestBytes": 68102,
+      "rawResponseAvailable": false
+    },
+    {
+      "case": "create-transfer-team",
+      "attempt": 2,
+      "success": false,
+      "kind": "validation",
+      "responseProtocol": "AppSpec",
+      "diagnostic": "Form repairForm field estimate has type integer, but control text requires text.",
+      "requestSha256": "f1e7252eb5d3543c7bdea0670fec597fbbabd9acb48d07970e766e95085f3dd6",
+      "requestBytes": 68221,
+      "controlRequestBytes": 68221,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "9d2f7f0ab8f649376fcf8ffb60ca8c2b9063d8547c12ef15f3e96377324da193",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "9d2f7f0ab8f649376fcf8ffb60ca8c2b9063d8547c12ef15f3e96377324da193",
+      "recordedDerivedHashVerified": true
+    },
+    {
+      "case": "create-transfer-team",
+      "attempt": 3,
+      "success": true,
+      "kind": "received",
+      "responseProtocol": "boundedCreationChanges",
+      "diagnostic": null,
+      "requestSha256": "1929b825681fd6f67f122c7f1569ba6d37eb60ba65d2a4b3b3d8dd91efac71d3",
+      "requestBytes": 34492,
+      "controlRequestBytes": 74196,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "244e98caff496d4312ee1a055d52f6d14070da8c4549e4f1d9e3dc13df1ca3e9",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "47122b8609c86a9dfc6a1bbed99b137491c494a7987b31dc6d677506e323487a",
+      "recordedDerivedHashVerified": true,
+      "repairBaseEqualsPreviousDerivedResponse": true,
+      "repairBaseSha256": "11fa0653ec7c1c060f48efad62eb7df6d68bd96db0efd10be4ddc4b55766b7dc",
+      "independentPatchAssemblyExact": true,
+      "changeCount": 1,
+      "operations": {
+        "remove": 1
+      },
+      "paths": [
+        [
+          "views",
+          2,
+          "options",
+          "controls",
+          1
+        ]
+      ]
+    },
+    {
+      "case": "unsupported-executable",
+      "attempt": 1,
+      "success": true,
+      "kind": "received",
+      "responseProtocol": "AppSpec",
+      "diagnostic": null,
+      "requestSha256": "9d50efd4513f3b53b819a9ec404eb2e85c82ebed52b24e79c673142f9b0c3ddd",
+      "requestBytes": 67738,
+      "controlRequestBytes": 67738,
+      "rawResponseAvailable": true,
+      "rawResponseSha256": "564e15dad068f25f1c66bae1f43c453f2720ff7a0ebb6d510c71f3c5c14fc0b1",
+      "recordedRawHashVerified": true,
+      "derivedResponseSha256": "564e15dad068f25f1c66bae1f43c453f2720ff7a0ebb6d510c71f3c5c14fc0b1",
+      "recordedDerivedHashVerified": true
+    }
+  ]
+}

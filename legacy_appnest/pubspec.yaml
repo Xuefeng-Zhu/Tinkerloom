@@ -1,0 +1,12 @@
+name: _
+publish_to: none
+
+environment:
+  sdk: '>=3.13.0 <3.14.0'
+
+workspace:
+  - appnest_client
+  - appnest_server
+  - appnest_flutter
+  - packages/appnest_spec
+  - packages/appnest_renderer

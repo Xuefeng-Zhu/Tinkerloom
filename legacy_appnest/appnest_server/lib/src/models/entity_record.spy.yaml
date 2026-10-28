@@ -1,0 +1,17 @@
+class: EntityRecord
+table: nest_record
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  collectionId: String
+  data: dynamic, serializationDataType=jsonb
+  creatorId: String
+  revision: int
+  writtenUnderVersionId: int, relation(parent=nest_version)
+  createdAt: DateTime
+  updatedAt: DateTime
+  deleted: bool, default=false
+indexes:
+  record_scope_time:
+    fields: appId, collectionId, createdAt

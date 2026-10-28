@@ -1,0 +1,1101 @@
+{
+  "schemaVersion": 1,
+  "provider": "nvidia",
+  "apiBase": "https://integrate.api.nvidia.com/v1",
+  "benchmarkVersion": "appnest-nemotron-v2",
+  "benchmarkLabel": "AppNest NVIDIA model evaluation",
+  "modelFamilies": {
+    "moonshotai/kimi-k3": "Kimi",
+    "z-ai/glm-5.3": "GLM",
+    "deepseek-ai/deepseek-v4.1-flash": "DeepSeek"
+  },
+  "status": "blocked",
+  "createdAt": "2026-10-08T08:48:43.322174Z",
+  "updatedAt": "2026-10-08T10:22:38.092014Z",
+  "source": {
+    "commit": "7a4b402480fe6b16bc695d280e306a9722963b11",
+    "dirtyTrackedSha256": "594138a88d13ccd1e5d676105dea59e827ec315bdc44b3ebf889d00c346f2e60",
+    "contractSourceSha256": "f647ad486340c43ddb4d2da5fbb6f4f143ec2b54cec04bc79a47bc3a182c6822",
+    "dartVersion": "3.13.0 (stable) (Wed Aug 5 00:28:05 2026 -0700) on \"macos_arm64\"",
+    "files": {
+      "appnest_server/lib/src/evaluation/nemotron_parallel_scheduler.dart": "b932baa426f122e915bcd16c4688ab9a1464380e423e316cd0884aa97be9bba4",
+      "appnest_server/lib/src/evaluation/nvidia_model_profiles.dart": "16c506a0528d52f9f32284b9d7e3a271c30cf7d0e211f4214d3e6a6dfa863421",
+      "appnest_server/lib/src/modules/builder/builder.dart": "520ba357c52158fb4279e8ece468ec06b12470a588a9371b6d504a789c60de4f",
+      "appnest_server/lib/src/modules/builder/creation_compiler.dart": "b8f9f642fc3cb7ad0c9b0b7102a5f874c95da6d5ff32844c3229b665310907d0",
+      "appnest_server/lib/src/modules/builder/customization_evaluation.dart": "4b460730522dd375b3323bb78ac71f60b6aacfabfc23f32a7427916700c608b6",
+      "appnest_server/lib/src/modules/builder/generation_quality.dart": "10b42800a230065346a400569ad9f1673a51e5530940d4d91c2c01d474849b91",
+      "appnest_server/lib/src/modules/builder/generation_requirements.dart": "9a469805b406612f331ecab63fdf96292b396acb81770f89029aa5bd79d9812f",
+      "appnest_server/lib/src/modules/builder/nemotron_evaluation.dart": "8171d8c478133ca15f290a44db35647f05ed3f980b1928983d799eed17612a82",
+      "appnest_server/lib/src/modules/builder/nemotron_report.dart": "92b1252cb23519ea6458ad5e98358d28b4fd62dfb9c87e29e348a7d478b851f5",
+      "appnest_server/lib/src/modules/builder/nemotron_routes.dart": "5c3767032281b9d1029f26170269917dd22b27d0b2761f3fa2dcf82a9944f4cf",
+      "appnest_server/lib/src/modules/builder/nemotron_scenarios.dart": "29b7f710ccc67d7c037daa5f318916a611350f5fdd2cbc441f0b26329e968237",
+      "appnest_server/lib/src/modules/builder/provider.dart": "ec08e957776f9053e4ea5251774d3da7ef2bec0a6a38014fb6a2c89df5021cc0",
+      "appnest_server/lib/src/modules/builder/repair_bindings.dart": "f24f5e0d40fec992aa546106f9ac186fa130ad8606011cd22002bd651d52de12",
+      "appnest_server/pubspec.yaml": "7b3827ec18181e59e32c92a356220ce02e33c81360aa3ed125d4966d6b87e2de",
+      "packages/appnest_spec/lib/appnest_spec.dart": "189085c4cbf30423002e1e3acb6d8367c649a58292da00a641f659e59baabf2c",
+      "packages/appnest_spec/lib/src/appearance.dart": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e",
+      "packages/appnest_spec/lib/src/device_spec.dart": "ad79778c211c67c074c1bf522e8bdd2a4f6ffd66e28793e3bb9359e5653a7029",
+      "packages/appnest_spec/lib/src/rich_spec.dart": "7aae7c81de7a5708b6184320abc50f24e0d64f00cda3c6d76b521f4d5d063e5a",
+      "packages/appnest_spec/lib/src/rich_templates.dart": "c6a4ab1d72859d41425b03b18f1e4340e870694a79954483566627b5ba721d98",
+      "packages/appnest_spec/lib/src/schema.dart": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24",
+      "packages/appnest_spec/lib/src/spec.dart": "df491ed854b45a7fbd06130784ca305245ba9efa842f127249b06012ff8bf4a2",
+      "packages/appnest_spec/lib/src/templates.dart": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3",
+      "packages/appnest_spec/lib/src/utility_spec.dart": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442",
+      "packages/appnest_spec/lib/src/utility_templates.dart": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18",
+      "packages/appnest_spec/pubspec.yaml": "74e0dd05a42046744392f1e43fa9b395dac1ea5a82b2e15cbcfa03e4c2aec23a",
+      "pubspec.lock": "098981397295b030cdf11c48c14e898bb0419ad6c38bc6797519d169b3f77f99",
+      "pubspec.yaml": "24c0edf2a3ef601e43f6086db95d44aeaff678965f4eedef2ad5b96856c3a6b4",
+      "scripts/nemotron_eval.dart": "535bb3e3bb6395a87a6f3eb0b6028f30a93bb9b633b6f3c60605496dd6f6512a"
+    }
+  },
+  "runFingerprint": "e7cd449878d1973a1e973cee86dcaa68dd2030325283fb0006b8c085121bb84a",
+  "catalog": [
+    {
+      "id": "moonshotai/kimi-k3",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/moonshotai/kimi-k3",
+      "family": "Kimi",
+      "pricingVerified": false,
+      "supportedParameters": null
+    },
+    {
+      "id": "z-ai/glm-5.3",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/z-ai/glm-5-3",
+      "family": "GLM",
+      "pricingVerified": false,
+      "supportedParameters": null
+    },
+    {
+      "id": "deepseek-ai/deepseek-v4.1-flash",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/deepseek-ai/deepseek-v4.1-flash",
+      "family": "DeepSeek",
+      "pricingVerified": false,
+      "supportedParameters": null
+    }
+  ],
+  "transportProfiles": {
+    "moonshotai/kimi-k3": {
+      "profile": "nvidia-kimi-k3-instruction-schema-low-v1",
+      "family": "Kimi",
+      "catalogUrl": "https://build.nvidia.com/moonshotai/kimi-k3",
+      "reasoning": "always enabled; low effort requested",
+      "requestOverrides": {
+        "stream": false,
+        "temperature": 0,
+        "reasoning_effort": "low"
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://docs.api.nvidia.com/nim/reference/moonshotai-kimi-k3",
+        "https://docs.api.nvidia.com/nim/reference/moonshotai-kimi-k3-infer"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/moonshotai-kimi-k3-infer",
+        "temperature": "https://docs.api.nvidia.com/nim/reference/moonshotai-kimi-k3-infer",
+        "reasoning_effort": "https://docs.api.nvidia.com/nim/reference/moonshotai-kimi-k3-infer"
+      },
+      "limitations": [
+        "Bounded AppNest feasibility profile; thinking cannot be disabled.",
+        "Temperature 0 is supported; NVIDIA recommends 1.0. Low effort and the shared token/deadline limits do not measure maximal capability."
+      ]
+    },
+    "z-ai/glm-5.3": {
+      "profile": "nvidia-glm-5.3-instruction-schema-low-v1",
+      "family": "GLM",
+      "catalogUrl": "https://build.nvidia.com/z-ai/glm-5-3",
+      "reasoning": "enabled; low effort requested; previous thinking cleared",
+      "requestOverrides": {
+        "stream": false,
+        "temperature": 0,
+        "reasoning_effort": "low",
+        "chat_template_kwargs": {
+          "clear_thinking": true
+        }
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3",
+        "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-infer",
+        "https://recipes.vllm.ai/zai-org/GLM-5.3"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-infer",
+        "temperature": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-infer",
+        "reasoning_effort": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3",
+        "reasoning_effort.location": "https://recipes.vllm.ai/zai-org/GLM-5.3",
+        "chat_template_kwargs.clear_thinking": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3"
+      },
+      "limitations": [
+        "Bounded AppNest feasibility profile; no unsupported thinking-off switch is sent.",
+        "Temperature 0 is supported; the endpoint default is 0.5. Low effort and shared token/deadline limits do not measure maximal capability."
+      ]
+    },
+    "deepseek-ai/deepseek-v4.1-flash": {
+      "profile": "nvidia-deepseek-v4.1-flash-instruction-schema-default-v1",
+      "family": "DeepSeek",
+      "catalogUrl": "https://build.nvidia.com/deepseek-ai/deepseek-v4.1-flash",
+      "reasoning": "model default; no documented NVIDIA HTTP override sent",
+      "requestOverrides": {
+        "stream": false,
+        "temperature": 0
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://docs.api.nvidia.com/nim/reference/nvidia-deepseek-v4_1-flash-infer",
+        "https://build.nvidia.com/deepseek-ai/deepseek-v4.1-flash/modelcard"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/nvidia-deepseek-v4_1-flash-infer",
+        "temperature": "https://docs.api.nvidia.com/nim/reference/nvidia-deepseek-v4_1-flash-infer"
+      },
+      "limitations": [
+        "Bounded AppNest feasibility profile; source-model numeric reasoning controls are not assumed to be NVIDIA HTTP parameters.",
+        "Temperature 0 is supported; NVIDIA recommends 1.0. Shared 8000/12000 generation tokens and 90-second deadline are below publisher recommendations and do not measure maximal capability."
+      ]
+    }
+  },
+  "execution": {
+    "concurrency": 3,
+    "requestIntervalMs": 4000,
+    "pacing": "global-dispatch",
+    "perModelSequential": true
+  },
+  "executionObserved": {
+    "requestsDispatchedThisInvocation": 165,
+    "peakConcurrentRequestsThisInvocation": 3
+  },
+  "models": {
+    "moonshotai/kimi-k3": {
+      "planned": 36,
+      "attempted": 25,
+      "completed": 24,
+      "passed": 7,
+      "failed": 17,
+      "correctnessCompleted": 8,
+      "correctnessFailed": 1,
+      "firstAttemptPassed": 5,
+      "skipped": 0,
+      "pending": 11,
+      "inFlight": 0,
+      "indeterminate": 0,
+      "blocked": 1,
+      "availabilityFailureAttempts": 56,
+      "availabilityFailureKinds": {
+        "timeout": 55,
+        "rate_limit": 1
+      },
+      "availabilityOnlyFailures": 16,
+      "attemptCount": 65,
+      "completionCoverage": 0.6666666666666666,
+      "resolvedCoverage": 0.6666666666666666,
+      "correctnessCoverage": 0.2222222222222222,
+      "firstAttemptPassRateObserved": 0.625,
+      "firstAttemptPassRatePlanned": 0.1388888888888889,
+      "eventualPassRateObserved": 0.875,
+      "eventualPassRatePlanned": 0.19444444444444445,
+      "latencyMs": {
+        "sampleCount": 24,
+        "median": 270010.5,
+        "p95": 270026,
+        "quantileMethod": "median midpoint; p95 nearest rank"
+      },
+      "usage": {
+        "promptTokens": 142446,
+        "completionTokens": 5048,
+        "totalTokens": 147494,
+        "reasoningTokens": 313,
+        "costReportedUsd": null,
+        "knownAttempts": {
+          "promptTokens": 9,
+          "completionTokens": 9,
+          "totalTokens": 9,
+          "reasoningTokens": 9
+        },
+        "attemptCount": 65,
+        "missingUsageAttempts": 56,
+        "complete": false,
+        "reasoningComplete": false,
+        "costComplete": false
+      },
+      "categories": {
+        "create": {
+          "planned": 12,
+          "attempted": 12,
+          "completed": 12,
+          "passed": 7,
+          "failed": 5,
+          "correctnessCompleted": 8,
+          "correctnessFailed": 1,
+          "firstAttemptPassed": 5,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 17,
+          "availabilityFailureKinds": {
+            "timeout": 17
+          },
+          "availabilityOnlyFailures": 4,
+          "attemptCount": 26,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 0.6666666666666666,
+          "firstAttemptPassRateObserved": 0.625,
+          "firstAttemptPassRatePlanned": 0.4166666666666667,
+          "eventualPassRateObserved": 0.875,
+          "eventualPassRatePlanned": 0.5833333333333334,
+          "latencyMs": {
+            "sampleCount": 12,
+            "median": 261002.0,
+            "p95": 270026,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": 142446,
+            "completionTokens": 5048,
+            "totalTokens": 147494,
+            "reasoningTokens": 313,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 9,
+              "completionTokens": 9,
+              "totalTokens": 9,
+              "reasoningTokens": 9
+            },
+            "attemptCount": 26,
+            "missingUsageAttempts": 17,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "edit": {
+          "planned": 12,
+          "attempted": 12,
+          "completed": 12,
+          "passed": 0,
+          "failed": 12,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 36,
+          "availabilityFailureKinds": {
+            "timeout": 36
+          },
+          "availabilityOnlyFailures": 12,
+          "attemptCount": 36,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 12,
+            "median": 270011.5,
+            "p95": 270029,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 36,
+            "missingUsageAttempts": 36,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "guidance": {
+          "planned": 4,
+          "attempted": 1,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 3,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 1,
+          "availabilityFailureAttempts": 3,
+          "availabilityFailureKinds": {
+            "timeout": 2,
+            "rate_limit": 1
+          },
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 3,
+          "completionCoverage": 0.0,
+          "resolvedCoverage": 0.0,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 3,
+            "missingUsageAttempts": 3,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "unsupported": {
+          "planned": 4,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 4,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": 0.0,
+          "resolvedCoverage": 0.0,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "sequence": {
+          "planned": 4,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 4,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": 0.0,
+          "resolvedCoverage": 0.0,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        }
+      }
+    },
+    "z-ai/glm-5.3": {
+      "planned": 36,
+      "attempted": 36,
+      "completed": 36,
+      "passed": 35,
+      "failed": 1,
+      "correctnessCompleted": 36,
+      "correctnessFailed": 1,
+      "firstAttemptPassed": 32,
+      "skipped": 0,
+      "pending": 0,
+      "inFlight": 0,
+      "indeterminate": 0,
+      "blocked": 0,
+      "availabilityFailureAttempts": 1,
+      "availabilityFailureKinds": {
+        "timeout": 1
+      },
+      "availabilityOnlyFailures": 0,
+      "attemptCount": 41,
+      "completionCoverage": 1.0,
+      "resolvedCoverage": 1.0,
+      "correctnessCoverage": 1.0,
+      "firstAttemptPassRateObserved": 0.8888888888888888,
+      "firstAttemptPassRatePlanned": 0.8888888888888888,
+      "eventualPassRateObserved": 0.9722222222222222,
+      "eventualPassRatePlanned": 0.9722222222222222,
+      "latencyMs": {
+        "sampleCount": 36,
+        "median": 2718.5,
+        "p95": 17506,
+        "quantileMethod": "median midpoint; p95 nearest rank"
+      },
+      "usage": {
+        "promptTokens": 586683,
+        "completionTokens": 11568,
+        "totalTokens": 598251,
+        "reasoningTokens": 2163,
+        "costReportedUsd": null,
+        "knownAttempts": {
+          "promptTokens": 40,
+          "completionTokens": 40,
+          "totalTokens": 40,
+          "reasoningTokens": 40
+        },
+        "attemptCount": 41,
+        "missingUsageAttempts": 1,
+        "complete": false,
+        "reasoningComplete": false,
+        "costComplete": false
+      },
+      "categories": {
+        "create": {
+          "planned": 12,
+          "attempted": 12,
+          "completed": 12,
+          "passed": 11,
+          "failed": 1,
+          "correctnessCompleted": 12,
+          "correctnessFailed": 1,
+          "firstAttemptPassed": 8,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 1,
+          "availabilityFailureKinds": {
+            "timeout": 1
+          },
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 17,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 1.0,
+          "firstAttemptPassRateObserved": 0.6666666666666666,
+          "firstAttemptPassRatePlanned": 0.6666666666666666,
+          "eventualPassRateObserved": 0.9166666666666666,
+          "eventualPassRatePlanned": 0.9166666666666666,
+          "latencyMs": {
+            "sampleCount": 12,
+            "median": 10662.5,
+            "p95": 159802,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": 243716,
+            "completionTokens": 10455,
+            "totalTokens": 254171,
+            "reasoningTokens": 2078,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 16,
+              "completionTokens": 16,
+              "totalTokens": 16,
+              "reasoningTokens": 16
+            },
+            "attemptCount": 17,
+            "missingUsageAttempts": 1,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "edit": {
+          "planned": 12,
+          "attempted": 12,
+          "completed": 12,
+          "passed": 12,
+          "failed": 0,
+          "correctnessCompleted": 12,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 12,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 12,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 1.0,
+          "firstAttemptPassRateObserved": 1.0,
+          "firstAttemptPassRatePlanned": 1.0,
+          "eventualPassRateObserved": 1.0,
+          "eventualPassRatePlanned": 1.0,
+          "latencyMs": {
+            "sampleCount": 12,
+            "median": 1963.5,
+            "p95": 5316,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": 211892,
+            "completionTokens": 520,
+            "totalTokens": 212412,
+            "reasoningTokens": 48,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 12,
+              "completionTokens": 12,
+              "totalTokens": 12,
+              "reasoningTokens": 12
+            },
+            "attemptCount": 12,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        },
+        "guidance": {
+          "planned": 4,
+          "attempted": 4,
+          "completed": 4,
+          "passed": 4,
+          "failed": 0,
+          "correctnessCompleted": 4,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 4,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 4,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 1.0,
+          "firstAttemptPassRateObserved": 1.0,
+          "firstAttemptPassRatePlanned": 1.0,
+          "eventualPassRateObserved": 1.0,
+          "eventualPassRatePlanned": 1.0,
+          "latencyMs": {
+            "sampleCount": 4,
+            "median": 1963.5,
+            "p95": 2387,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": 1254,
+            "completionTokens": 221,
+            "totalTokens": 1475,
+            "reasoningTokens": 0,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 4,
+              "completionTokens": 4,
+              "totalTokens": 4,
+              "reasoningTokens": 4
+            },
+            "attemptCount": 4,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        },
+        "unsupported": {
+          "planned": 4,
+          "attempted": 4,
+          "completed": 4,
+          "passed": 4,
+          "failed": 0,
+          "correctnessCompleted": 4,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 4,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 4,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 1.0,
+          "firstAttemptPassRateObserved": 1.0,
+          "firstAttemptPassRatePlanned": 1.0,
+          "eventualPassRateObserved": 1.0,
+          "eventualPassRatePlanned": 1.0,
+          "latencyMs": {
+            "sampleCount": 4,
+            "median": 2721.0,
+            "p95": 4547,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": 60403,
+            "completionTokens": 189,
+            "totalTokens": 60592,
+            "reasoningTokens": 23,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 4,
+              "completionTokens": 4,
+              "totalTokens": 4,
+              "reasoningTokens": 4
+            },
+            "attemptCount": 4,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        },
+        "sequence": {
+          "planned": 4,
+          "attempted": 4,
+          "completed": 4,
+          "passed": 4,
+          "failed": 0,
+          "correctnessCompleted": 4,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 4,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 4,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 1.0,
+          "firstAttemptPassRateObserved": 1.0,
+          "firstAttemptPassRatePlanned": 1.0,
+          "eventualPassRateObserved": 1.0,
+          "eventualPassRatePlanned": 1.0,
+          "latencyMs": {
+            "sampleCount": 4,
+            "median": 1295.0,
+            "p95": 1647,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": 69418,
+            "completionTokens": 183,
+            "totalTokens": 69601,
+            "reasoningTokens": 14,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 4,
+              "completionTokens": 4,
+              "totalTokens": 4,
+              "reasoningTokens": 4
+            },
+            "attemptCount": 4,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        }
+      }
+    },
+    "deepseek-ai/deepseek-v4.1-flash": {
+      "planned": 36,
+      "attempted": 21,
+      "completed": 20,
+      "passed": 0,
+      "failed": 20,
+      "correctnessCompleted": 0,
+      "correctnessFailed": 0,
+      "firstAttemptPassed": 0,
+      "skipped": 0,
+      "pending": 16,
+      "inFlight": 0,
+      "indeterminate": 0,
+      "blocked": 0,
+      "availabilityFailureAttempts": 62,
+      "availabilityFailureKinds": {
+        "timeout": 62
+      },
+      "availabilityOnlyFailures": 20,
+      "attemptCount": 62,
+      "completionCoverage": 0.5555555555555556,
+      "resolvedCoverage": 0.5555555555555556,
+      "correctnessCoverage": 0.0,
+      "firstAttemptPassRateObserved": null,
+      "firstAttemptPassRatePlanned": 0.0,
+      "eventualPassRateObserved": null,
+      "eventualPassRatePlanned": 0.0,
+      "latencyMs": {
+        "sampleCount": 20,
+        "median": 270035.5,
+        "p95": 270051,
+        "quantileMethod": "median midpoint; p95 nearest rank"
+      },
+      "usage": {
+        "promptTokens": null,
+        "completionTokens": null,
+        "totalTokens": null,
+        "reasoningTokens": null,
+        "costReportedUsd": null,
+        "knownAttempts": {},
+        "attemptCount": 62,
+        "missingUsageAttempts": 62,
+        "complete": false,
+        "reasoningComplete": false,
+        "costComplete": false
+      },
+      "categories": {
+        "create": {
+          "planned": 12,
+          "attempted": 12,
+          "completed": 12,
+          "passed": 0,
+          "failed": 12,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 36,
+          "availabilityFailureKinds": {
+            "timeout": 36
+          },
+          "availabilityOnlyFailures": 12,
+          "attemptCount": 36,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 12,
+            "median": 270038.5,
+            "p95": 270051,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 36,
+            "missingUsageAttempts": 36,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "edit": {
+          "planned": 12,
+          "attempted": 9,
+          "completed": 8,
+          "passed": 0,
+          "failed": 8,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 4,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 26,
+          "availabilityFailureKinds": {
+            "timeout": 26
+          },
+          "availabilityOnlyFailures": 8,
+          "attemptCount": 26,
+          "completionCoverage": 0.6666666666666666,
+          "resolvedCoverage": 0.6666666666666666,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 8,
+            "median": 270034.5,
+            "p95": 270042,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 26,
+            "missingUsageAttempts": 26,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "guidance": {
+          "planned": 4,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 4,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": 0.0,
+          "resolvedCoverage": 0.0,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "unsupported": {
+          "planned": 4,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 4,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": 0.0,
+          "resolvedCoverage": 0.0,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "sequence": {
+          "planned": 4,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 4,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": 0.0,
+          "resolvedCoverage": 0.0,
+          "correctnessCoverage": 0.0,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": 0.0,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": 0.0,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        }
+      }
+    }
+  },
+  "plannedPerModel": 36,
+  "plannedCategories": {
+    "create": 12,
+    "edit": 12,
+    "guidance": 4,
+    "unsupported": 4,
+    "sequence": 4
+  },
+  "recommendations": {
+    "create": {
+      "status": "incomplete_evidence",
+      "model": null,
+      "explanation": "No winner: complete comparable create correctness coverage is required for every selected model."
+    },
+    "edit": {
+      "status": "incomplete_evidence",
+      "model": null,
+      "explanation": "No winner: complete comparable edit correctness coverage is required for every selected model."
+    }
+  },
+  "expectedPriceUsd": null,
+  "expectedCostBasis": "free_developer_endpoint",
+  "pricingVerified": false,
+  "accountLimitsKnown": false,
+  "limitations": [
+    "Exploratory single-trial measurements; no statistical reliability claim.",
+    "Synthetic provider and definition checks only. No authenticated persistence, Flutter rendering, publication, device, or production acceptance is established.",
+    "Transport, quota, and unavailable-model failures are availability results and excluded from observed correctness rates.",
+    "Known token and cost sums include every attempt. Missing usage is unknown and is never replaced with zero."
+  ]
+}

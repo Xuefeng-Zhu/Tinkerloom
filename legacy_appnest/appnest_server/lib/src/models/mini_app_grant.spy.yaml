@@ -1,0 +1,13 @@
+class: MiniAppGrant
+table: nest_grant
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  actorId: String
+  role: String
+  revoked: bool, default=false
+indexes:
+  grant_unique:
+    fields: appId, actorId
+    unique: true

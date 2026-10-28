@@ -1,0 +1,9 @@
+class: GuidanceRequest
+table: nest_guidance_request
+serverOnly: true
+fields:
+  actorId: String
+  createdAt: DateTime
+indexes:
+  guidance_actor_created:
+    fields: actorId, createdAt

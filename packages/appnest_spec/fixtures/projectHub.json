@@ -1,0 +1,319 @@
+{
+  "formatVersion": 1,
+  "name": "Project Hub",
+  "theme": "blue",
+  "icon": "spark",
+  "requires": [
+    "collections.v1",
+    "navigation.v1",
+    "workflow.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "workflow.transition.v1",
+    "views.banner.v1",
+    "views.board.v1",
+    "views.table.v1",
+    "views.calendar.v1",
+    "views.timeline.v1",
+    "views.checklist.v1",
+    "views.details.v1",
+    "views.form.v1",
+    "views.configured.v1",
+    "views.interactive.v1"
+  ],
+  "collections": [
+    {
+      "id": "projects",
+      "label": "Entries",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Task",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "status",
+          "label": "Status",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Open",
+            "Done"
+          ]
+        },
+        {
+          "id": "dueAt",
+          "label": "Due date",
+          "type": "timestamp",
+          "required": false
+        },
+        {
+          "id": "priority",
+          "label": "Priority",
+          "type": "choice",
+          "required": false,
+          "choices": [
+            "Low",
+            "Normal",
+            "High"
+          ]
+        },
+        {
+          "id": "effort",
+          "label": "Effort",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "behaviors": [
+        {
+          "id": "workflow",
+          "type": "workflow.v1",
+          "fieldId": "status",
+          "transitions": {
+            "Open": [
+              "Done"
+            ],
+            "Done": [
+              "Open"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "welcome",
+      "type": "banner",
+      "label": "Project overview",
+      "options": {
+        "title": "Make progress together",
+        "body": "Plan the next step, share the work, and celebrate what is done.",
+        "tone": "accent"
+      },
+      "actionIds": []
+    },
+    {
+      "id": "taskBoard",
+      "type": "board",
+      "collectionId": "projects",
+      "label": "Team board",
+      "options": {
+        "draggable": true,
+        "moveActionId": "moveRecord"
+      },
+      "titleFieldId": "title",
+      "groupByFieldId": "status",
+      "actionIds": [
+        "addRecord",
+        "editRecord",
+        "moveRecord"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "taskTable",
+      "type": "table",
+      "collectionId": "projects",
+      "label": "All tasks",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "fieldIds": [
+        "title",
+        "priority",
+        "dueAt",
+        "effort"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "taskCalendar",
+      "type": "calendar",
+      "collectionId": "projects",
+      "label": "Calendar",
+      "options": {
+        "dateFieldId": "dueAt"
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "taskTimeline",
+      "type": "timeline",
+      "collectionId": "projects",
+      "label": "Coming up",
+      "options": {
+        "dateFieldId": "dueAt"
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "taskChecklist",
+      "type": "checklist",
+      "collectionId": "projects",
+      "label": "Quick check-in",
+      "options": {
+        "fieldId": "status",
+        "actionId": "moveRecord",
+        "checkedValue": "Done",
+        "uncheckedValue": "Open"
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord",
+        "moveRecord"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "details",
+      "type": "details",
+      "collectionId": "projects",
+      "label": "Task details",
+      "titleFieldId": "title",
+      "actionIds": [
+        "editRecord",
+        "moveRecord"
+      ]
+    },
+    {
+      "id": "editor",
+      "type": "form",
+      "collectionId": "projects",
+      "label": "Task editor",
+      "options": {
+        "controls": [
+          {
+            "fieldId": "priority",
+            "control": "segmented"
+          },
+          {
+            "fieldId": "effort",
+            "control": "stepper",
+            "min": 1,
+            "max": 20,
+            "step": 1
+          },
+          {
+            "fieldId": "notes",
+            "control": "multiline"
+          }
+        ]
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "addRecord",
+      "label": "Add entry",
+      "capability": "records.create.v1",
+      "collectionId": "projects"
+    },
+    {
+      "id": "editRecord",
+      "label": "Edit entry",
+      "capability": "records.patch.v1",
+      "collectionId": "projects"
+    },
+    {
+      "id": "moveRecord",
+      "label": "Change status",
+      "capability": "workflow.transition.v1",
+      "collectionId": "projects",
+      "behaviorId": "workflow"
+    }
+  ],
+  "policyPresetRequest": "groupWorkflow.v1",
+  "automationRequests": [],
+  "navigation": {
+    "entryPageId": "boardPage",
+    "pages": [
+      {
+        "id": "boardPage",
+        "title": "Workspace",
+        "viewIds": [
+          "welcome",
+          "taskBoard"
+        ]
+      },
+      {
+        "id": "tablePage",
+        "title": "Tasks",
+        "viewIds": [
+          "taskTable",
+          "taskChecklist"
+        ]
+      },
+      {
+        "id": "calendarPage",
+        "title": "Schedule",
+        "viewIds": [
+          "taskCalendar",
+          "taskTimeline"
+        ]
+      },
+      {
+        "id": "detailPage",
+        "title": "Task details",
+        "viewIds": [
+          "details"
+        ]
+      },
+      {
+        "id": "formPage",
+        "title": "Task editor",
+        "viewIds": [
+          "editor"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "pageId": "boardPage",
+        "label": "Board",
+        "icon": "board"
+      },
+      {
+        "pageId": "tablePage",
+        "label": "Tasks",
+        "icon": "list"
+      },
+      {
+        "pageId": "calendarPage",
+        "label": "Schedule",
+        "icon": "today"
+      }
+    ]
+  }
+}

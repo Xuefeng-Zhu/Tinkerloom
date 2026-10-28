@@ -1,0 +1,6 @@
+class: PlatformInfo
+fields:
+  aiAvailable: bool
+  aiMode: String
+  development: bool
+  actorId: String

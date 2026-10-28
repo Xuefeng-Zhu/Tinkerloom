@@ -1,0 +1,285 @@
+{
+  "schemaVersion": 1,
+  "scope": "Read-only rejected-plan audit; accepted results were not replayed by this audit.",
+  "networkCallsMade": false,
+  "candidateChangesMade": false,
+  "scoresChanged": false,
+  "sourceManifestSha256": "983a95855a662e3ec1161c84577d3ed8e88aa7e0cfdf8b0c5bcca1017d3e111a",
+  "frozenSourceFilesVerified": 35,
+  "allFrozenSourceFilesMatch": true,
+  "replayScriptSha256": "c438eae8f24aeebe379eb28afaa95d36dd3d34c39f09346bd7c1aa21c4776723",
+  "replayCommand": "CI=true dart --packages=.dart_tool/package_config.json /private/tmp/appnest_plan_failure_replay.dart docs/evidence/nemotron-pipelines/2026-10-08/plan-pipeline.json",
+  "completedCheckpointCounts": [
+    {
+      "run": "controls",
+      "checkpointSha256": "a6a1b78d91f3861c6f54feb1a2ea2da46d576894c5427e82c26f0e58b9c8f63a",
+      "status": "completed",
+      "operations": 12,
+      "passedOperations": 9,
+      "failedOperations": 3,
+      "attempts": 20,
+      "successfulAttempts": 9,
+      "failedAttempts": 11
+    },
+    {
+      "run": "scoped",
+      "checkpointSha256": "05f82cb522f21574e9cead1a1a3fb68a49f891d20353777fdd8c3c0f8613229c",
+      "status": "completed",
+      "operations": 6,
+      "passedOperations": 1,
+      "failedOperations": 5,
+      "attempts": 16,
+      "successfulAttempts": 1,
+      "failedAttempts": 15
+    },
+    {
+      "run": "plan-pipeline",
+      "checkpointSha256": "881cbe41eb5166ce9f74358125f0469e016db2442ceb87bc26a9f5dec606ab7a",
+      "status": "completed",
+      "operations": 6,
+      "passedOperations": 2,
+      "failedOperations": 4,
+      "attempts": 14,
+      "successfulAttempts": 2,
+      "failedAttempts": 12
+    }
+  ],
+  "planAttemptCounts": {
+    "all": 14,
+    "accepted": 2,
+    "failed": 12,
+    "rawResponseHashMatches": 14,
+    "failedCompileDiagnosticsExactMatches": 12,
+    "postCompileScorerFailures": 0,
+    "compilerImplementationBugsObserved": 0
+  },
+  "classificationCounts": {
+    "authored-field-property": 1,
+    "authored-plan-placement": 5,
+    "authored-boolean-checklist-values": 2,
+    "authored-navigation-omission": 1,
+    "authored-ambiguous-operation": 1,
+    "authored-workflow-form-control": 1,
+    "authored-control-type-mismatch": 1
+  },
+  "rejectedPlanReplay": {
+    "failedAttemptsChecked": 12,
+    "allExact": true,
+    "rows": [
+      {
+        "case": "create-rich-dashboard",
+        "attempt": 1,
+        "expectedDiagnostic": "field: unknown properties control",
+        "observedDiagnostic": "field: unknown properties control",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "fe0c266e9af8d5f9e6f7488bd553bbcd88ddd85aec1522584c9fea8dafd0e837",
+        "classification": "authored-field-property",
+        "rawFacts": {
+          "path": "plan.collections[0].fields[4].control",
+          "value": "multiline",
+          "explanation": "Form presentation control was authored on a field, where control is forbidden."
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-rich-dashboard",
+        "attempt": 2,
+        "expectedDiagnostic": "Record components need collection routes",
+        "observedDiagnostic": "Record components need collection routes",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "db13965e9115653be7d425f71b50730ead601ebb302dd97c117e2f49f435970b",
+        "classification": "authored-plan-placement",
+        "rawFacts": {
+          "path": "plan.pages[0].components[3].type",
+          "value": "details",
+          "explanation": "The declared plan places record details in collection.details, not inline page components."
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-rich-dashboard",
+        "attempt": 3,
+        "expectedDiagnostic": "Boolean checklists need a record patch action",
+        "observedDiagnostic": "Boolean checklists need a record patch action",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "774c9c875e193c059d1d37831ded403fc0f7ee73528dc00de1c9608aef14d1d2",
+        "classification": "authored-boolean-checklist-values",
+        "rawFacts": {
+          "path": "plan.pages[0].components[0].options",
+          "fieldType": "boolean",
+          "explicitEditOperationPresent": true,
+          "forbiddenKeys": [
+            "checkedValue",
+            "uncheckedValue"
+          ],
+          "explanation": "The patch action is present. The unchanged parser also uses this diagnostic for forbidden checkedValue/uncheckedValue keys on a boolean checklist."
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-multistep-form",
+        "attempt": 1,
+        "expectedDiagnostic": "Record components need collection routes",
+        "observedDiagnostic": "Record components need collection routes",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "1d87080cef0d9374f01f0a7b9d839e73fe3b66add4ff55c3638194010e63d620",
+        "classification": "authored-plan-placement",
+        "rawFacts": {
+          "path": "plan.pages[0].components[2].type",
+          "value": "details"
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-multistep-form",
+        "attempt": 2,
+        "expectedDiagnostic": "Record components need collection routes",
+        "observedDiagnostic": "Record components need collection routes",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "8da1f0acce83c7dc5de090c49a22096b9840b87ebedd0f6846cfd5b788b760b9",
+        "classification": "authored-plan-placement",
+        "rawFacts": {
+          "path": "plan.pages[0].components[2].type",
+          "value": "details"
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-multistep-form",
+        "attempt": 3,
+        "expectedDiagnostic": "Navigation needs pages and one to five tabs",
+        "observedDiagnostic": "Navigation needs pages and one to five tabs",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "73ee61db0be4c4447e144d7d6982761cb3ca78766d9183f767a712b1fba0d2b0",
+        "classification": "authored-navigation-omission",
+        "rawFacts": {
+          "path": "plan.pages[0]",
+          "tabCount": 0,
+          "explanation": "The only page has no tab although entryPageKey must identify an app tab."
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-transfer-reading",
+        "attempt": 1,
+        "expectedDiagnostic": "Boolean checklists need a record patch action",
+        "observedDiagnostic": "Boolean checklists need a record patch action",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "6abed9de32741b4d4485ca7f3607dc227e6c2312e0556c699af8c7723b3f9884",
+        "classification": "authored-boolean-checklist-values",
+        "rawFacts": {
+          "path": "plan.pages[0].components[1].options",
+          "fieldType": "boolean",
+          "explicitEditOperationPresent": true,
+          "forbiddenKeys": [
+            "checkedValue",
+            "uncheckedValue"
+          ],
+          "explanation": "The patch action is present. Rejection is the authored string state values, forbidden for boolean checklist fields."
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-transfer-reading",
+        "attempt": 2,
+        "expectedDiagnostic": "Duplicate creation plan operation",
+        "observedDiagnostic": "Duplicate creation plan operation",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "17493da3b4e1efa2f7097e1a0a9311f99ab5cf8e9793c25e1d0fac9084d0b4df",
+        "classification": "authored-ambiguous-operation",
+        "rawFacts": {
+          "path": "plan.collections[0].operations",
+          "duplicatedType": "edit",
+          "labels": [
+            "Edit Book",
+            "Toggle Finished"
+          ],
+          "explanation": "The plan contract permits one edit operation per collection so checklist binding is unambiguous."
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-transfer-reading",
+        "attempt": 3,
+        "expectedDiagnostic": "Record components need collection routes",
+        "observedDiagnostic": "Record components need collection routes",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "0c66a93014d9cd518020b7f407ae22e9e5f597fe247f140f6154d5694578ed3e",
+        "classification": "authored-plan-placement",
+        "rawFacts": {
+          "path": "plan.pages[0].components[1].type",
+          "value": "details"
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-transfer-team",
+        "attempt": 1,
+        "expectedDiagnostic": "Record components need collection routes",
+        "observedDiagnostic": "Record components need collection routes",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "170f3ac05930f69449de457da5f707e200f3dc071a9aefb0fa0f663a3560e18e",
+        "classification": "authored-plan-placement",
+        "rawFacts": {
+          "path": "plan.pages[0].components[1].type",
+          "value": "details"
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-transfer-team",
+        "attempt": 2,
+        "expectedDiagnostic": "Form v0 must remove the control for workflow-managed field stage; change its state through the workflow action.",
+        "observedDiagnostic": "Form v0 must remove the control for workflow-managed field stage; change its state through the workflow action.",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "1ad5a1806b66a70027e8aa3d78561a93f390661914fed537a917c54968945003",
+        "classification": "authored-workflow-form-control",
+        "rawFacts": {
+          "path": "plan.collections[0].form.options.controls[1]",
+          "fieldId": "stage",
+          "control": "select",
+          "explanation": "The authored stage field is controlled by workflow.v1; ordinary form controls cannot mutate it."
+        },
+        "compilerImplementationBugObserved": false
+      },
+      {
+        "case": "create-transfer-team",
+        "attempt": 3,
+        "expectedDiagnostic": "Form v0 field estimate has type integer, but control text requires text.",
+        "observedDiagnostic": "Form v0 field estimate has type integer, but control text requires text.",
+        "observedType": "SpecException",
+        "exactMatch": true,
+        "rawResponseSha256": "adecfdfa6ec50492ac6cc797a0c4a75655e1273ab411d938099915b4a8ed87e5",
+        "classification": "authored-control-type-mismatch",
+        "rawFacts": {
+          "path": "plan.collections[0].form.options.controls[1]",
+          "fieldId": "estimate",
+          "fieldType": "integer",
+          "control": "text",
+          "explanation": "A text control is incompatible with the authored integer field."
+        },
+        "compilerImplementationBugObserved": false
+      }
+    ]
+  },
+  "caveats": [
+    "Only the first rejecting diagnostic is reproduced; some raw plans contain additional violations.",
+    "Two boolean-checklist diagnostics mention the patch action although a valid explicit edit operation is present. The actual rejection is the authored checkedValue/uncheckedValue keys on a boolean field.",
+    "Inline details and duplicate edit operations are rejected by this experimental plan language. This does not assert that equivalent explicitly wired AppSpec structures are impossible.",
+    "Plan JSON Schema alone does not enforce every semantic dependency: pages.tab is optional per page, but the entry page must be a tab. The model omitted all tabs in one final response; strict navigation validation rejected it.",
+    "The 12 rejected plans never reached scenario fidelity scoring, because exact raw compilation rejected them first. This audit found no score misclassification or compiler implementation defect in these observed failures.",
+    "Controls and scoped checkpoint counts are included for context only; their failed responses were not re-scored by this focused audit.",
+    "This is a synthetic definition-level audit, not connected-app, authentication, persistence, rendering, device or production proof."
+  ]
+}

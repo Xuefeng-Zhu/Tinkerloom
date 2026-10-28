@@ -1,0 +1,49 @@
+{
+  "formatVersion": 1,
+  "name": "My Focus Clock",
+  "theme": "teal",
+  "icon": "spark",
+  "requires": [
+    "navigation.v1",
+    "views.clock.v1",
+    "views.timer.v1"
+  ],
+  "collections": [],
+  "views": [
+    {
+      "id": "localClock",
+      "type": "clock",
+      "label": "Local time",
+      "actionIds": []
+    },
+    {
+      "id": "focusTimer",
+      "type": "timer",
+      "label": "Focus timer",
+      "actionIds": []
+    }
+  ],
+  "actions": [],
+  "policyPresetRequest": "personalTracker.v1",
+  "automationRequests": [],
+  "navigation": {
+    "entryPageId": "focusPage",
+    "pages": [
+      {
+        "id": "focusPage",
+        "title": "Time for yourself",
+        "viewIds": [
+          "localClock",
+          "focusTimer"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "pageId": "focusPage",
+        "label": "Focus",
+        "icon": "today"
+      }
+    ]
+  }
+}

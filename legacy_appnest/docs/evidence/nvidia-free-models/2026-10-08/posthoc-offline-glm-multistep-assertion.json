@@ -1,0 +1,42 @@
+{
+  "label": "POSTHOC OFFLINE GLM MULTISTEP ASSERTION DIAGNOSTIC",
+  "generatedAt": "2026-10-08T10:25:24.440722Z",
+  "inputCheckpointSha256": "9f83e60ae88fe28d3e30da0102deb4ea69dadcd973ae8bafb638ee34c9f3f771",
+  "inputCheckpointUpdatedAt": "2026-10-08T10:22:38.092014Z",
+  "inputCheckpointStatus": "blocked",
+  "runFingerprint": "e7cd449878d1973a1e973cee86dcaa68dd2030325283fb0006b8c085121bb84a",
+  "sourceMatchesScoredManifest": true,
+  "primaryScoresChanged": false,
+  "liveCallsMade": false,
+  "operationStatus": "failed",
+  "attempts": [
+    {
+      "attempt": 1,
+      "responseSha256": "9eab47d0d6f19b3481e44887e90c72c0310bbd04c3f310d8edabf9b94ce16ace",
+      "strictParserPass": true,
+      "productionChecksPass": true,
+      "fixedAssertionsPass": false,
+      "compilerAddedCapabilities": [],
+      "fixedAssertionsPassAfterDiagnosticOnlyExplicitImageControl": true,
+      "fixedAssertionDiagnostic": "Expose private image upload, timestamp, multiline caption, rating and favorite controls.",
+      "diagnosticOnlyExplicitImageControlInsertions": 1
+    },
+    {
+      "attempt": 3,
+      "responseSha256": "5d8e148329437b36b7592a942899cde1b9e73714129e558d64f808e821f400b2",
+      "strictParserPass": true,
+      "productionChecksPass": true,
+      "fixedAssertionsPass": false,
+      "compilerAddedCapabilities": [],
+      "fixedAssertionsPassAfterDiagnosticOnlyExplicitImageControl": true,
+      "fixedAssertionDiagnostic": "Expose private image upload, timestamp, multiline caption, rating and favorite controls.",
+      "diagnosticOnlyExplicitImageControlInsertions": 1
+    }
+  ],
+  "rendererSource": {
+    "typeDispatch": "packages/appnest_renderer/lib/src/editor.dart:417",
+    "imageControl": "packages/appnest_renderer/lib/src/editor.dart:799",
+    "adapterUpload": "packages/appnest_renderer/lib/src/editor.dart:850"
+  },
+  "caveat": "The one-entry in-memory insertion only isolates the failing fixed assertion; it is not production compilation, a new model response, a score correction, or renderer/device/upload execution evidence."
+}

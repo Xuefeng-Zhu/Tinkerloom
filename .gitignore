@@ -1,0 +1,32 @@
+# Local secrets and service configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+**/passwords.yaml
+**/service-account*.json
+**/*-credentials.json
+**/*.pem
+**/*.key
+
+# Dart, Flutter, and native build products
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+build/
+**/build/
+**/Pods/
+**/.symlinks/
+**/ephemeral/
+**/DerivedData/
+**/.serverpod/
+
+# Editor, system, logs, and test output
+.DS_Store
+.idea/
+.vscode/*.local.json
+*.log
+coverage/
+output/

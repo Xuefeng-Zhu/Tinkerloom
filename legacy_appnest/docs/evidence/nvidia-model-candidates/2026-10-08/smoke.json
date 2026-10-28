@@ -1,0 +1,2130 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "appnest-nemotron-v2",
+  "provider": "nvidia",
+  "benchmarkLabel": "AppNest NVIDIA model evaluation",
+  "modelFamilies": {
+    "z-ai/glm-5.3-flash": "GLM",
+    "google/gemma-4-31b-it": "Gemma",
+    "poolside/laguna-xs-2.1": "Laguna",
+    "z-ai/glm-5.3": "GLM"
+  },
+  "apiBase": "https://integrate.api.nvidia.com/v1",
+  "models": [
+    "z-ai/glm-5.3-flash",
+    "google/gemma-4-31b-it",
+    "poolside/laguna-xs-2.1",
+    "z-ai/glm-5.3"
+  ],
+  "scenarios": [
+    {
+      "id": "create-notes-fields",
+      "operation": "create",
+      "prompt": "Make a personal notes app with titles, multiline notes, categories, search, add/edit forms, and a details page for each note.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Notes",
+        "theme": "amber",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Ideas",
+                  "Personal",
+                  "Work"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "body",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "body",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Notes",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Notes",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "edit-notes-fields",
+      "operation": "edit",
+      "prompt": "Add an optional text field named Source to my notes. Include it in the add/edit form and details. Preserve every existing field and page.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "My Notes",
+        "theme": "amber",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Ideas",
+                  "Personal",
+                  "Work"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "body",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "body",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Notes",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Notes",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "guidance-ambiguous-organize",
+      "operation": "guidance",
+      "prompt": "Help me organize things.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Reading Journal",
+        "theme": "amber",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.summary.v1"
+        ],
+        "collections": [
+          {
+            "id": "books",
+            "label": "Books",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "author",
+                "label": "Author",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Want to read",
+                  "Reading",
+                  "Finished"
+                ]
+              },
+              {
+                "id": "rating",
+                "label": "Rating",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "library",
+            "type": "list",
+            "collectionId": "books",
+            "label": "Library",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addBook",
+              "editBook"
+            ]
+          },
+          {
+            "id": "readingSummary",
+            "type": "summary",
+            "collectionId": "books",
+            "label": "Overview",
+            "groupByFieldId": "status",
+            "actionIds": []
+          }
+        ],
+        "actions": [
+          {
+            "id": "addBook",
+            "label": "Add book",
+            "capability": "records.create.v1",
+            "collectionId": "books"
+          },
+          {
+            "id": "editBook",
+            "label": "Edit book",
+            "capability": "records.patch.v1",
+            "collectionId": "books"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": []
+      }
+    }
+  ],
+  "source": {
+    "commit": "93f0291683bbcdf299ffd6276b2e9e7ccdc78496",
+    "dirtyTrackedSha256": "ad104563e37844fb31ddfc77900de81ee892838dd7a782cf0f79b77dac43e083",
+    "contractSourceSha256": "6e05128c9224e4d7b87d4fa74644645d4fe50d64dce4b810a1aa80975ae3205d",
+    "dartVersion": "3.13.0 (stable) (Wed Aug 5 00:28:05 2026 -0700) on \"macos_arm64\"",
+    "files": {
+      "appnest_server/lib/src/evaluation/nemotron_case_selection.dart": "961faa1d8bdcf2ff2aeec6b928c872767935464c4f5a3caae645053c934fdd2b",
+      "appnest_server/lib/src/evaluation/nemotron_parallel_scheduler.dart": "b932baa426f122e915bcd16c4688ab9a1464380e423e316cd0884aa97be9bba4",
+      "appnest_server/lib/src/evaluation/nvidia_model_profiles.dart": "232cc7a0faa37d34c494354895d58e1f221d5838a501f0cd80f0e434089b13c3",
+      "appnest_server/lib/src/modules/builder/builder.dart": "520ba357c52158fb4279e8ece468ec06b12470a588a9371b6d504a789c60de4f",
+      "appnest_server/lib/src/modules/builder/creation_compiler.dart": "b8f9f642fc3cb7ad0c9b0b7102a5f874c95da6d5ff32844c3229b665310907d0",
+      "appnest_server/lib/src/modules/builder/customization_evaluation.dart": "4b460730522dd375b3323bb78ac71f60b6aacfabfc23f32a7427916700c608b6",
+      "appnest_server/lib/src/modules/builder/generation_quality.dart": "10b42800a230065346a400569ad9f1673a51e5530940d4d91c2c01d474849b91",
+      "appnest_server/lib/src/modules/builder/generation_requirements.dart": "9a469805b406612f331ecab63fdf96292b396acb81770f89029aa5bd79d9812f",
+      "appnest_server/lib/src/modules/builder/nemotron_evaluation.dart": "8171d8c478133ca15f290a44db35647f05ed3f980b1928983d799eed17612a82",
+      "appnest_server/lib/src/modules/builder/nemotron_report.dart": "92b1252cb23519ea6458ad5e98358d28b4fd62dfb9c87e29e348a7d478b851f5",
+      "appnest_server/lib/src/modules/builder/nemotron_routes.dart": "5c3767032281b9d1029f26170269917dd22b27d0b2761f3fa2dcf82a9944f4cf",
+      "appnest_server/lib/src/modules/builder/nemotron_scenarios.dart": "29b7f710ccc67d7c037daa5f318916a611350f5fdd2cbc441f0b26329e968237",
+      "appnest_server/lib/src/modules/builder/provider.dart": "ec08e957776f9053e4ea5251774d3da7ef2bec0a6a38014fb6a2c89df5021cc0",
+      "appnest_server/lib/src/modules/builder/repair_bindings.dart": "f24f5e0d40fec992aa546106f9ac186fa130ad8606011cd22002bd651d52de12",
+      "appnest_server/pubspec.yaml": "7b3827ec18181e59e32c92a356220ce02e33c81360aa3ed125d4966d6b87e2de",
+      "packages/appnest_spec/lib/appnest_spec.dart": "189085c4cbf30423002e1e3acb6d8367c649a58292da00a641f659e59baabf2c",
+      "packages/appnest_spec/lib/src/appearance.dart": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e",
+      "packages/appnest_spec/lib/src/device_spec.dart": "ad79778c211c67c074c1bf522e8bdd2a4f6ffd66e28793e3bb9359e5653a7029",
+      "packages/appnest_spec/lib/src/rich_spec.dart": "7aae7c81de7a5708b6184320abc50f24e0d64f00cda3c6d76b521f4d5d063e5a",
+      "packages/appnest_spec/lib/src/rich_templates.dart": "c6a4ab1d72859d41425b03b18f1e4340e870694a79954483566627b5ba721d98",
+      "packages/appnest_spec/lib/src/schema.dart": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24",
+      "packages/appnest_spec/lib/src/spec.dart": "df491ed854b45a7fbd06130784ca305245ba9efa842f127249b06012ff8bf4a2",
+      "packages/appnest_spec/lib/src/templates.dart": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3",
+      "packages/appnest_spec/lib/src/utility_spec.dart": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442",
+      "packages/appnest_spec/lib/src/utility_templates.dart": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18",
+      "packages/appnest_spec/pubspec.yaml": "74e0dd05a42046744392f1e43fa9b395dac1ea5a82b2e15cbcfa03e4c2aec23a",
+      "pubspec.lock": "098981397295b030cdf11c48c14e898bb0419ad6c38bc6797519d169b3f77f99",
+      "pubspec.yaml": "24c0edf2a3ef601e43f6086db95d44aeaff678965f4eedef2ad5b96856c3a6b4",
+      "scripts/nemotron_eval.dart": "3d0d963b3c08cd6cd6ecf2d1c3891a1be453f3e31c3ed9d744a7b33d972666d5"
+    }
+  },
+  "maxAttempts": 3,
+  "execution": {
+    "concurrency": 4,
+    "requestIntervalMs": 4000,
+    "pacing": "global-dispatch",
+    "perModelSequential": true
+  },
+  "transportProfiles": {
+    "z-ai/glm-5.3-flash": {
+      "profile": "nvidia-glm-5.3-flash-instruction-schema-low-v1",
+      "family": "GLM",
+      "catalogUrl": "https://build.nvidia.com/z-ai/glm-5-3-flash",
+      "reasoning": "always enabled; low effort requested; previous thinking cleared",
+      "requestOverrides": {
+        "stream": false,
+        "temperature": 0,
+        "reasoning_effort": "low",
+        "chat_template_kwargs": {
+          "clear_thinking": true
+        }
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-flash",
+        "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-flash-infer",
+        "https://recipes.vllm.ai/zai-org/GLM-5.3-Flash"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-flash-infer",
+        "temperature": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-flash-infer",
+        "reasoning_effort": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-flash",
+        "reasoning_effort.location": "https://recipes.vllm.ai/zai-org/GLM-5.3-Flash",
+        "chat_template_kwargs.clear_thinking": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-flash"
+      },
+      "limitations": [
+        "Bounded AppNest feasibility profile; thinking cannot be disabled.",
+        "Temperature 0 is supported; the endpoint default is 0.5. Low effort and shared token/deadline limits do not measure maximal capability."
+      ]
+    },
+    "google/gemma-4-31b-it": {
+      "profile": "nvidia-gemma-4-31b-it-instruction-schema-thinking-off-v1",
+      "family": "Gemma",
+      "catalogUrl": "https://build.nvidia.com/google/gemma-4-31b-it",
+      "reasoning": "thinking disabled",
+      "requestOverrides": {
+        "stream": false,
+        "temperature": 0,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://docs.api.nvidia.com/nim/reference/google-gemma-4-31b-it-infer",
+        "https://build.nvidia.com/google/gemma-4-31b-it/modelcard"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/google-gemma-4-31b-it-infer",
+        "temperature": "https://docs.api.nvidia.com/nim/reference/google-gemma-4-31b-it-infer",
+        "chat_template_kwargs.enable_thinking": "https://docs.api.nvidia.com/nim/reference/google-gemma-4-31b-it-infer"
+      },
+      "limitations": [
+        "Bounded AppNest feasibility profile with documented thinking-off control and shared token/deadline limits; not maximal capability."
+      ]
+    },
+    "poolside/laguna-xs-2.1": {
+      "profile": "nvidia-laguna-xs-2.1-instruction-schema-default-v1",
+      "family": "Laguna",
+      "catalogUrl": "https://build.nvidia.com/poolside/laguna-xs-2.1",
+      "reasoning": "model default; no documented NVIDIA HTTP override sent",
+      "requestOverrides": {
+        "stream": false,
+        "temperature": 0
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://docs.api.nvidia.com/nim/reference/poolside-laguna-xs-2-1-infer",
+        "https://docs.api.nvidia.com/nim/reference/poolside-laguna-xs-2-1"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/poolside-laguna-xs-2-1-infer",
+        "temperature": "https://docs.api.nvidia.com/nim/reference/poolside-laguna-xs-2-1-infer"
+      },
+      "limitations": [
+        "Bounded AppNest feasibility profile; optional source-model thinking is not assumed to expose an NVIDIA HTTP parameter.",
+        "Temperature 0 is supported; the endpoint default is 1.0. Shared token/deadline limits and this instruction-only workload differ from the publisher agentic coding benchmark."
+      ]
+    },
+    "z-ai/glm-5.3": {
+      "profile": "nvidia-glm-5.3-instruction-schema-low-v1",
+      "family": "GLM",
+      "catalogUrl": "https://build.nvidia.com/z-ai/glm-5-3",
+      "reasoning": "enabled; low effort requested; previous thinking cleared",
+      "requestOverrides": {
+        "stream": false,
+        "temperature": 0,
+        "reasoning_effort": "low",
+        "chat_template_kwargs": {
+          "clear_thinking": true
+        }
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3",
+        "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-infer",
+        "https://recipes.vllm.ai/zai-org/GLM-5.3"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-infer",
+        "temperature": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3-infer",
+        "reasoning_effort": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3",
+        "reasoning_effort.location": "https://recipes.vllm.ai/zai-org/GLM-5.3",
+        "chat_template_kwargs.clear_thinking": "https://docs.api.nvidia.com/nim/reference/z-ai-glm-5-3"
+      },
+      "limitations": [
+        "Bounded AppNest feasibility profile; no unsupported thinking-off switch is sent.",
+        "Temperature 0 is supported; the endpoint default is 0.5. Low effort and shared token/deadline limits do not measure maximal capability."
+      ]
+    }
+  },
+  "runFingerprint": "c7dd349e9bd578409da856422b17ee3a3e746bdfe72ef5cf717b9c1ec6bbe6c4",
+  "createdAt": "2026-10-08T14:20:38.785876Z",
+  "updatedAt": "2026-10-08T14:24:37.495185Z",
+  "status": "completed",
+  "catalog": [
+    {
+      "id": "z-ai/glm-5.3-flash",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/z-ai/glm-5-3-flash",
+      "family": "GLM",
+      "pricingVerified": false,
+      "supportedParameters": null
+    },
+    {
+      "id": "google/gemma-4-31b-it",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/google/gemma-4-31b-it",
+      "family": "Gemma",
+      "pricingVerified": false,
+      "supportedParameters": null
+    },
+    {
+      "id": "poolside/laguna-xs-2.1",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/poolside/laguna-xs-2.1",
+      "family": "Laguna",
+      "pricingVerified": false,
+      "supportedParameters": null
+    },
+    {
+      "id": "z-ai/glm-5.3",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/z-ai/glm-5-3",
+      "family": "GLM",
+      "pricingVerified": false,
+      "supportedParameters": null
+    }
+  ],
+  "freeOnly": true,
+  "queueTimingMeasured": false,
+  "connectedAppVerified": false,
+  "operations": [
+    {
+      "model": "z-ai/glm-5.3-flash",
+      "case": "create-notes-fields",
+      "operation": "create",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 24133,
+          "dispatchedAt": "2026-10-08T14:20:38.995349Z",
+          "completedAt": "2026-10-08T14:21:03.129299Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 15099,
+            "completion_tokens": 486,
+            "total_tokens": 15585,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 32,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\"formatVersion\":1,\"name\":\"Notes\",\"theme\":\"teal\",\"icon\":\"book\",\"appearance\":{\"style\":\"clean\"},\"requires\":[\"collections.v1\",\"records.create.v1\",\"records.patch.v1\",\"views.list.v1\",\"views.details.v1\",\"views.form.v1\",\"views.interactive.v1\",\"views.configured.v1\",\"navigation.v1\",\"appearance.v1\"],\"policyPresetRequest\":\"personalTracker.v1\",\"automationRequests\":[],\"collections\":[{\"id\":\"notes\",\"label\":\"Notes\",\"fields\":[{\"id\":\"title\",\"label\":\"Title\",\"type\":\"text\",\"required\":true},{\"id\":\"body\",\"label\":\"Note\",\"type\":\"text\",\"required\":false},{\"id\":\"category\",\"label\":\"Category\",\"type\":\"choice\",\"required\":false,\"choices\":[\"Personal\",\"Work\",\"Ideas\"]}]}],\"actions\":[{\"id\":\"addNote\",\"label\":\"Add note\",\"capability\":\"records.create.v1\",\"collectionId\":\"notes\"},{\"id\":\"editNote\",\"label\":\"Edit note\",\"capability\":\"records.patch.v1\",\"collectionId\":\"notes\"}],\"views\":[{\"id\":\"noteList\",\"type\":\"list\",\"collectionId\":\"notes\",\"label\":\"Notes\",\"titleFieldId\":\"title\",\"fieldIds\":[\"category\"],\"filterFieldIds\":[\"category\"],\"actionIds\":[\"addNote\",\"editNote\"],\"detailPageId\":\"noteDetailsPage\",\"formPageId\":\"noteFormPage\"},{\"id\":\"noteDetails\",\"type\":\"details\",\"collectionId\":\"notes\",\"label\":\"Note\",\"titleFieldId\":\"title\",\"fieldIds\":[\"category\",\"body\"],\"actionIds\":[\"editNote\"],\"formPageId\":\"noteFormPage\"},{\"id\":\"noteForm\",\"type\":\"form\",\"collectionId\":\"notes\",\"label\":\"Note editor\",\"fieldIds\":[\"title\",\"body\",\"category\"],\"actionIds\":[\"addNote\",\"editNote\"],\"options\":{\"controls\":[{\"fieldId\":\"body\",\"control\":\"multiline\"}]}}],\"navigation\":{\"entryPageId\":\"notesPage\",\"pages\":[{\"id\":\"notesPage\",\"title\":\"Notes\",\"viewIds\":[\"noteList\"],\"primaryActionId\":\"addNote\"},{\"id\":\"noteDetailsPage\",\"title\":\"Note details\",\"viewIds\":[\"noteDetails\"]},{\"id\":\"noteFormPage\",\"title\":\"Note editor\",\"viewIds\":[\"noteForm\"]}],\"tabs\":[{\"pageId\":\"notesPage\",\"label\":\"Notes\",\"icon\":\"list\"}]}}"
+        }
+      ],
+      "totalMs": 24133,
+      "candidate": {
+        "formatVersion": 1,
+        "name": "Notes",
+        "theme": "teal",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.interactive.v1",
+          "views.configured.v1",
+          "navigation.v1",
+          "appearance.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Notes",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Personal",
+                  "Work",
+                  "Ideas"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "noteList",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addNote",
+              "editNote"
+            ],
+            "fieldIds": [
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "noteDetailsPage",
+            "formPageId": "noteFormPage"
+          },
+          {
+            "id": "noteDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Note",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editNote"
+            ],
+            "fieldIds": [
+              "category",
+              "body"
+            ],
+            "formPageId": "noteFormPage"
+          },
+          {
+            "id": "noteForm",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Note editor",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "body",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "actionIds": [
+              "addNote",
+              "editNote"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addNote",
+            "label": "Add note",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editNote",
+            "label": "Edit note",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "notesPage",
+          "pages": [
+            {
+              "id": "notesPage",
+              "title": "Notes",
+              "viewIds": [
+                "noteList"
+              ],
+              "primaryActionId": "addNote"
+            },
+            {
+              "id": "noteDetailsPage",
+              "title": "Note details",
+              "viewIds": [
+                "noteDetails"
+              ]
+            },
+            {
+              "id": "noteFormPage",
+              "title": "Note editor",
+              "viewIds": [
+                "noteForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "notesPage",
+              "label": "Notes",
+              "icon": "list"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "clean"
+        }
+      }
+    },
+    {
+      "model": "google/gemma-4-31b-it",
+      "case": "create-notes-fields",
+      "operation": "create",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 90008,
+          "dispatchedAt": "2026-10-08T14:20:43.010836Z",
+          "completedAt": "2026-10-08T14:22:13.020020Z",
+          "success": false,
+          "kind": "timeout",
+          "detailKind": "timeout",
+          "diagnostic": "The AI provider did not finish within the bounded response deadline. Try again later."
+        },
+        {
+          "number": 2,
+          "elapsedMs": 24651,
+          "dispatchedAt": "2026-10-08T14:22:13.048048Z",
+          "completedAt": "2026-10-08T14:22:37.699450Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 16502,
+            "completion_tokens": 1010,
+            "total_tokens": 17512,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 16448
+            }
+          },
+          "syntheticResponse": "{\n  \"formatVersion\": 1,\n  \"name\": \"Personal Notes\",\n  \"theme\": \"blue\",\n  \"icon\": \"book\",\n  \"appearance\": {\n    \"style\": \"clean\"\n  },\n  \"requires\": [\n    \"collections.v1\",\n    \"views.list.v1\",\n    \"views.details.v1\",\n    \"views.form.v1\",\n    \"navigation.v1\",\n    \"views.configured.v1\",\n    \"views.interactive.v1\",\n    \"records.create.v1\",\n    \"records.patch.v1\",\n    \"appearance.v1\"\n  ],\n  \"policyPresetRequest\": \"personalTracker.v1\",\n  \"automationRequests\": [],\n  \"collections\": [\n    {\n      \"id\": \"notes\",\n      \"label\": \"Notes\",\n      \"fields\": [\n        {\n          \"id\": \"title\",\n          \"label\": \"Title\",\n          \"type\": \"text\",\n          \"required\": true\n        },\n        {\n          \"id\": \"body\",\n          \"label\": \"Note\",\n          \"type\": \"text\",\n          \"required\": false\n        },\n        {\n          \"id\": \"category\",\n          \"label\": \"Category\",\n          \"type\": \"choice\",\n          \"required\": false,\n          \"choices\": [\n            \"Work\",\n            \"Personal\",\n            \"Ideas\",\n            \"Archive\"\n          ]\n        }\n      ]\n    }\n  ],\n  \"actions\": [\n    {\n      \"id\": \"createNote\",\n      \"label\": \"New Note\",\n      \"capability\": \"records.create.v1\",\n      \"collectionId\": \"notes\"\n    },\n    {\n      \"id\": \"editNote\",\n      \"label\": \"Edit Note\",\n      \"capability\": \"records.patch.v1\",\n      \"collectionId\": \"notes\"\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"notesList\",\n      \"type\": \"list\",\n      \"collectionId\": \"notes\",\n      \"label\": \"My Notes\",\n      \"titleFieldId\": \"title\",\n      \"filterFieldIds\": [\n        \"category\"\n      ],\n      \"actionIds\": [\n        \"createNote\",\n        \"editNote\"\n      ],\n      \"detailPageId\": \"noteDetailsPage\",\n      \"formPageId\": \"noteFormPage\"\n    },\n    {\n      \"id\": \"noteDetails\",\n      \"type\": \"details\",\n      \"collectionId\": \"notes\",\n      \"label\": \"Note Details\",\n      \"titleFieldId\": \"title\",\n      \"fieldIds\": [\n        \"category\",\n        \"body\"\n      ],\n      \"actionIds\": [\n        \"editNote\"\n      ],\n      \"formPageId\": \"noteFormPage\"\n    },\n    {\n      \"id\": \"noteForm\",\n      \"type\": \"form\",\n      \"collectionId\": \"notes\",\n      \"label\": \"Note Editor\",\n      \"fieldIds\": [\n        \"title\",\n        \"category\",\n        \"body\"\n      ],\n      \"actionIds\": [\n        \"createNote\",\n        \"editNote\"\n      ],\n      \"options\": {\n        \"controls\": [\n          {\n            \"fieldId\": \"body\",\n            \"control\": \"multiline\"\n          }\n        ]\n      }\n    }\n  ],\n  \"navigation\": {\n    \"entryPageId\": \"notesPage\",\n    \"pages\": [\n      {\n        \"id\": \"notesPage\",\n        \"title\": \"Notes\",\n        \"viewIds\": [\n          \"notesList\"\n        ],\n        \"primaryActionId\": \"createNote\"\n      },\n      {\n        \"id\": \"noteDetailsPage\",\n        \"title\": \"Note\",\n        \"viewIds\": [\n          \"noteDetails\"\n        ]\n      },\n      {\n        \"id\": \"noteFormPage\",\n        \"title\": \"Edit Note\",\n        \"viewIds\": [\n          \"noteForm\"\n        ]\n      }\n    ],\n    \"tabs\": [\n      {\n        \"pageId\": \"notesPage\",\n        \"label\": \"Notes\",\n        \"icon\": \"list\"\n      }\n    ]\n  }\n}"
+        }
+      ],
+      "totalMs": 114659,
+      "diagnostic": "The AI provider did not finish within the bounded response deadline. Try again later.",
+      "candidate": {
+        "formatVersion": 1,
+        "name": "Personal Notes",
+        "theme": "blue",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "navigation.v1",
+          "views.configured.v1",
+          "views.interactive.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "appearance.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Notes",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Work",
+                  "Personal",
+                  "Ideas",
+                  "Archive"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "notesList",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "My Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "createNote",
+              "editNote"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "noteDetailsPage",
+            "formPageId": "noteFormPage"
+          },
+          {
+            "id": "noteDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Note Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editNote"
+            ],
+            "fieldIds": [
+              "category",
+              "body"
+            ],
+            "formPageId": "noteFormPage"
+          },
+          {
+            "id": "noteForm",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Note Editor",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "body",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "actionIds": [
+              "createNote",
+              "editNote"
+            ],
+            "fieldIds": [
+              "title",
+              "category",
+              "body"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "createNote",
+            "label": "New Note",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editNote",
+            "label": "Edit Note",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "notesPage",
+          "pages": [
+            {
+              "id": "notesPage",
+              "title": "Notes",
+              "viewIds": [
+                "notesList"
+              ],
+              "primaryActionId": "createNote"
+            },
+            {
+              "id": "noteDetailsPage",
+              "title": "Note",
+              "viewIds": [
+                "noteDetails"
+              ]
+            },
+            {
+              "id": "noteFormPage",
+              "title": "Edit Note",
+              "viewIds": [
+                "noteForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "notesPage",
+              "label": "Notes",
+              "icon": "list"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "clean"
+        }
+      }
+    },
+    {
+      "model": "poolside/laguna-xs-2.1",
+      "case": "create-notes-fields",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 90003,
+          "dispatchedAt": "2026-10-08T14:20:47.025611Z",
+          "completedAt": "2026-10-08T14:22:17.029809Z",
+          "success": false,
+          "kind": "timeout",
+          "detailKind": "timeout",
+          "diagnostic": "The AI provider did not finish within the bounded response deadline. Try again later."
+        },
+        {
+          "number": 2,
+          "elapsedMs": 90004,
+          "dispatchedAt": "2026-10-08T14:22:17.058315Z",
+          "completedAt": "2026-10-08T14:23:47.062938Z",
+          "success": false,
+          "kind": "timeout",
+          "detailKind": "timeout",
+          "diagnostic": "The AI provider did not finish within the bounded response deadline. Try again later."
+        },
+        {
+          "number": 3,
+          "elapsedMs": 851,
+          "dispatchedAt": "2026-10-08T14:23:47.090990Z",
+          "completedAt": "2026-10-08T14:23:47.942277Z",
+          "success": false,
+          "kind": "http_error",
+          "detailKind": "http_error",
+          "diagnostic": "AI provider could not complete the request (HTTP 503).",
+          "httpStatus": 503
+        }
+      ],
+      "totalMs": 180858,
+      "diagnostic": "AI provider could not complete the request (HTTP 503)."
+    },
+    {
+      "model": "z-ai/glm-5.3",
+      "case": "create-notes-fields",
+      "operation": "create",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 10017,
+          "dispatchedAt": "2026-10-08T14:20:51.039653Z",
+          "completedAt": "2026-10-08T14:21:01.056870Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 15099,
+            "completion_tokens": 478,
+            "total_tokens": 15577,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 24
+            }
+          },
+          "syntheticResponse": "{\"formatVersion\":1,\"name\":\"Notes\",\"theme\":\"sage\",\"icon\":\"book\",\"appearance\":{\"style\":\"editorial\"},\"requires\":[\"collections.v1\",\"views.list.v1\",\"views.form.v1\",\"views.details.v1\",\"views.configured.v1\",\"views.interactive.v1\",\"navigation.v1\",\"appearance.v1\",\"records.create.v1\",\"records.patch.v1\"],\"policyPresetRequest\":\"personalTracker.v1\",\"automationRequests\":[],\"collections\":[{\"id\":\"notes\",\"label\":\"Notes\",\"fields\":[{\"id\":\"title\",\"label\":\"Title\",\"type\":\"text\",\"required\":true},{\"id\":\"body\",\"label\":\"Note\",\"type\":\"text\",\"required\":false},{\"id\":\"category\",\"label\":\"Category\",\"type\":\"choice\",\"required\":false,\"choices\":[\"Idea\",\"Journal\",\"Task\",\"Reference\"]}]}],\"actions\":[{\"id\":\"addNote\",\"label\":\"Add note\",\"capability\":\"records.create.v1\",\"collectionId\":\"notes\"},{\"id\":\"editNote\",\"label\":\"Edit note\",\"capability\":\"records.patch.v1\",\"collectionId\":\"notes\"}],\"views\":[{\"id\":\"noteList\",\"type\":\"list\",\"collectionId\":\"notes\",\"label\":\"Notes\",\"titleFieldId\":\"title\",\"fieldIds\":[\"category\"],\"filterFieldIds\":[\"category\"],\"actionIds\":[\"addNote\",\"editNote\"],\"detailPageId\":\"noteDetailsPage\",\"formPageId\":\"noteFormPage\"},{\"id\":\"noteDetails\",\"type\":\"details\",\"collectionId\":\"notes\",\"label\":\"Note\",\"titleFieldId\":\"title\",\"fieldIds\":[\"category\",\"body\"],\"actionIds\":[\"editNote\"],\"formPageId\":\"noteFormPage\"},{\"id\":\"noteForm\",\"type\":\"form\",\"collectionId\":\"notes\",\"label\":\"Note\",\"fieldIds\":[\"title\",\"body\",\"category\"],\"actionIds\":[\"addNote\",\"editNote\"],\"options\":{\"controls\":[{\"fieldId\":\"body\",\"control\":\"multiline\"}]}}],\"navigation\":{\"entryPageId\":\"notesPage\",\"pages\":[{\"id\":\"notesPage\",\"title\":\"Notes\",\"viewIds\":[\"noteList\"],\"primaryActionId\":\"addNote\"},{\"id\":\"noteDetailsPage\",\"title\":\"Note details\",\"viewIds\":[\"noteDetails\"]},{\"id\":\"noteFormPage\",\"title\":\"Note editor\",\"viewIds\":[\"noteForm\"]}],\"tabs\":[{\"pageId\":\"notesPage\",\"label\":\"Notes\",\"icon\":\"book\"}]}}"
+        }
+      ],
+      "totalMs": 10017,
+      "candidate": {
+        "formatVersion": 1,
+        "name": "Notes",
+        "theme": "sage",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "views.list.v1",
+          "views.form.v1",
+          "views.details.v1",
+          "views.configured.v1",
+          "views.interactive.v1",
+          "navigation.v1",
+          "appearance.v1",
+          "records.create.v1",
+          "records.patch.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Notes",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Idea",
+                  "Journal",
+                  "Task",
+                  "Reference"
+                ]
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "noteList",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addNote",
+              "editNote"
+            ],
+            "fieldIds": [
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "noteDetailsPage",
+            "formPageId": "noteFormPage"
+          },
+          {
+            "id": "noteDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Note",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editNote"
+            ],
+            "fieldIds": [
+              "category",
+              "body"
+            ],
+            "formPageId": "noteFormPage"
+          },
+          {
+            "id": "noteForm",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Note",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "body",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "actionIds": [
+              "addNote",
+              "editNote"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addNote",
+            "label": "Add note",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editNote",
+            "label": "Edit note",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "notesPage",
+          "pages": [
+            {
+              "id": "notesPage",
+              "title": "Notes",
+              "viewIds": [
+                "noteList"
+              ],
+              "primaryActionId": "addNote"
+            },
+            {
+              "id": "noteDetailsPage",
+              "title": "Note details",
+              "viewIds": [
+                "noteDetails"
+              ]
+            },
+            {
+              "id": "noteFormPage",
+              "title": "Note editor",
+              "viewIds": [
+                "noteForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "notesPage",
+              "label": "Notes",
+              "icon": "book"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "editorial"
+        }
+      }
+    },
+    {
+      "model": "z-ai/glm-5.3-flash",
+      "case": "edit-notes-fields",
+      "operation": "edit",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 90003,
+          "dispatchedAt": "2026-10-08T14:21:09.093631Z",
+          "completedAt": "2026-10-08T14:22:39.097517Z",
+          "success": false,
+          "kind": "timeout",
+          "detailKind": "timeout",
+          "diagnostic": "The AI provider did not finish within the bounded response deadline. Try again later."
+        },
+        {
+          "number": 2,
+          "elapsedMs": 90003,
+          "dispatchedAt": "2026-10-08T14:22:41.736131Z",
+          "completedAt": "2026-10-08T14:24:11.740104Z",
+          "success": false,
+          "kind": "timeout",
+          "detailKind": "timeout",
+          "diagnostic": "The AI provider did not finish within the bounded response deadline. Try again later."
+        },
+        {
+          "number": 3,
+          "elapsedMs": 12072,
+          "dispatchedAt": "2026-10-08T14:24:15.199049Z",
+          "completedAt": "2026-10-08T14:24:27.271244Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 17416,
+            "completion_tokens": 50,
+            "total_tokens": 17466,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 11,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\"patches\":[{\"type\":\"AddField\",\"collectionId\":\"notes\",\"field\":{\"label\":\"Source\",\"type\":\"text\",\"required\":false},\"viewIds\":[\"entryDetails\",\"entryEditor\"]}]}"
+        }
+      ],
+      "totalMs": 192078,
+      "diagnostic": "The AI provider did not finish within the bounded response deadline. Try again later.",
+      "candidate": {
+        "formatVersion": 1,
+        "name": "My Notes",
+        "theme": "amber",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Ideas",
+                  "Personal",
+                  "Work"
+                ]
+              },
+              {
+                "id": "eval_1",
+                "label": "Source",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "body",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category",
+              "eval_1"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "control": "multiline",
+                  "fieldId": "body"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category",
+              "eval_1"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Notes",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Notes",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "model": "google/gemma-4-31b-it",
+      "case": "edit-notes-fields",
+      "operation": "edit",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 32664,
+          "dispatchedAt": "2026-10-08T14:22:37.719334Z",
+          "completedAt": "2026-10-08T14:23:10.384148Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 18761,
+            "completion_tokens": 37,
+            "total_tokens": 18798,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "syntheticResponse": "{\"patches\":[{\"type\":\"AddField\",\"collectionId\":\"notes\",\"field\":{\"label\":\"Source\",\"type\":\"text\",\"required\":false},\"viewIds\":[\"entryDetails\",\"entryEditor\"]}]}"
+        }
+      ],
+      "totalMs": 32664,
+      "candidate": {
+        "formatVersion": 1,
+        "name": "My Notes",
+        "theme": "amber",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Ideas",
+                  "Personal",
+                  "Work"
+                ]
+              },
+              {
+                "id": "eval_1",
+                "label": "Source",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "body",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category",
+              "eval_1"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "control": "multiline",
+                  "fieldId": "body"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category",
+              "eval_1"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Notes",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Notes",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "model": "poolside/laguna-xs-2.1",
+      "case": "edit-notes-fields",
+      "operation": "edit",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 653,
+          "dispatchedAt": "2026-10-08T14:23:51.105294Z",
+          "completedAt": "2026-10-08T14:23:51.759272Z",
+          "success": false,
+          "kind": "http_error",
+          "detailKind": "http_error",
+          "diagnostic": "AI provider could not complete the request (HTTP 503).",
+          "httpStatus": 503
+        },
+        {
+          "number": 2,
+          "elapsedMs": 627,
+          "dispatchedAt": "2026-10-08T14:23:55.119684Z",
+          "completedAt": "2026-10-08T14:23:55.746723Z",
+          "success": false,
+          "kind": "http_error",
+          "detailKind": "http_error",
+          "diagnostic": "AI provider could not complete the request (HTTP 503).",
+          "httpStatus": 503
+        },
+        {
+          "number": 3,
+          "elapsedMs": 654,
+          "dispatchedAt": "2026-10-08T14:23:59.135106Z",
+          "completedAt": "2026-10-08T14:23:59.789513Z",
+          "success": false,
+          "kind": "http_error",
+          "detailKind": "http_error",
+          "diagnostic": "AI provider could not complete the request (HTTP 503).",
+          "httpStatus": 503
+        }
+      ],
+      "totalMs": 1934,
+      "diagnostic": "AI provider could not complete the request (HTTP 503)."
+    },
+    {
+      "model": "z-ai/glm-5.3",
+      "case": "edit-notes-fields",
+      "operation": "edit",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 1862,
+          "dispatchedAt": "2026-10-08T14:21:01.068418Z",
+          "completedAt": "2026-10-08T14:21:02.930866Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 17400,
+            "completion_tokens": 39,
+            "total_tokens": 17439,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "syntheticResponse": "{\"patches\":[{\"type\":\"AddField\",\"collectionId\":\"notes\",\"field\":{\"label\":\"Source\",\"type\":\"text\",\"required\":false},\"viewIds\":[\"entryDetails\",\"entryEditor\"]}]}"
+        }
+      ],
+      "totalMs": 1862,
+      "candidate": {
+        "formatVersion": 1,
+        "name": "My Notes",
+        "theme": "amber",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "notes",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "body",
+                "label": "Note",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Ideas",
+                  "Personal",
+                  "Work"
+                ]
+              },
+              {
+                "id": "eval_1",
+                "label": "Source",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "allEntries",
+            "type": "list",
+            "collectionId": "notes",
+            "label": "Notes",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "presentation": "cards",
+            "fieldIds": [
+              "body",
+              "category"
+            ],
+            "filterFieldIds": [
+              "category"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryDetails",
+            "type": "details",
+            "collectionId": "notes",
+            "label": "Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category",
+              "eval_1"
+            ],
+            "formPageId": "formPage"
+          },
+          {
+            "id": "entryEditor",
+            "type": "form",
+            "collectionId": "notes",
+            "label": "Edit entry",
+            "options": {
+              "controls": [
+                {
+                  "control": "multiline",
+                  "fieldId": "body"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "title",
+              "body",
+              "category",
+              "eval_1"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "notes"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "notes"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "homePage",
+          "pages": [
+            {
+              "id": "homePage",
+              "title": "My Notes",
+              "viewIds": [
+                "allEntries"
+              ],
+              "primaryActionId": "addRecord"
+            },
+            {
+              "id": "detailPage",
+              "title": "Details",
+              "viewIds": [
+                "entryDetails"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Edit entry",
+              "viewIds": [
+                "entryEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "homePage",
+              "label": "My Notes",
+              "icon": "list"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "model": "z-ai/glm-5.3-flash",
+      "case": "guidance-ambiguous-organize",
+      "operation": "guidance",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 10191,
+          "dispatchedAt": "2026-10-08T14:24:27.291308Z",
+          "completedAt": "2026-10-08T14:24:37.483257Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 301,
+            "completion_tokens": 102,
+            "total_tokens": 403,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "syntheticResponse": "{\"needsClarification\":true,\"questions\":[{\"question\":\"What kind of things do you want to organize?\",\"options\":[\"Personal tasks and to-dos\",\"Household items and belongings\",\"Work projects and notes\",\"Events and appointments\"]},{\"question\":\"How will you mainly use it?\",\"options\":[\"Track what needs doing\",\"Find where things are stored\",\"Plan schedules and deadlines\"]},{\"question\":\"Who will use the app?\",\"options\":[\"Just me\",\"My family or household\",\"A small team\"]}]}"
+        }
+      ],
+      "totalMs": 10191
+    },
+    {
+      "model": "google/gemma-4-31b-it",
+      "case": "guidance-ambiguous-organize",
+      "operation": "guidance",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 14505,
+          "dispatchedAt": "2026-10-08T14:23:10.417415Z",
+          "completedAt": "2026-10-08T14:23:24.923045Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 306,
+            "completion_tokens": 81,
+            "total_tokens": 387,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            }
+          },
+          "syntheticResponse": "{\"needsClarification\":true,\"questions\":[{\"question\":\"What are you organizing?\",\"options\":[\"Daily tasks and to-dos\",\"Physical inventory/collections\",\"Project milestones and deadlines\"]},{\"question\":\"How should the items be tracked?\",\"options\":[\"Simple checklist\",\"Kanban board\",\"Categorized database\"]},{\"question\":\"What is the primary goal?\",\"options\":[\"Personal productivity\",\"Team collaboration\",\"Resource management\"]}]}"
+        }
+      ],
+      "totalMs": 14505
+    },
+    {
+      "model": "poolside/laguna-xs-2.1",
+      "case": "guidance-ambiguous-organize",
+      "operation": "guidance",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 199,
+          "dispatchedAt": "2026-10-08T14:24:03.152898Z",
+          "completedAt": "2026-10-08T14:24:03.352373Z",
+          "success": false,
+          "kind": "http_error",
+          "detailKind": "http_error",
+          "diagnostic": "Nemotron guidance request failed.",
+          "httpStatus": 503
+        },
+        {
+          "number": 2,
+          "elapsedMs": 196,
+          "dispatchedAt": "2026-10-08T14:24:07.167308Z",
+          "completedAt": "2026-10-08T14:24:07.363606Z",
+          "success": false,
+          "kind": "http_error",
+          "detailKind": "http_error",
+          "diagnostic": "Nemotron guidance request failed.",
+          "httpStatus": 503
+        },
+        {
+          "number": 3,
+          "elapsedMs": 179,
+          "dispatchedAt": "2026-10-08T14:24:11.183562Z",
+          "completedAt": "2026-10-08T14:24:11.362772Z",
+          "success": false,
+          "kind": "http_error",
+          "detailKind": "http_error",
+          "diagnostic": "Nemotron guidance request failed.",
+          "httpStatus": 503
+        }
+      ],
+      "totalMs": 574,
+      "diagnostic": "Nemotron guidance request failed."
+    },
+    {
+      "model": "z-ai/glm-5.3",
+      "case": "guidance-ambiguous-organize",
+      "operation": "guidance",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 2855,
+          "dispatchedAt": "2026-10-08T14:21:05.083095Z",
+          "completedAt": "2026-10-08T14:21:07.938744Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 301,
+            "completion_tokens": 101,
+            "total_tokens": 402,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0
+            }
+          },
+          "syntheticResponse": "{\"needsClarification\":true,\"questions\":[{\"question\":\"What kind of things do you want to organize?\",\"options\":[\"Tasks and to-dos\",\"Events and schedules\",\"Notes and ideas\",\"Personal belongings\"]},{\"question\":\"Who will use this app?\",\"options\":[\"Just me\",\"Me and my family\",\"A team or group\"]},{\"question\":\"What is the main action you want to do?\",\"options\":[\"Create and check off items\",\"Plan and schedule ahead\",\"Sort items into categories\"]}]}"
+        }
+      ],
+      "totalMs": 2855
+    }
+  ],
+  "quota": {
+    "authenticatedCatalogVerified": true,
+    "accountLimitsKnown": false,
+    "freeRequests": null,
+    "completionCallsMade": false,
+    "checkedAt": "2026-10-08T14:20:38.967380Z"
+  },
+  "executionObserved": {
+    "requestsDispatchedThisInvocation": 21,
+    "peakConcurrentRequestsThisInvocation": 4
+  }
+}

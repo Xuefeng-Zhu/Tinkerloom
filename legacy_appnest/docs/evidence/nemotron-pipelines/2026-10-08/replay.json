@@ -1,0 +1,41 @@
+{
+  "runs": [
+    {
+      "run": "controls",
+      "exitCode": 0,
+      "acceptedResultsChecked": 9,
+      "message": "Offline replay passed for 9 accepted synthetic results.",
+      "checkedAt": "2026-10-08T22:56:06.939283+00:00"
+    },
+    {
+      "run": "scoped",
+      "exitCode": 0,
+      "acceptedResultsChecked": 1,
+      "message": "Offline replay passed for 1 accepted synthetic results.",
+      "checkedAt": "2026-10-08T22:56:14.153603+00:00"
+    },
+    {
+      "run": "plan-pipeline",
+      "exitCode": 0,
+      "acceptedResultsChecked": 2,
+      "message": "Offline replay passed for 2 accepted synthetic results.",
+      "checkedAt": "2026-10-08T22:56:21.371848+00:00"
+    },
+    {
+      "run": "repair",
+      "exitCode": 0,
+      "acceptedResultsChecked": 3,
+      "message": "Offline replay passed for 3 accepted synthetic results.",
+      "checkedAt": "2026-10-08T23:06:59.582022+00:00"
+    },
+    {
+      "run": "cascade",
+      "exitCode": 0,
+      "acceptedResultsChecked": 6,
+      "message": "Offline replay passed for 6 accepted synthetic results.",
+      "checkedAt": "2026-10-08T23:13:21.070609+00:00"
+    }
+  ],
+  "networkCallsMade": false,
+  "totalAcceptedResultsChecked": 21
+}

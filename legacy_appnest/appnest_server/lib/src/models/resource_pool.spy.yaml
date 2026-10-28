@@ -1,0 +1,14 @@
+class: ResourcePool
+table: nest_pool
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  recordId: int, relation(parent=nest_record)
+  behaviorId: String
+  capacity: int
+  allocated: int, default=0
+indexes:
+  pool_unique:
+    fields: appId, recordId, behaviorId
+    unique: true

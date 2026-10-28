@@ -1,0 +1,128 @@
+{
+  "formatVersion": 1,
+  "name": "Volunteer Shifts",
+  "theme": "teal",
+  "icon": "people",
+  "requires": [
+    "collections.v1",
+    "capacity.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "capacity.configure.v1",
+    "capacity.claim.v1",
+    "capacity.release.v1",
+    "views.list.v1",
+    "views.capacity.v1",
+    "notifications.inApp.v1"
+  ],
+  "collections": [
+    {
+      "id": "shifts",
+      "label": "Shifts",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Shift",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "startsAt",
+          "label": "Starts",
+          "type": "timestamp",
+          "required": true
+        },
+        {
+          "id": "notes",
+          "label": "Preparation notes",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "behaviors": [
+        {
+          "id": "places",
+          "type": "capacity.v1"
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "allShifts",
+      "type": "list",
+      "collectionId": "shifts",
+      "label": "Shifts",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addShift",
+        "editShift",
+        "join",
+        "leave",
+        "configure"
+      ]
+    },
+    {
+      "id": "placesSummary",
+      "type": "capacity",
+      "collectionId": "shifts",
+      "label": "Places",
+      "titleFieldId": "title",
+      "actionIds": [
+        "join",
+        "leave"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "addShift",
+      "label": "Create shift",
+      "capability": "records.create.v1",
+      "collectionId": "shifts"
+    },
+    {
+      "id": "editShift",
+      "label": "Edit shift",
+      "capability": "records.patch.v1",
+      "collectionId": "shifts"
+    },
+    {
+      "id": "configure",
+      "label": "Set capacity",
+      "capability": "capacity.configure.v1",
+      "collectionId": "shifts",
+      "behaviorId": "places"
+    },
+    {
+      "id": "join",
+      "label": "Join shift",
+      "capability": "capacity.claim.v1",
+      "collectionId": "shifts",
+      "behaviorId": "places"
+    },
+    {
+      "id": "leave",
+      "label": "Cancel sign-up",
+      "capability": "capacity.release.v1",
+      "collectionId": "shifts",
+      "behaviorId": "places"
+    }
+  ],
+  "policyPresetRequest": "groupCapacitySignup.v1",
+  "automationRequests": [
+    {
+      "id": "shiftReminder",
+      "trigger": {
+        "type": "beforeTimestamp",
+        "collectionId": "shifts",
+        "fieldId": "startsAt",
+        "offsetSeconds": 3600
+      },
+      "effect": {
+        "type": "notifyActiveClaimants",
+        "channel": "inApp"
+      }
+    }
+  ]
+}

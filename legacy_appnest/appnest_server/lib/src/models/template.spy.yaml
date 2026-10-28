@@ -1,0 +1,11 @@
+class: Template
+table: nest_template
+serverOnly: true
+fields:
+  key: String
+  specJson: String
+  description: String
+indexes:
+  template_key:
+    fields: key
+    unique: true

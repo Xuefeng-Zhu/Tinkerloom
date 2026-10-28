@@ -1,0 +1,6 @@
+class: ReminderState
+fields:
+  ruleId: String
+  state: String
+  scheduledAt: DateTime?
+  eligible: bool

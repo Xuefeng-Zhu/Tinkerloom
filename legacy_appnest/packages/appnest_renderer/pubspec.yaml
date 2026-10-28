@@ -1,0 +1,16 @@
+name: appnest_renderer
+description: Shared semantic components for live and synthetic AppNest runtimes.
+version: 1.0.0
+publish_to: none
+resolution: workspace
+environment:
+  sdk: '>=3.13.0 <3.14.0'
+  flutter: '>=3.47.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  appnest_spec:
+    path: ../appnest_spec
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

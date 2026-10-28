@@ -1,0 +1,43 @@
+{
+  "validationLayer": "Offline request construction only; no provider requests dispatched.",
+  "legacyModes": [
+    "baseline",
+    "bounded-reasoning",
+    "contract-reasoning",
+    "contract-only",
+    "efficient-creation"
+  ],
+  "coverage": "26 supported mode/model configurations: baseline over all 10 NVIDIA evaluation models; each of the other four modes over exact Super, Ultra, GLM 5.3, and GLM 5.3 Flash. All 36 benchmark cases use initial and synthetic repair envelopes (1872 body hashes). Sequence bodies use declared fixtures, not a live model-generated earlier result.",
+  "checks": {
+    "requestBodies": {
+      "entries": 1872,
+      "allHashesEqual": true,
+      "receiptBytesEqual": true,
+      "beforeSha256": "a33fe711d90a1e73ef4b46fef3212f94affc9b49d85c07045a9a72327caa5e8c",
+      "afterSha256": "a33fe711d90a1e73ef4b46fef3212f94affc9b49d85c07045a9a72327caa5e8c",
+      "beforeFile": "output/nemotron-tuning-phase3-2026-10-08/legacy-request-hashes-before.json",
+      "afterFile": "output/nemotron-tuning-phase3-2026-10-08/legacy-request-hashes-after.json"
+    },
+    "profileMetadata": {
+      "entries": 26,
+      "allHashesEqual": true,
+      "receiptBytesEqual": true,
+      "beforeSha256": "9cd5824377f8743c095889e79d2c99e4c0a4991231e58eb720873848fa8dc1cb",
+      "afterSha256": "9cd5824377f8743c095889e79d2c99e4c0a4991231e58eb720873848fa8dc1cb",
+      "beforeFile": "output/nemotron-tuning-phase3-2026-10-08/legacy-request-hashes-before.json.profiles.json",
+      "afterFile": "output/nemotron-tuning-phase3-2026-10-08/legacy-request-hashes-after.json.profiles.json"
+    },
+    "promptHelper": {
+      "phase2Archive": "docs/evidence/nemotron-tuning/2026-10-08/phase2/source.tar.gz",
+      "path": "appnest_server/lib/src/modules/builder/nemotron_prompt.dart",
+      "wholeFileBytesEqual": true,
+      "sha256": "d859dfeac0d260f0875fdba7121aa5d18f90fd2d7ca3978af5424b70ac3c70f4"
+    }
+  },
+  "changedProductionSourceFilesFromFrozenPhase2": [
+    "appnest_server/lib/src/evaluation/nvidia_model_profiles.dart",
+    "appnest_server/lib/src/modules/builder/provider.dart",
+    "scripts/nemotron_eval.dart"
+  ],
+  "newFocusedTestFile": "appnest_server/test/nemotron_publisher_profile_test.dart"
+}

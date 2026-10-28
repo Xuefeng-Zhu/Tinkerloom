@@ -1,0 +1,4 @@
+class: RecordSummary
+fields:
+  total: int
+  groups: Map<String,int>

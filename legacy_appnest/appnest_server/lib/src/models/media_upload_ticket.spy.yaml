@@ -1,0 +1,4 @@
+class: MediaUploadTicket
+fields:
+  assetId: String
+  uploadDescription: String

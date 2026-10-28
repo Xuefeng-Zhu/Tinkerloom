@@ -1,0 +1,31 @@
+name: Format
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.0'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check formatting
+        run: |
+          find \
+            appnest_server/lib appnest_server/test appnest_server/bin appnest_client/bin \
+            appnest_flutter/lib appnest_flutter/test packages scripts \
+            -type f -name '*.dart' \
+            ! -path 'appnest_server/lib/src/generated/*' \
+            ! -path 'appnest_server/test/integration/test_tools/*' -print0 \
+            | xargs -0 dart format --output=none --set-exit-if-changed

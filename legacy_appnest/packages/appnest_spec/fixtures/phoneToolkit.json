@@ -1,0 +1,106 @@
+{
+  "formatVersion": 1,
+  "name": "Phone Toolkit",
+  "theme": "teal",
+  "icon": "spark",
+  "requires": [
+    "navigation.v1",
+    "views.configured.v1",
+    "views.deviceInfo.v1",
+    "views.deviceControl.v1"
+  ],
+  "collections": [],
+  "views": [
+    {
+      "id": "phoneInfo",
+      "type": "deviceInfo",
+      "label": "My phone",
+      "options": {
+        "fields": [
+          "batteryLevel",
+          "charging",
+          "model",
+          "osVersion",
+          "connection",
+          "language",
+          "region",
+          "timeZone"
+        ]
+      },
+      "actionIds": []
+    },
+    {
+      "id": "flashlight",
+      "type": "deviceControl",
+      "label": "Flashlight",
+      "options": {
+        "control": "flashlight"
+      },
+      "actionIds": []
+    },
+    {
+      "id": "brightness",
+      "type": "deviceControl",
+      "label": "Brightness",
+      "options": {
+        "control": "brightness"
+      },
+      "actionIds": []
+    },
+    {
+      "id": "keepAwake",
+      "type": "deviceControl",
+      "label": "Keep screen awake",
+      "options": {
+        "control": "keepAwake"
+      },
+      "actionIds": []
+    },
+    {
+      "id": "haptics",
+      "type": "deviceControl",
+      "label": "Haptic feedback",
+      "options": {
+        "control": "haptics"
+      },
+      "actionIds": []
+    }
+  ],
+  "actions": [],
+  "policyPresetRequest": "personalTracker.v1",
+  "automationRequests": [],
+  "navigation": {
+    "entryPageId": "phonePage",
+    "pages": [
+      {
+        "id": "phonePage",
+        "title": "My phone",
+        "viewIds": [
+          "phoneInfo"
+        ]
+      },
+      {
+        "id": "controlsPage",
+        "title": "Phone controls",
+        "viewIds": [
+          "flashlight",
+          "brightness",
+          "keepAwake",
+          "haptics"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "pageId": "phonePage",
+        "label": "My phone",
+        "icon": "today"
+      },
+      {
+        "pageId": "controlsPage",
+        "label": "Controls",
+        "icon": "list"
+      }
+    ]
+  }
+}

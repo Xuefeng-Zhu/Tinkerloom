@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-10-08T15:02:19.233196+00:00",
+  "intent": "Improve Nemotron AppNest contract compliance and measure against GLM without weakening validation",
+  "provider": "nvidia",
+  "targetModel": "nvidia/nemotron-3-super-120b-a12b",
+  "controlModel": "z-ai/glm-5.3",
+  "screeningProfiles": [
+    "baseline",
+    "bounded-reasoning",
+    "contract-reasoning"
+  ],
+  "screeningCases": [
+    "create-notes-fields",
+    "create-calendar-category",
+    "create-calendar-appearance",
+    "create-rich-dashboard",
+    "create-multistep-form",
+    "create-capacity-signup",
+    "create-reminders-name",
+    "create-focus-clock"
+  ],
+  "screeningOrder": "Sequential fresh checkpoints, baseline then bounded-reasoning then contract-reasoning; no overlapping evaluator invocations",
+  "candidateGate": {
+    "complete": true,
+    "minEventualPasses": 7,
+    "plannedCases": 8,
+    "availabilityOnlyFailuresAllowed": 0,
+    "regressionCasesMustPass": [
+      "create-reminders-name",
+      "create-focus-clock"
+    ],
+    "mustImproveBaselineOnAtLeastOne": [
+      "eventualPasses",
+      "firstAttemptPasses",
+      "fewerAttempts"
+    ],
+    "eventualPassesMustNotRegressBaseline": true
+  },
+  "selectionOrder": [
+    "highest eventual passes",
+    "highest first-attempt passes",
+    "fewest attempts",
+    "lowest median operation time"
+  ],
+  "fullPhase": "At most one fresh 36-case run for the selected candidate plus contemporaneous GLM control, concurrency2; no claims of parity without complete category coverage",
+  "limits": {
+    "maxAttemptsPerCase": 3,
+    "generationSeconds": 90,
+    "guidanceSeconds": 20,
+    "initialGenerationTokens": 8000,
+    "recognizedTruncationTokens": 12000,
+    "reasoningTokens": 1024,
+    "globalRequestStartIntervalSeconds": 4,
+    "screeningMaxDispatchesPerProfile": 24,
+    "fullMaxDispatches": 216
+  },
+  "stopConditions": [
+    "Existing auth/quota/nonzero reported cost/HTTP202 behavior stops or blocks the evaluator; do not auto-resume",
+    "If a screening profile returns only availability failures on its first operation, stop that profile and exclude it; record any interrupted dispatch outcome as unknown",
+    "No automatic credit purchase or paid fallback"
+  ],
+  "scope": [
+    "Synthetic saved responses; no private records",
+    "Default configured application model and transport remain unchanged",
+    "One exploratory adaptive selection trial, no statistical or universal parity claim",
+    "Do not reinterpret or overwrite historical checkpoints"
+  ]
+}

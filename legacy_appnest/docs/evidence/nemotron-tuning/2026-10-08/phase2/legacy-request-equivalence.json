@@ -1,0 +1,28 @@
+{
+  "offlineRequestConstructionOnly": true,
+  "legacyRequestHashCount": 648,
+  "legacyRequestHashMapsIdentical": true,
+  "legacyModes": [
+    "baseline",
+    "bounded-reasoning",
+    "contract-reasoning"
+  ],
+  "models": [
+    "nvidia/nemotron-3-super-120b-a12b",
+    "nvidia/nemotron-3-ultra-550b-a55b",
+    "z-ai/glm-5.3"
+  ],
+  "cases": 36,
+  "versionsPerCase": [
+    "initial",
+    "synthetic diagnostic/rejected response repair"
+  ],
+  "sequenceScope": "Uses each declared fixture baseline, not an actual model-created sequence baseline.",
+  "beforeSha256": "365996b4e02c2703fb99a66346c945b158ae4509d3294f4b026f80d4788e7c1c",
+  "afterSha256": "365996b4e02c2703fb99a66346c945b158ae4509d3294f4b026f80d4788e7c1c",
+  "phase1ChecklistDeclarationByteIdentical": true,
+  "checklistDeclarationSha256": "4574a76ad1614c27b5679f9ae129e6d4446b6155a68a1895ece89bacd1ce75a5",
+  "phase1SourceArchiveSha256": "15b801da76bb077ec91ee1c4ae2e61d7942ae64c2003a155a71027eca9487f0f",
+  "phase1BaselineGlmInitialRequestHashesIdentical": true,
+  "phase1BaselineGlmInitialRequestHashCount": 16
+}

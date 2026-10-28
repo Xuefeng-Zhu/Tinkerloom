@@ -1,0 +1,81 @@
+{
+  "recordedAt": "2026-10-08T14:25:04.634038+00:00",
+  "smokeStatus": "completed",
+  "smokeCheckpointSha256": "40161067f71d4d693dd67ce1963190be5ea876abe8e79a9dc69503a1fc203fda",
+  "globalStopTripped": false,
+  "sourceFileHashesMatched": 29,
+  "eligibleModels": [
+    "z-ai/glm-5.3-flash",
+    "google/gemma-4-31b-it",
+    "z-ai/glm-5.3"
+  ],
+  "excludedModels": [
+    "poolside/laguna-xs-2.1"
+  ],
+  "results": [
+    {
+      "model": "z-ai/glm-5.3-flash",
+      "eligible": true,
+      "respondedCases": [
+        "create-notes-fields",
+        "edit-notes-fields",
+        "guidance-ambiguous-organize"
+      ],
+      "passed": 3,
+      "attempts": 5,
+      "attemptKinds": {
+        "received": 3,
+        "timeout": 2
+      },
+      "httpStatuses": {}
+    },
+    {
+      "model": "google/gemma-4-31b-it",
+      "eligible": true,
+      "respondedCases": [
+        "create-notes-fields",
+        "edit-notes-fields",
+        "guidance-ambiguous-organize"
+      ],
+      "passed": 3,
+      "attempts": 4,
+      "attemptKinds": {
+        "timeout": 1,
+        "received": 3
+      },
+      "httpStatuses": {}
+    },
+    {
+      "model": "poolside/laguna-xs-2.1",
+      "eligible": false,
+      "respondedCases": [],
+      "passed": 0,
+      "attempts": 9,
+      "attemptKinds": {
+        "timeout": 2,
+        "http_error": 7
+      },
+      "httpStatuses": {
+        "503": 7
+      }
+    },
+    {
+      "model": "z-ai/glm-5.3",
+      "eligible": true,
+      "respondedCases": [
+        "create-notes-fields",
+        "edit-notes-fields",
+        "guidance-ambiguous-organize"
+      ],
+      "passed": 3,
+      "attempts": 3,
+      "attemptKinds": {
+        "received": 3
+      },
+      "httpStatuses": {}
+    }
+  ],
+  "fullOperations": 108,
+  "fullCheckpoint": "full.json",
+  "fullMaxRequests": 324
+}

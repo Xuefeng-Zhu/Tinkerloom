@@ -1,0 +1,4 @@
+class: MemberInfo
+fields:
+  actorId: String
+  role: String

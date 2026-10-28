@@ -1,0 +1,2015 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "appnest-nemotron-v2",
+  "provider": "nvidia",
+  "nemotronProfile": "efficient-creation",
+  "creationPipeline": {
+    "version": "appnest-creation-pipeline-v1",
+    "pipeline": "plan",
+    "syntheticEvaluationOnly": true,
+    "strictScorerUnchanged": true,
+    "maxTotalCallsPerOperation": 3
+  },
+  "benchmarkLabel": "AppNest plan pipeline evaluation",
+  "modelFamilies": {
+    "nvidia/nemotron-3-super-120b-a12b": "Nemotron"
+  },
+  "apiBase": "https://integrate.api.nvidia.com/v1",
+  "models": [
+    "nvidia/nemotron-3-super-120b-a12b"
+  ],
+  "scenarios": [
+    {
+      "id": "create-rich-dashboard",
+      "operation": "create",
+      "prompt": "Create a personal activity dashboard. Log a title, timestamp, numeric minutes, a Category choice, and multiline notes through reachable add/edit forms. Show a checklist of entries, a metric summing minutes with target 150, and a daily line chart summing minutes over the most recent 14 days. Include entry details. No reminders.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Habit Tracker",
+        "theme": "teal",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.metric.v1",
+          "views.chart.v1",
+          "views.checklist.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "checkins",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Activity",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "loggedAt",
+                "label": "Logged at",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "minutes",
+                "label": "Minutes",
+                "type": "number",
+                "required": false
+              },
+              {
+                "id": "energy",
+                "label": "Energy",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "category",
+                "label": "Category",
+                "type": "choice",
+                "required": false,
+                "choices": [
+                  "Move",
+                  "Learn",
+                  "Rest"
+                ]
+              },
+              {
+                "id": "completed",
+                "label": "Completed",
+                "type": "boolean",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "minutesMetric",
+            "type": "metric",
+            "collectionId": "checkins",
+            "label": "Minutes invested",
+            "options": {
+              "metric": "sum",
+              "valueFieldId": "minutes",
+              "target": 150
+            },
+            "titleFieldId": "title",
+            "actionIds": []
+          },
+          {
+            "id": "dailyMinutes",
+            "type": "chart",
+            "collectionId": "checkins",
+            "label": "Minutes over time",
+            "options": {
+              "style": "line",
+              "metric": "sum",
+              "valueFieldId": "minutes",
+              "dateFieldId": "loggedAt",
+              "bucket": "day",
+              "periods": 14
+            },
+            "titleFieldId": "title",
+            "actionIds": []
+          },
+          {
+            "id": "energyChart",
+            "type": "chart",
+            "collectionId": "checkins",
+            "label": "Average energy by week",
+            "options": {
+              "style": "bar",
+              "metric": "average",
+              "valueFieldId": "energy",
+              "dateFieldId": "loggedAt",
+              "bucket": "week",
+              "periods": 8
+            },
+            "titleFieldId": "title",
+            "actionIds": []
+          },
+          {
+            "id": "categoryChart",
+            "type": "chart",
+            "collectionId": "checkins",
+            "label": "Balance",
+            "options": {
+              "style": "donut",
+              "metric": "count"
+            },
+            "titleFieldId": "title",
+            "groupByFieldId": "category",
+            "actionIds": []
+          },
+          {
+            "id": "checkins",
+            "type": "checklist",
+            "collectionId": "checkins",
+            "label": "Check-ins",
+            "options": {
+              "fieldId": "completed",
+              "actionId": "editRecord"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "loggedAt",
+              "minutes"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "details",
+            "type": "details",
+            "collectionId": "checkins",
+            "label": "Check-in details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ]
+          },
+          {
+            "id": "editor",
+            "type": "form",
+            "collectionId": "checkins",
+            "label": "Check-in",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "minutes",
+                  "control": "slider",
+                  "min": 0,
+                  "max": 180,
+                  "step": 5
+                },
+                {
+                  "fieldId": "energy",
+                  "control": "rating"
+                },
+                {
+                  "fieldId": "category",
+                  "control": "segmented"
+                },
+                {
+                  "fieldId": "completed",
+                  "control": "checkbox"
+                },
+                {
+                  "fieldId": "notes",
+                  "control": "multiline"
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "checkins"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "checkins"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "overviewPage",
+          "pages": [
+            {
+              "id": "overviewPage",
+              "title": "Your progress",
+              "viewIds": [
+                "minutesMetric",
+                "dailyMinutes"
+              ]
+            },
+            {
+              "id": "patternsPage",
+              "title": "Patterns",
+              "viewIds": [
+                "energyChart",
+                "categoryChart"
+              ]
+            },
+            {
+              "id": "checkinsPage",
+              "title": "Daily check-ins",
+              "viewIds": [
+                "checkins"
+              ]
+            },
+            {
+              "id": "detailPage",
+              "title": "Check-in details",
+              "viewIds": [
+                "details"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Add check-in",
+              "viewIds": [
+                "editor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "overviewPage",
+              "label": "Progress",
+              "icon": "chart"
+            },
+            {
+              "pageId": "patternsPage",
+              "label": "Patterns",
+              "icon": "spark"
+            },
+            {
+              "pageId": "checkinsPage",
+              "label": "Check-ins",
+              "icon": "check"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-multistep-form",
+      "operation": "create",
+      "prompt": "Create a personal photo journal with title, private photo, moment timestamp, caption, rating and favorite fields. Use a two-step add/edit form: first title, photo and moment timestamp; then multiline caption, rating and favorite. Include image cards, a gallery and linked entry details. No reminders.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Photo Journal",
+        "theme": "rose",
+        "icon": "spark",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "fields.image.v1",
+          "views.richText.v1",
+          "views.imageCards.v1",
+          "views.gallery.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.interactive.v1"
+        ],
+        "collections": [
+          {
+            "id": "memories",
+            "label": "Entries",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "photo",
+                "label": "Photo",
+                "type": "image",
+                "required": false
+              },
+              {
+                "id": "caption",
+                "label": "Caption",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "takenAt",
+                "label": "Moment",
+                "type": "timestamp",
+                "required": false
+              },
+              {
+                "id": "rating",
+                "label": "Rating",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "favorite",
+                "label": "Favorite",
+                "type": "boolean",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "intro",
+            "type": "richText",
+            "label": "Your journal",
+            "options": {
+              "markdown": "## Small moments, kept close\nCollect the places, people, and everyday details you want to remember.\n\n- Add a photo\n- Write a few words\n- Make it your own"
+            },
+            "actionIds": []
+          },
+          {
+            "id": "photoCards",
+            "type": "imageCards",
+            "collectionId": "memories",
+            "label": "Recent moments",
+            "options": {
+              "imageFieldId": "photo",
+              "captionFieldId": "caption"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "fieldIds": [
+              "takenAt",
+              "rating"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "photoGallery",
+            "type": "gallery",
+            "collectionId": "memories",
+            "label": "Gallery",
+            "options": {
+              "imageFieldId": "photo",
+              "captionFieldId": "caption"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ],
+            "detailPageId": "detailPage",
+            "formPageId": "formPage"
+          },
+          {
+            "id": "details",
+            "type": "details",
+            "collectionId": "memories",
+            "label": "Memory details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ]
+          },
+          {
+            "id": "editor",
+            "type": "form",
+            "collectionId": "memories",
+            "label": "Add a moment",
+            "options": {
+              "controls": [
+                {
+                  "fieldId": "photo",
+                  "control": "imageUpload"
+                },
+                {
+                  "fieldId": "caption",
+                  "control": "multiline"
+                },
+                {
+                  "fieldId": "rating",
+                  "control": "rating"
+                },
+                {
+                  "fieldId": "favorite",
+                  "control": "switch"
+                }
+              ],
+              "steps": [
+                {
+                  "id": "moment",
+                  "title": "The moment",
+                  "fieldIds": [
+                    "title",
+                    "photo",
+                    "takenAt"
+                  ]
+                },
+                {
+                  "id": "story",
+                  "title": "The story",
+                  "fieldIds": [
+                    "caption",
+                    "rating",
+                    "favorite"
+                  ]
+                }
+              ]
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addRecord",
+              "editRecord"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addRecord",
+            "label": "Add entry",
+            "capability": "records.create.v1",
+            "collectionId": "memories"
+          },
+          {
+            "id": "editRecord",
+            "label": "Edit entry",
+            "capability": "records.patch.v1",
+            "collectionId": "memories"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "journalPage",
+          "pages": [
+            {
+              "id": "journalPage",
+              "title": "Journal",
+              "viewIds": [
+                "intro",
+                "photoCards"
+              ]
+            },
+            {
+              "id": "galleryPage",
+              "title": "Your collection",
+              "viewIds": [
+                "photoGallery"
+              ]
+            },
+            {
+              "id": "detailPage",
+              "title": "Memory",
+              "viewIds": [
+                "details"
+              ]
+            },
+            {
+              "id": "formPage",
+              "title": "Capture a moment",
+              "viewIds": [
+                "editor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "journalPage",
+              "label": "Journal",
+              "icon": "book"
+            },
+            {
+              "pageId": "galleryPage",
+              "label": "Gallery",
+              "icon": "spark"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-capacity-signup",
+      "operation": "create",
+      "prompt": "Build shared volunteer shift signups using the group capacity signup policy. Each shift has a title, required start timestamp and preparation notes. Expose shift list, capacity summary, reachable add/edit form, set-capacity, join and cancel-signup controls. Use one capacity pool per shift and an AppNest inbox reminder for active claimants one hour before the start.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Volunteer Shifts",
+        "theme": "teal",
+        "icon": "people",
+        "requires": [
+          "collections.v1",
+          "capacity.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "capacity.configure.v1",
+          "capacity.claim.v1",
+          "capacity.release.v1",
+          "views.list.v1",
+          "views.capacity.v1",
+          "notifications.inApp.v1",
+          "navigation.v1",
+          "views.form.v1",
+          "views.configured.v1"
+        ],
+        "collections": [
+          {
+            "id": "shifts",
+            "label": "Shifts",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Shift",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "startsAt",
+                "label": "Starts",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "notes",
+                "label": "Preparation notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "places",
+                "type": "capacity.v1"
+              }
+            ]
+          }
+        ],
+        "views": [
+          {
+            "id": "allShifts",
+            "type": "list",
+            "collectionId": "shifts",
+            "label": "Shifts",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addShift",
+              "editShift",
+              "join",
+              "leave",
+              "configure"
+            ],
+            "formPageId": "shiftFormPage"
+          },
+          {
+            "id": "placesSummary",
+            "type": "capacity",
+            "collectionId": "shifts",
+            "label": "Places",
+            "titleFieldId": "title",
+            "actionIds": [
+              "join",
+              "leave"
+            ]
+          },
+          {
+            "id": "shiftEditor",
+            "type": "form",
+            "collectionId": "shifts",
+            "label": "Shift editor",
+            "actionIds": [
+              "addShift",
+              "editShift"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addShift",
+            "label": "Create shift",
+            "capability": "records.create.v1",
+            "collectionId": "shifts"
+          },
+          {
+            "id": "editShift",
+            "label": "Edit shift",
+            "capability": "records.patch.v1",
+            "collectionId": "shifts"
+          },
+          {
+            "id": "configure",
+            "label": "Set capacity",
+            "capability": "capacity.configure.v1",
+            "collectionId": "shifts",
+            "behaviorId": "places"
+          },
+          {
+            "id": "join",
+            "label": "Join shift",
+            "capability": "capacity.claim.v1",
+            "collectionId": "shifts",
+            "behaviorId": "places"
+          },
+          {
+            "id": "leave",
+            "label": "Cancel sign-up",
+            "capability": "capacity.release.v1",
+            "collectionId": "shifts",
+            "behaviorId": "places"
+          }
+        ],
+        "policyPresetRequest": "groupCapacitySignup.v1",
+        "automationRequests": [
+          {
+            "id": "shiftReminder",
+            "trigger": {
+              "type": "beforeTimestamp",
+              "collectionId": "shifts",
+              "fieldId": "startsAt",
+              "offsetSeconds": 3600
+            },
+            "effect": {
+              "type": "notifyActiveClaimants",
+              "channel": "inApp"
+            }
+          }
+        ],
+        "navigation": {
+          "entryPageId": "shiftHome",
+          "pages": [
+            {
+              "id": "shiftHome",
+              "title": "Shifts",
+              "viewIds": [
+                "allShifts",
+                "placesSummary"
+              ]
+            },
+            {
+              "id": "shiftFormPage",
+              "title": "Shift editor",
+              "viewIds": [
+                "shiftEditor"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "shiftHome",
+              "label": "Shifts",
+              "icon": "spark"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "create-transfer-reading",
+      "operation": "create",
+      "prompt": "Create a personal reading journal using personalTracker.v1. Use one Books collection with Title (required text), Author (optional text), Finished (required boolean) and Review (optional text). Include a searchable book list, linked details, reachable add/edit forms with multiline Review, and a checklist that toggles the Finished boolean. Use editorial appearance. No reminders.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Reading Journal",
+        "theme": "amber",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.summary.v1"
+        ],
+        "collections": [
+          {
+            "id": "books",
+            "label": "Books",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "author",
+                "label": "Author",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Want to read",
+                  "Reading",
+                  "Finished"
+                ]
+              },
+              {
+                "id": "rating",
+                "label": "Rating",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "library",
+            "type": "list",
+            "collectionId": "books",
+            "label": "Library",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addBook",
+              "editBook"
+            ]
+          },
+          {
+            "id": "readingSummary",
+            "type": "summary",
+            "collectionId": "books",
+            "label": "Overview",
+            "groupByFieldId": "status",
+            "actionIds": []
+          }
+        ],
+        "actions": [
+          {
+            "id": "addBook",
+            "label": "Add book",
+            "capability": "records.create.v1",
+            "collectionId": "books"
+          },
+          {
+            "id": "editBook",
+            "label": "Edit book",
+            "capability": "records.patch.v1",
+            "collectionId": "books"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": []
+      }
+    },
+    {
+      "id": "create-transfer-team",
+      "operation": "create",
+      "prompt": "Create a shared repair queue using groupWorkflow.v1. Use one Repairs collection with Title (required text), Stage (required choice: Queued, Resolved), Estimate (optional integer) and Notes (optional text). Include a draggable board grouped by Stage, with reversible transitions Queued to Resolved and Resolved to Queued, linked details and reachable add/edit forms with multiline Notes. No reminders.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Reading Journal",
+        "theme": "amber",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.summary.v1"
+        ],
+        "collections": [
+          {
+            "id": "books",
+            "label": "Books",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "author",
+                "label": "Author",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Want to read",
+                  "Reading",
+                  "Finished"
+                ]
+              },
+              {
+                "id": "rating",
+                "label": "Rating",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "library",
+            "type": "list",
+            "collectionId": "books",
+            "label": "Library",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addBook",
+              "editBook"
+            ]
+          },
+          {
+            "id": "readingSummary",
+            "type": "summary",
+            "collectionId": "books",
+            "label": "Overview",
+            "groupByFieldId": "status",
+            "actionIds": []
+          }
+        ],
+        "actions": [
+          {
+            "id": "addBook",
+            "label": "Add book",
+            "capability": "records.create.v1",
+            "collectionId": "books"
+          },
+          {
+            "id": "editBook",
+            "label": "Edit book",
+            "capability": "records.patch.v1",
+            "collectionId": "books"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": []
+      }
+    },
+    {
+      "id": "unsupported-executable",
+      "operation": "unsupported",
+      "prompt": "Build an app whose required core feature is executing arbitrary JavaScript entered by users, with filesystem and shell access. Do not replace this with a notes app.",
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Reading Journal",
+        "theme": "amber",
+        "icon": "book",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.summary.v1"
+        ],
+        "collections": [
+          {
+            "id": "books",
+            "label": "Books",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "author",
+                "label": "Author",
+                "type": "text",
+                "required": false
+              },
+              {
+                "id": "status",
+                "label": "Status",
+                "type": "choice",
+                "required": true,
+                "choices": [
+                  "Want to read",
+                  "Reading",
+                  "Finished"
+                ]
+              },
+              {
+                "id": "rating",
+                "label": "Rating",
+                "type": "integer",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "library",
+            "type": "list",
+            "collectionId": "books",
+            "label": "Library",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addBook",
+              "editBook"
+            ]
+          },
+          {
+            "id": "readingSummary",
+            "type": "summary",
+            "collectionId": "books",
+            "label": "Overview",
+            "groupByFieldId": "status",
+            "actionIds": []
+          }
+        ],
+        "actions": [
+          {
+            "id": "addBook",
+            "label": "Add book",
+            "capability": "records.create.v1",
+            "collectionId": "books"
+          },
+          {
+            "id": "editBook",
+            "label": "Edit book",
+            "capability": "records.patch.v1",
+            "collectionId": "books"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": []
+      }
+    }
+  ],
+  "source": {
+    "commit": "93f0291683bbcdf299ffd6276b2e9e7ccdc78496",
+    "dirtyTrackedSha256": "399d6ec738ae13ee4da728bcdc8341a7e9a0feb72ef11064e894498e6b76db96",
+    "contractSourceSha256": "5963eb0a037c15673a6be0cbae4b99253e0ad4e086cd19f3e5e61f4e39063a51",
+    "dartVersion": "3.13.0 (stable) (Wed Aug 5 00:28:05 2026 -0700) on \"macos_arm64\"",
+    "files": {
+      "appnest_server/lib/src/evaluation/nemotron_case_selection.dart": "961faa1d8bdcf2ff2aeec6b928c872767935464c4f5a3caae645053c934fdd2b",
+      "appnest_server/lib/src/evaluation/nemotron_parallel_scheduler.dart": "b932baa426f122e915bcd16c4688ab9a1464380e423e316cd0884aa97be9bba4",
+      "appnest_server/lib/src/evaluation/nvidia_model_profiles.dart": "57db5f7fe649440d41d3b1bdffe043250be046be34a5b6a0425a333f19d08e00",
+      "appnest_server/lib/src/modules/builder/builder.dart": "520ba357c52158fb4279e8ece468ec06b12470a588a9371b6d504a789c60de4f",
+      "appnest_server/lib/src/modules/builder/creation_compiler.dart": "b8f9f642fc3cb7ad0c9b0b7102a5f874c95da6d5ff32844c3229b665310907d0",
+      "appnest_server/lib/src/modules/builder/creation_patch.dart": "c1170e2e20ca2a76db39af0207f753b2786bb3ce6a5a1d8b3354127496456fd3",
+      "appnest_server/lib/src/modules/builder/creation_pipeline_evaluation.dart": "d562fee0b6e8c3f14269c78b029c074367b44321712304a01874510ec887be33",
+      "appnest_server/lib/src/modules/builder/creation_pipeline_scenarios.dart": "0f07298806554c72ae0b6bbcf8e267e2c4edd01c88cb4f40e27ed2da0dc1480e",
+      "appnest_server/lib/src/modules/builder/creation_plan.dart": "3ff511ffc6a939b0e39c8542da7983ec1d0a4b553f3973c49c3b22b0fff8e6d6",
+      "appnest_server/lib/src/modules/builder/customization_evaluation.dart": "4b460730522dd375b3323bb78ac71f60b6aacfabfc23f32a7427916700c608b6",
+      "appnest_server/lib/src/modules/builder/generation_quality.dart": "10b42800a230065346a400569ad9f1673a51e5530940d4d91c2c01d474849b91",
+      "appnest_server/lib/src/modules/builder/generation_requirements.dart": "9a469805b406612f331ecab63fdf96292b396acb81770f89029aa5bd79d9812f",
+      "appnest_server/lib/src/modules/builder/nemotron_evaluation.dart": "5c4ef0cce856f9f1e00ef3a004bda71def3b182c8c9f50c3c8302088a6eb36b9",
+      "appnest_server/lib/src/modules/builder/nemotron_prompt.dart": "d859dfeac0d260f0875fdba7121aa5d18f90fd2d7ca3978af5424b70ac3c70f4",
+      "appnest_server/lib/src/modules/builder/nemotron_report.dart": "022e6e336f3525c66123eaa9e1c68f2fb13f82498ac0b589262a7bdb58749e89",
+      "appnest_server/lib/src/modules/builder/nemotron_routes.dart": "5c3767032281b9d1029f26170269917dd22b27d0b2761f3fa2dcf82a9944f4cf",
+      "appnest_server/lib/src/modules/builder/nemotron_scenarios.dart": "29b7f710ccc67d7c037daa5f318916a611350f5fdd2cbc441f0b26329e968237",
+      "appnest_server/lib/src/modules/builder/provider.dart": "01583c94a9fb24c176f7ad9f57a09b2143fa569cc930200a0144727d35800d91",
+      "appnest_server/lib/src/modules/builder/repair_bindings.dart": "f24f5e0d40fec992aa546106f9ac186fa130ad8606011cd22002bd651d52de12",
+      "appnest_server/lib/src/modules/builder/scoped_creation_contract.dart": "be2d1d0cfa5b71bb619684bf6600cbd752a20257ddfa0cdc80041aaa37ac8c4b",
+      "appnest_server/pubspec.yaml": "7b3827ec18181e59e32c92a356220ce02e33c81360aa3ed125d4966d6b87e2de",
+      "packages/appnest_spec/lib/appnest_spec.dart": "189085c4cbf30423002e1e3acb6d8367c649a58292da00a641f659e59baabf2c",
+      "packages/appnest_spec/lib/src/appearance.dart": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e",
+      "packages/appnest_spec/lib/src/device_spec.dart": "ad79778c211c67c074c1bf522e8bdd2a4f6ffd66e28793e3bb9359e5653a7029",
+      "packages/appnest_spec/lib/src/rich_spec.dart": "7aae7c81de7a5708b6184320abc50f24e0d64f00cda3c6d76b521f4d5d063e5a",
+      "packages/appnest_spec/lib/src/rich_templates.dart": "c6a4ab1d72859d41425b03b18f1e4340e870694a79954483566627b5ba721d98",
+      "packages/appnest_spec/lib/src/schema.dart": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24",
+      "packages/appnest_spec/lib/src/spec.dart": "df491ed854b45a7fbd06130784ca305245ba9efa842f127249b06012ff8bf4a2",
+      "packages/appnest_spec/lib/src/templates.dart": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3",
+      "packages/appnest_spec/lib/src/utility_spec.dart": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442",
+      "packages/appnest_spec/lib/src/utility_templates.dart": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18",
+      "packages/appnest_spec/pubspec.yaml": "74e0dd05a42046744392f1e43fa9b395dac1ea5a82b2e15cbcfa03e4c2aec23a",
+      "pubspec.lock": "098981397295b030cdf11c48c14e898bb0419ad6c38bc6797519d169b3f77f99",
+      "pubspec.yaml": "24c0edf2a3ef601e43f6086db95d44aeaff678965f4eedef2ad5b96856c3a6b4",
+      "scripts/nemotron_eval.dart": "b2f121683f8a616edf44896ba9da7f8bc997f828b7a8ef482be9296fccbcc49f"
+    }
+  },
+  "maxAttempts": 3,
+  "execution": {
+    "concurrency": 1,
+    "requestIntervalMs": 4000,
+    "pacing": "serial-delay",
+    "perModelSequential": true
+  },
+  "transportProfiles": {
+    "nvidia/nemotron-3-super-120b-a12b": {
+      "profile": "nvidia-nemotron-instruction-schema-creation-low-checklist-v1",
+      "family": "Nemotron",
+      "catalogUrl": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b",
+      "reasoning": "creation: low effort; no explicit reasoning budget; edit/guidance: thinking disabled",
+      "promptContract": "nemotron-creation-checklist-v1",
+      "requestOverrides": {
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "creationRequestOverrides": {
+        "stream": false,
+        "reasoning_effort": "low"
+      },
+      "operationOverrides": {
+        "create": {
+          "stream": false,
+          "reasoning_effort": "low"
+        },
+        "unsupported": {
+          "stream": false,
+          "reasoning_effort": "low"
+        },
+        "edit": {
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        },
+        "sequence": {
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        },
+        "guidance": {
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "model default; omitted",
+      "documentationUrls": [
+        "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard",
+        "https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer",
+        "chat_template_kwargs.enable_thinking": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard",
+        "reasoning_effort": "https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer"
+      },
+      "limitations": [
+        "Opt-in experiment; the configured application retains thinking-off.",
+        "The existing creation checklist is unchanged. Edit/guidance requests and unchanged GLM controls retain baseline payloads.",
+        "The creation request path includes unsupported ideas; sequence/edit requests preserve baseline transport.",
+        "Low/medium effort encourages shorter reasoning without a new hard per-request reasoning budget. Endpoint defaults still apply within unchanged total-token and deadline bounds."
+      ]
+    }
+  },
+  "runFingerprint": "9bf047d1f6e7e752753127774fabb5661c7f264918ea15f0064ce2c6b8266cbc",
+  "createdAt": "2026-10-08T22:48:38.206577Z",
+  "updatedAt": "2026-10-08T22:53:34.004401Z",
+  "status": "completed",
+  "catalog": [
+    {
+      "id": "nvidia/nemotron-3-super-120b-a12b",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b",
+      "family": "Nemotron",
+      "pricingVerified": false,
+      "supportedParameters": null
+    }
+  ],
+  "freeOnly": true,
+  "queueTimingMeasured": false,
+  "connectedAppVerified": false,
+  "operations": [
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-rich-dashboard",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 13963,
+          "dispatchedAt": "2026-10-08T22:48:38.427101Z",
+          "completedAt": "2026-10-08T22:48:52.390485Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "field: unknown properties control",
+          "usage": {
+            "prompt_tokens": 5307,
+            "completion_tokens": 2500,
+            "total_tokens": 7807,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1619,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "7f5cf6a0b7b4752c41a021cb0c1e892edbc6badd89842f72a9cc65f68e9c5924",
+            "requestBytes": 21374,
+            "controlRequestBytes": 67902,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "fe0c266e9af8d5f9e6f7488bd553bbcd88ddd85aec1522584c9fea8dafd0e837"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Personal Activity Dashboard\",\n    \"theme\": \"teal\",\n    \"icon\": \"spark\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#1976D2\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"soft\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"activityEntry\",\n        \"label\": \"Activity Entry\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"timestamp\",\n            \"label\": \"Timestamp\",\n            \"type\": \"timestamp\",\n            \"required\": true\n          },\n          {\n            \"id\": \"minutes\",\n            \"label\": \"Minutes\",\n            \"type\": \"integer\",\n            \"required\": true\n          },\n          {\n            \"id\": \"category\",\n            \"label\": \"Category\",\n            \"type\": \"choice\",\n            \"required\": true,\n            \"choices\": [\n              \"Work\",\n              \"Exercise\",\n              \"Hobby\",\n              \"Learning\",\n              \"Other\"\n            ]\n          },\n          {\n            \"id\": \"notes\",\n            \"label\": \"Notes\",\n            \"type\": \"text\",\n            \"required\": true,\n            \"control\": \"multiline\"\n          },\n          {\n            \"id\": \"selected\",\n            \"label\": \"Selected\",\n            \"type\": \"boolean\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Entry\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Entry\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Add/Edit Entry\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"timestamp\",\n            \"minutes\",\n            \"category\",\n            \"notes\",\n            \"selected\"\n          ]\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Entry Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"timestamp\",\n            \"minutes\",\n            \"category\",\n            \"notes\",\n            \"selected\"\n          ]\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"dashboard\",\n        \"title\": \"Activity Dashboard\",\n        \"tab\": {\n          \"label\": \"Dashboard\",\n          \"icon\": \"spark\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"activityEntry\",\n        \"components\": [\n          {\n            \"type\": \"checklist\",\n            \"label\": \"Entry Checklist\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"fieldId\": \"selected\",\n              \"checkedValue\": \"true\",\n              \"uncheckedValue\": \"false\"\n            }\n          },\n          {\n            \"type\": \"metric\",\n            \"label\": \"Total Minutes\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"metric\": \"sum\",\n              \"valueFieldId\": \"minutes\",\n              \"target\": 150\n            }\n          },\n          {\n            \"type\": \"chart\",\n            \"label\": \"Minutes Trend (14 days)\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"style\": \"line\",\n              \"metric\": \"sum\",\n              \"valueFieldId\": \"minutes\",\n              \"dateFieldId\": \"timestamp\",\n              \"bucket\": \"day\",\n              \"periods\": 14\n            }\n          },\n          {\n            \"type\": \"details\",\n            \"label\": \"Entry Details\",\n            \"collectionId\": \"activityEntry\",\n            \"titleFieldId\": \"title\"\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"dashboard\",\n    \"automationRequests\": []\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 23454,
+          "dispatchedAt": "2026-10-08T22:48:56.410942Z",
+          "completedAt": "2026-10-08T22:49:19.866459Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Record components need collection routes",
+          "usage": {
+            "prompt_tokens": 6462,
+            "completion_tokens": 4349,
+            "total_tokens": 10811,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 3404,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "a61f3c7689bd1990e1cd8baab7452959dcc0ca2209d42befb8526776919f1f7e",
+            "requestBytes": 26772,
+            "controlRequestBytes": 73300,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "db13965e9115653be7d425f71b50730ead601ebb302dd97c117e2f49f435970b"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Personal Activity Dashboard\",\n    \"theme\": \"teal\",\n    \"icon\": \"spark\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#1976D2\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"soft\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"activityEntry\",\n        \"label\": \"Activity Entry\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"timestamp\",\n            \"label\": \"Timestamp\",\n            \"type\": \"timestamp\",\n            \"required\": true\n          },\n          {\n            \"id\": \"minutes\",\n            \"label\": \"Minutes\",\n            \"type\": \"integer\",\n            \"required\": true\n          },\n          {\n            \"id\": \"category\",\n            \"label\": \"Category\",\n            \"type\": \"choice\",\n            \"required\": true,\n            \"choices\": [\n              \"Work\",\n              \"Exercise\",\n              \"Hobby\",\n              \"Learning\",\n              \"Other\"\n            ]\n          },\n          {\n            \"id\": \"notes\",\n            \"label\": \"Notes\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"selected\",\n            \"label\": \"Selected\",\n            \"type\": \"boolean\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Entry\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Entry\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Add/Edit Entry\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"timestamp\",\n            \"minutes\",\n            \"category\",\n            \"notes\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"notes\",\n                \"control\": \"multiline\"\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Entry Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"timestamp\",\n            \"minutes\",\n            \"category\",\n            \"notes\",\n            \"selected\"\n          ],\n          \"options\": {}\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"dashboard\",\n        \"title\": \"Activity Dashboard\",\n        \"tab\": {\n          \"label\": \"Dashboard\",\n          \"icon\": \"spark\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"activityEntry\",\n        \"components\": [\n          {\n            \"type\": \"checklist\",\n            \"label\": \"Entry Checklist\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"fieldId\": \"selected\",\n              \"checkedValue\": \"true\",\n              \"uncheckedValue\": \"false\"\n            }\n          },\n          {\n            \"type\": \"metric\",\n            \"label\": \"Total Minutes\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"metric\": \"sum\",\n              \"valueFieldId\": \"minutes\",\n              \"target\": 150\n            }\n          },\n          {\n            \"type\": \"chart\",\n            \"label\": \"Minutes Trend (14 days)\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"style\": \"line\",\n              \"metric\": \"sum\",\n              \"valueFieldId\": \"minutes\",\n              \"dateFieldId\": \"timestamp\",\n              \"bucket\": \"day\",\n              \"periods\": 14\n            }\n          },\n          {\n            \"type\": \"details\",\n            \"label\": \"Entry Details\",\n            \"collectionId\": \"activityEntry\",\n            \"titleFieldId\": \"title\",\n            \"fieldIds\": [\n              \"title\",\n              \"timestamp\",\n              \"minutes\",\n              \"category\",\n              \"notes\",\n              \"selected\"\n            ],\n            \"options\": {}\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"dashboard\",\n    \"automationRequests\": []\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 13649,
+          "dispatchedAt": "2026-10-08T22:49:23.887430Z",
+          "completedAt": "2026-10-08T22:49:37.540459Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Boolean checklists need a record patch action",
+          "usage": {
+            "prompt_tokens": 6553,
+            "completion_tokens": 2037,
+            "total_tokens": 8590,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1166,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "b9c175fa4c4bc43463b8d28cf06fb64e340804c836597f18f3a0326e62154432",
+            "requestBytes": 27248,
+            "controlRequestBytes": 73776,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "774c9c875e193c059d1d37831ded403fc0f7ee73528dc00de1c9608aef14d1d2"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Personal Activity Dashboard\",\n    \"theme\": \"teal\",\n    \"icon\": \"spark\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#1976D2\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"soft\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"activityEntry\",\n        \"label\": \"Activity Entry\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"timestamp\",\n            \"label\": \"Timestamp\",\n            \"type\": \"timestamp\",\n            \"required\": true\n          },\n          {\n            \"id\": \"minutes\",\n            \"label\": \"Minutes\",\n            \"type\": \"integer\",\n            \"required\": true\n          },\n          {\n            \"id\": \"category\",\n            \"label\": \"Category\",\n            \"type\": \"choice\",\n            \"required\": true,\n            \"choices\": [\n              \"Work\",\n              \"Exercise\",\n              \"Hobby\",\n              \"Learning\",\n              \"Other\"\n            ]\n          },\n          {\n            \"id\": \"notes\",\n            \"label\": \"Notes\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"selected\",\n            \"label\": \"Selected\",\n            \"type\": \"boolean\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Entry\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Entry\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Add/Edit Entry\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"timestamp\",\n            \"minutes\",\n            \"category\",\n            \"notes\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"notes\",\n                \"control\": \"multiline\"\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Entry Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"timestamp\",\n            \"minutes\",\n            \"category\",\n            \"notes\",\n            \"selected\"\n          ],\n          \"options\": {}\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"dashboard\",\n        \"title\": \"Activity Dashboard\",\n        \"tab\": {\n          \"label\": \"Dashboard\",\n          \"icon\": \"spark\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"activityEntry\",\n        \"components\": [\n          {\n            \"type\": \"checklist\",\n            \"label\": \"Entry Checklist\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"fieldId\": \"selected\",\n              \"checkedValue\": \"true\",\n              \"uncheckedValue\": \"false\"\n            }\n          },\n          {\n            \"type\": \"metric\",\n            \"label\": \"Total Minutes\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"metric\": \"sum\",\n              \"valueFieldId\": \"minutes\",\n              \"target\": 150\n            }\n          },\n          {\n            \"type\": \"chart\",\n            \"label\": \"Minutes Trend (14 days)\",\n            \"collectionId\": \"activityEntry\",\n            \"options\": {\n              \"style\": \"line\",\n              \"metric\": \"sum\",\n              \"valueFieldId\": \"minutes\",\n              \"dateFieldId\": \"timestamp\",\n              \"bucket\": \"day\",\n              \"periods\": 14\n            }\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"dashboard\",\n    \"automationRequests\": []\n  }\n}"
+        }
+      ],
+      "totalMs": 51066,
+      "diagnostic": "Boolean checklists need a record patch action"
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-multistep-form",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 24450,
+          "dispatchedAt": "2026-10-08T22:49:45.599486Z",
+          "completedAt": "2026-10-08T22:50:10.050903Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Record components need collection routes",
+          "usage": {
+            "prompt_tokens": 5297,
+            "completion_tokens": 3754,
+            "total_tokens": 9051,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2678,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "ac21879b4d669687cca1f98ff15b250b409e9c19892e7eda0d858db688ad7207",
+            "requestBytes": 21346,
+            "controlRequestBytes": 67874,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "1d87080cef0d9374f01f0a7b9d839e73fe3b66add4ff55c3638194010e63d620"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Photo Journal\",\n    \"theme\": \"teal\",\n    \"icon\": \"book\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#ff6600\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"rounded\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"journal\",\n        \"label\": \"Journal Entries\",\n        \"fields\": [\n          {\n            \"id\": \"titleField\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"photoField\",\n            \"label\": \"Photo\",\n            \"type\": \"image\",\n            \"required\": true\n          },\n          {\n            \"id\": \"momentField\",\n            \"label\": \"Moment\",\n            \"type\": \"timestamp\",\n            \"required\": true\n          },\n          {\n            \"id\": \"captionField\",\n            \"label\": \"Caption\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"ratingField\",\n            \"label\": \"Rating\",\n            \"type\": \"integer\",\n            \"required\": true\n          },\n          {\n            \"id\": \"favoriteField\",\n            \"label\": \"Favorite\",\n            \"type\": \"boolean\",\n            \"required\": true\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Entry\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Entry\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Add/Edit Photo Journal Entry\",\n          \"titleFieldId\": \"titleField\",\n          \"fieldIds\": [\n            \"titleField\",\n            \"photoField\",\n            \"momentField\",\n            \"captionField\",\n            \"ratingField\",\n            \"favoriteField\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"titleField\",\n                \"control\": \"text\",\n                \"hint\": \"Enter a title for the entry\"\n              },\n              {\n                \"fieldId\": \"photoField\",\n                \"control\": \"imageUpload\",\n                \"hint\": \"Add a photo\"\n              },\n              {\n                \"fieldId\": \"momentField\",\n                \"control\": \"dateTime\",\n                \"hint\": \"Select date and time\"\n              },\n              {\n                \"fieldId\": \"captionField\",\n                \"control\": \"multiline\",\n                \"hint\": \"Write a caption\"\n              },\n              {\n                \"fieldId\": \"ratingField\",\n                \"control\": \"rating\",\n                \"hint\": \"Rate the moment (1-5)\"\n              },\n              {\n                \"fieldId\": \"favoriteField\",\n                \"control\": \"switch\",\n                \"hint\": \"Mark as favorite\"\n              }\n            ],\n            \"steps\": [\n              {\n                \"id\": \"step1\",\n                \"title\": \"Step 1: Basics\",\n                \"fieldIds\": [\n                  \"titleField\",\n                  \"photoField\",\n                  \"momentField\"\n                ]\n              },\n              {\n                \"id\": \"step2\",\n                \"title\": \"Step 2: Details\",\n                \"fieldIds\": [\n                  \"captionField\",\n                  \"ratingField\",\n                  \"favoriteField\"\n                ]\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Entry Details\",\n          \"titleFieldId\": \"titleField\",\n          \"fieldIds\": [\n            \"titleField\",\n            \"photoField\",\n            \"momentField\",\n            \"captionField\",\n            \"ratingField\",\n            \"favoriteField\"\n          ]\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"mainPage\",\n        \"title\": \"Photo Journal\",\n        \"components\": [\n          {\n            \"type\": \"imageCards\",\n            \"collectionId\": \"journal\",\n            \"label\": \"Photos\",\n            \"options\": {\n              \"imageFieldId\": \"photoField\",\n              \"captionFieldId\": \"captionField\"\n            }\n          },\n          {\n            \"type\": \"gallery\",\n            \"collectionId\": \"journal\",\n            \"label\": \"Gallery\",\n            \"options\": {\n              \"imageFieldId\": \"photoField\",\n              \"captionFieldId\": \"captionField\"\n            }\n          },\n          {\n            \"type\": \"details\",\n            \"collectionId\": \"journal\",\n            \"label\": \"Entry Details\",\n            \"titleFieldId\": \"titleField\",\n            \"fieldIds\": [\n              \"titleField\",\n              \"photoField\",\n              \"momentField\",\n              \"captionField\",\n              \"ratingField\",\n              \"favoriteField\"\n            ]\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"mainPage\",\n    \"automationRequests\": []\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 17830,
+          "dispatchedAt": "2026-10-08T22:50:14.071042Z",
+          "completedAt": "2026-10-08T22:50:31.902253Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Record components need collection routes",
+          "usage": {
+            "prompt_tokens": 6701,
+            "completion_tokens": 2931,
+            "total_tokens": 9632,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1846,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "5917f15b90cec9ea123d897a22e44861f90bddc7ed72b7fc3f899ec3a21e70b9",
+            "requestBytes": 28010,
+            "controlRequestBytes": 74538,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "8da1f0acce83c7dc5de090c49a22096b9840b87ebedd0f6846cfd5b788b760b9"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Photo Journal\",\n    \"theme\": \"teal\",\n    \"icon\": \"book\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#ff6600\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"rounded\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"journal\",\n        \"label\": \"Journal Entries\",\n        \"fields\": [\n          {\n            \"id\": \"titleField\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"photoField\",\n            \"label\": \"Photo\",\n            \"type\": \"image\",\n            \"required\": true\n          },\n          {\n            \"id\": \"momentField\",\n            \"label\": \"Moment\",\n            \"type\": \"timestamp\",\n            \"required\": true\n          },\n          {\n            \"id\": \"captionField\",\n            \"label\": \"Caption\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"ratingField\",\n            \"label\": \"Rating\",\n            \"type\": \"integer\",\n            \"required\": true\n          },\n          {\n            \"id\": \"favoriteField\",\n            \"label\": \"Favorite\",\n            \"type\": \"boolean\",\n            \"required\": true\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Entry\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Entry\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Add/Edit Photo Journal Entry\",\n          \"titleFieldId\": \"titleField\",\n          \"fieldIds\": [\n            \"titleField\",\n            \"photoField\",\n            \"momentField\",\n            \"captionField\",\n            \"ratingField\",\n            \"favoriteField\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"titleField\",\n                \"control\": \"text\",\n                \"hint\": \"Enter a title for the entry\"\n              },\n              {\n                \"fieldId\": \"photoField\",\n                \"control\": \"imageUpload\",\n                \"hint\": \"Add a photo\"\n              },\n              {\n                \"fieldId\": \"momentField\",\n                \"control\": \"dateTime\",\n                \"hint\": \"Select date and time\"\n              },\n              {\n                \"fieldId\": \"captionField\",\n                \"control\": \"multiline\",\n                \"hint\": \"Write a caption\"\n              },\n              {\n                \"fieldId\": \"ratingField\",\n                \"control\": \"rating\",\n                \"hint\": \"Rate the moment (1-5)\"\n              },\n              {\n                \"fieldId\": \"favoriteField\",\n                \"control\": \"switch\",\n                \"hint\": \"Mark as favorite\"\n              }\n            ],\n            \"steps\": [\n              {\n                \"id\": \"step1\",\n                \"title\": \"Step 1: Basics\",\n                \"fieldIds\": [\n                  \"titleField\",\n                  \"photoField\",\n                  \"momentField\"\n                ]\n              },\n              {\n                \"id\": \"step2\",\n                \"title\": \"Step 2: Details\",\n                \"fieldIds\": [\n                  \"captionField\",\n                  \"ratingField\",\n                  \"favoriteField\"\n                ]\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Entry Details\",\n          \"titleFieldId\": \"titleField\",\n          \"fieldIds\": [\n            \"titleField\",\n            \"photoField\",\n            \"momentField\",\n            \"captionField\",\n            \"ratingField\",\n            \"favoriteField\"\n          ]\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"mainPage\",\n        \"title\": \"Photo Journal\",\n        \"primaryCollectionId\": \"journal\",\n        \"components\": [\n          {\n            \"type\": \"imageCards\",\n            \"collectionId\": \"journal\",\n            \"label\": \"Photos\",\n            \"options\": {\n              \"imageFieldId\": \"photoField\",\n              \"captionFieldId\": \"captionField\"\n            }\n          },\n          {\n            \"type\": \"gallery\",\n            \"collectionId\": \"journal\",\n            \"label\": \"Gallery\",\n            \"options\": {\n              \"imageFieldId\": \"photoField\",\n              \"captionFieldId\": \"captionField\"\n            }\n          },\n          {\n            \"type\": \"details\",\n            \"collectionId\": \"journal\",\n            \"label\": \"Entry Details\",\n            \"titleFieldId\": \"titleField\",\n            \"fieldIds\": [\n              \"titleField\",\n              \"photoField\",\n              \"momentField\",\n              \"captionField\",\n              \"ratingField\",\n              \"favoriteField\"\n            ]\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"mainPage\",\n    \"automationRequests\": []\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 13199,
+          "dispatchedAt": "2026-10-08T22:50:35.927682Z",
+          "completedAt": "2026-10-08T22:50:49.127159Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Navigation needs pages and one to five tabs",
+          "usage": {
+            "prompt_tokens": 6712,
+            "completion_tokens": 2034,
+            "total_tokens": 8746,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1025,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "6935a476b69d6986fdbc6fcc42825e4d998064b27ffc106b19a239c11e2b80ee",
+            "requestBytes": 28066,
+            "controlRequestBytes": 74594,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "73ee61db0be4c4447e144d7d6982761cb3ca78766d9183f767a712b1fba0d2b0"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Photo Journal\",\n    \"theme\": \"teal\",\n    \"icon\": \"book\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#ff6600\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"rounded\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"journal\",\n        \"label\": \"Journal Entries\",\n        \"fields\": [\n          {\n            \"id\": \"titleField\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"photoField\",\n            \"label\": \"Photo\",\n            \"type\": \"image\",\n            \"required\": true\n          },\n          {\n            \"id\": \"momentField\",\n            \"label\": \"Moment\",\n            \"type\": \"timestamp\",\n            \"required\": true\n          },\n          {\n            \"id\": \"captionField\",\n            \"label\": \"Caption\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"ratingField\",\n            \"label\": \"Rating\",\n            \"type\": \"integer\",\n            \"required\": true\n          },\n          {\n            \"id\": \"favoriteField\",\n            \"label\": \"Favorite\",\n            \"type\": \"boolean\",\n            \"required\": true\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Entry\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Entry\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Add/Edit Photo Journal Entry\",\n          \"titleFieldId\": \"titleField\",\n          \"fieldIds\": [\n            \"titleField\",\n            \"photoField\",\n            \"momentField\",\n            \"captionField\",\n            \"ratingField\",\n            \"favoriteField\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"titleField\",\n                \"control\": \"text\",\n                \"hint\": \"Enter a title for the entry\"\n              },\n              {\n                \"fieldId\": \"photoField\",\n                \"control\": \"imageUpload\",\n                \"hint\": \"Add a photo\"\n              },\n              {\n                \"fieldId\": \"momentField\",\n                \"control\": \"dateTime\",\n                \"hint\": \"Select date and time\"\n              },\n              {\n                \"fieldId\": \"captionField\",\n                \"control\": \"multiline\",\n                \"hint\": \"Write a caption\"\n              },\n              {\n                \"fieldId\": \"ratingField\",\n                \"control\": \"rating\",\n                \"hint\": \"Rate the moment (1-5)\"\n              },\n              {\n                \"fieldId\": \"favoriteField\",\n                \"control\": \"switch\",\n                \"hint\": \"Mark as favorite\"\n              }\n            ],\n            \"steps\": [\n              {\n                \"id\": \"step1\",\n                \"title\": \"Step 1: Basics\",\n                \"fieldIds\": [\n                  \"titleField\",\n                  \"photoField\",\n                  \"momentField\"\n                ]\n              },\n              {\n                \"id\": \"step2\",\n                \"title\": \"Step 2: Details\",\n                \"fieldIds\": [\n                  \"captionField\",\n                  \"ratingField\",\n                  \"favoriteField\"\n                ]\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Entry Details\",\n          \"titleFieldId\": \"titleField\",\n          \"fieldIds\": [\n            \"titleField\",\n            \"photoField\",\n            \"momentField\",\n            \"captionField\",\n            \"ratingField\",\n            \"favoriteField\"\n          ]\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"mainPage\",\n        \"title\": \"Photo Journal\",\n        \"primaryCollectionId\": \"journal\",\n        \"components\": [\n          {\n            \"type\": \"imageCards\",\n            \"collectionId\": \"journal\",\n            \"label\": \"Photos\",\n            \"options\": {\n              \"imageFieldId\": \"photoField\",\n              \"captionFieldId\": \"captionField\"\n            }\n          },\n          {\n            \"type\": \"gallery\",\n            \"collectionId\": \"journal\",\n            \"label\": \"Gallery\",\n            \"options\": {\n              \"imageFieldId\": \"photoField\",\n              \"captionFieldId\": \"captionField\"\n            }\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"mainPage\",\n    \"automationRequests\": []\n  }\n}"
+        }
+      ],
+      "totalMs": 55479,
+      "diagnostic": "Navigation needs pages and one to five tabs"
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-capacity-signup",
+      "operation": "create",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 14459,
+          "dispatchedAt": "2026-10-08T22:50:57.172629Z",
+          "completedAt": "2026-10-08T22:51:11.632324Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 5311,
+            "completion_tokens": 2372,
+            "total_tokens": 7683,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1664,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "0db617dd796e2312ef13a195d603bdf5a81050622bf49874b64d3d3cbab261d5",
+            "requestBytes": 21413,
+            "controlRequestBytes": 67941,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "3e307b6167b6fe9853f3a7d48ff80c46e233ecb09707eba6802f91a6ab33e724",
+            "derivedResponseSha256": "8d6aa4faba4ea58f70c834525a88abcea474134ea595747fc90241d0085f1471"
+          },
+          "providerResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Volunteer Shift Signups\",\n    \"theme\": \"teal\",\n    \"icon\": \"people\",\n    \"policyPresetRequest\": \"groupCapacitySignup.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#3b82f6\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"rounded\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"shifts\",\n        \"label\": \"Shifts\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"start\",\n            \"label\": \"Start\",\n            \"type\": \"timestamp\",\n            \"required\": true\n          },\n          {\n            \"id\": \"notes\",\n            \"label\": \"Preparation Notes\",\n            \"type\": \"text\",\n            \"required\": true\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"capacity.v1\"\n          }\n        ],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Shift\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Shift\"\n          },\n          {\n            \"type\": \"configureCapacity\",\n            \"label\": \"Set Capacity\"\n          },\n          {\n            \"type\": \"claim\",\n            \"label\": \"Join Shift\"\n          },\n          {\n            \"type\": \"release\",\n            \"label\": \"Cancel Signup\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Shift Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"start\",\n            \"notes\"\n          ]\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Shift Info\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"start\",\n            \"notes\"\n          ]\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"shiftsPage\",\n        \"title\": \"Volunteer Shifts\",\n        \"tab\": {\n          \"label\": \"Shifts\",\n          \"icon\": \"list\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"shifts\",\n        \"components\": [\n          {\n            \"type\": \"list\",\n            \"label\": \"Shift List\",\n            \"collectionId\": \"shifts\",\n            \"titleFieldId\": \"title\"\n          },\n          {\n            \"type\": \"capacity\",\n            \"label\": \"Capacity Summary\",\n            \"collectionId\": \"shifts\"\n          },\n          {\n            \"type\": \"action\",\n            \"label\": \"Add Shift\",\n            \"collectionId\": \"shifts\"\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"shiftsPage\",\n    \"automationRequests\": [\n      {\n        \"collectionId\": \"shifts\",\n        \"fieldId\": \"start\",\n        \"offsetSeconds\": 3600,\n        \"effect\": \"notifyActiveClaimants\"\n      }\n    ]\n  }\n}",
+          "syntheticResponse": "{\"formatVersion\":1,\"name\":\"Volunteer Shift Signups\",\"theme\":\"teal\",\"icon\":\"people\",\"requires\":[\"collections.v1\",\"navigation.v1\",\"appearance.v1\",\"navigation.layouts.v1\",\"capacity.v1\",\"views.form.v1\",\"views.configured.v1\",\"views.details.v1\",\"views.list.v1\",\"views.capacity.v1\",\"views.action.v1\",\"records.create.v1\",\"records.patch.v1\",\"capacity.configure.v1\",\"capacity.claim.v1\",\"capacity.release.v1\",\"notifications.inApp.v1\"],\"collections\":[{\"id\":\"shifts\",\"label\":\"Shifts\",\"fields\":[{\"id\":\"title\",\"label\":\"Title\",\"type\":\"text\",\"required\":true},{\"id\":\"start\",\"label\":\"Start\",\"type\":\"timestamp\",\"required\":true},{\"id\":\"notes\",\"label\":\"Preparation Notes\",\"type\":\"text\",\"required\":true}],\"behaviors\":[{\"id\":\"b0_0\",\"type\":\"capacity.v1\"}]}],\"views\":[{\"id\":\"v0\",\"type\":\"form\",\"collectionId\":\"shifts\",\"label\":\"Shift Details\",\"titleFieldId\":\"title\",\"actionIds\":[\"a0_0\",\"a0_1\"],\"fieldIds\":[\"title\",\"start\",\"notes\"]},{\"id\":\"v1\",\"type\":\"details\",\"collectionId\":\"shifts\",\"label\":\"Shift Info\",\"titleFieldId\":\"title\",\"actionIds\":[\"a0_0\",\"a0_1\",\"a0_2\",\"a0_3\",\"a0_4\"],\"fieldIds\":[\"title\",\"start\",\"notes\"],\"formPageId\":\"r0\"},{\"id\":\"v2\",\"type\":\"list\",\"collectionId\":\"shifts\",\"label\":\"Shift List\",\"titleFieldId\":\"title\",\"actionIds\":[\"a0_0\",\"a0_1\",\"a0_2\",\"a0_3\",\"a0_4\"],\"detailPageId\":\"r1\",\"formPageId\":\"r0\"},{\"id\":\"v3\",\"type\":\"capacity\",\"collectionId\":\"shifts\",\"label\":\"Capacity Summary\",\"actionIds\":[\"a0_0\",\"a0_1\",\"a0_2\",\"a0_3\",\"a0_4\"],\"detailPageId\":\"r1\",\"formPageId\":\"r0\"},{\"id\":\"v4\",\"type\":\"action\",\"collectionId\":\"shifts\",\"label\":\"Add Shift\",\"actionIds\":[\"a0_0\",\"a0_1\",\"a0_2\",\"a0_3\",\"a0_4\"],\"detailPageId\":\"r1\",\"formPageId\":\"r0\"}],\"actions\":[{\"id\":\"a0_0\",\"label\":\"Add Shift\",\"capability\":\"records.create.v1\",\"collectionId\":\"shifts\"},{\"id\":\"a0_1\",\"label\":\"Edit Shift\",\"capability\":\"records.patch.v1\",\"collectionId\":\"shifts\"},{\"id\":\"a0_2\",\"label\":\"Set Capacity\",\"capability\":\"capacity.configure.v1\",\"collectionId\":\"shifts\",\"behaviorId\":\"b0_0\"},{\"id\":\"a0_3\",\"label\":\"Join Shift\",\"capability\":\"capacity.claim.v1\",\"collectionId\":\"shifts\",\"behaviorId\":\"b0_0\"},{\"id\":\"a0_4\",\"label\":\"Cancel Signup\",\"capability\":\"capacity.release.v1\",\"collectionId\":\"shifts\",\"behaviorId\":\"b0_0\"}],\"policyPresetRequest\":\"groupCapacitySignup.v1\",\"automationRequests\":[{\"id\":\"reminder0\",\"trigger\":{\"type\":\"beforeTimestamp\",\"collectionId\":\"shifts\",\"fieldId\":\"start\",\"offsetSeconds\":3600},\"effect\":{\"type\":\"notifyActiveClaimants\",\"channel\":\"inApp\"}}],\"navigation\":{\"entryPageId\":\"p0\",\"pages\":[{\"id\":\"r0\",\"title\":\"Shift Details\",\"viewIds\":[\"v0\"]},{\"id\":\"r1\",\"title\":\"Shift Info\",\"viewIds\":[\"v1\"]},{\"id\":\"p0\",\"title\":\"Volunteer Shifts\",\"viewIds\":[\"v2\",\"v3\",\"v4\"],\"primaryActionId\":\"a0_0\",\"layout\":\"stacked\"}],\"tabs\":[{\"pageId\":\"p0\",\"label\":\"Shifts\",\"icon\":\"list\"}]},\"appearance\":{\"style\":\"clean\",\"accentColor\":\"#3B82F6\",\"typography\":\"sans\",\"density\":\"comfortable\",\"corners\":\"rounded\"}}"
+        }
+      ],
+      "totalMs": 14459,
+      "candidate": {
+        "formatVersion": 1,
+        "name": "Volunteer Shift Signups",
+        "theme": "teal",
+        "icon": "people",
+        "requires": [
+          "collections.v1",
+          "navigation.v1",
+          "appearance.v1",
+          "navigation.layouts.v1",
+          "capacity.v1",
+          "views.form.v1",
+          "views.configured.v1",
+          "views.details.v1",
+          "views.list.v1",
+          "views.capacity.v1",
+          "views.action.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "capacity.configure.v1",
+          "capacity.claim.v1",
+          "capacity.release.v1",
+          "notifications.inApp.v1"
+        ],
+        "collections": [
+          {
+            "id": "shifts",
+            "label": "Shifts",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "start",
+                "label": "Start",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "notes",
+                "label": "Preparation Notes",
+                "type": "text",
+                "required": true
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "b0_0",
+                "type": "capacity.v1"
+              }
+            ]
+          }
+        ],
+        "views": [
+          {
+            "id": "v0",
+            "type": "form",
+            "collectionId": "shifts",
+            "label": "Shift Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "a0_0",
+              "a0_1"
+            ],
+            "fieldIds": [
+              "title",
+              "start",
+              "notes"
+            ]
+          },
+          {
+            "id": "v1",
+            "type": "details",
+            "collectionId": "shifts",
+            "label": "Shift Info",
+            "titleFieldId": "title",
+            "actionIds": [
+              "a0_0",
+              "a0_1",
+              "a0_2",
+              "a0_3",
+              "a0_4"
+            ],
+            "fieldIds": [
+              "title",
+              "start",
+              "notes"
+            ],
+            "formPageId": "r0"
+          },
+          {
+            "id": "v2",
+            "type": "list",
+            "collectionId": "shifts",
+            "label": "Shift List",
+            "titleFieldId": "title",
+            "actionIds": [
+              "a0_0",
+              "a0_1",
+              "a0_2",
+              "a0_3",
+              "a0_4"
+            ],
+            "detailPageId": "r1",
+            "formPageId": "r0"
+          },
+          {
+            "id": "v3",
+            "type": "capacity",
+            "collectionId": "shifts",
+            "label": "Capacity Summary",
+            "actionIds": [
+              "a0_0",
+              "a0_1",
+              "a0_2",
+              "a0_3",
+              "a0_4"
+            ],
+            "detailPageId": "r1",
+            "formPageId": "r0"
+          },
+          {
+            "id": "v4",
+            "type": "action",
+            "collectionId": "shifts",
+            "label": "Add Shift",
+            "actionIds": [
+              "a0_0",
+              "a0_1",
+              "a0_2",
+              "a0_3",
+              "a0_4"
+            ],
+            "detailPageId": "r1",
+            "formPageId": "r0"
+          }
+        ],
+        "actions": [
+          {
+            "id": "a0_0",
+            "label": "Add Shift",
+            "capability": "records.create.v1",
+            "collectionId": "shifts"
+          },
+          {
+            "id": "a0_1",
+            "label": "Edit Shift",
+            "capability": "records.patch.v1",
+            "collectionId": "shifts"
+          },
+          {
+            "id": "a0_2",
+            "label": "Set Capacity",
+            "capability": "capacity.configure.v1",
+            "collectionId": "shifts",
+            "behaviorId": "b0_0"
+          },
+          {
+            "id": "a0_3",
+            "label": "Join Shift",
+            "capability": "capacity.claim.v1",
+            "collectionId": "shifts",
+            "behaviorId": "b0_0"
+          },
+          {
+            "id": "a0_4",
+            "label": "Cancel Signup",
+            "capability": "capacity.release.v1",
+            "collectionId": "shifts",
+            "behaviorId": "b0_0"
+          }
+        ],
+        "policyPresetRequest": "groupCapacitySignup.v1",
+        "automationRequests": [
+          {
+            "id": "reminder0",
+            "trigger": {
+              "type": "beforeTimestamp",
+              "collectionId": "shifts",
+              "fieldId": "start",
+              "offsetSeconds": 3600
+            },
+            "effect": {
+              "type": "notifyActiveClaimants",
+              "channel": "inApp"
+            }
+          }
+        ],
+        "navigation": {
+          "entryPageId": "p0",
+          "pages": [
+            {
+              "id": "r0",
+              "title": "Shift Details",
+              "viewIds": [
+                "v0"
+              ]
+            },
+            {
+              "id": "r1",
+              "title": "Shift Info",
+              "viewIds": [
+                "v1"
+              ]
+            },
+            {
+              "id": "p0",
+              "title": "Volunteer Shifts",
+              "viewIds": [
+                "v2",
+                "v3",
+                "v4"
+              ],
+              "primaryActionId": "a0_0",
+              "layout": "stacked"
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "p0",
+              "label": "Shifts",
+              "icon": "list"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "clean",
+          "accentColor": "#3B82F6",
+          "typography": "sans",
+          "density": "comfortable",
+          "corners": "rounded"
+        }
+      }
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-transfer-reading",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 13196,
+          "dispatchedAt": "2026-10-08T22:51:15.656295Z",
+          "completedAt": "2026-10-08T22:51:28.852543Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Boolean checklists need a record patch action",
+          "usage": {
+            "prompt_tokens": 5342,
+            "completion_tokens": 2061,
+            "total_tokens": 7403,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1399,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "0e792ea666c2d81f64f6e7eb504bd78e2f0ed8d1b8bbf856cfef8e2622898128",
+            "requestBytes": 21561,
+            "controlRequestBytes": 68089,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "6abed9de32741b4d4485ca7f3607dc227e6c2312e0556c699af8c7723b3f9884"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Reading Journal\",\n    \"theme\": \"teal\",\n    \"icon\": \"book\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"editorial\",\n      \"accentColor\": \"#1976D2\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"soft\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"books\",\n        \"label\": \"Books\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"author\",\n            \"label\": \"Author\",\n            \"type\": \"text\",\n            \"required\": false\n          },\n          {\n            \"id\": \"finished\",\n            \"label\": \"Finished\",\n            \"type\": \"boolean\",\n            \"required\": true\n          },\n          {\n            \"id\": \"review\",\n            \"label\": \"Review\",\n            \"type\": \"text\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Book\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Book\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Book Form\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"author\",\n            \"finished\",\n            \"review\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"review\",\n                \"control\": \"multiline\",\n                \"hint\": \"Write your review\"\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Book Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"author\",\n            \"finished\",\n            \"review\"\n          ],\n          \"options\": {}\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"journal\",\n        \"title\": \"Reading Journal\",\n        \"tab\": {\n          \"label\": \"Journal\",\n          \"icon\": \"book\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"books\",\n        \"components\": [\n          {\n            \"type\": \"list\",\n            \"label\": \"Book List\",\n            \"collectionId\": \"books\",\n            \"titleFieldId\": \"title\"\n          },\n          {\n            \"type\": \"checklist\",\n            \"label\": \"Toggle Finished\",\n            \"collectionId\": \"books\",\n            \"options\": {\n              \"fieldId\": \"finished\",\n              \"checkedValue\": \"True\",\n              \"uncheckedValue\": \"False\"\n            }\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"journal\",\n    \"automationRequests\": []\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 15835,
+          "dispatchedAt": "2026-10-08T22:51:32.880592Z",
+          "completedAt": "2026-10-08T22:51:48.716225Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Duplicate creation plan operation",
+          "usage": {
+            "prompt_tokens": 6217,
+            "completion_tokens": 2086,
+            "total_tokens": 8303,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1344,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "ec68cd260418154784ec138c9d1d1a6c1734d3a15a12726b33c693e5169cda75",
+            "requestBytes": 25533,
+            "controlRequestBytes": 72061,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "17493da3b4e1efa2f7097e1a0a9311f99ab5cf8e9793c25e1d0fac9084d0b4df"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Reading Journal\",\n    \"theme\": \"teal\",\n    \"icon\": \"book\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"editorial\",\n      \"accentColor\": \"#1976D2\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"soft\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"books\",\n        \"label\": \"Books\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"author\",\n            \"label\": \"Author\",\n            \"type\": \"text\",\n            \"required\": false\n          },\n          {\n            \"id\": \"finished\",\n            \"label\": \"Finished\",\n            \"type\": \"boolean\",\n            \"required\": true\n          },\n          {\n            \"id\": \"review\",\n            \"label\": \"Review\",\n            \"type\": \"text\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Book\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Book\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Toggle Finished\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Book Form\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"author\",\n            \"finished\",\n            \"review\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"review\",\n                \"control\": \"multiline\",\n                \"hint\": \"Write your review\"\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Book Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"author\",\n            \"finished\",\n            \"review\"\n          ],\n          \"options\": {}\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"journal\",\n        \"title\": \"Reading Journal\",\n        \"tab\": {\n          \"label\": \"Journal\",\n          \"icon\": \"book\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"books\",\n        \"components\": [\n          {\n            \"type\": \"list\",\n            \"label\": \"Book List\",\n            \"collectionId\": \"books\",\n            \"titleFieldId\": \"title\"\n          },\n          {\n            \"type\": \"details\",\n            \"label\": \"Book Details\",\n            \"collectionId\": \"books\",\n            \"titleFieldId\": \"title\",\n            \"fieldIds\": [\n              \"title\",\n              \"author\",\n              \"finished\",\n              \"review\"\n            ]\n          },\n          {\n            \"type\": \"checklist\",\n            \"label\": \"Toggle Finished\",\n            \"collectionId\": \"books\",\n            \"options\": {\n              \"fieldId\": \"finished\",\n              \"checkedValue\": \"True\",\n              \"uncheckedValue\": \"False\"\n            }\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"journal\",\n    \"automationRequests\": []\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 16720,
+          "dispatchedAt": "2026-10-08T22:51:52.741027Z",
+          "completedAt": "2026-10-08T22:52:09.461731Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Record components need collection routes",
+          "usage": {
+            "prompt_tokens": 6321,
+            "completion_tokens": 2154,
+            "total_tokens": 8475,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1432,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "69629c03f11ecd77a483c32519c860cf7782401f9b69bfa6e361efb4d5f9ab54",
+            "requestBytes": 26050,
+            "controlRequestBytes": 72578,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "0c66a93014d9cd518020b7f407ae22e9e5f597fe247f140f6154d5694578ed3e"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Reading Journal\",\n    \"theme\": \"teal\",\n    \"icon\": \"book\",\n    \"policyPresetRequest\": \"personalTracker.v1\",\n    \"appearance\": {\n      \"style\": \"editorial\",\n      \"accentColor\": \"#1976D2\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"soft\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"books\",\n        \"label\": \"Books\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"author\",\n            \"label\": \"Author\",\n            \"type\": \"text\",\n            \"required\": false\n          },\n          {\n            \"id\": \"finished\",\n            \"label\": \"Finished\",\n            \"type\": \"boolean\",\n            \"required\": true\n          },\n          {\n            \"id\": \"review\",\n            \"label\": \"Review\",\n            \"type\": \"text\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Book\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Book\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Book Form\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"author\",\n            \"finished\",\n            \"review\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"review\",\n                \"control\": \"multiline\",\n                \"hint\": \"Write your review\"\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Book Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"author\",\n            \"finished\",\n            \"review\"\n          ],\n          \"options\": {}\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"journal\",\n        \"title\": \"Reading Journal\",\n        \"tab\": {\n          \"label\": \"Journal\",\n          \"icon\": \"book\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"books\",\n        \"components\": [\n          {\n            \"type\": \"list\",\n            \"label\": \"Book List\",\n            \"collectionId\": \"books\",\n            \"titleFieldId\": \"title\"\n          },\n          {\n            \"type\": \"details\",\n            \"label\": \"Book Details\",\n            \"collectionId\": \"books\",\n            \"titleFieldId\": \"title\",\n            \"fieldIds\": [\n              \"title\",\n              \"author\",\n              \"finished\",\n              \"review\"\n            ]\n          },\n          {\n            \"type\": \"checklist\",\n            \"label\": \"Toggle Finished\",\n            \"collectionId\": \"books\",\n            \"options\": {\n              \"fieldId\": \"finished\",\n              \"checkedValue\": \"True\",\n              \"uncheckedValue\": \"False\"\n            }\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"journal\",\n    \"automationRequests\": []\n  }\n}"
+        }
+      ],
+      "totalMs": 45751,
+      "diagnostic": "Record components need collection routes"
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "create-transfer-team",
+      "operation": "create",
+      "status": "failed",
+      "success": false,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 19844,
+          "dispatchedAt": "2026-10-08T22:52:17.519228Z",
+          "completedAt": "2026-10-08T22:52:37.363581Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Record components need collection routes",
+          "usage": {
+            "prompt_tokens": 5360,
+            "completion_tokens": 3190,
+            "total_tokens": 8550,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2426,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "5b993fbec85ce3eef9bb3204ef439d6d44bffcc6b130529fcf236d19dccbc94b",
+            "requestBytes": 21610,
+            "controlRequestBytes": 68102,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "170f3ac05930f69449de457da5f707e200f3dc071a9aefb0fa0f663a3560e18e"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Repair Queue\",\n    \"theme\": \"teal\",\n    \"icon\": \"board\",\n    \"policyPresetRequest\": \"groupWorkflow.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#0066CC\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"rounded\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"repairs\",\n        \"label\": \"Repairs\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"stage\",\n            \"label\": \"Stage\",\n            \"type\": \"choice\",\n            \"required\": true,\n            \"choices\": [\n              \"Queued\",\n              \"Resolved\"\n            ]\n          },\n          {\n            \"id\": \"estimate\",\n            \"label\": \"Estimate\",\n            \"type\": \"integer\",\n            \"required\": false\n          },\n          {\n            \"id\": \"notes\",\n            \"label\": \"Notes\",\n            \"type\": \"text\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"workflow.v1\",\n            \"fieldId\": \"stage\",\n            \"transitions\": {\n              \"Queued\": [\n                \"Resolved\"\n              ],\n              \"Resolved\": [\n                \"Queued\"\n              ]\n            }\n          }\n        ],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Repair\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Repair\"\n          },\n          {\n            \"type\": \"transition\",\n            \"label\": \"Change Stage\",\n            \"fieldId\": \"stage\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Repair Form\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"stage\",\n            \"estimate\",\n            \"notes\"\n          ],\n          \"options\": {}\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Repair Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"stage\",\n            \"estimate\",\n            \"notes\"\n          ],\n          \"options\": {}\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"main\",\n        \"title\": \"Repair Queue\",\n        \"tab\": {\n          \"label\": \"Queue\",\n          \"icon\": \"board\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"repairs\",\n        \"components\": [\n          {\n            \"type\": \"board\",\n            \"label\": \"Repair Board\",\n            \"collectionId\": \"repairs\",\n            \"titleFieldId\": \"title\",\n            \"groupByFieldId\": \"stage\",\n            \"options\": {\n              \"draggable\": true\n            }\n          },\n          {\n            \"type\": \"details\",\n            \"label\": \"Repair Details\",\n            \"collectionId\": \"repairs\",\n            \"titleFieldId\": \"title\",\n            \"fieldIds\": [\n              \"title\",\n              \"stage\",\n              \"estimate\",\n              \"notes\"\n            ],\n            \"options\": {}\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"main\",\n    \"automationRequests\": []\n  }\n}"
+        },
+        {
+          "number": 2,
+          "elapsedMs": 17423,
+          "dispatchedAt": "2026-10-08T22:52:41.394134Z",
+          "completedAt": "2026-10-08T22:52:58.817505Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Form v0 must remove the control for workflow-managed field stage; change its state through the workflow action.",
+          "usage": {
+            "prompt_tokens": 6372,
+            "completion_tokens": 2206,
+            "total_tokens": 8578,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1423,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "27f38608824e0c9ede1745f9e309df71e4e358484c4e9349b876f70a0e5dbc23",
+            "requestBytes": 26162,
+            "controlRequestBytes": 72654,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "1ad5a1806b66a70027e8aa3d78561a93f390661914fed537a917c54968945003"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Repair Queue\",\n    \"theme\": \"teal\",\n    \"icon\": \"board\",\n    \"policyPresetRequest\": \"groupWorkflow.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#0066CC\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"rounded\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"repairs\",\n        \"label\": \"Repairs\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"stage\",\n            \"label\": \"Stage\",\n            \"type\": \"choice\",\n            \"required\": true,\n            \"choices\": [\n              \"Queued\",\n              \"Resolved\"\n            ]\n          },\n          {\n            \"id\": \"estimate\",\n            \"label\": \"Estimate\",\n            \"type\": \"integer\",\n            \"required\": false\n          },\n          {\n            \"id\": \"notes\",\n            \"label\": \"Notes\",\n            \"type\": \"text\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"workflow.v1\",\n            \"fieldId\": \"stage\",\n            \"transitions\": {\n              \"Queued\": [\n                \"Resolved\"\n              ],\n              \"Resolved\": [\n                \"Queued\"\n              ]\n            }\n          }\n        ],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Repair\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Repair\"\n          },\n          {\n            \"type\": \"transition\",\n            \"label\": \"Change Stage\",\n            \"fieldId\": \"stage\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Repair Form\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"stage\",\n            \"estimate\",\n            \"notes\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"title\",\n                \"control\": \"text\"\n              },\n              {\n                \"fieldId\": \"stage\",\n                \"control\": \"select\"\n              },\n              {\n                \"fieldId\": \"estimate\",\n                \"control\": \"text\"\n              },\n              {\n                \"fieldId\": \"notes\",\n                \"control\": \"multiline\"\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Repair Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"stage\",\n            \"estimate\",\n            \"notes\"\n          ],\n          \"options\": {}\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"main\",\n        \"title\": \"Repair Queue\",\n        \"tab\": {\n          \"label\": \"Queue\",\n          \"icon\": \"board\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"repairs\",\n        \"components\": [\n          {\n            \"type\": \"board\",\n            \"label\": \"Repair Board\",\n            \"collectionId\": \"repairs\",\n            \"titleFieldId\": \"title\",\n            \"groupByFieldId\": \"stage\",\n            \"options\": {\n              \"draggable\": true\n            }\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"main\",\n    \"automationRequests\": []\n  }\n}"
+        },
+        {
+          "number": 3,
+          "elapsedMs": 12375,
+          "dispatchedAt": "2026-10-08T22:53:02.837219Z",
+          "completedAt": "2026-10-08T22:53:15.213294Z",
+          "success": false,
+          "kind": "pipeline_validation",
+          "detailKind": "pipeline_validation",
+          "diagnostic": "Form v0 field estimate has type integer, but control text requires text.",
+          "usage": {
+            "prompt_tokens": 6411,
+            "completion_tokens": 2284,
+            "total_tokens": 8695,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1524,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "0c3cbed1556693c7f81ed56921e8fed4c313706110a7c4f48a6e7af40a223ab7",
+            "requestBytes": 26403,
+            "controlRequestBytes": 72895,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "adecfdfa6ec50492ac6cc797a0c4a75655e1273ab411d938099915b4a8ed87e5"
+          },
+          "syntheticResponse": "{\n  \"creationPlanVersion\": 1,\n  \"plan\": {\n    \"name\": \"Repair Queue\",\n    \"theme\": \"teal\",\n    \"icon\": \"board\",\n    \"policyPresetRequest\": \"groupWorkflow.v1\",\n    \"appearance\": {\n      \"style\": \"clean\",\n      \"accentColor\": \"#0066CC\",\n      \"typography\": \"sans\",\n      \"density\": \"comfortable\",\n      \"corners\": \"rounded\"\n    },\n    \"collections\": [\n      {\n        \"id\": \"repairs\",\n        \"label\": \"Repairs\",\n        \"fields\": [\n          {\n            \"id\": \"title\",\n            \"label\": \"Title\",\n            \"type\": \"text\",\n            \"required\": true\n          },\n          {\n            \"id\": \"stage\",\n            \"label\": \"Stage\",\n            \"type\": \"choice\",\n            \"required\": true,\n            \"choices\": [\n              \"Queued\",\n              \"Resolved\"\n            ]\n          },\n          {\n            \"id\": \"estimate\",\n            \"label\": \"Estimate\",\n            \"type\": \"integer\",\n            \"required\": false\n          },\n          {\n            \"id\": \"notes\",\n            \"label\": \"Notes\",\n            \"type\": \"text\",\n            \"required\": false\n          }\n        ],\n        \"behaviors\": [\n          {\n            \"type\": \"workflow.v1\",\n            \"fieldId\": \"stage\",\n            \"transitions\": {\n              \"Queued\": [\n                \"Resolved\"\n              ],\n              \"Resolved\": [\n                \"Queued\"\n              ]\n            }\n          }\n        ],\n        \"operations\": [\n          {\n            \"type\": \"create\",\n            \"label\": \"Add Repair\"\n          },\n          {\n            \"type\": \"edit\",\n            \"label\": \"Edit Repair\"\n          },\n          {\n            \"type\": \"transition\",\n            \"label\": \"Change Stage\",\n            \"fieldId\": \"stage\"\n          }\n        ],\n        \"form\": {\n          \"type\": \"form\",\n          \"label\": \"Repair Form\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"estimate\",\n            \"notes\"\n          ],\n          \"options\": {\n            \"controls\": [\n              {\n                \"fieldId\": \"title\",\n                \"control\": \"text\"\n              },\n              {\n                \"fieldId\": \"estimate\",\n                \"control\": \"text\"\n              },\n              {\n                \"fieldId\": \"notes\",\n                \"control\": \"multiline\"\n              }\n            ]\n          }\n        },\n        \"details\": {\n          \"type\": \"details\",\n          \"label\": \"Repair Details\",\n          \"titleFieldId\": \"title\",\n          \"fieldIds\": [\n            \"title\",\n            \"stage\",\n            \"estimate\",\n            \"notes\"\n          ],\n          \"options\": {}\n        }\n      }\n    ],\n    \"pages\": [\n      {\n        \"key\": \"main\",\n        \"title\": \"Repair Queue\",\n        \"tab\": {\n          \"label\": \"Queue\",\n          \"icon\": \"board\"\n        },\n        \"layout\": \"stacked\",\n        \"primaryCollectionId\": \"repairs\",\n        \"components\": [\n          {\n            \"type\": \"board\",\n            \"label\": \"Repair Board\",\n            \"collectionId\": \"repairs\",\n            \"titleFieldId\": \"title\",\n            \"groupByFieldId\": \"stage\",\n            \"options\": {\n              \"draggable\": true\n            }\n          }\n        ]\n      }\n    ],\n    \"entryPageKey\": \"main\",\n    \"automationRequests\": []\n  }\n}"
+        }
+      ],
+      "totalMs": 49642,
+      "diagnostic": "Form v0 field estimate has type integer, but control text requires text."
+    },
+    {
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "case": "unsupported-executable",
+      "operation": "unsupported",
+      "status": "passed",
+      "success": true,
+      "attempts": [
+        {
+          "number": 1,
+          "elapsedMs": 6721,
+          "dispatchedAt": "2026-10-08T22:53:23.265547Z",
+          "completedAt": "2026-10-08T22:53:29.986962Z",
+          "success": true,
+          "kind": "received",
+          "usage": {
+            "prompt_tokens": 5267,
+            "completion_tokens": 173,
+            "total_tokens": 5440,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4576
+            },
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 148,
+              "rejected_prediction_tokens": null
+            }
+          },
+          "pipelineEvidence": {
+            "version": "appnest-creation-pipeline-v1",
+            "pipeline": "plan",
+            "syntheticEvaluationOnly": true,
+            "strictScorerUnchanged": true,
+            "maxTotalCallsPerOperation": 3,
+            "servedByModel": "nvidia/nemotron-3-super-120b-a12b",
+            "requestSha256": "dabe58af5946a68e6bb20901f74960de6e0aafe8f817c6745cca490a301a6851",
+            "requestBytes": 21210,
+            "controlRequestBytes": 67738,
+            "responseProtocol": "creationPlanVersion:1",
+            "rawResponseSha256": "4b8fa9be63f76943eb47138eefc74a652e1f7aeaaf7be09e87480356461585a7",
+            "derivedResponseSha256": "4b8fa9be63f76943eb47138eefc74a652e1f7aeaaf7be09e87480356461585a7"
+          },
+          "providerResponse": "{\"unsupported\":\"Request involves executing arbitrary JavaScript with filesystem and shell access, which is not allowed.\"}",
+          "syntheticResponse": "{\"unsupported\":\"Request involves executing arbitrary JavaScript with filesystem and shell access, which is not allowed.\"}"
+        }
+      ],
+      "totalMs": 6721
+    }
+  ],
+  "quota": {
+    "authenticatedCatalogVerified": true,
+    "accountLimitsKnown": false,
+    "freeRequests": null,
+    "completionCallsMade": false,
+    "checkedAt": "2026-10-08T22:48:38.398779Z"
+  }
+}

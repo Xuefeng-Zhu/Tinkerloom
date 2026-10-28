@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-10-08T22:28:54.695192+00:00",
+  "analysis": "workspace dart analyze --fatal-infos: No issues found",
+  "format": "selected sources dart format --output=none --set-exit-if-changed: 0 changed",
+  "newTestsPassed": 65,
+  "regressionTestsPassed": 341,
+  "totalTestsPassed": 416,
+  "runtimeAcceptance": "No app server started; no database, Flutter, publication or production acceptance claimed",
+  "migrationsRequired": false,
+  "credentials": "Ignored configuration read only by existing fixed NVIDIA adapter; never included in source archive",
+  "cascadeGuardTestsPassed": 10,
+  "finalCheckedAt": "2026-10-08T23:13:53.068163+00:00",
+  "frozenSourceFilesUnchanged": 35,
+  "preExistingWorkFilesUnchanged": 5,
+  "acceptedOfflineReplaysPassed": 21,
+  "independentAudit": "complete; 78 total attempts; no actual-model client overlap",
+  "finalAnalysis": "workspace dart analyze --fatal-infos: No issues found",
+  "finalFormat": "15 selected sources/tests; 0 changed",
+  "gitDiffCheck": "passed"
+}

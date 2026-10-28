@@ -1,0 +1,28 @@
+# Only server build/runtime inputs enter the build context. In particular, local
+# passwords, .env files, embedded PostgreSQL, captures, and caches stay outside it.
+**
+!pubspec.lock
+!appnest_server/
+!appnest_server/pubspec.yaml
+!appnest_server/bin/
+!appnest_server/bin/**
+!appnest_server/lib/
+!appnest_server/lib/**
+!appnest_server/config/
+!appnest_server/config/*.yaml
+!appnest_server/migrations/
+!appnest_server/migrations/**
+!appnest_server/web/
+!appnest_server/web/**
+!packages/
+!packages/appnest_spec/
+!packages/appnest_spec/pubspec.yaml
+!packages/appnest_spec/lib/
+!packages/appnest_spec/lib/**
+**/passwords*.yaml
+**/.env*
+**/.serverpod/**
+**/.dart_tool/**
+**/build/**
+**/*.lock
+!pubspec.lock

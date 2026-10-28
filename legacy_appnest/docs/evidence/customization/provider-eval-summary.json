@@ -1,0 +1,143 @@
+{
+  "date": "2026-09-23",
+  "configuredModel": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "latestCreatePasses": 5,
+  "createCases": 8,
+  "latestEditPasses": 8,
+  "editCases": 8,
+  "editsUsingGeneratedApps": 5,
+  "editsUsingExplicitTemplates": 3,
+  "requestsAcrossAllRecordedRuns": 84,
+  "offlineReplayPassed": 13,
+  "connectedRuntimeVerified": false,
+  "rows": [
+    {
+      "case": "notes-fields",
+      "create": {
+        "success": false,
+        "attempts": 3,
+        "totalMs": 44745,
+        "evidence": "provider-eval-create-recheck.json"
+      },
+      "edit": {
+        "success": true,
+        "attempts": 1,
+        "totalMs": 5778,
+        "baseline": "template",
+        "evidence": "provider-eval-template-edits.json"
+      }
+    },
+    {
+      "case": "notes-appearance",
+      "create": {
+        "success": true,
+        "attempts": 2,
+        "totalMs": 16765,
+        "evidence": "provider-eval-create-recheck.json"
+      },
+      "edit": {
+        "success": true,
+        "attempts": 1,
+        "totalMs": 3119,
+        "baseline": "generated",
+        "evidence": "provider-eval-create-recheck.json"
+      }
+    },
+    {
+      "case": "reminders-timing",
+      "create": {
+        "success": false,
+        "attempts": 3,
+        "totalMs": 31528,
+        "evidence": "provider-eval-create-recheck.json"
+      },
+      "edit": {
+        "success": true,
+        "attempts": 1,
+        "totalMs": 4258,
+        "baseline": "template",
+        "evidence": "provider-eval-template-edits.json"
+      }
+    },
+    {
+      "case": "reminders-name",
+      "create": {
+        "success": true,
+        "attempts": 2,
+        "totalMs": 29357,
+        "evidence": "provider-eval-round2.json"
+      },
+      "edit": {
+        "success": true,
+        "attempts": 1,
+        "totalMs": 3417,
+        "baseline": "generated",
+        "evidence": "provider-eval-round2.json"
+      }
+    },
+    {
+      "case": "calendar-category",
+      "create": {
+        "success": true,
+        "attempts": 2,
+        "totalMs": 17606,
+        "evidence": "provider-eval-create-recheck.json"
+      },
+      "edit": {
+        "success": true,
+        "attempts": 1,
+        "totalMs": 2651,
+        "baseline": "generated",
+        "evidence": "provider-eval-create-recheck.json"
+      }
+    },
+    {
+      "case": "calendar-appearance",
+      "create": {
+        "success": true,
+        "attempts": 3,
+        "totalMs": 43419,
+        "evidence": "provider-eval-round2.json"
+      },
+      "edit": {
+        "success": true,
+        "attempts": 1,
+        "totalMs": 3690,
+        "baseline": "generated",
+        "evidence": "provider-eval-edit-recheck.json"
+      }
+    },
+    {
+      "case": "focus-duration",
+      "create": {
+        "success": false,
+        "attempts": 3,
+        "totalMs": 38731,
+        "evidence": "provider-eval-create-recheck.json"
+      },
+      "edit": {
+        "success": true,
+        "attempts": 1,
+        "totalMs": 5718,
+        "baseline": "template",
+        "evidence": "provider-eval-template-edits.json"
+      }
+    },
+    {
+      "case": "focus-clock",
+      "create": {
+        "success": true,
+        "attempts": 3,
+        "totalMs": 35714,
+        "evidence": "provider-eval-round2.json"
+      },
+      "edit": {
+        "success": true,
+        "attempts": 1,
+        "totalMs": 3059,
+        "baseline": "generated",
+        "evidence": "provider-eval-round2.json"
+      }
+    }
+  ]
+}

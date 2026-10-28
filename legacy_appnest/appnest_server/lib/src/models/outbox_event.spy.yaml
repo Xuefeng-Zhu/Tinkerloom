@@ -1,0 +1,12 @@
+class: OutboxEvent
+table: nest_outbox
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  recordId: int?, relation(parent=nest_record)
+  kind: String
+  planned: bool, default=false
+  invalidated: bool, default=false
+  attempts: int, default=0
+  nextAttemptAt: DateTime
+  createdAt: DateTime

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "action": "administrative_interrupt",
+  "checkpointSha256": "d3521647ed185d50af6b8993f1e26b143059ac7881faed32da0ec65d119c1e83",
+  "reason": "After GLM and GLMFlash completed all36cases, stop the stalled Gemma lane:12 consecutive completed full-run attempts timed out, four cases exhausted retries, no full-run response was received. This operational stopping decision was added during the trial after an optional runtime-preference question received no reply; it was not part of the original smoke gate.",
+  "pid": 46182,
+  "signal": "SIGINT",
+  "signalSentAt": "2026-10-08T14:45:16.573795+00:00",
+  "processExitVerified": true,
+  "processExitVerifiedAt": "2026-10-08T14:45:16.690209+00:00",
+  "exitCode": 130,
+  "recordedAt": "2026-10-08T14:45:52.079579+00:00",
+  "processExitEvidence": "Fresh ps and lsof verified Dart CLI identity, original launch time, exact checkpoint path and AppNest cwd before SIGINT; ps -p 46182 returned no PID after the signal. Evaluator session68775 returned exit130.",
+  "rawCheckpointStatus": "running",
+  "unknownInFlightAtStop": [
+    {
+      "model": "google/gemma-4-31b-it",
+      "case": "create-calendar-category",
+      "operation": "create",
+      "inFlightAttempt": 1
+    }
+  ],
+  "checkpointMutatedForStop": false,
+  "remoteCancellationVerified": false,
+  "resumeAttempted": false
+}

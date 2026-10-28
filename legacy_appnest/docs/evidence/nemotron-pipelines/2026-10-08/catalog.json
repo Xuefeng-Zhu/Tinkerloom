@@ -1,0 +1,18 @@
+[
+  {
+    "id": "nvidia/nemotron-3-super-120b-a12b",
+    "freeEndpoint": true,
+    "sourceUrl": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b",
+    "family": "Nemotron",
+    "pricingVerified": false,
+    "supportedParameters": null
+  },
+  {
+    "id": "z-ai/glm-5.3",
+    "freeEndpoint": true,
+    "sourceUrl": "https://build.nvidia.com/z-ai/glm-5-3",
+    "family": "GLM",
+    "pricingVerified": false,
+    "supportedParameters": null
+  }
+]

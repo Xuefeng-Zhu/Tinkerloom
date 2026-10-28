@@ -1,0 +1,385 @@
+{
+  "recordedAt": "2026-09-23T20:28:42.635340Z",
+  "layer": "live provider + schema + exact synthetic scenario assertions",
+  "assertionVersion": 3,
+  "requestContract": "appnest-v1-typed-customization-2",
+  "plannedOperations": 1,
+  "savedSyntheticSource": "docs/evidence/customization/provider-eval-round2.json",
+  "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "queueTimingMeasured": false,
+  "connectedAppVerified": false,
+  "operations": [
+    {
+      "case": "calendar-appearance",
+      "operation": "edit",
+      "success": true,
+      "totalMs": 3690,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 3690,
+          "success": true,
+          "usage": {
+            "completion_tokens": 503,
+            "prompt_tokens": 17839,
+            "total_tokens": 18342,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 471,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 17839
+          },
+          "syntheticResponse": "{\"patches\":[{\"type\":\"SetAppearance\",\"appearance\":{\"style\":\"playful\",\"accentColor\":\"#2563EB\"}}]}"
+        }
+      ],
+      "candidateHash": "fcdd59b2311f07f63914aea21eba9ce50190bd4cf040495b3654bb0a1d97f8a7",
+      "candidate": {
+        "formatVersion": 1,
+        "name": "Events Calendar",
+        "theme": "blue",
+        "icon": "check",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.calendar.v1",
+          "views.configured.v1",
+          "navigation.v1",
+          "appearance.v1"
+        ],
+        "collections": [
+          {
+            "id": "events",
+            "label": "Events",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "dateTime",
+                "label": "Date & Time",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "allDay",
+                "label": "All day",
+                "type": "boolean",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "monthCalendar",
+            "type": "calendar",
+            "collectionId": "events",
+            "label": "Calendar",
+            "options": {
+              "dateFieldId": "dateTime"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addEvent"
+            ],
+            "formPageId": "eventFormPage"
+          },
+          {
+            "id": "dayAgenda",
+            "type": "list",
+            "collectionId": "events",
+            "label": "Day Agenda",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addEvent",
+              "editEvent"
+            ],
+            "detailPageId": "eventDetailsPage",
+            "formPageId": "eventFormPage"
+          },
+          {
+            "id": "eventDetails",
+            "type": "details",
+            "collectionId": "events",
+            "label": "Event Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editEvent"
+            ],
+            "formPageId": "eventFormPage"
+          },
+          {
+            "id": "eventForm",
+            "type": "form",
+            "collectionId": "events",
+            "label": "Event",
+            "actionIds": [
+              "addEvent",
+              "editEvent"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addEvent",
+            "label": "Add Event",
+            "capability": "records.create.v1",
+            "collectionId": "events"
+          },
+          {
+            "id": "editEvent",
+            "label": "Edit Event",
+            "capability": "records.patch.v1",
+            "collectionId": "events"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "calendarPage",
+          "pages": [
+            {
+              "id": "calendarPage",
+              "title": "Calendar",
+              "viewIds": [
+                "monthCalendar"
+              ],
+              "primaryActionId": "addEvent"
+            },
+            {
+              "id": "dayPage",
+              "title": "Day",
+              "viewIds": [
+                "dayAgenda"
+              ],
+              "primaryActionId": "addEvent"
+            },
+            {
+              "id": "eventDetailsPage",
+              "title": "Event Details",
+              "viewIds": [
+                "eventDetails"
+              ]
+            },
+            {
+              "id": "eventFormPage",
+              "title": "Event Editor",
+              "viewIds": [
+                "eventForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "calendarPage",
+              "label": "Calendar",
+              "icon": "check"
+            },
+            {
+              "pageId": "dayPage",
+              "label": "Day",
+              "icon": "today"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "playful",
+          "accentColor": "#2563EB"
+        }
+      },
+      "baseline": {
+        "formatVersion": 1,
+        "name": "Events Calendar",
+        "theme": "blue",
+        "icon": "check",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.calendar.v1",
+          "views.configured.v1",
+          "navigation.v1",
+          "appearance.v1"
+        ],
+        "collections": [
+          {
+            "id": "events",
+            "label": "Events",
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "type": "text",
+                "required": true
+              },
+              {
+                "id": "dateTime",
+                "label": "Date & Time",
+                "type": "timestamp",
+                "required": true
+              },
+              {
+                "id": "allDay",
+                "label": "All day",
+                "type": "boolean",
+                "required": false
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "type": "text",
+                "required": false
+              }
+            ],
+            "behaviors": []
+          }
+        ],
+        "views": [
+          {
+            "id": "monthCalendar",
+            "type": "calendar",
+            "collectionId": "events",
+            "label": "Calendar",
+            "options": {
+              "dateFieldId": "dateTime"
+            },
+            "titleFieldId": "title",
+            "actionIds": [
+              "addEvent"
+            ],
+            "formPageId": "eventFormPage"
+          },
+          {
+            "id": "dayAgenda",
+            "type": "list",
+            "collectionId": "events",
+            "label": "Day Agenda",
+            "titleFieldId": "title",
+            "actionIds": [
+              "addEvent",
+              "editEvent"
+            ],
+            "detailPageId": "eventDetailsPage",
+            "formPageId": "eventFormPage"
+          },
+          {
+            "id": "eventDetails",
+            "type": "details",
+            "collectionId": "events",
+            "label": "Event Details",
+            "titleFieldId": "title",
+            "actionIds": [
+              "editEvent"
+            ],
+            "formPageId": "eventFormPage"
+          },
+          {
+            "id": "eventForm",
+            "type": "form",
+            "collectionId": "events",
+            "label": "Event",
+            "actionIds": [
+              "addEvent",
+              "editEvent"
+            ]
+          }
+        ],
+        "actions": [
+          {
+            "id": "addEvent",
+            "label": "Add Event",
+            "capability": "records.create.v1",
+            "collectionId": "events"
+          },
+          {
+            "id": "editEvent",
+            "label": "Edit Event",
+            "capability": "records.patch.v1",
+            "collectionId": "events"
+          }
+        ],
+        "policyPresetRequest": "personalTracker.v1",
+        "automationRequests": [],
+        "navigation": {
+          "entryPageId": "calendarPage",
+          "pages": [
+            {
+              "id": "calendarPage",
+              "title": "Calendar",
+              "viewIds": [
+                "monthCalendar"
+              ],
+              "primaryActionId": "addEvent"
+            },
+            {
+              "id": "dayPage",
+              "title": "Day",
+              "viewIds": [
+                "dayAgenda"
+              ],
+              "primaryActionId": "addEvent"
+            },
+            {
+              "id": "eventDetailsPage",
+              "title": "Event Details",
+              "viewIds": [
+                "eventDetails"
+              ]
+            },
+            {
+              "id": "eventFormPage",
+              "title": "Event Editor",
+              "viewIds": [
+                "eventForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "pageId": "calendarPage",
+              "label": "Calendar",
+              "icon": "check"
+            },
+            {
+              "pageId": "dayPage",
+              "label": "Day",
+              "icon": "today"
+            }
+          ]
+        },
+        "appearance": {
+          "style": "clean",
+          "accentColor": "#2563EB",
+          "typography": "sans",
+          "density": "comfortable",
+          "corners": "soft"
+        }
+      }
+    }
+  ]
+}

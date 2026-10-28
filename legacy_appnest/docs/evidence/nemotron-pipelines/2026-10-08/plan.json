@@ -1,0 +1,31 @@
+{
+  "createdAt": "2026-10-08T22:17:59.077918+00:00",
+  "purpose": "Exploratory comparison of creation pipelines, not a model parity claim",
+  "profiles": [
+    "control-efficient-creation",
+    "control-glm-5.3",
+    "scoped",
+    "plan",
+    "repair",
+    "cascade"
+  ],
+  "cases": [
+    "create-rich-dashboard",
+    "create-multistep-form",
+    "create-capacity-signup",
+    "create-transfer-reading",
+    "create-transfer-team",
+    "unsupported-executable"
+  ],
+  "targetModel": "nvidia/nemotron-3-super-120b-a12b",
+  "controlAndFallbackModel": "z-ai/glm-5.3",
+  "nemotronTransportProfile": "efficient-creation",
+  "maxAttemptsPerOperation": 3,
+  "generationDeadlineSeconds": 90,
+  "requestIntervalMs": 4000,
+  "perModelSequential": true,
+  "cascade": "First attempt Nemotron; validation or eligible provider failure retries use GLM; transport/quota indeterminate and billing stop guards unchanged. GLM receives original request and diagnostics, never Nemotron speculative fixes.",
+  "validation": "Unchanged strict AppSpec parser and existing scenario assertions; transfer cases use new request-fidelity assertions; no fixture/template substitution",
+  "reporting": "Model-only control and pipeline results separate. Preserve raw provider responses, deterministic derived outputs, usage from every attempt, request hashes and source snapshot.",
+  "stopping": "Run each planned pilot once. No after-the-fact tuning or winner promotion; report failures and missing usage. No application default changes, deployment or paid route fallback."
+}

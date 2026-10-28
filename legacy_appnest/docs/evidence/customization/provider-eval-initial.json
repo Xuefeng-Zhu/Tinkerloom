@@ -1,0 +1,929 @@
+{
+  "recordedAt": "2026-09-23T20:13:52.139067Z",
+  "layer": "live provider + schema + requested-feature validation",
+  "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "queueTimingMeasured": false,
+  "connectedAppVerified": false,
+  "operations": [
+    {
+      "case": "notes-fields",
+      "operation": "create",
+      "success": true,
+      "totalMs": 20251,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 7203,
+          "success": false,
+          "diagnostic": "Missing required capabilities: navigation.layouts.v1, views.interactive.v1",
+          "usage": {
+            "completion_tokens": 2106,
+            "prompt_tokens": 7629,
+            "total_tokens": 9735,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1184,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 7629
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 13047,
+          "success": true,
+          "usage": {
+            "completion_tokens": 4192,
+            "prompt_tokens": 8857,
+            "total_tokens": 13049,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 3349,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4505
+          }
+        }
+      ],
+      "candidateHash": "586979c36770ab64deff7c01f3b3d874525e8885b58023e4605e727aea275a0f"
+    },
+    {
+      "case": "notes-fields",
+      "operation": "edit",
+      "success": false,
+      "totalMs": 8205,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 3421,
+          "success": false,
+          "diagnostic": "View identity cannot be changed",
+          "usage": {
+            "completion_tokens": 803,
+            "prompt_tokens": 8002,
+            "total_tokens": 8805,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 603,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 8002
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 2475,
+          "success": false,
+          "diagnostic": "edit output: unknown properties policyPresetRequest",
+          "usage": {
+            "completion_tokens": 538,
+            "prompt_tokens": 8230,
+            "total_tokens": 8768,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 327,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3878
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 2308,
+          "success": false,
+          "diagnostic": "edit output: unknown properties navigation, appearance",
+          "usage": {
+            "completion_tokens": 518,
+            "prompt_tokens": 8246,
+            "total_tokens": 8764,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 308,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3894
+          }
+        }
+      ]
+    },
+    {
+      "case": "notes-appearance",
+      "operation": "create",
+      "success": false,
+      "totalMs": 34807,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 18845,
+          "success": false,
+          "diagnostic": "truncated: AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens."
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 11927,
+          "success": false,
+          "diagnostic": "Include the requested fields, component types, or exact customization in the candidate.",
+          "usage": {
+            "completion_tokens": 3914,
+            "prompt_tokens": 7660,
+            "total_tokens": 11574,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 3073,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3308
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 4035,
+          "success": false,
+          "diagnostic": "Include the requested fields, component types, or exact customization in the candidate.",
+          "usage": {
+            "completion_tokens": 1087,
+            "prompt_tokens": 8751,
+            "total_tokens": 9838,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 246,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4399
+          }
+        }
+      ]
+    },
+    {
+      "case": "reminders-timing",
+      "operation": "create",
+      "success": true,
+      "totalMs": 37680,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 4904,
+          "success": false,
+          "diagnostic": "Missing required capabilities: notifications.inApp.v1, notifications.owner.v1",
+          "usage": {
+            "completion_tokens": 1644,
+            "prompt_tokens": 7654,
+            "total_tokens": 9298,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 530,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3302
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 16692,
+          "success": false,
+          "diagnostic": "Missing required capabilities: notifications.inApp.v1, notifications.owner.v1",
+          "usage": {
+            "completion_tokens": 5604,
+            "prompt_tokens": 9019,
+            "total_tokens": 14623,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 4595,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4667
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 16083,
+          "success": true,
+          "usage": {
+            "completion_tokens": 5134,
+            "prompt_tokens": 8875,
+            "total_tokens": 14009,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 4138,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4523
+          }
+        }
+      ],
+      "candidateHash": "d90fa2a06b9e749e282a1d4160620e2d86c79cc9a66b9cf6c9a3456a0bb25a3f"
+    },
+    {
+      "case": "reminders-timing",
+      "operation": "edit",
+      "success": false,
+      "totalMs": 22790,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 2614,
+          "success": false,
+          "diagnostic": "edit output: unknown properties actionIds",
+          "usage": {
+            "completion_tokens": 513,
+            "prompt_tokens": 8126,
+            "total_tokens": 8639,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 455,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3774
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 16871,
+          "success": false,
+          "diagnostic": "truncated: AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens."
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 3304,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 1045,
+            "prompt_tokens": 8153,
+            "total_tokens": 9198,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 353,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3801
+          }
+        }
+      ]
+    },
+    {
+      "case": "reminders-name",
+      "operation": "create",
+      "success": true,
+      "totalMs": 16191,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 12239,
+          "success": false,
+          "diagnostic": "Missing required capabilities: notifications.inApp.v1, notifications.owner.v1",
+          "usage": {
+            "completion_tokens": 4230,
+            "prompt_tokens": 7648,
+            "total_tokens": 11878,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 3109,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3296
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 3952,
+          "success": true,
+          "usage": {
+            "completion_tokens": 1219,
+            "prompt_tokens": 9120,
+            "total_tokens": 10339,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 91,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4768
+          }
+        }
+      ],
+      "candidateHash": "4062b7336fe6577b7fe70f8fdbacbeb5da0a4487dc89231233d7919f7b4abafb"
+    },
+    {
+      "case": "reminders-name",
+      "operation": "edit",
+      "success": false,
+      "totalMs": 12668,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 2691,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 802,
+            "prompt_tokens": 8117,
+            "total_tokens": 8919,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 105,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3765
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 4402,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 1445,
+            "prompt_tokens": 8902,
+            "total_tokens": 10347,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 307,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4550
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 5574,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 1909,
+            "prompt_tokens": 9629,
+            "total_tokens": 11538,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 771,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 5277
+          }
+        }
+      ]
+    },
+    {
+      "case": "calendar-category",
+      "operation": "create",
+      "success": false,
+      "totalMs": 38007,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 18052,
+          "success": false,
+          "diagnostic": "truncated: AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens."
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 10886,
+          "success": false,
+          "diagnostic": "Page calendarPage primaryActionId createEvent must reference a records.create.v1 action. Include createEvent in actionIds of a view on this page and set that view formPageId to its form page (unless the view is itself a form).",
+          "usage": {
+            "completion_tokens": 3437,
+            "prompt_tokens": 7670,
+            "total_tokens": 11107,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2465,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3318
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 9068,
+          "success": false,
+          "diagnostic": "Missing required capabilities: navigation.layouts.v1",
+          "usage": {
+            "completion_tokens": 3131,
+            "prompt_tokens": 8890,
+            "total_tokens": 12021,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2220,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4538
+          }
+        }
+      ]
+    },
+    {
+      "case": "calendar-appearance",
+      "operation": "create",
+      "success": false,
+      "totalMs": 38601,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 11231,
+          "success": false,
+          "diagnostic": "Page calendarPage primaryActionId addEvent must reference a records.create.v1 action. Include addEvent in actionIds of a view on this page and set that view formPageId to its form page (unless the view is itself a form).",
+          "usage": {
+            "completion_tokens": 3931,
+            "prompt_tokens": 7635,
+            "total_tokens": 11566,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2799,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3283
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 9860,
+          "success": false,
+          "diagnostic": "Page calendarPage primaryActionId addEvent must reference a records.create.v1 action. Include addEvent in actionIds of a view on this page and set that view formPageId to its form page (unless the view is itself a form).",
+          "usage": {
+            "completion_tokens": 3607,
+            "prompt_tokens": 9052,
+            "total_tokens": 12659,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2345,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4700
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 17509,
+          "success": false,
+          "diagnostic": "truncated: AI output reached the token limit before finishing. Return a smaller complete JSON definition within 8000 tokens."
+        }
+      ]
+    },
+    {
+      "case": "focus-duration",
+      "operation": "create",
+      "success": true,
+      "totalMs": 30876,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 16345,
+          "success": false,
+          "diagnostic": "Page clockPage primaryActionId clockAction must reference a records.create.v1 action. Include clockAction in actionIds of a view on this page and set that view formPageId to its form page (unless the view is itself a form).",
+          "usage": {
+            "completion_tokens": 5205,
+            "prompt_tokens": 7647,
+            "total_tokens": 12852,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 4551,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3295
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 8254,
+          "success": false,
+          "diagnostic": "Missing required capabilities: navigation.layouts.v1, views.clock.v1, views.timer.v1",
+          "usage": {
+            "completion_tokens": 2558,
+            "prompt_tokens": 8517,
+            "total_tokens": 11075,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1966,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4165
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 6276,
+          "success": true,
+          "usage": {
+            "completion_tokens": 1752,
+            "prompt_tokens": 8436,
+            "total_tokens": 10188,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1357,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4084
+          }
+        }
+      ],
+      "candidateHash": "9e58e50e384c58895c357c83285940512a26589661e62fee82698b7329cd7f02"
+    },
+    {
+      "case": "focus-duration",
+      "operation": "edit",
+      "success": false,
+      "totalMs": 5111,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 1646,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 393,
+            "prompt_tokens": 7691,
+            "total_tokens": 8084,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 133,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3339
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 1913,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 412,
+            "prompt_tokens": 8011,
+            "total_tokens": 8423,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 152,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3659
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 1551,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 412,
+            "prompt_tokens": 8011,
+            "total_tokens": 8423,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 152,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3659
+          }
+        }
+      ]
+    },
+    {
+      "case": "focus-clock",
+      "operation": "create",
+      "success": true,
+      "totalMs": 22892,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 3664,
+          "success": false,
+          "diagnostic": "Unknown collection focusTimer",
+          "usage": {
+            "completion_tokens": 1187,
+            "prompt_tokens": 7640,
+            "total_tokens": 8827,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 429,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3288
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 12941,
+          "success": false,
+          "diagnostic": "Missing required capabilities: navigation.layouts.v1",
+          "usage": {
+            "completion_tokens": 2668,
+            "prompt_tokens": 8538,
+            "total_tokens": 11206,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2349,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 4186
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 6286,
+          "success": true,
+          "usage": {
+            "completion_tokens": 1593,
+            "prompt_tokens": 8065,
+            "total_tokens": 9658,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1266,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3713
+          }
+        }
+      ],
+      "candidateHash": "3b0b2c52af47516e559159e7c452737409aa1ae7c0b0ee5ef24273422dad5fb3"
+    },
+    {
+      "case": "focus-clock",
+      "operation": "edit",
+      "success": false,
+      "totalMs": 11955,
+      "attempts": [
+        {
+          "attempt": 1,
+          "elapsedMs": 2561,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 636,
+            "prompt_tokens": 7654,
+            "total_tokens": 8290,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 275,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3302
+          }
+        },
+        {
+          "attempt": 2,
+          "elapsedMs": 4934,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 1200,
+            "prompt_tokens": 8160,
+            "total_tokens": 9360,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 839,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3808
+          }
+        },
+        {
+          "attempt": 3,
+          "elapsedMs": 4459,
+          "success": false,
+          "diagnostic": "edit output: unknown properties formatVersion, name, theme, icon, requires, collections, views, actions, policyPresetRequest, automationRequests, navigation, appearance",
+          "usage": {
+            "completion_tokens": 1221,
+            "prompt_tokens": 8160,
+            "total_tokens": 9381,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 860,
+              "rejected_prediction_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 4352,
+              "multimodal_tokens": null
+            },
+            "prompt_cache_hit_tokens": 4352,
+            "prompt_cache_miss_tokens": 3808
+          }
+        }
+      ]
+    }
+  ]
+}

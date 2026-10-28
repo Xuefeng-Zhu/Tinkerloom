@@ -1,0 +1,461 @@
+{
+  "schemaVersion": 1,
+  "provider": "nvidia",
+  "apiBase": "https://integrate.api.nvidia.com/v1",
+  "benchmarkVersion": "appnest-nemotron-v2",
+  "benchmarkLabel": "AppNest Nemotron evaluation",
+  "modelFamilies": {
+    "nvidia/nemotron-3-super-120b-a12b": "Nemotron"
+  },
+  "status": "completed",
+  "createdAt": "2026-10-08T16:04:27.986171Z",
+  "updatedAt": "2026-10-08T16:16:01.420036Z",
+  "source": {
+    "commit": "93f0291683bbcdf299ffd6276b2e9e7ccdc78496",
+    "dirtyTrackedSha256": "4adb7027cb3089ad6f8a98b1ff593471a7dca22632b6c5a52c0accdc2efcc80b",
+    "contractSourceSha256": "6fb821954d7f92f976a3f4035b2e5b130067485d26fb26ed65ee6c43ee1fe34e",
+    "dartVersion": "3.13.0 (stable) (Wed Aug 5 00:28:05 2026 -0700) on \"macos_arm64\"",
+    "files": {
+      "appnest_server/lib/src/evaluation/nemotron_case_selection.dart": "961faa1d8bdcf2ff2aeec6b928c872767935464c4f5a3caae645053c934fdd2b",
+      "appnest_server/lib/src/evaluation/nemotron_parallel_scheduler.dart": "b932baa426f122e915bcd16c4688ab9a1464380e423e316cd0884aa97be9bba4",
+      "appnest_server/lib/src/evaluation/nvidia_model_profiles.dart": "57db5f7fe649440d41d3b1bdffe043250be046be34a5b6a0425a333f19d08e00",
+      "appnest_server/lib/src/modules/builder/builder.dart": "520ba357c52158fb4279e8ece468ec06b12470a588a9371b6d504a789c60de4f",
+      "appnest_server/lib/src/modules/builder/creation_compiler.dart": "b8f9f642fc3cb7ad0c9b0b7102a5f874c95da6d5ff32844c3229b665310907d0",
+      "appnest_server/lib/src/modules/builder/customization_evaluation.dart": "4b460730522dd375b3323bb78ac71f60b6aacfabfc23f32a7427916700c608b6",
+      "appnest_server/lib/src/modules/builder/generation_quality.dart": "10b42800a230065346a400569ad9f1673a51e5530940d4d91c2c01d474849b91",
+      "appnest_server/lib/src/modules/builder/generation_requirements.dart": "9a469805b406612f331ecab63fdf96292b396acb81770f89029aa5bd79d9812f",
+      "appnest_server/lib/src/modules/builder/nemotron_evaluation.dart": "7d7a2d62cb4c68b7048679c5f613c73c8f8dbc408cdaf9ad13f92d02214c46dd",
+      "appnest_server/lib/src/modules/builder/nemotron_prompt.dart": "d859dfeac0d260f0875fdba7121aa5d18f90fd2d7ca3978af5424b70ac3c70f4",
+      "appnest_server/lib/src/modules/builder/nemotron_report.dart": "92b1252cb23519ea6458ad5e98358d28b4fd62dfb9c87e29e348a7d478b851f5",
+      "appnest_server/lib/src/modules/builder/nemotron_routes.dart": "5c3767032281b9d1029f26170269917dd22b27d0b2761f3fa2dcf82a9944f4cf",
+      "appnest_server/lib/src/modules/builder/nemotron_scenarios.dart": "29b7f710ccc67d7c037daa5f318916a611350f5fdd2cbc441f0b26329e968237",
+      "appnest_server/lib/src/modules/builder/provider.dart": "a3e8cddb31c59d9a8d1714555691a7c4285763479a57627672bf2bb0a2e583e6",
+      "appnest_server/lib/src/modules/builder/repair_bindings.dart": "f24f5e0d40fec992aa546106f9ac186fa130ad8606011cd22002bd651d52de12",
+      "appnest_server/pubspec.yaml": "7b3827ec18181e59e32c92a356220ce02e33c81360aa3ed125d4966d6b87e2de",
+      "packages/appnest_spec/lib/appnest_spec.dart": "189085c4cbf30423002e1e3acb6d8367c649a58292da00a641f659e59baabf2c",
+      "packages/appnest_spec/lib/src/appearance.dart": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e",
+      "packages/appnest_spec/lib/src/device_spec.dart": "ad79778c211c67c074c1bf522e8bdd2a4f6ffd66e28793e3bb9359e5653a7029",
+      "packages/appnest_spec/lib/src/rich_spec.dart": "7aae7c81de7a5708b6184320abc50f24e0d64f00cda3c6d76b521f4d5d063e5a",
+      "packages/appnest_spec/lib/src/rich_templates.dart": "c6a4ab1d72859d41425b03b18f1e4340e870694a79954483566627b5ba721d98",
+      "packages/appnest_spec/lib/src/schema.dart": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24",
+      "packages/appnest_spec/lib/src/spec.dart": "df491ed854b45a7fbd06130784ca305245ba9efa842f127249b06012ff8bf4a2",
+      "packages/appnest_spec/lib/src/templates.dart": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3",
+      "packages/appnest_spec/lib/src/utility_spec.dart": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442",
+      "packages/appnest_spec/lib/src/utility_templates.dart": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18",
+      "packages/appnest_spec/pubspec.yaml": "74e0dd05a42046744392f1e43fa9b395dac1ea5a82b2e15cbcfa03e4c2aec23a",
+      "pubspec.lock": "098981397295b030cdf11c48c14e898bb0419ad6c38bc6797519d169b3f77f99",
+      "pubspec.yaml": "24c0edf2a3ef601e43f6086db95d44aeaff678965f4eedef2ad5b96856c3a6b4",
+      "scripts/nemotron_eval.dart": "b4a1689750fb1ea281d26bd1f2bbb3cc65f5a1c8b45551745f4eb6b279ed07a5"
+    }
+  },
+  "runFingerprint": "ac65e484994caa4c2295a7ab991a1613211abfb17d6ec73e9c2dbb32b30627cd",
+  "catalog": [
+    {
+      "id": "nvidia/nemotron-3-super-120b-a12b",
+      "freeEndpoint": true,
+      "sourceUrl": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b",
+      "family": "Nemotron",
+      "pricingVerified": false,
+      "supportedParameters": null
+    }
+  ],
+  "transportProfiles": {
+    "nvidia/nemotron-3-super-120b-a12b": {
+      "profile": "nvidia-nemotron-instruction-schema-publisher-creation-low-checklist-v1",
+      "family": "Nemotron",
+      "catalogUrl": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b",
+      "reasoning": "creation: low effort; no explicit reasoning budget; edit/guidance: thinking disabled",
+      "promptContract": "nemotron-creation-checklist-v1",
+      "requestOverrides": {
+        "stream": false,
+        "chat_template_kwargs": {
+          "enable_thinking": false
+        }
+      },
+      "creationRequestOverrides": {
+        "stream": false,
+        "reasoning_effort": "low",
+        "temperature": 1.0,
+        "top_p": 0.95
+      },
+      "operationOverrides": {
+        "create": {
+          "stream": false,
+          "reasoning_effort": "low",
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "unsupported": {
+          "stream": false,
+          "reasoning_effort": "low",
+          "temperature": 1.0,
+          "top_p": 0.95
+        },
+        "edit": {
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        },
+        "sequence": {
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        },
+        "guidance": {
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "responseContract": "complete JSON schema supplied as instructions",
+      "generationDeadlineSeconds": 90,
+      "guidanceDeadlineSeconds": 20,
+      "generationMaxTokens": {
+        "initial": 8000,
+        "recognizedCreationTruncation": 12000
+      },
+      "guidanceMaxTokens": 2048,
+      "topP": "creation/unsupported: 0.95; edit/sequence/guidance: model default; omitted",
+      "documentationUrls": [
+        "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard",
+        "https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer"
+      ],
+      "parameterSources": {
+        "stream": "https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer",
+        "chat_template_kwargs.enable_thinking": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard",
+        "reasoning_effort": "https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer",
+        "temperature": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard",
+        "top_p": "https://build.nvidia.com/nvidia/nemotron-3-super-120b-a12b/modelcard"
+      },
+      "limitations": [
+        "Opt-in experiment; the configured application retains thinking-off.",
+        "Creation/unsupported applies publisher temperature 1.0 and top_p 0.95 with the unchanged creation checklist. Edits/sequences retain baseline temperature 0; guidance retains baseline omitted temperature; top_p is omitted for all three. GLM controls remain unchanged.",
+        "No explicit reasoning budget is sent. Endpoint defaults still apply within unchanged 8000/12000 total completion tokens, 90-second generation and 20-second guidance bounds. These limits do not establish maximal model capability."
+      ]
+    }
+  },
+  "execution": {
+    "concurrency": 1,
+    "requestIntervalMs": 4000,
+    "pacing": "serial-delay",
+    "perModelSequential": true
+  },
+  "executionObserved": null,
+  "models": {
+    "nvidia/nemotron-3-super-120b-a12b": {
+      "planned": 8,
+      "attempted": 8,
+      "completed": 8,
+      "passed": 6,
+      "failed": 2,
+      "correctnessCompleted": 8,
+      "correctnessFailed": 2,
+      "firstAttemptPassed": 2,
+      "skipped": 0,
+      "pending": 0,
+      "inFlight": 0,
+      "indeterminate": 0,
+      "blocked": 0,
+      "availabilityFailureAttempts": 0,
+      "availabilityFailureKinds": {},
+      "availabilityOnlyFailures": 0,
+      "attemptCount": 16,
+      "completionCoverage": 1.0,
+      "resolvedCoverage": 1.0,
+      "correctnessCoverage": 1.0,
+      "firstAttemptPassRateObserved": 0.25,
+      "firstAttemptPassRatePlanned": 0.25,
+      "eventualPassRateObserved": 0.75,
+      "eventualPassRatePlanned": 0.75,
+      "latencyMs": {
+        "sampleCount": 8,
+        "median": 89130.0,
+        "p95": 117621,
+        "quantileMethod": "median midpoint; p95 nearest rank"
+      },
+      "usage": {
+        "promptTokens": 287019,
+        "completionTokens": 53458,
+        "totalTokens": 340477,
+        "reasoningTokens": 37134,
+        "costReportedUsd": null,
+        "knownAttempts": {
+          "promptTokens": 16,
+          "completionTokens": 16,
+          "totalTokens": 16,
+          "reasoningTokens": 16
+        },
+        "attemptCount": 16,
+        "missingUsageAttempts": 0,
+        "complete": true,
+        "reasoningComplete": true,
+        "costComplete": false
+      },
+      "categories": {
+        "create": {
+          "planned": 8,
+          "attempted": 8,
+          "completed": 8,
+          "passed": 6,
+          "failed": 2,
+          "correctnessCompleted": 8,
+          "correctnessFailed": 2,
+          "firstAttemptPassed": 2,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 16,
+          "completionCoverage": 1.0,
+          "resolvedCoverage": 1.0,
+          "correctnessCoverage": 1.0,
+          "firstAttemptPassRateObserved": 0.25,
+          "firstAttemptPassRatePlanned": 0.25,
+          "eventualPassRateObserved": 0.75,
+          "eventualPassRatePlanned": 0.75,
+          "latencyMs": {
+            "sampleCount": 8,
+            "median": 89130.0,
+            "p95": 117621,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": 287019,
+            "completionTokens": 53458,
+            "totalTokens": 340477,
+            "reasoningTokens": 37134,
+            "costReportedUsd": null,
+            "knownAttempts": {
+              "promptTokens": 16,
+              "completionTokens": 16,
+              "totalTokens": 16,
+              "reasoningTokens": 16
+            },
+            "attemptCount": 16,
+            "missingUsageAttempts": 0,
+            "complete": true,
+            "reasoningComplete": true,
+            "costComplete": false
+          }
+        },
+        "edit": {
+          "planned": 0,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": null,
+          "resolvedCoverage": null,
+          "correctnessCoverage": null,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": null,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": null,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "guidance": {
+          "planned": 0,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": null,
+          "resolvedCoverage": null,
+          "correctnessCoverage": null,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": null,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": null,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "unsupported": {
+          "planned": 0,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": null,
+          "resolvedCoverage": null,
+          "correctnessCoverage": null,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": null,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": null,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        },
+        "sequence": {
+          "planned": 0,
+          "attempted": 0,
+          "completed": 0,
+          "passed": 0,
+          "failed": 0,
+          "correctnessCompleted": 0,
+          "correctnessFailed": 0,
+          "firstAttemptPassed": 0,
+          "skipped": 0,
+          "pending": 0,
+          "inFlight": 0,
+          "indeterminate": 0,
+          "blocked": 0,
+          "availabilityFailureAttempts": 0,
+          "availabilityFailureKinds": {},
+          "availabilityOnlyFailures": 0,
+          "attemptCount": 0,
+          "completionCoverage": null,
+          "resolvedCoverage": null,
+          "correctnessCoverage": null,
+          "firstAttemptPassRateObserved": null,
+          "firstAttemptPassRatePlanned": null,
+          "eventualPassRateObserved": null,
+          "eventualPassRatePlanned": null,
+          "latencyMs": {
+            "sampleCount": 0,
+            "median": null,
+            "p95": null,
+            "quantileMethod": "median midpoint; p95 nearest rank"
+          },
+          "usage": {
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "reasoningTokens": null,
+            "costReportedUsd": null,
+            "knownAttempts": {},
+            "attemptCount": 0,
+            "missingUsageAttempts": 0,
+            "complete": false,
+            "reasoningComplete": false,
+            "costComplete": false
+          }
+        }
+      }
+    }
+  },
+  "plannedPerModel": 8,
+  "plannedCategories": {
+    "create": 8,
+    "edit": 0,
+    "guidance": 0,
+    "unsupported": 0,
+    "sequence": 0
+  },
+  "recommendations": {
+    "create": {
+      "status": "incomplete_evidence",
+      "model": null,
+      "explanation": "No winner: complete comparable create correctness coverage is required for every selected model."
+    },
+    "edit": {
+      "status": "incomplete_evidence",
+      "model": null,
+      "explanation": "No winner: complete comparable edit correctness coverage is required for every selected model."
+    }
+  },
+  "expectedPriceUsd": null,
+  "expectedCostBasis": "free_developer_endpoint",
+  "pricingVerified": false,
+  "accountLimitsKnown": false,
+  "limitations": [
+    "Exploratory single-trial measurements; no statistical reliability claim.",
+    "Synthetic provider and definition checks only. No authenticated persistence, Flutter rendering, publication, device, or production acceptance is established.",
+    "Transport, quota, and unavailable-model failures are availability results and excluded from observed correctness rates.",
+    "Known token and cost sums include every attempt. Missing usage is unknown and is never replaced with zero."
+  ]
+}

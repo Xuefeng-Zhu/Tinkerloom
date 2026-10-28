@@ -1,0 +1,9 @@
+class: ActionRequest
+fields:
+  appId: int
+  actionId: String
+  targetRecordId: int?
+  expectedDefinitionVersionId: int
+  expectedRecordRevision: int?
+  input: dynamic
+  idempotencyKey: String

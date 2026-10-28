@@ -1,0 +1,8 @@
+class: Workspace
+table: nest_workspace
+serverOnly: true
+fields:
+  name: String
+  ownerId: String
+  personal: bool, default=false
+  createdAt: DateTime

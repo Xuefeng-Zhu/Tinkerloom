@@ -1,0 +1,56 @@
+{
+  "destination": "https://api.tokenfactory.us-central1.nebius.com/v1/chat/completions",
+  "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "operations": [
+    {
+      "id": "notes-fields",
+      "create": "Make a personal notes app with titles, multiline notes, categories, search, add/edit forms, and a details page for each note.",
+      "edit": "Add an optional text field named Source to my notes. Include it in the add/edit form and details. Preserve every existing field and page."
+    },
+    {
+      "id": "notes-appearance",
+      "create": "Build a simple notebook to capture my ideas with titles, long notes, and categories. I need to add and edit notes.",
+      "edit": "Give this app an editorial appearance with accent color #3B6B5A. Keep all content and behavior unchanged."
+    },
+    {
+      "id": "reminders-timing",
+      "create": "Create a personal reminder list with title, notes, Open/Done status, and an optional Remind me timestamp. Remind the owner in the AppNest inbox at that time only while Open. Include add/edit screens.",
+      "edit": "Update the existing reminder rule to fire 10 minutes before its existing timestamp. Preserve its rule ID, condition, and recipient."
+    },
+    {
+      "id": "reminders-name",
+      "create": "I want a simple personal task reminder app with optional due dates and independent reminder times, Open and Done states, and owner inbox reminders only for open tasks. Let me add and edit tasks.",
+      "edit": "Rename this app to Gentle Reminders and change nothing else."
+    },
+    {
+      "id": "calendar-category",
+      "create": "Create a personal calendar for my events with title, start time, notes, and a Category choice of Personal or Work. Include monthly calendar with daily agenda and add/edit screens.",
+      "edit": "Add Travel as another choice in the existing Category field. Preserve all existing choices, fields, and views."
+    },
+    {
+      "id": "calendar-appearance",
+      "create": "Make an events calendar with a monthly calendar and selected-day agenda, event titles, date and time, notes, and add/edit screens.",
+      "edit": "Change this app to the playful appearance style. Keep its content and behavior unchanged."
+    },
+    {
+      "id": "focus-duration",
+      "create": "Make a minimal clock and focus timer app. Show a local digital clock and a 25-minute focus countdown with start, pause, resume, and reset. No record collections are needed.",
+      "edit": "Change the existing focus timer default duration to 40 minutes. Keep the clock and all other settings unchanged."
+    },
+    {
+      "id": "focus-clock",
+      "create": "Build my focus app with a digital local clock showing seconds and a 25-minute countdown timer. It needs no notes, tasks, or record collections.",
+      "edit": "Change the existing clock to analog and hide its seconds hand. Preserve the timer and all other settings."
+    }
+  ],
+  "payloadContents": [
+    "synthetic prompts above",
+    "AppNest declarative schema and fixed capability guidance",
+    "fixed synthetic reading example",
+    "previous generated synthetic definition for edits",
+    "bounded synthetic validation diagnostics for retries"
+  ],
+  "privateRecordsIncluded": false,
+  "firstRequestBytes": 82197,
+  "networkCallsMade": false
+}

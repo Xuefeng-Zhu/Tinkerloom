@@ -1,0 +1,162 @@
+{
+  "formatVersion": 1,
+  "name": "My Notes",
+  "theme": "amber",
+  "icon": "spark",
+  "requires": [
+    "collections.v1",
+    "navigation.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "views.list.v1",
+    "views.details.v1",
+    "views.form.v1",
+    "views.configured.v1",
+    "views.interactive.v1"
+  ],
+  "collections": [
+    {
+      "id": "notes",
+      "label": "Entries",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "body",
+          "label": "Note",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "category",
+          "label": "Category",
+          "type": "choice",
+          "required": false,
+          "choices": [
+            "Ideas",
+            "Personal",
+            "Work"
+          ]
+        }
+      ],
+      "behaviors": []
+    }
+  ],
+  "views": [
+    {
+      "id": "allEntries",
+      "type": "list",
+      "collectionId": "notes",
+      "label": "Notes",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "presentation": "cards",
+      "fieldIds": [
+        "body",
+        "category"
+      ],
+      "filterFieldIds": [
+        "category"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "entryDetails",
+      "type": "details",
+      "collectionId": "notes",
+      "label": "Details",
+      "titleFieldId": "title",
+      "actionIds": [
+        "editRecord"
+      ],
+      "fieldIds": [
+        "title",
+        "body",
+        "category"
+      ],
+      "formPageId": "formPage"
+    },
+    {
+      "id": "entryEditor",
+      "type": "form",
+      "collectionId": "notes",
+      "label": "Edit entry",
+      "options": {
+        "controls": [
+          {
+            "fieldId": "body",
+            "control": "multiline"
+          }
+        ]
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "fieldIds": [
+        "title",
+        "body",
+        "category"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "addRecord",
+      "label": "Add entry",
+      "capability": "records.create.v1",
+      "collectionId": "notes"
+    },
+    {
+      "id": "editRecord",
+      "label": "Edit entry",
+      "capability": "records.patch.v1",
+      "collectionId": "notes"
+    }
+  ],
+  "policyPresetRequest": "personalTracker.v1",
+  "automationRequests": [],
+  "navigation": {
+    "entryPageId": "homePage",
+    "pages": [
+      {
+        "id": "homePage",
+        "title": "My Notes",
+        "viewIds": [
+          "allEntries"
+        ],
+        "primaryActionId": "addRecord"
+      },
+      {
+        "id": "detailPage",
+        "title": "Details",
+        "viewIds": [
+          "entryDetails"
+        ]
+      },
+      {
+        "id": "formPage",
+        "title": "Edit entry",
+        "viewIds": [
+          "entryEditor"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "pageId": "homePage",
+        "label": "My Notes",
+        "icon": "list"
+      }
+    ]
+  }
+}

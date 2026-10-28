@@ -1,0 +1,22 @@
+{
+  "nvidia/nemotron-3-super-120b-a12b": {
+    "create-notes-fields": "a412757dec53c78e91c00c2d011d86ad81d4c398a46e59975a025a00f875adbd",
+    "create-reminders-name": "133f3f59ce4749c013679cd1b3aa0a9eb930a2ae0c38f49320a7a08d7931270d",
+    "create-calendar-category": "745152a45e66cada04c5695d2f17c1d4b5c37e4d289284ce4d95609a27252bd4",
+    "create-calendar-appearance": "4613dcc1202a19e19e5de23066d9874e9d81107edd80c814750e56f7cb5a879a",
+    "create-focus-clock": "ad46cd4435c5b3af77d1dac149af79b10f3f1ea02bd5576cf34f808756e54485",
+    "create-rich-dashboard": "565acc8d8169230a21573b95cf07796b17ce04f2c20465f2ea181b8eb679c5b7",
+    "create-multistep-form": "952854b6ec96ef58d4c6260215b34481a081bdb49e4e3c41209fe4a7fe2019bf",
+    "create-capacity-signup": "3c71346d0fcdafc350077668fb25ce6a49afb3837158ecbcee3cf970776607f6"
+  },
+  "z-ai/glm-5.3": {
+    "create-notes-fields": "77312b86f0f1f53fb7307053189e64d24e13ce5707bb551b7879d11d0e2fd065",
+    "create-reminders-name": "95f4094e0f883151a4f327f6a36c36b446651c0f706f1f6c408d637dc5d763df",
+    "create-calendar-category": "3056b6c065322f1467440bdc49e2a70f8c5492454d9fd7bee2fd997a67433d53",
+    "create-calendar-appearance": "bfee26c222dec9584443ebbefdd1c968760b1de479dd68cba73ea0f69f66bbfe",
+    "create-focus-clock": "192c20dd91a6ccef4c2871c3cc5209234059ede6b2509a47c16342b2291fac9f",
+    "create-rich-dashboard": "ceb232dd2351f9376493215a8ae83965dbc26fab7736d0417bfa2503b1b15415",
+    "create-multistep-form": "d57202f1a0957f1b44724f63b772360d6afe9fa3583be0f79a6e9511a9cb11f9",
+    "create-capacity-signup": "7af336dd588243da02a49552931f59522f6c0a3c288917ed99bb2623accdc849"
+  }
+}

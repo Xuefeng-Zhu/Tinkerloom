@@ -1,0 +1,10 @@
+class: RuntimeRecord
+fields:
+  id: int
+  collectionId: String
+  data: dynamic
+  revision: int
+  capacity: int?
+  allocated: int?
+  claimed: bool
+  allowedActions: List<String>

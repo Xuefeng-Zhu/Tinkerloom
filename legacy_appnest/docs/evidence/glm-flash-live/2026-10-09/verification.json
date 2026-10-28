@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-09",
+  "environment": "local development, synthetic Morgan personal workspace",
+  "model": "z-ai/glm-5.3-flash",
+  "appId": 195,
+  "draftId": 128,
+  "publishedVersionId": 125,
+  "recordId": 283,
+  "baseCommit": "93f0291",
+  "sourceState": "Working tree included pre-existing uncommitted builder changes; these are preserved outside the publication scope.",
+  "sourceSha256": {
+    "appnest_server/lib/src/modules/builder/provider.dart": "e50eb3a6c36a68ddc7e925784ab894e3c39e4243678b7246c0fe921af2c844b5",
+    "appnest_server/lib/src/evaluation/nvidia_model_profiles.dart": "57db5f7fe649440d41d3b1bdffe043250be046be34a5b6a0425a333f19d08e00",
+    "appnest_server/lib/src/modules/builder/builder.dart": "520ba357c52158fb4279e8ece468ec06b12470a588a9371b6d504a789c60de4f",
+    "appnest_flutter/lib/features/builder/builder_screen.dart": "540045c51fce22926d1c87a5767bea0490db18c2b1df4b9626da04244236e3e6"
+  },
+  "browserConsoleWarningsOrErrorsAfterFinalReload": []
+}

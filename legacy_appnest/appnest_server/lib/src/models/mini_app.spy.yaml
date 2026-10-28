@@ -1,0 +1,11 @@
+class: MiniApp
+table: nest_app
+serverOnly: true
+fields:
+  workspaceId: int, relation(parent=nest_workspace)
+  ownerId: String
+  name: String
+  activeVersionId: int?, relation(parent=nest_version)
+  archived: bool, default=false
+  controlRevision: int, default=0
+  createdAt: DateTime

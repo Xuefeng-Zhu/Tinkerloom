@@ -1,0 +1,171 @@
+{
+  "actions": [
+    {
+      "capability": "records.create.v1",
+      "collectionId": "tasks",
+      "id": "addTask",
+      "label": "Add task"
+    },
+    {
+      "capability": "records.patch.v1",
+      "collectionId": "tasks",
+      "id": "editTask",
+      "label": "Edit task"
+    },
+    {
+      "behaviorId": "taskStatus",
+      "capability": "workflow.transition.v1",
+      "collectionId": "tasks",
+      "id": "toggleStatus",
+      "label": "Toggle status"
+    }
+  ],
+  "appearance": {
+    "accentColor": "#2563EB",
+    "corners": "rounded",
+    "density": "comfortable",
+    "style": "clean",
+    "typography": "sans"
+  },
+  "automationRequests": [],
+  "collections": [
+    {
+      "behaviors": [
+        {
+          "fieldId": "status",
+          "id": "taskStatus",
+          "transitions": {
+            "Done": [
+              "To do"
+            ],
+            "To do": [
+              "Done"
+            ]
+          },
+          "type": "workflow.v1"
+        }
+      ],
+      "fields": [
+        {
+          "id": "title",
+          "label": "Title",
+          "required": true,
+          "type": "text"
+        },
+        {
+          "id": "date",
+          "label": "Date",
+          "required": true,
+          "type": "timestamp"
+        },
+        {
+          "choices": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "id": "priority",
+          "label": "Priority",
+          "required": true,
+          "type": "choice"
+        },
+        {
+          "choices": [
+            "To do",
+            "Done"
+          ],
+          "id": "status",
+          "label": "Status",
+          "required": true,
+          "type": "choice"
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "required": false,
+          "type": "text"
+        }
+      ],
+      "id": "tasks",
+      "label": "Tasks"
+    }
+  ],
+  "formatVersion": 1,
+  "icon": "check",
+  "name": "Daily Planner",
+  "navigation": {
+    "entryPageId": "dailyPage",
+    "pages": [
+      {
+        "id": "dailyPage",
+        "primaryActionId": "addTask",
+        "title": "Today",
+        "viewIds": [
+          "dailyTasksView"
+        ]
+      },
+      {
+        "id": "taskFormPage",
+        "title": "Task",
+        "viewIds": [
+          "taskFormView"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "icon": "today",
+        "label": "Today",
+        "pageId": "dailyPage"
+      }
+    ]
+  },
+  "policyPresetRequest": "personalTracker.v1",
+  "requires": [
+    "collections.v1",
+    "workflow.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "workflow.transition.v1",
+    "views.list.v1",
+    "views.form.v1",
+    "navigation.v1",
+    "views.configured.v1",
+    "appearance.v1"
+  ],
+  "theme": "sage",
+  "views": [
+    {
+      "actionIds": [
+        "addTask",
+        "editTask",
+        "toggleStatus"
+      ],
+      "collectionId": "tasks",
+      "formPageId": "taskFormPage",
+      "groupByFieldId": "date",
+      "id": "dailyTasksView",
+      "label": "Tasks",
+      "titleFieldId": "title",
+      "type": "list"
+    },
+    {
+      "actionIds": [
+        "addTask",
+        "editTask"
+      ],
+      "collectionId": "tasks",
+      "fieldIds": [
+        "title",
+        "date",
+        "priority",
+        "status",
+        "notes"
+      ],
+      "id": "taskFormView",
+      "label": "Task",
+      "titleFieldId": "title",
+      "type": "form"
+    }
+  ]
+}

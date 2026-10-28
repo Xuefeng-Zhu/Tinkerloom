@@ -1,0 +1,280 @@
+{
+  "formatVersion": 1,
+  "name": "Habit Tracker",
+  "theme": "teal",
+  "icon": "spark",
+  "requires": [
+    "collections.v1",
+    "navigation.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "views.metric.v1",
+    "views.chart.v1",
+    "views.checklist.v1",
+    "views.details.v1",
+    "views.form.v1",
+    "views.configured.v1",
+    "views.interactive.v1"
+  ],
+  "collections": [
+    {
+      "id": "checkins",
+      "label": "Entries",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Activity",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "loggedAt",
+          "label": "Logged at",
+          "type": "timestamp",
+          "required": true
+        },
+        {
+          "id": "minutes",
+          "label": "Minutes",
+          "type": "number",
+          "required": false
+        },
+        {
+          "id": "energy",
+          "label": "Energy",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "id": "category",
+          "label": "Category",
+          "type": "choice",
+          "required": false,
+          "choices": [
+            "Move",
+            "Learn",
+            "Rest"
+          ]
+        },
+        {
+          "id": "completed",
+          "label": "Completed",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "behaviors": []
+    }
+  ],
+  "views": [
+    {
+      "id": "minutesMetric",
+      "type": "metric",
+      "collectionId": "checkins",
+      "label": "Minutes invested",
+      "options": {
+        "metric": "sum",
+        "valueFieldId": "minutes",
+        "target": 150
+      },
+      "titleFieldId": "title",
+      "actionIds": []
+    },
+    {
+      "id": "dailyMinutes",
+      "type": "chart",
+      "collectionId": "checkins",
+      "label": "Minutes over time",
+      "options": {
+        "style": "line",
+        "metric": "sum",
+        "valueFieldId": "minutes",
+        "dateFieldId": "loggedAt",
+        "bucket": "day",
+        "periods": 14
+      },
+      "titleFieldId": "title",
+      "actionIds": []
+    },
+    {
+      "id": "energyChart",
+      "type": "chart",
+      "collectionId": "checkins",
+      "label": "Average energy by week",
+      "options": {
+        "style": "bar",
+        "metric": "average",
+        "valueFieldId": "energy",
+        "dateFieldId": "loggedAt",
+        "bucket": "week",
+        "periods": 8
+      },
+      "titleFieldId": "title",
+      "actionIds": []
+    },
+    {
+      "id": "categoryChart",
+      "type": "chart",
+      "collectionId": "checkins",
+      "label": "Balance",
+      "options": {
+        "style": "donut",
+        "metric": "count"
+      },
+      "titleFieldId": "title",
+      "groupByFieldId": "category",
+      "actionIds": []
+    },
+    {
+      "id": "checkins",
+      "type": "checklist",
+      "collectionId": "checkins",
+      "label": "Check-ins",
+      "options": {
+        "fieldId": "completed",
+        "actionId": "editRecord"
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "fieldIds": [
+        "loggedAt",
+        "minutes"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "details",
+      "type": "details",
+      "collectionId": "checkins",
+      "label": "Check-in details",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ]
+    },
+    {
+      "id": "editor",
+      "type": "form",
+      "collectionId": "checkins",
+      "label": "Check-in",
+      "options": {
+        "controls": [
+          {
+            "fieldId": "minutes",
+            "control": "slider",
+            "min": 0,
+            "max": 180,
+            "step": 5
+          },
+          {
+            "fieldId": "energy",
+            "control": "rating"
+          },
+          {
+            "fieldId": "category",
+            "control": "segmented"
+          },
+          {
+            "fieldId": "completed",
+            "control": "checkbox"
+          },
+          {
+            "fieldId": "notes",
+            "control": "multiline"
+          }
+        ]
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "addRecord",
+      "label": "Add entry",
+      "capability": "records.create.v1",
+      "collectionId": "checkins"
+    },
+    {
+      "id": "editRecord",
+      "label": "Edit entry",
+      "capability": "records.patch.v1",
+      "collectionId": "checkins"
+    }
+  ],
+  "policyPresetRequest": "personalTracker.v1",
+  "automationRequests": [],
+  "navigation": {
+    "entryPageId": "overviewPage",
+    "pages": [
+      {
+        "id": "overviewPage",
+        "title": "Your progress",
+        "viewIds": [
+          "minutesMetric",
+          "dailyMinutes"
+        ]
+      },
+      {
+        "id": "patternsPage",
+        "title": "Patterns",
+        "viewIds": [
+          "energyChart",
+          "categoryChart"
+        ]
+      },
+      {
+        "id": "checkinsPage",
+        "title": "Daily check-ins",
+        "viewIds": [
+          "checkins"
+        ]
+      },
+      {
+        "id": "detailPage",
+        "title": "Check-in details",
+        "viewIds": [
+          "details"
+        ]
+      },
+      {
+        "id": "formPage",
+        "title": "Add check-in",
+        "viewIds": [
+          "editor"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "pageId": "overviewPage",
+        "label": "Progress",
+        "icon": "chart"
+      },
+      {
+        "pageId": "patternsPage",
+        "label": "Patterns",
+        "icon": "spark"
+      },
+      {
+        "pageId": "checkinsPage",
+        "label": "Check-ins",
+        "icon": "check"
+      }
+    ]
+  }
+}

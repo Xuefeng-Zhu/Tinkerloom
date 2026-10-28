@@ -1,0 +1,415 @@
+{
+  "app": [
+    {
+      "id": 195,
+      "name": "Flash Reading Verified",
+      "activeVersionId": 125,
+      "controlRevision": 1
+    }
+  ],
+  "draft": [
+    {
+      "id": 128,
+      "candidateJson": {
+        "actions": [
+          {
+            "capability": "records.create.v1",
+            "collectionId": "books",
+            "id": "addBook",
+            "label": "Add book"
+          },
+          {
+            "capability": "records.patch.v1",
+            "collectionId": "books",
+            "id": "editBook",
+            "label": "Edit book"
+          }
+        ],
+        "appearance": {
+          "style": "editorial"
+        },
+        "automationRequests": [],
+        "collections": [
+          {
+            "behaviors": [],
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "required": true,
+                "type": "text"
+              },
+              {
+                "id": "author",
+                "label": "Author",
+                "required": false,
+                "type": "text"
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "required": false,
+                "type": "text"
+              },
+              {
+                "choices": [
+                  "Want to read",
+                  "Reading",
+                  "Finished"
+                ],
+                "id": "status",
+                "label": "Reading status",
+                "required": true,
+                "type": "choice"
+              },
+              {
+                "id": "rating",
+                "label": "Rating (1-5)",
+                "required": false,
+                "type": "integer"
+              },
+              {
+                "choices": [
+                  "Low",
+                  "Medium",
+                  "High"
+                ],
+                "id": "id_ZfELqSTqlNdLivWV",
+                "label": "Priority",
+                "required": false,
+                "type": "choice"
+              }
+            ],
+            "id": "books",
+            "label": "Books"
+          }
+        ],
+        "formatVersion": 1,
+        "icon": "book",
+        "name": "Flash Reading Verified",
+        "navigation": {
+          "entryPageId": "booksPage",
+          "pages": [
+            {
+              "id": "booksPage",
+              "primaryActionId": "addBook",
+              "title": "Books",
+              "viewIds": [
+                "bookList"
+              ]
+            },
+            {
+              "id": "bookDetailsPage",
+              "title": "Book details",
+              "viewIds": [
+                "bookDetails"
+              ]
+            },
+            {
+              "id": "bookFormPage",
+              "title": "Book editor",
+              "viewIds": [
+                "bookForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "icon": "book",
+              "label": "Books",
+              "pageId": "booksPage"
+            }
+          ]
+        },
+        "policyPresetRequest": "personalTracker.v1",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.interactive.v1",
+          "views.configured.v1",
+          "navigation.v1",
+          "appearance.v1"
+        ],
+        "theme": "sage",
+        "views": [
+          {
+            "actionIds": [
+              "addBook",
+              "editBook"
+            ],
+            "collectionId": "books",
+            "detailPageId": "bookDetailsPage",
+            "fieldIds": [
+              "author",
+              "status",
+              "rating"
+            ],
+            "formPageId": "bookFormPage",
+            "id": "bookList",
+            "label": "Books",
+            "titleFieldId": "title",
+            "type": "list"
+          },
+          {
+            "actionIds": [
+              "editBook"
+            ],
+            "collectionId": "books",
+            "fieldIds": [
+              "author",
+              "notes",
+              "status",
+              "rating",
+              "id_ZfELqSTqlNdLivWV"
+            ],
+            "formPageId": "bookFormPage",
+            "id": "bookDetails",
+            "label": "Book",
+            "titleFieldId": "title",
+            "type": "details"
+          },
+          {
+            "actionIds": [
+              "addBook",
+              "editBook"
+            ],
+            "collectionId": "books",
+            "fieldIds": [
+              "title",
+              "author",
+              "notes",
+              "status",
+              "rating",
+              "id_ZfELqSTqlNdLivWV"
+            ],
+            "id": "bookForm",
+            "label": "Book",
+            "options": {
+              "controls": [
+                {
+                  "control": "multiline",
+                  "fieldId": "notes"
+                }
+              ]
+            },
+            "type": "form"
+          }
+        ]
+      },
+      "candidateHash": "4059b0460401b9a2e7ca0e584d7f93b556bdb84af68054f29e761b0b407534c4",
+      "mutation": 3,
+      "activeJobId": 110,
+      "publishedVersionId": 125
+    }
+  ],
+  "versions": [
+    {
+      "id": 125,
+      "number": 1,
+      "candidateHash": "4059b0460401b9a2e7ca0e584d7f93b556bdb84af68054f29e761b0b407534c4",
+      "specJson": {
+        "actions": [
+          {
+            "capability": "records.create.v1",
+            "collectionId": "books",
+            "id": "addBook",
+            "label": "Add book"
+          },
+          {
+            "capability": "records.patch.v1",
+            "collectionId": "books",
+            "id": "editBook",
+            "label": "Edit book"
+          }
+        ],
+        "appearance": {
+          "style": "editorial"
+        },
+        "automationRequests": [],
+        "collections": [
+          {
+            "behaviors": [],
+            "fields": [
+              {
+                "id": "title",
+                "label": "Title",
+                "required": true,
+                "type": "text"
+              },
+              {
+                "id": "author",
+                "label": "Author",
+                "required": false,
+                "type": "text"
+              },
+              {
+                "id": "notes",
+                "label": "Notes",
+                "required": false,
+                "type": "text"
+              },
+              {
+                "choices": [
+                  "Want to read",
+                  "Reading",
+                  "Finished"
+                ],
+                "id": "status",
+                "label": "Reading status",
+                "required": true,
+                "type": "choice"
+              },
+              {
+                "id": "rating",
+                "label": "Rating (1-5)",
+                "required": false,
+                "type": "integer"
+              },
+              {
+                "choices": [
+                  "Low",
+                  "Medium",
+                  "High"
+                ],
+                "id": "id_ZfELqSTqlNdLivWV",
+                "label": "Priority",
+                "required": false,
+                "type": "choice"
+              }
+            ],
+            "id": "books",
+            "label": "Books"
+          }
+        ],
+        "formatVersion": 1,
+        "icon": "book",
+        "name": "Flash Reading Verified",
+        "navigation": {
+          "entryPageId": "booksPage",
+          "pages": [
+            {
+              "id": "booksPage",
+              "primaryActionId": "addBook",
+              "title": "Books",
+              "viewIds": [
+                "bookList"
+              ]
+            },
+            {
+              "id": "bookDetailsPage",
+              "title": "Book details",
+              "viewIds": [
+                "bookDetails"
+              ]
+            },
+            {
+              "id": "bookFormPage",
+              "title": "Book editor",
+              "viewIds": [
+                "bookForm"
+              ]
+            }
+          ],
+          "tabs": [
+            {
+              "icon": "book",
+              "label": "Books",
+              "pageId": "booksPage"
+            }
+          ]
+        },
+        "policyPresetRequest": "personalTracker.v1",
+        "requires": [
+          "collections.v1",
+          "records.create.v1",
+          "records.patch.v1",
+          "views.list.v1",
+          "views.details.v1",
+          "views.form.v1",
+          "views.interactive.v1",
+          "views.configured.v1",
+          "navigation.v1",
+          "appearance.v1"
+        ],
+        "theme": "sage",
+        "views": [
+          {
+            "actionIds": [
+              "addBook",
+              "editBook"
+            ],
+            "collectionId": "books",
+            "detailPageId": "bookDetailsPage",
+            "fieldIds": [
+              "author",
+              "status",
+              "rating"
+            ],
+            "formPageId": "bookFormPage",
+            "id": "bookList",
+            "label": "Books",
+            "titleFieldId": "title",
+            "type": "list"
+          },
+          {
+            "actionIds": [
+              "editBook"
+            ],
+            "collectionId": "books",
+            "fieldIds": [
+              "author",
+              "notes",
+              "status",
+              "rating",
+              "id_ZfELqSTqlNdLivWV"
+            ],
+            "formPageId": "bookFormPage",
+            "id": "bookDetails",
+            "label": "Book",
+            "titleFieldId": "title",
+            "type": "details"
+          },
+          {
+            "actionIds": [
+              "addBook",
+              "editBook"
+            ],
+            "collectionId": "books",
+            "fieldIds": [
+              "title",
+              "author",
+              "notes",
+              "status",
+              "rating",
+              "id_ZfELqSTqlNdLivWV"
+            ],
+            "id": "bookForm",
+            "label": "Book",
+            "options": {
+              "controls": [
+                {
+                  "control": "multiline",
+                  "fieldId": "notes"
+                }
+              ]
+            },
+            "type": "form"
+          }
+        ]
+      }
+    }
+  ],
+  "records": [],
+  "audit": [
+    {
+      "id": 576,
+      "action": "publish",
+      "targetRecordId": null,
+      "createdAt": "2026-10-09T07:58:18.52532"
+    }
+  ]
+}

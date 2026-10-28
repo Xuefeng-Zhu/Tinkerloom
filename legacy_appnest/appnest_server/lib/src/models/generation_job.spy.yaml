@@ -1,0 +1,22 @@
+class: GenerationJob
+table: nest_generation
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  draftId: int, relation(parent=nest_draft)
+  actorId: String
+  mutation: int
+  status: String
+  requestText: String
+  mode: String
+  provider: String?
+  model: String?
+  promptVersion: String
+  attempts: int, default=0
+  leaseGeneration: int, default=0
+  leaseUntil: DateTime?
+  nextAttemptAt: DateTime
+  diagnostics: String
+  usageJson: String
+  createdAt: DateTime
+  updatedAt: DateTime

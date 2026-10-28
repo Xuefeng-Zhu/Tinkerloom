@@ -1,0 +1,53 @@
+emailIdp:
+  - login:
+  - startRegistration:
+  - verifyRegistrationCode:
+  - finishRegistration:
+  - startPasswordReset:
+  - verifyPasswordResetCode:
+  - finishPasswordReset:
+  - hasAccount:
+jwtRefresh:
+  - refreshAccessToken:
+apps:
+  - workspaces:
+  - createWorkspace:
+  - list:
+  - manifest:
+  - templates:
+  - instantiate:
+  - remix:
+  - pin:
+  - archive:
+  - invite:
+  - acceptInvitation:
+  - revokeInvitation:
+  - members:
+  - setGrant:
+  - activity:
+builder:
+  - platform:
+  - begin:
+  - get:
+  - suggestQuestions:
+  - patch:
+  - generate:
+  - publish:
+  - abandonFailedEdit:
+  - runs:
+media:
+  - beginUpload:
+  - completeUpload:
+  - readImage:
+runtime:
+  - query:
+  - summary:
+  - aggregate:
+  - reminderState:
+  - get:
+  - execute:
+  - inbox:
+  - readNotification:
+  - events:
+greeting:
+  - hello:

@@ -1,0 +1,15 @@
+class: Claim
+table: nest_claim
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  poolId: int, relation(parent=nest_pool)
+  actorId: String
+  active: bool
+  createdAt: DateTime
+  updatedAt: DateTime
+indexes:
+  claim_unique:
+    fields: poolId, actorId
+    unique: true

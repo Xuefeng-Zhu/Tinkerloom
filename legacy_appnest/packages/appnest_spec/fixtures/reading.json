@@ -1,0 +1,94 @@
+{
+  "formatVersion": 1,
+  "name": "Reading Journal",
+  "theme": "amber",
+  "icon": "book",
+  "requires": [
+    "collections.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "views.list.v1",
+    "views.summary.v1"
+  ],
+  "collections": [
+    {
+      "id": "books",
+      "label": "Books",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "author",
+          "label": "Author",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "status",
+          "label": "Status",
+          "type": "choice",
+          "required": true,
+          "choices": [
+            "Want to read",
+            "Reading",
+            "Finished"
+          ]
+        },
+        {
+          "id": "rating",
+          "label": "Rating",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "type": "text",
+          "required": false
+        }
+      ],
+      "behaviors": []
+    }
+  ],
+  "views": [
+    {
+      "id": "library",
+      "type": "list",
+      "collectionId": "books",
+      "label": "Library",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addBook",
+        "editBook"
+      ]
+    },
+    {
+      "id": "readingSummary",
+      "type": "summary",
+      "collectionId": "books",
+      "label": "Overview",
+      "groupByFieldId": "status",
+      "actionIds": []
+    }
+  ],
+  "actions": [
+    {
+      "id": "addBook",
+      "label": "Add book",
+      "capability": "records.create.v1",
+      "collectionId": "books"
+    },
+    {
+      "id": "editBook",
+      "label": "Edit book",
+      "capability": "records.patch.v1",
+      "collectionId": "books"
+    }
+  ],
+  "policyPresetRequest": "personalTracker.v1",
+  "automationRequests": []
+}

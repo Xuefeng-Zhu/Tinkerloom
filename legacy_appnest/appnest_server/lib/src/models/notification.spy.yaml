@@ -1,0 +1,19 @@
+class: Notification
+table: nest_notification
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  actorId: String
+  runId: int, relation(parent=nest_run)
+  deliveryKey: String
+  title: String
+  body: String
+  readAt: DateTime?
+  createdAt: DateTime
+indexes:
+  delivery_unique:
+    fields: deliveryKey
+    unique: true
+  inbox_actor:
+    fields: actorId, createdAt

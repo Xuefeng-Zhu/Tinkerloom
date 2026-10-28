@@ -1,0 +1,9 @@
+class: PublishRequest
+fields:
+  draftId: int
+  candidateHash: String
+  expectedCurrentVersionId: int?
+  enabledRuleIds: List<String>
+  activateExistingRecordIds: List<int>
+  reviewHash: String
+  idempotencyKey: String

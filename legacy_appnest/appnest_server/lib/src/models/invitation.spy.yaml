@@ -1,0 +1,18 @@
+class: Invitation
+table: nest_invitation
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  issuerId: String
+  tokenHash: String
+  role: String
+  recipientId: String?
+  expiresAt: DateTime
+  revoked: bool, default=false
+  acceptedBy: String?
+  createdAt: DateTime
+indexes:
+  invitation_token:
+    fields: tokenHash
+    unique: true

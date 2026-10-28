@@ -1,0 +1,6 @@
+class: ActivityItem
+fields:
+  id: int
+  action: String
+  createdAt: DateTime
+  status: String

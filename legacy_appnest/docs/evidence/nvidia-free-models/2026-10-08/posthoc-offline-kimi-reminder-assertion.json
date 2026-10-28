@@ -1,0 +1,61 @@
+{
+  "label": "POSTHOC OFFLINE KIMI REMINDER ASSERTION DIAGNOSTIC",
+  "generatedAt": "2026-10-08T10:25:26.163682Z",
+  "inputCheckpointSha256": "9f83e60ae88fe28d3e30da0102deb4ea69dadcd973ae8bafb638ee34c9f3f771",
+  "inputCheckpointUpdatedAt": "2026-10-08T10:22:38.092014Z",
+  "inputCheckpointStatus": "blocked",
+  "runFingerprint": "e7cd449878d1973a1e973cee86dcaa68dd2030325283fb0006b8c085121bb84a",
+  "sourceMatchesScoredManifest": true,
+  "primaryScoresChanged": false,
+  "liveCallsMade": false,
+  "operationStatus": "failed",
+  "scenarioPrompt": "I want a simple personal task reminder app with optional due dates and independent reminder times, Open and Done states, and owner inbox reminders only for open tasks. Let me add and edit tasks.",
+  "extractedProductionOwnerInboxRequirement": {
+    "effect": "notifyOwner",
+    "optionalTimestamp": false,
+    "distinctOptionalDueDate": false,
+    "openCompletedCondition": false
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "primaryKind": "validation",
+      "primaryDiagnostic": "Make the reminder timestamp optional and editable in add/edit forms.",
+      "hasSavedResponse": true,
+      "strictParserPass": true,
+      "compilerPass": true,
+      "productionChecksPass": true,
+      "fixedAssertionsPass": false,
+      "fixedAssertionsPassAfterDiagnosticOnlyOptionalReminder": true,
+      "responseSha256": "049fbe930adc0912a79d3987ab554d8a6d31ffe60d80aa0362006563ec2c4e9e",
+      "compilerAddedCapabilities": [],
+      "fixedAssertionDiagnostic": "Make the reminder timestamp optional and editable in add/edit forms.",
+      "reminderTimestampRequired": true
+    },
+    {
+      "attempt": 2,
+      "primaryKind": "validation",
+      "primaryDiagnostic": "The AI response was not valid JSON. Return exactly one complete JSON object without commentary or markdown.",
+      "hasSavedResponse": true,
+      "strictParserPass": false,
+      "compilerPass": false,
+      "productionChecksPass": false,
+      "fixedAssertionsPass": false,
+      "fixedAssertionsPassAfterDiagnosticOnlyOptionalReminder": false,
+      "responseSha256": "853393391a533f4009a1d8b27c7f260ecc1faca0c6667a1210cdd7f6e937dee3",
+      "parseDiagnostic": "output_json: The AI response was not valid JSON. Return exactly one complete JSON object without commentary or markdown."
+    },
+    {
+      "attempt": 3,
+      "primaryKind": "timeout",
+      "primaryDiagnostic": "The AI provider did not finish within the bounded response deadline. Try again later.",
+      "hasSavedResponse": false,
+      "strictParserPass": false,
+      "compilerPass": false,
+      "productionChecksPass": false,
+      "fixedAssertionsPass": false,
+      "fixedAssertionsPassAfterDiagnosticOnlyOptionalReminder": false
+    }
+  ],
+  "caveat": "Making the reminder optional is a diagnostic-only functional change, not production compilation or a score correction. The fixed scorer requires optional reminder timestamps; the request expressly says optional due dates and independent reminder times. The production literal requirement extractor does not require an optional reminder for that wording. No renderer, delivery, save or device execution is verified."
+}

@@ -1,0 +1,238 @@
+{
+  "formatVersion": 1,
+  "name": "Photo Journal",
+  "theme": "rose",
+  "icon": "spark",
+  "requires": [
+    "collections.v1",
+    "navigation.v1",
+    "records.create.v1",
+    "records.patch.v1",
+    "fields.image.v1",
+    "views.richText.v1",
+    "views.imageCards.v1",
+    "views.gallery.v1",
+    "views.details.v1",
+    "views.form.v1",
+    "views.configured.v1",
+    "views.interactive.v1"
+  ],
+  "collections": [
+    {
+      "id": "memories",
+      "label": "Entries",
+      "fields": [
+        {
+          "id": "title",
+          "label": "Title",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "photo",
+          "label": "Photo",
+          "type": "image",
+          "required": false
+        },
+        {
+          "id": "caption",
+          "label": "Caption",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "takenAt",
+          "label": "Moment",
+          "type": "timestamp",
+          "required": false
+        },
+        {
+          "id": "rating",
+          "label": "Rating",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "id": "favorite",
+          "label": "Favorite",
+          "type": "boolean",
+          "required": false
+        }
+      ],
+      "behaviors": []
+    }
+  ],
+  "views": [
+    {
+      "id": "intro",
+      "type": "richText",
+      "label": "Your journal",
+      "options": {
+        "markdown": "## Small moments, kept close\nCollect the places, people, and everyday details you want to remember.\n\n- Add a photo\n- Write a few words\n- Make it your own"
+      },
+      "actionIds": []
+    },
+    {
+      "id": "photoCards",
+      "type": "imageCards",
+      "collectionId": "memories",
+      "label": "Recent moments",
+      "options": {
+        "imageFieldId": "photo",
+        "captionFieldId": "caption"
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "fieldIds": [
+        "takenAt",
+        "rating"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "photoGallery",
+      "type": "gallery",
+      "collectionId": "memories",
+      "label": "Gallery",
+      "options": {
+        "imageFieldId": "photo",
+        "captionFieldId": "caption"
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ],
+      "detailPageId": "detailPage",
+      "formPageId": "formPage"
+    },
+    {
+      "id": "details",
+      "type": "details",
+      "collectionId": "memories",
+      "label": "Memory details",
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ]
+    },
+    {
+      "id": "editor",
+      "type": "form",
+      "collectionId": "memories",
+      "label": "Add a moment",
+      "options": {
+        "controls": [
+          {
+            "fieldId": "photo",
+            "control": "imageUpload"
+          },
+          {
+            "fieldId": "caption",
+            "control": "multiline"
+          },
+          {
+            "fieldId": "rating",
+            "control": "rating"
+          },
+          {
+            "fieldId": "favorite",
+            "control": "switch"
+          }
+        ],
+        "steps": [
+          {
+            "id": "moment",
+            "title": "The moment",
+            "fieldIds": [
+              "title",
+              "photo",
+              "takenAt"
+            ]
+          },
+          {
+            "id": "story",
+            "title": "The story",
+            "fieldIds": [
+              "caption",
+              "rating",
+              "favorite"
+            ]
+          }
+        ]
+      },
+      "titleFieldId": "title",
+      "actionIds": [
+        "addRecord",
+        "editRecord"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "addRecord",
+      "label": "Add entry",
+      "capability": "records.create.v1",
+      "collectionId": "memories"
+    },
+    {
+      "id": "editRecord",
+      "label": "Edit entry",
+      "capability": "records.patch.v1",
+      "collectionId": "memories"
+    }
+  ],
+  "policyPresetRequest": "personalTracker.v1",
+  "automationRequests": [],
+  "navigation": {
+    "entryPageId": "journalPage",
+    "pages": [
+      {
+        "id": "journalPage",
+        "title": "Journal",
+        "viewIds": [
+          "intro",
+          "photoCards"
+        ]
+      },
+      {
+        "id": "galleryPage",
+        "title": "Your collection",
+        "viewIds": [
+          "photoGallery"
+        ]
+      },
+      {
+        "id": "detailPage",
+        "title": "Memory",
+        "viewIds": [
+          "details"
+        ]
+      },
+      {
+        "id": "formPage",
+        "title": "Capture a moment",
+        "viewIds": [
+          "editor"
+        ]
+      }
+    ],
+    "tabs": [
+      {
+        "pageId": "journalPage",
+        "label": "Journal",
+        "icon": "book"
+      },
+      {
+        "pageId": "galleryPage",
+        "label": "Gallery",
+        "icon": "spark"
+      }
+    ]
+  }
+}

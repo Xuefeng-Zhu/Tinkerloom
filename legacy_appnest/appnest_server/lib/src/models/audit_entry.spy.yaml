@@ -1,0 +1,10 @@
+class: AuditEntry
+table: nest_audit
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  actorId: String
+  action: String
+  targetRecordId: int?, relation(parent=nest_record)
+  requestId: String
+  createdAt: DateTime

@@ -1,0 +1,30 @@
+services:
+  # Development services
+  postgres:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "127.0.0.1:8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: appnest
+      POSTGRES_PASSWORD: ${APPNEST_DEV_DB_PASSWORD:?Set a unique optional development database password}
+    volumes:
+      - appnest_data:/var/lib/postgresql/data
+
+
+  # Test services
+  postgres_test:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "127.0.0.1:9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: appnest_test
+      POSTGRES_PASSWORD: ${APPNEST_TEST_DB_PASSWORD:?Set a unique optional test database password}
+    volumes:
+      - appnest_test_data:/var/lib/postgresql/data
+
+
+volumes:
+  appnest_data:
+  appnest_test_data:

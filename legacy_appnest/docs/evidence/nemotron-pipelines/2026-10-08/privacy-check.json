@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-08T23:13:53.084756+00:00",
+  "check": "common credential prefix patterns in saved text and decompressed source archive",
+  "textFilesScanned": 36,
+  "archiveSourceFilesScanned": 35,
+  "matchingFiles": [],
+  "limitation": "Pattern scan is supplemental; archive membership independently restricted to frozen source allowlist."
+}

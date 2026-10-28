@@ -1,0 +1,11 @@
+class: WorkspaceMember
+table: nest_workspace_member
+serverOnly: true
+fields:
+  workspaceId: int, relation(parent=nest_workspace)
+  actorId: String
+  role: String
+indexes:
+  membership_unique:
+    fields: workspaceId, actorId
+    unique: true

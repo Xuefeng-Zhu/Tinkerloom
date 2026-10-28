@@ -1,0 +1,17 @@
+class: Automation
+table: nest_automation
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  workspaceId: int, relation(parent=nest_workspace)
+  ruleId: String
+  ruleVersion: int
+  ruleJson: String
+  enabled: bool
+  executionActorId: String
+  activateExisting: bool
+  activatedAt: DateTime
+indexes:
+  rule_unique:
+    fields: appId, ruleId
+    unique: true

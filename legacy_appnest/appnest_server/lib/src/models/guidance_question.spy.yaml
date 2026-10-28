@@ -1,0 +1,4 @@
+class: GuidanceQuestion
+fields:
+  question: String
+  options: List<String>

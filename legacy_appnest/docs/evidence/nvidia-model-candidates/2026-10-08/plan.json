@@ -1,0 +1,66 @@
+{
+  "recordedAt": "2026-10-08T14:21:28.741025+00:00",
+  "models": [
+    "z-ai/glm-5.3-flash",
+    "google/gemma-4-31b-it",
+    "poolside/laguna-xs-2.1",
+    "z-ai/glm-5.3"
+  ],
+  "smokeCases": [
+    "create-notes-fields",
+    "edit-notes-fields",
+    "guidance-ambiguous-organize"
+  ],
+  "smokeOperations": 12,
+  "fullCasesPerEligibleModel": 36,
+  "eligibilityRule": "Every smoke operation has at least one nonempty syntheticResponse with attempt kind received or validation. Output validation failures remain eligible. Partial/truncated completions, HTTP errors and timeouts do not count as completed responses.",
+  "globalStopRule": "Do not launch full benchmark after blocked/incomplete smoke, billingGuardTripped, or HTTP 202/401/402/403/429. No automatic resume.",
+  "fullCheckpointPolicy": "Fresh full.json with the eligible models and all 36 original cases. Do not resume or combine smoke scores.",
+  "execution": {
+    "concurrency": 4,
+    "requestIntervalMs": 4000,
+    "pacing": "global-dispatch",
+    "perModelSequential": true
+  },
+  "maxAttemptsPerOperation": 3,
+  "smokeSourceFingerprint": "c7dd349e9bd578409da856422b17ee3a3e746bdfe72ef5cf717b9c1ec6bbe6c4",
+  "source": {
+    "commit": "93f0291683bbcdf299ffd6276b2e9e7ccdc78496",
+    "dirtyTrackedSha256": "ad104563e37844fb31ddfc77900de81ee892838dd7a782cf0f79b77dac43e083",
+    "contractSourceSha256": "6e05128c9224e4d7b87d4fa74644645d4fe50d64dce4b810a1aa80975ae3205d",
+    "dartVersion": "3.13.0 (stable) (Wed Aug 5 00:28:05 2026 -0700) on \"macos_arm64\"",
+    "files": {
+      "appnest_server/lib/src/evaluation/nemotron_case_selection.dart": "961faa1d8bdcf2ff2aeec6b928c872767935464c4f5a3caae645053c934fdd2b",
+      "appnest_server/lib/src/evaluation/nemotron_parallel_scheduler.dart": "b932baa426f122e915bcd16c4688ab9a1464380e423e316cd0884aa97be9bba4",
+      "appnest_server/lib/src/evaluation/nvidia_model_profiles.dart": "232cc7a0faa37d34c494354895d58e1f221d5838a501f0cd80f0e434089b13c3",
+      "appnest_server/lib/src/modules/builder/builder.dart": "520ba357c52158fb4279e8ece468ec06b12470a588a9371b6d504a789c60de4f",
+      "appnest_server/lib/src/modules/builder/creation_compiler.dart": "b8f9f642fc3cb7ad0c9b0b7102a5f874c95da6d5ff32844c3229b665310907d0",
+      "appnest_server/lib/src/modules/builder/customization_evaluation.dart": "4b460730522dd375b3323bb78ac71f60b6aacfabfc23f32a7427916700c608b6",
+      "appnest_server/lib/src/modules/builder/generation_quality.dart": "10b42800a230065346a400569ad9f1673a51e5530940d4d91c2c01d474849b91",
+      "appnest_server/lib/src/modules/builder/generation_requirements.dart": "9a469805b406612f331ecab63fdf96292b396acb81770f89029aa5bd79d9812f",
+      "appnest_server/lib/src/modules/builder/nemotron_evaluation.dart": "8171d8c478133ca15f290a44db35647f05ed3f980b1928983d799eed17612a82",
+      "appnest_server/lib/src/modules/builder/nemotron_report.dart": "92b1252cb23519ea6458ad5e98358d28b4fd62dfb9c87e29e348a7d478b851f5",
+      "appnest_server/lib/src/modules/builder/nemotron_routes.dart": "5c3767032281b9d1029f26170269917dd22b27d0b2761f3fa2dcf82a9944f4cf",
+      "appnest_server/lib/src/modules/builder/nemotron_scenarios.dart": "29b7f710ccc67d7c037daa5f318916a611350f5fdd2cbc441f0b26329e968237",
+      "appnest_server/lib/src/modules/builder/provider.dart": "ec08e957776f9053e4ea5251774d3da7ef2bec0a6a38014fb6a2c89df5021cc0",
+      "appnest_server/lib/src/modules/builder/repair_bindings.dart": "f24f5e0d40fec992aa546106f9ac186fa130ad8606011cd22002bd651d52de12",
+      "appnest_server/pubspec.yaml": "7b3827ec18181e59e32c92a356220ce02e33c81360aa3ed125d4966d6b87e2de",
+      "packages/appnest_spec/lib/appnest_spec.dart": "189085c4cbf30423002e1e3acb6d8367c649a58292da00a641f659e59baabf2c",
+      "packages/appnest_spec/lib/src/appearance.dart": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e",
+      "packages/appnest_spec/lib/src/device_spec.dart": "ad79778c211c67c074c1bf522e8bdd2a4f6ffd66e28793e3bb9359e5653a7029",
+      "packages/appnest_spec/lib/src/rich_spec.dart": "7aae7c81de7a5708b6184320abc50f24e0d64f00cda3c6d76b521f4d5d063e5a",
+      "packages/appnest_spec/lib/src/rich_templates.dart": "c6a4ab1d72859d41425b03b18f1e4340e870694a79954483566627b5ba721d98",
+      "packages/appnest_spec/lib/src/schema.dart": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24",
+      "packages/appnest_spec/lib/src/spec.dart": "df491ed854b45a7fbd06130784ca305245ba9efa842f127249b06012ff8bf4a2",
+      "packages/appnest_spec/lib/src/templates.dart": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3",
+      "packages/appnest_spec/lib/src/utility_spec.dart": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442",
+      "packages/appnest_spec/lib/src/utility_templates.dart": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18",
+      "packages/appnest_spec/pubspec.yaml": "74e0dd05a42046744392f1e43fa9b395dac1ea5a82b2e15cbcfa03e4c2aec23a",
+      "pubspec.lock": "098981397295b030cdf11c48c14e898bb0419ad6c38bc6797519d169b3f77f99",
+      "pubspec.yaml": "24c0edf2a3ef601e43f6086db95d44aeaff678965f4eedef2ad5b96856c3a6b4",
+      "scripts/nemotron_eval.dart": "3d0d963b3c08cd6cd6ecf2d1c3891a1be453f3e31c3ed9d744a7b33d972666d5"
+    }
+  },
+  "privateRecordsIncluded": false,
+  "productionModelChanged": false
+}

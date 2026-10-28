@@ -1,0 +1,25 @@
+class: AutomationRun
+table: nest_run
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  automationId: int, relation(parent=nest_automation)
+  ruleVersion: int, default=1
+  recordId: int, relation(parent=nest_record)
+  occurrenceKey: String
+  scheduleSignature: String
+  dueAt: DateTime
+  nextAttemptAt: DateTime
+  status: String
+  attempts: int, default=0
+  leaseGeneration: int, default=0
+  leaseUntil: DateTime?
+  errorCategory: String?
+  createdAt: DateTime
+  completedAt: DateTime?
+indexes:
+  occurrence_unique:
+    fields: occurrenceKey
+    unique: true
+  run_due:
+    fields: status, nextAttemptAt

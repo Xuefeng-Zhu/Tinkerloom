@@ -1,0 +1,12 @@
+name: appnest_spec
+description: AppNest's executable-code-free definition language.
+version: 1.0.0
+publish_to: none
+resolution: workspace
+environment:
+  sdk: '>=3.13.0 <3.14.0'
+dependencies:
+  crypto: ^3.0.7
+dev_dependencies:
+  test: ^1.25.5
+  lints: ^6.0.0

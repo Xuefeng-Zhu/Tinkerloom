@@ -1,0 +1,5 @@
+class: RecordPage
+fields:
+  records: List<RuntimeRecord>
+  total: int
+  nextCursor: String?

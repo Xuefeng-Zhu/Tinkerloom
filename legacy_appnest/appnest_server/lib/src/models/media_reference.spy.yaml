@@ -1,0 +1,18 @@
+class: MediaReference
+table: nest_media_reference
+serverOnly: true
+fields:
+  appId: int, relation(parent=nest_app)
+  assetRowId: int, relation(parent=nest_media_asset)
+  draftId: int?, relation(parent=nest_draft)
+  versionId: int?, relation(parent=nest_version)
+  recordId: int?, relation(parent=nest_record)
+indexes:
+  media_reference_asset:
+    fields: assetRowId
+  media_reference_draft:
+    fields: draftId
+  media_reference_version:
+    fields: versionId
+  media_reference_record:
+    fields: recordId

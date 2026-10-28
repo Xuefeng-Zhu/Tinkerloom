@@ -1,0 +1,18 @@
+class: FieldValue
+table: nest_field_value
+serverOnly: true
+fields:
+  recordId: int, relation(parent=nest_record)
+  appId: int, relation(parent=nest_app)
+  collectionId: String
+  fieldId: String
+  textValue: String?
+  numberValue: double?
+  boolValue: bool?
+  timestampValue: DateTime?
+indexes:
+  record_field:
+    fields: recordId, fieldId
+    unique: true
+  query_field:
+    fields: appId, collectionId, fieldId

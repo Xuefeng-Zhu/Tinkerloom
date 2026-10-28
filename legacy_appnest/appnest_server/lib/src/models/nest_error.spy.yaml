@@ -1,0 +1,4 @@
+exception: NestError
+fields:
+  category: String
+  message: String

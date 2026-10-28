@@ -1,0 +1,11 @@
+class: MediaUploadRequest
+fields:
+  appId: int
+  draftId: int?
+  actionId: String?
+  targetRecordId: int?
+  fieldId: String?
+  expectedDefinitionVersionId: int?
+  byteLength: int
+  contentType: String
+  idempotencyKey: String

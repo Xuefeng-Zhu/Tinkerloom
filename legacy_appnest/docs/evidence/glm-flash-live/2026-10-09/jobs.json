@@ -1,0 +1,41 @@
+[
+  {
+    "id": 108,
+    "appId": 195,
+    "draftId": 128,
+    "status": "preview ready",
+    "provider": "integrate.api.nvidia.com",
+    "model": "z-ai/glm-5.3-flash",
+    "attempts": 1,
+    "diagnostics": "",
+    "usageJson": "{\"prompt_tokens\":15148,\"completion_tokens\":595,\"total_tokens\":15743,\"prompt_tokens_details\":{\"audio_tokens\":null,\"cached_tokens\":0},\"completion_tokens_details\":{\"accepted_prediction_tokens\":null,\"audio_tokens\":null,\"reasoning_tokens\":91,\"rejected_prediction_tokens\":null},\"_appnestCompilation\":{\"compiler\":\"requiredCapabilities.v1\",\"rawOutputHash\":\"6072ed2fc812c958f715fa085643a8aa12eec5025d3bb28744ed375e823e1d1f\",\"inputDefinitionHash\":\"6072ed2fc812c958f715fa085643a8aa12eec5025d3bb28744ed375e823e1d1f\",\"candidateHash\":\"6b5c9f35db8a059c9257d68c56f3ea1ef148b7e31ba01a4504f2246c7c845371\",\"addedCapabilities\":[],\"finalCandidateHash\":\"6b5c9f35db8a059c9257d68c56f3ea1ef148b7e31ba01a4504f2246c7c845371\"}}",
+    "createdAt": "2026-10-09T07:52:01.400572",
+    "updatedAt": "2026-10-09T07:52:51.06953"
+  },
+  {
+    "id": 109,
+    "appId": 195,
+    "draftId": 128,
+    "status": "failed",
+    "provider": "integrate.api.nvidia.com",
+    "model": "z-ai/glm-5.3-flash",
+    "attempts": 3,
+    "diagnostics": "Unknown field priority",
+    "usageJson": "{\"prompt_tokens\":17642,\"completion_tokens\":272,\"total_tokens\":17914,\"prompt_tokens_details\":{\"audio_tokens\":null,\"cached_tokens\":0},\"completion_tokens_details\":{\"accepted_prediction_tokens\":null,\"audio_tokens\":null,\"reasoning_tokens\":141,\"rejected_prediction_tokens\":null},\"_appnestFailureCategory\":\"validation\"}",
+    "createdAt": "2026-10-09T07:53:16.781499",
+    "updatedAt": "2026-10-09T07:55:19.316414"
+  },
+  {
+    "id": 110,
+    "appId": 195,
+    "draftId": 128,
+    "status": "preview ready",
+    "provider": "integrate.api.nvidia.com",
+    "model": "z-ai/glm-5.3-flash",
+    "attempts": 1,
+    "diagnostics": "",
+    "usageJson": "{\"prompt_tokens\":17475,\"completion_tokens\":78,\"total_tokens\":17553,\"prompt_tokens_details\":{\"audio_tokens\":null,\"cached_tokens\":0},\"completion_tokens_details\":{\"accepted_prediction_tokens\":null,\"audio_tokens\":null,\"reasoning_tokens\":14,\"rejected_prediction_tokens\":null}}",
+    "createdAt": "2026-10-09T07:56:29.848752",
+    "updatedAt": "2026-10-09T07:57:09.015992"
+  }
+]
