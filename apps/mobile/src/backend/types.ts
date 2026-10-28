@@ -29,6 +29,7 @@ export interface AppAccess {
   capabilities?: AppCapabilities;
 }
 export interface MiniApp extends AppAccess {
+  engine?: "bounded.v1" | "appspec.v1";
   id: string;
   workspaceId: string;
   name: string;
@@ -150,6 +151,10 @@ export interface ArchiveApp {
 }
 
 export interface AppBackend {
+  /** Versioned authenticated Function transport; the host supplies account fencing. */
+  executeSpec?(
+    payload: Record<string, unknown>,
+  ): Promise<Record<string, unknown>>;
   newId(): string;
   currentUser(): Promise<User | null>;
   signIn(email: string, password: string): Promise<User>;

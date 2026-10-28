@@ -4,8 +4,8 @@ import {
   Client,
   ExecutionMethod,
   Functions,
-  ID,
 } from "react-native-appwrite";
+import { randomUUID } from "expo-crypto";
 import type { PublicConfig } from "./config";
 import type { SdkAdapter } from "./core";
 
@@ -18,7 +18,7 @@ export function createSdk(config: PublicConfig): SdkAdapter {
   const functions = new Functions(client);
   return {
     account,
-    newId: () => ID.unique(),
+    newId: () => randomUUID(),
     execute: (body) =>
       functions.createExecution({
         functionId: config.functionId,

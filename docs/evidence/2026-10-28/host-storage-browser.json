@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-28T21:32:26.953155+00:00",
+  "layer": "standalone actual browser IndexedDB/WebCrypto adapter",
+  "browser": "Chrome via UI automation",
+  "encryptedStorageAssertions": 12,
+  "genericBuilderCasAssertions": 5,
+  "afterReloadAssertions": 3,
+  "status": "passed",
+  "nativeDeviceProof": false,
+  "backendCalls": 0,
+  "bundleSha256": "474228696478bd8ba3e6d01afedf8db28a3d940c41b70659978408b88b35677f",
+  "rebuildIdenticalToVerifiedBrowserBundle": true,
+  "sourceSha256": {
+    "browserStorage.ts": "37eec7617d6881bad4734098b254c9d164a071bc1c5a6f9c07d12d169602e50e",
+    "scope.ts": "62c04e8f27f11973c0d90cade8a69b73ac555a0485528a86616afadf8a0419a3",
+    "storage.ts": "ddea61ba593d29888d0a9cd8d5fc85ee97c85b2d3ca4c331adb891f7fcbfe9af"
+  },
+  "sourceAdapterTests": 18,
+  "nativeValidation": {
+    "swiftSyntaxParse": true,
+    "podspecMetadata": true,
+    "autolinkingApple": true,
+    "autolinkingAndroid": true,
+    "nativeCompilation": false,
+    "physicalDevice": false,
+    "permissionPrompts": false
+  }
+}

@@ -26,7 +26,22 @@
       "output": "single",
       "favicon": "./assets/favicon.png"
     },
-    "experiments": { "typedRoutes": true },
-    "plugins": ["expo-router"]
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-localization",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Tinkerloom to use the camera permission only when you turn on a mini-app flashlight. No photos or video are captured.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
+        }
+      ]
+    ]
   }
 }

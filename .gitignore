@@ -36,3 +36,4 @@ node_modules/
 .expo/
 dist/
 *.tsbuildinfo
+scripts/host-storage-probe/app.js

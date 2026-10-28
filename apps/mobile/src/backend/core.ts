@@ -2,6 +2,8 @@ import { BackendError, normalizeError } from "./errors";
 import { canonicalText } from "../preview/canonicalText";
 import { access } from "./access";
 import { CollaborationRpc } from "./collaboration";
+import { runtimeJsonSnapshot } from "../runtime/json";
+import { utf8Bytes } from "../spec/schema";
 import {
   idPattern,
   invalidResponse,
@@ -117,8 +119,15 @@ function app(
           "role",
           "archived",
           "capabilities",
+          "engine",
         ].includes(key),
     )
+  )
+    invalidResponse(mutation);
+  if (
+    row.engine !== undefined &&
+    row.engine !== "bounded.v1" &&
+    row.engine !== "appspec.v1"
   )
     invalidResponse(mutation);
   const parsed = {
@@ -126,6 +135,9 @@ function app(
     name: title(row.name, mutation),
     workspaceId: id(row.workspaceId, mutation),
     ...access(row, mutation, legacy),
+    ...(row.engine === undefined
+      ? {}
+      : { engine: row.engine as MiniApp["engine"] }),
   };
   if (parsed.workspaceId !== workspaceId) invalidResponse(mutation);
   return parsed;
@@ -401,6 +413,58 @@ export class AppwriteBackend implements AppBackend {
     );
   }
 
+  async executeSpec(
+    payload: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    let request: Record<string, unknown>;
+    try {
+      request = runtimeJsonSnapshot(payload) as Record<string, unknown>;
+    } catch {
+      throw new BackendError(
+        "This request is invalid or too large. It has not been sent.",
+        "invalid_request",
+        "service",
+        false,
+        400,
+      );
+    }
+    const op = request?.op;
+    if (
+      typeof op !== "string" ||
+      !(op.startsWith("spec.") || op === "listMembers")
+    )
+      throw new BackendError(
+        "That operation is unavailable.",
+        "invalid_request",
+        "service",
+        false,
+        400,
+      );
+    const reads = new Set([
+      "spec.capabilities",
+      "spec.templates",
+      "spec.getApp",
+      "spec.appAccess",
+      "spec.launcher",
+      "spec.listDrafts",
+      "spec.listVersions",
+      "spec.getVersion",
+      "spec.review",
+      "spec.query",
+      "spec.getRecord",
+      "spec.summary",
+      "spec.aggregate",
+      "spec.getGeneration",
+      "spec.reminderState",
+      "spec.inbox",
+      "spec.runs",
+      "spec.media.status",
+      "spec.media.read",
+      "listMembers",
+    ]);
+    return this.request(request, !reads.has(op));
+  }
+
   createInvitation(command: CreateInvitation) {
     return this.collaboration.createInvitation(command);
   }
@@ -569,7 +633,10 @@ export class AppwriteBackend implements AppBackend {
       }
       if (
         typeof execution.responseBody !== "string" ||
-        execution.responseBody.length > 262_144 ||
+        execution.responseBody.length >
+          (String(payload.op).startsWith("spec.") ? 8_388_608 : 262_144) ||
+        utf8Bytes(execution.responseBody) >
+          (String(payload.op).startsWith("spec.") ? 8_388_608 : 262_144) ||
         !Number.isInteger(execution.responseStatusCode)
       )
         invalidResponse(mutation);
