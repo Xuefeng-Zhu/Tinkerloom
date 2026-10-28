@@ -1,0 +1,20 @@
+{
+  "name": "tinkerloom",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "setup": "npm --prefix apps/mobile ci",
+    "dev": "npm --prefix apps/mobile start",
+    "web": "npm --prefix apps/mobile run web",
+    "preview:web": "npm --prefix apps/mobile run preview:web",
+    "ios": "npm --prefix apps/mobile run ios",
+    "android": "npm --prefix apps/mobile run android",
+    "typecheck": "npm --prefix apps/mobile run typecheck",
+    "lint": "npm --prefix apps/mobile run lint",
+    "test": "npm --prefix apps/mobile test",
+    "format:check": "npm --prefix apps/mobile run format:check",
+    "export:web": "npm --prefix apps/mobile run export:web",
+    "export:all": "npm --prefix apps/mobile run export:all",
+    "verify": "npm run typecheck && npm run lint && npm test && npm run format:check && npm run export:all"
+  }
+}

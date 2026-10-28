@@ -30,3 +30,9 @@ build/
 *.log
 coverage/
 output/
+
+# React Native and Expo
+node_modules/
+.expo/
+dist/
+*.tsbuildinfo

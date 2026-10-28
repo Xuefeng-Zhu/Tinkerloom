@@ -18,7 +18,7 @@ Use a compatible Appwrite instance with TablesDB and Dart Functions. Create a se
 
 Create a key index for `workspaces.ownerId` and a composite key index for `apps.ownerId, workspaceId`. Verify index status and the `ownerId` column length against the target Appwrite version. Do not put credentials in this repository.
 
-Create a Dart Function, for example ID `appnest-core`, with this directory as root and `lib/main.dart` as entrypoint. Use a Dart runtime supported by your instance (the implementation targets Dart 3.5 or later). Configure an environment variable `PLATFORM_DATABASE_ID` with the database ID, grant the function `rows.read` and `rows.write` scopes, and permit execution by authenticated users. Appwrite supplies its endpoint, project ID, ephemeral key and the invoking user's JWT. For Flutter web, configure the Appwrite platform and origin correctly. No account, table, function, schema, or deployment was created by these instructions.
+Create a Dart Function, for example ID `tinkerloom-core`, with this directory as root and `lib/main.dart` as entrypoint. Use a Dart runtime supported by your instance (the implementation targets Dart 3.5 or later). Configure an environment variable `PLATFORM_DATABASE_ID` with the database ID, grant the function `rows.read` and `rows.write` scopes, and permit execution by authenticated users. Appwrite supplies its endpoint, project ID, ephemeral key and the invoking user's JWT. For the React Native client, register native platform identifiers matching `apps/mobile/app.json`; for web, configure the hostname and origin correctly. No account, table, function, schema, or deployment was created by these instructions.
 
 Invoke the function synchronously with a JSON body:
 

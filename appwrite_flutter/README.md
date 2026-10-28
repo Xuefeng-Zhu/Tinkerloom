@@ -1,5 +1,7 @@
 # Appwrite Flutter migration slice
 
+This prototype is superseded by `../apps/mobile`, the active React Native client. It is retained as migration reference.
+
 This is a separate, early Flutter web client for the Appwrite backend. It signs
 in through Appwrite Account and calls the `appnest-core` Function to create and
 list owned workspaces and empty app shells. It is not the completed AppNest
