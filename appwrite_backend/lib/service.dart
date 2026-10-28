@@ -17,6 +17,7 @@ part 'drafts.dart';
 part 'spec_runtime.dart';
 part 'spec_actions.dart';
 part 'spec_queries.dart';
+part 'spec_lifecycle.dart';
 
 typedef Row = Map<String, dynamic>;
 

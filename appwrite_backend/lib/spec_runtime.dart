@@ -292,6 +292,7 @@ extension _SpecRuntime on PlatformService {
         'baseVersionId': base,
         'candidateHash': candidate.hash,
         'publishedVersionId': null,
+        'updatedAt': clock().toUtc().toIso8601String(),
         'specJson': candidate.canonical
       };
       if (draft == null) {
@@ -475,6 +476,22 @@ extension _SpecRuntime on PlatformService {
         };
       case 'spec.createApp':
         return _specCreate(actor, input);
+      case 'spec.instantiate':
+        return _specInstantiate(actor, input);
+      case 'spec.remix':
+        return _specRemix(actor, input);
+      case 'spec.launcher':
+        return _specLauncher(actor, input);
+      case 'spec.appAccess':
+        return _specAppAccess(actor, input);
+      case 'spec.listDrafts':
+        return _specListDrafts(actor, input);
+      case 'spec.listVersions':
+        return _specListVersions(actor, input);
+      case 'spec.getVersion':
+        return _specGetVersion(actor, input);
+      case 'spec.setPinned':
+        return _specSetPinned(actor, input);
       case 'spec.saveDraft':
         return _specSave(actor, input);
       case 'spec.review':

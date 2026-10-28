@@ -1,10 +1,7 @@
 {
   "databaseId": "tinkerloom",
   "specification": "serverless",
-  "functionScopes": [
-    "rows.read",
-    "rows.write"
-  ],
+  "functionScopes": ["rows.read", "rows.write"],
   "tables": [
     {
       "tableId": "workspaces",
@@ -35,9 +32,7 @@
         {
           "key": "owner",
           "type": "key",
-          "columns": [
-            "ownerId"
-          ]
+          "columns": ["ownerId"]
         }
       ]
     },
@@ -140,17 +135,12 @@
         {
           "key": "owner_workspace",
           "type": "key",
-          "columns": [
-            "ownerId",
-            "workspaceId"
-          ]
+          "columns": ["ownerId", "workspaceId"]
         },
         {
           "key": "workspace",
           "type": "key",
-          "columns": [
-            "workspaceId"
-          ]
+          "columns": ["workspaceId"]
         }
       ]
     },
@@ -196,10 +186,7 @@
         {
           "key": "owner_app",
           "type": "key",
-          "columns": [
-            "ownerId",
-            "appId"
-          ]
+          "columns": ["ownerId", "appId"]
         }
       ]
     },
@@ -275,17 +262,12 @@
         {
           "key": "workspace_actor",
           "type": "unique",
-          "columns": [
-            "workspaceId",
-            "actorId"
-          ]
+          "columns": ["workspaceId", "actorId"]
         },
         {
           "key": "actor",
           "type": "key",
-          "columns": [
-            "actorId"
-          ]
+          "columns": ["actorId"]
         }
       ]
     },
@@ -336,17 +318,17 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
         },
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
+        },
+        {
+          "key": "actor_workspace",
+          "type": "key",
+          "columns": ["actorId", "workspaceId"]
         }
       ]
     },
@@ -405,10 +387,12 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
+        },
+        {
+          "key": "author_workspace",
+          "type": "key",
+          "columns": ["actorId", "workspaceId"]
         }
       ]
     },
@@ -492,16 +476,12 @@
         {
           "key": "token",
           "type": "unique",
-          "columns": [
-            "tokenHash"
-          ]
+          "columns": ["tokenHash"]
         },
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         }
       ]
     },
@@ -533,9 +513,7 @@
         {
           "key": "actor",
           "type": "unique",
-          "columns": [
-            "actorId"
-          ]
+          "columns": ["actorId"]
         }
       ]
     },
@@ -592,16 +570,24 @@
           "type": "varchar",
           "size": 36,
           "required": false
+        },
+        {
+          "key": "updatedAt",
+          "type": "varchar",
+          "size": 64,
+          "required": false
         }
       ],
       "indexes": [
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
+        },
+        {
+          "key": "author_workspace",
+          "type": "key",
+          "columns": ["actorId", "workspaceId"]
         }
       ]
     },
@@ -657,10 +643,7 @@
         {
           "key": "app_number",
           "type": "unique",
-          "columns": [
-            "appId",
-            "number"
-          ]
+          "columns": ["appId", "number"]
         }
       ]
     },
@@ -732,10 +715,7 @@
         {
           "key": "app_collection",
           "type": "key",
-          "columns": [
-            "appId",
-            "collectionId"
-          ]
+          "columns": ["appId", "collectionId"]
         }
       ]
     },
@@ -787,7 +767,7 @@
         },
         {
           "key": "numberValue",
-          "type": "float",
+          "type": "double",
           "required": false
         },
         {
@@ -806,19 +786,12 @@
         {
           "key": "record_field",
           "type": "unique",
-          "columns": [
-            "recordId",
-            "fieldId"
-          ]
+          "columns": ["recordId", "fieldId"]
         },
         {
           "key": "app_collection_field",
           "type": "key",
-          "columns": [
-            "appId",
-            "collectionId",
-            "fieldId"
-          ]
+          "columns": ["appId", "collectionId", "fieldId"]
         }
       ]
     },
@@ -877,19 +850,12 @@
         {
           "key": "record_behavior",
           "type": "unique",
-          "columns": [
-            "appId",
-            "recordId",
-            "behaviorId"
-          ]
+          "columns": ["appId", "recordId", "behaviorId"]
         },
         {
           "key": "app_record",
           "type": "key",
-          "columns": [
-            "appId",
-            "recordId"
-          ]
+          "columns": ["appId", "recordId"]
         }
       ]
     },
@@ -943,10 +909,7 @@
         {
           "key": "pool_actor",
           "type": "unique",
-          "columns": [
-            "poolId",
-            "actorId"
-          ]
+          "columns": ["poolId", "actorId"]
         }
       ]
     },
@@ -1002,9 +965,7 @@
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         }
       ]
     },
@@ -1068,16 +1029,68 @@
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         },
         {
           "key": "next_attempt",
           "type": "key",
-          "columns": [
-            "nextAttemptAt"
-          ]
+          "columns": ["nextAttemptAt"]
+        }
+      ]
+    },
+    {
+      "tableId": "shortcuts",
+      "name": "shortcuts",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "pinned",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "revision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "updatedAt",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app_actor",
+          "type": "unique",
+          "columns": ["appId", "actorId"]
+        },
+        {
+          "key": "actor_workspace",
+          "type": "key",
+          "columns": ["actorId", "workspaceId"]
         }
       ]
     }
