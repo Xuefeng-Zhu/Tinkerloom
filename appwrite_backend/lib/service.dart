@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
+import 'package:appnest_spec/appnest_spec.dart' as spec;
 
 import 'definition.dart';
 import 'errors.dart';
@@ -13,6 +14,9 @@ export 'store.dart';
 
 part 'collaboration.dart';
 part 'drafts.dart';
+part 'spec_runtime.dart';
+part 'spec_actions.dart';
+part 'spec_queries.dart';
 
 typedef Row = Map<String, dynamic>;
 
@@ -140,6 +144,8 @@ class PlatformService {
         'role': access.role,
         'archived': access.archived,
         'capabilities': access.capabilities,
+        'engine':
+            access.app['engine'] == 'appspec.v1' ? 'appspec.v1' : 'bounded.v1',
       };
 
   Row? _definition(Row row, String key) {
@@ -210,9 +216,10 @@ class PlatformService {
   }
 
   Future<void> _saveReceipt(String actor, String appId, String operationId,
-      String request, Row response, String transactionId) async {
+      String request, Row response, String transactionId,
+      {int maximumBytes = 65536}) async {
     final encoded = jsonEncode(response);
-    if (utf8.encode(encoded).length > 65536)
+    if (utf8.encode(encoded).length > maximumBytes)
       throw const ServiceException('response_too_large', 500);
     await store.create(
         'receipts',
@@ -226,39 +233,56 @@ class PlatformService {
         transactionId: transactionId);
   }
 
-  String _request(Row input) {
+  String _request(Row input, {int maximumBytes = 32768}) {
     final request = canonicalJson(input);
-    if (utf8.encode(request).length > 32768)
+    if (utf8.encode(request).length > maximumBytes)
       throw const ServiceException('request_too_large', 413);
     return request;
   }
 
   Future<Row?> _authorizedReceipt(String actor, String appId,
-      String operationId, String request, String capability) async {
-    _require(await _access(actor, appId), capability, writable: false);
+      String operationId, String request, String capability,
+      {Future<void> Function(AppAccess, String?)? authorize}) async {
+    final initial = await _access(actor, appId);
+    _require(initial, capability, writable: false);
+    if (authorize != null) await authorize(initial, null);
     final receipt = await _receipt(actor, appId, operationId, request);
     // Do not let a receipt read bypass a grant/workspace revocation occurring
     // during hydration, including the conflict/error recovery paths below.
-    if (receipt != null)
-      _require(await _access(actor, appId), capability, writable: false);
+    if (receipt != null) {
+      final current = await _access(actor, appId);
+      _require(current, capability, writable: false);
+      if (authorize != null) await authorize(current, null);
+    }
     return receipt;
   }
 
   Future<Row> _mutate(String actor, Row input, String capability,
       Future<Row> Function(String transactionId, AppAccess access) action,
-      {bool writable = true}) async {
+      {bool writable = true,
+      int requestBytes = 32768,
+      int responseBytes = 65536,
+      Future<void> Function(AppAccess, String?)? authorize}) async {
     final appId = _validId(input['appId']);
     final operationId = _validId(input['operationId']);
-    final request = _request(input);
+    final request = _request(input, maximumBytes: requestBytes);
     final initial = await _access(actor, appId);
+    final receiptResponseBytes = initial.app['engine'] == 'appspec.v1'
+        ? max(responseBytes, _specResponseBytes)
+        : responseBytes;
+    if (initial.app['engine'] == 'appspec.v1' &&
+        {'saveDraft', 'publishApp', 'saveRecord'}.contains(input['op']))
+      throw const ServiceException('unsupported_runtime', 400);
     _require(initial, capability, writable: false);
     final previous = await _authorizedReceipt(
-        actor, appId, operationId, request, capability);
+        actor, appId, operationId, request, capability,
+        authorize: authorize);
     if (previous != null) return previous;
     try {
       return await _transaction((transactionId) async {
         final access = await _stageAccess(actor, initial, transactionId);
         _require(access, capability, writable: false);
+        if (authorize != null) await authorize(access, transactionId);
         final old = await _receipt(actor, appId, operationId, request,
             transactionId: transactionId);
         if (old != null) return old;
@@ -266,8 +290,19 @@ class PlatformService {
         // still recover the exact result of a previously committed command.
         _require(access, capability, writable: writable);
         final response = await action(transactionId, access);
+        if (access.app['engine'] == 'appspec.v1' &&
+            !(input['op'] as String).startsWith('spec.')) {
+          await _specChanged(
+              actor, access, operationId, input['op'] as String, transactionId);
+          if (response.containsKey('app'))
+            response['app'] = await _publicSpecApp(
+                actor,
+                await _access(actor, appId, transactionId: transactionId),
+                transactionId);
+        }
         await _saveReceipt(
-            actor, appId, operationId, request, response, transactionId);
+            actor, appId, operationId, request, response, transactionId,
+            maximumBytes: receiptResponseBytes);
         return response;
       });
     } on ServiceException catch (error) {
@@ -280,7 +315,8 @@ class PlatformService {
         'app_archived'
       }.contains(error.code)) {
         final old = await _authorizedReceipt(
-            actor, appId, operationId, request, capability);
+            actor, appId, operationId, request, capability,
+            authorize: authorize);
         if (old != null) return old;
       }
       rethrow;
@@ -304,6 +340,13 @@ class PlatformService {
   Future<Row> execute(String actor, Row input) async {
     if (actor.isEmpty) throw const ServiceException('unauthenticated', 401);
     _validId(actor);
+    if (input['op'] is String && (input['op'] as String).startsWith('spec.')) {
+      try {
+        return await _executeSpec(actor, input);
+      } on spec.SpecException {
+        throw const ServiceException('invalid_spec', 400);
+      }
+    }
     switch (input['op']) {
       case 'createWorkspace':
         _inputKeys(input, {'op', 'id', 'name'});
@@ -407,7 +450,9 @@ class PlatformService {
           try {
             final access = await _access(actor, row[r'$id'] as String);
             if (access.role != 'owner' &&
-                _storedRevision(row, 'publishedRevision') == 0) continue;
+                (row['engine'] == 'appspec.v1'
+                    ? row['specVersionId'] == null
+                    : _storedRevision(row, 'publishedRevision') == 0)) continue;
             result.add(_appSummary(access));
           } on ServiceException catch (error) {
             if (error.code != 'not_found') rethrow;
@@ -420,6 +465,8 @@ class PlatformService {
       case 'getApp':
         _inputKeys(input, {'op', 'appId'});
         final access = await _access(actor, _validId(input['appId']));
+        if (access.app['engine'] == 'appspec.v1')
+          throw const ServiceException('unsupported_runtime', 400);
         if (access.role != 'owner' &&
             _storedRevision(access.app, 'publishedRevision') == 0)
           throw const ServiceException('not_found', 404);
@@ -434,6 +481,8 @@ class PlatformService {
         _inputKeys(input, {'op', 'appId', 'definitionRevision', 'afterId'});
         final appId = _validId(input['appId']);
         final access = await _access(actor, appId);
+        if (access.app['engine'] == 'appspec.v1')
+          throw const ServiceException('unsupported_runtime', 400);
         final expected = _revision(input['definitionRevision']);
         final published = _storedRevision(access.app, 'publishedRevision');
         if (published == 0) throw const ServiceException('not_published', 409);

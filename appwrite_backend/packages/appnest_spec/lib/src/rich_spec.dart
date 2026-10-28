@@ -466,7 +466,9 @@ class AggregateQuery {
           throw const SpecException(
             'Bucket boundaries must be UTC ISO timestamps',
           );
-        final parsed = DateTime.tryParse(value);
+        final parsed = DateTime.tryParse(
+          strictTimestamp(value, 'bucket boundary'),
+        );
         if (parsed == null || !parsed.isUtc)
           throw const SpecException('Invalid bucket boundary');
         return parsed;

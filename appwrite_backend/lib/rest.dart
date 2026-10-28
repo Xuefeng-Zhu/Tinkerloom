@@ -49,7 +49,8 @@ class AppwriteRest implements RowStore {
     }
     final bytes = <int>[];
     await for (final chunk in response.timeout(const Duration(seconds: 15))) {
-      if (bytes.length + chunk.length > 1048576) throw const RestException(502);
+      if (bytes.length + chunk.length > 33554432)
+        throw const RestException(502);
       bytes.addAll(chunk);
     }
     return Map<String, dynamic>.from(jsonDecode(utf8.decode(bytes)) as Map);
@@ -101,6 +102,7 @@ class AppwriteRest implements RowStore {
     int limit = 100,
     String? afterId,
     bool detectOverflow = true,
+    List<String>? select,
   }) async {
     final queries = [
       for (final entry in filters.entries)
@@ -119,6 +121,7 @@ class AppwriteRest implements RowStore {
           'method': 'cursorAfter',
           'values': [afterId]
         },
+      if (select != null) {'method': 'select', 'values': select},
     ];
     final result = await _request('GET',
         _uri(_rows(table), queries: queries, transactionId: transactionId));

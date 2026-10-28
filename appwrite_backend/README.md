@@ -1,4 +1,8 @@
-# Appwrite collaborative builder and records
+# Appwrite backend checkpoint
+
+The isolated full-AppSpec engine foundation is described in [SPEC_ENGINE.md](SPEC_ENGINE.md). It adds versioned APIs and separate storage while retaining the bounded/collaboration runtime below. Its local tests do not replace deployment and live acceptance.
+
+## Bounded collaborative builder and records
 
 This is the trusted collaborative builder and records backend for Tinkerloom: workspaces and apps, saved declarative drafts, exact-revision publication, and published live records. Its bounded React Native definition supports `text`, `longText`, `boolean`, `choice`, `number`, and civil `date` fields, plus optional list, table, or agenda presentation. It is not the full AppNest AppSpec/renderer port. It now includes workspace membership plus explicit app grants, private author drafts, hashed invitations, role revocation, and owner-only archival. Capacity allocation, private media, AI, reminders, and audit/outbox workers remain to be migrated. Existing accounts and data are not automatically transferred.
 

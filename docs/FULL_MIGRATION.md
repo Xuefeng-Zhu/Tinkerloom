@@ -24,6 +24,15 @@ Current replacement evidence:
 - **E3 — browser**: [rich browser receipt](evidence/2026-10-28/rich-browser-qa.md) and [initial browser phases](evidence/2026-10-28/browser-qa.md), covering the exercised builder/record paths, reload/fresh-session persistence and ten-to-eleven-record paging. These are not native/device or full-renderer acceptance.
 - **E4 — initial frontend only**: [dated initial verification](REACT_NATIVE_VERIFICATION.md), useful for its bounded layout/router/preview checks, superseded where later receipts exist.
 
+## New implementation checkpoints after the baseline
+
+- The portable Dart contract is bundled in the Function, with 87 passing original tests.
+- [Full AppSpec engine](../appwrite_backend/SPEC_ENGINE.md): 71 local backend groups now cover immutable/private publication, all seven trusted actions, projection-based complete queries/aggregates, atomic audit/outbox and capacity contention. These are simulated-store/local HTTP checks; full-engine Cloud acceptance remains pending. Timestamp projections use lossless canonical text after a reproduced datetime millisecond-truncation defect.
+- [React Native domain](../apps/mobile/src/spec/README.md): full strict decoding/canonical fixtures and typed helpers are implemented; hashes remain server-authoritative. Definition decoding is independent of installed runtime/effect support.
+- [Native baseline](NATIVE_VERIFICATION.md): both local compilation commands passed against the documented older snapshot. Final-source rebuilds, installation and device behavior remain pending.
+
+The row baselines below are historical inventory. None of these implementation checkpoints completes the full parity, Cloud, mounted-client, worker, media, migration or device acceptance matrix.
+
 ## Dependency order
 
 | Phase | Deliverable and dependency                                                                                                                                                                                            | Exit evidence before relying on it                                                                                                                                          |

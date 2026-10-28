@@ -14,6 +14,7 @@ abstract interface class RowStore {
     int limit = 100,
     String? afterId,
     bool detectOverflow = true,
+    List<String>? select,
   });
   Future<String> beginTransaction();
   Future<void> finishTransaction(String transactionId, {required bool commit});

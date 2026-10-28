@@ -65,10 +65,12 @@ class FieldSpec {
             (required && value.trim().isEmpty))
           throw SpecException('$label must be text');
       case FieldType.integer:
-        if (value is! int || value.abs() > 9007199254740991)
+        if (value is! int ||
+            value < -9007199254740991 ||
+            value > 9007199254740991)
           throw SpecException('$label must be a safe integer');
       case FieldType.number:
-        if (value is! num || !value.isFinite || value.abs() > 1e15)
+        if (value is! num || !value.isFinite || value < -1e15 || value > 1e15)
           throw SpecException('$label must be a finite number');
       case FieldType.boolean:
         if (value is! bool) throw SpecException('$label must be true or false');
@@ -76,12 +78,7 @@ class FieldSpec {
         if (value is! String || !choices.contains(value))
           throw SpecException('$label has an unsupported choice');
       case FieldType.timestamp:
-        if (value is! String || !RegExp(r'(Z|[+-]\d\d:\d\d)$').hasMatch(value))
-          throw SpecException('$label needs a timestamp with timezone');
-        final date = DateTime.tryParse(value);
-        if (date == null)
-          throw SpecException('$label must be a valid timestamp');
-        return date.toUtc().toIso8601String();
+        return strictTimestamp(value, label);
       case FieldType.image:
         _imageId(value);
       case FieldType.member:
@@ -1630,4 +1627,58 @@ Map<String, dynamic> resolveViewQuery(
     'filters': filters,
   });
   return {'filters': query.filters, 'sort': query.sort, 'limit': query.limit};
+}
+
+/// Explicit offsets and microseconds, without DateTime's civil-field rollover.
+String strictTimestamp(Object? value, String label) {
+  if (value is! String)
+    throw SpecException('$label needs a timestamp with timezone');
+  final match = RegExp(
+    r'^([+-]?\d{4,6})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,6}))?(Z|([+-])(\d{2}):(\d{2}))$',
+  ).firstMatch(value);
+  if (match == null || match.end != value.length)
+    throw SpecException('$label needs a timestamp with timezone');
+  final year = int.parse(match[1]!),
+      month = int.parse(match[2]!),
+      day = int.parse(match[3]!);
+  final hour = int.parse(match[4]!),
+      minute = int.parse(match[5]!),
+      second = int.parse(match[6]!);
+  final offsetHour = int.parse(match[10] ?? '0'),
+      offsetMinute = int.parse(match[11] ?? '0');
+  final fraction = (match[7] ?? '').padRight(6, '0');
+  final micros = int.parse(fraction);
+  if (month < 1 ||
+      month > 12 ||
+      day < 1 ||
+      hour > 23 ||
+      minute > 59 ||
+      second > 59 ||
+      offsetHour > 23 ||
+      offsetMinute > 59)
+    throw SpecException('$label must be a valid timestamp');
+  try {
+    final civil = DateTime.utc(
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second,
+      micros ~/ 1000,
+      micros % 1000,
+    );
+    if (civil.year != year ||
+        civil.month != month ||
+        civil.day != day ||
+        civil.hour != hour ||
+        civil.minute != minute ||
+        civil.second != second)
+      throw SpecException('$label must be a valid timestamp');
+    final offset =
+        (offsetHour * 60 + offsetMinute) * (match[9] == '-' ? -1 : 1);
+    return civil.subtract(Duration(minutes: offset)).toIso8601String();
+  } on ArgumentError {
+    throw SpecException('$label must be a valid timestamp');
+  }
 }

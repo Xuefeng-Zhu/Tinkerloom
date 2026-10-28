@@ -66,7 +66,8 @@ class MemoryStore implements RowStore {
       {String? transactionId,
       int limit = 100,
       String? afterId,
-      bool detectOverflow = true}) async {
+      bool detectOverflow = true,
+      List<String>? select}) async {
     final all = {...?rows[table]};
     if (transactionId != null) {
       for (final entry in transactions[transactionId]!.staged.entries) {
@@ -85,7 +86,12 @@ class MemoryStore implements RowStore {
         .where((row) =>
             afterId == null || (row[r'$id'] as String).compareTo(afterId) > 0)
         .take(limit)
-        .map(_copy)
+        .map((row) => select == null
+            ? _copy(row)
+            : {
+                for (final key in select)
+                  if (row.containsKey(key)) key: row[key]
+              })
         .toList();
   }
 

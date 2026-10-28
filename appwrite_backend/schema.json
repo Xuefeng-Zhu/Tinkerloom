@@ -108,6 +108,32 @@
           "key": "archived",
           "type": "boolean",
           "required": false
+        },
+        {
+          "key": "engine",
+          "type": "varchar",
+          "size": 16,
+          "required": false
+        },
+        {
+          "key": "specVersionId",
+          "type": "varchar",
+          "size": 36,
+          "required": false
+        },
+        {
+          "key": "specVersionNumber",
+          "type": "integer",
+          "required": false,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "controlRevision",
+          "type": "integer",
+          "required": false,
+          "min": 0,
+          "max": 2147483647
         }
       ],
       "indexes": [
@@ -509,6 +535,548 @@
           "type": "unique",
           "columns": [
             "actorId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "spec_drafts",
+      "name": "spec_drafts",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "revision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "baseVersionId",
+          "type": "varchar",
+          "size": 36,
+          "required": false
+        },
+        {
+          "key": "candidateHash",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        },
+        {
+          "key": "specJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "publishedVersionId",
+          "type": "varchar",
+          "size": 36,
+          "required": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app_actor",
+          "type": "unique",
+          "columns": [
+            "appId",
+            "actorId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "spec_versions",
+      "name": "spec_versions",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "number",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "hash",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        },
+        {
+          "key": "specJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "publisherId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app_number",
+          "type": "unique",
+          "columns": [
+            "appId",
+            "number"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "spec_records",
+      "name": "spec_records",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "collectionId",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        },
+        {
+          "key": "dataJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "creatorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "revision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "writtenUnderVersionId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "deleted",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "key": "updatedAt",
+          "type": "datetime",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app_collection",
+          "type": "key",
+          "columns": [
+            "appId",
+            "collectionId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "spec_values",
+      "name": "spec_values",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "recordId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "collectionId",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        },
+        {
+          "key": "fieldId",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        },
+        {
+          "key": "present",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "textValue",
+          "type": "mediumtext",
+          "required": false
+        },
+        {
+          "key": "numberValue",
+          "type": "float",
+          "required": false
+        },
+        {
+          "key": "boolValue",
+          "type": "boolean",
+          "required": false
+        },
+        {
+          "key": "timestampValue",
+          "type": "varchar",
+          "size": 64,
+          "required": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "record_field",
+          "type": "unique",
+          "columns": [
+            "recordId",
+            "fieldId"
+          ]
+        },
+        {
+          "key": "app_collection_field",
+          "type": "key",
+          "columns": [
+            "appId",
+            "collectionId",
+            "fieldId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "spec_pools",
+      "name": "spec_pools",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "recordId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "collectionId",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        },
+        {
+          "key": "behaviorId",
+          "type": "varchar",
+          "size": 64,
+          "required": true
+        },
+        {
+          "key": "capacity",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 10000
+        },
+        {
+          "key": "allocated",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 10000
+        }
+      ],
+      "indexes": [
+        {
+          "key": "record_behavior",
+          "type": "unique",
+          "columns": [
+            "appId",
+            "recordId",
+            "behaviorId"
+          ]
+        },
+        {
+          "key": "app_record",
+          "type": "key",
+          "columns": [
+            "appId",
+            "recordId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "spec_claims",
+      "name": "spec_claims",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "poolId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "active",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "key": "updatedAt",
+          "type": "datetime",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "pool_actor",
+          "type": "unique",
+          "columns": [
+            "poolId",
+            "actorId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "audit",
+      "name": "audit",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "action",
+          "type": "varchar",
+          "size": 128,
+          "required": true
+        },
+        {
+          "key": "recordId",
+          "type": "varchar",
+          "size": 36,
+          "required": false
+        },
+        {
+          "key": "requestId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app",
+          "type": "key",
+          "columns": [
+            "appId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "outbox",
+      "name": "outbox",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "recordId",
+          "type": "varchar",
+          "size": 36,
+          "required": false
+        },
+        {
+          "key": "kind",
+          "type": "varchar",
+          "size": 128,
+          "required": true
+        },
+        {
+          "key": "payloadJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "planningDone",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "invalidationDone",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "nextAttemptAt",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app",
+          "type": "key",
+          "columns": [
+            "appId"
+          ]
+        },
+        {
+          "key": "next_attempt",
+          "type": "key",
+          "columns": [
+            "nextAttemptAt"
           ]
         }
       ]

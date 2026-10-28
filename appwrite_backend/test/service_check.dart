@@ -6,6 +6,7 @@ import '../lib/service.dart';
 import 'memory_store.dart';
 import 'rich_contract_check.dart' as rich;
 import 'collaboration_check.dart' as collaboration;
+import 'spec_engine_check.dart' as engine;
 
 void check(bool condition, String label) {
   if (!condition) throw StateError(label);
@@ -471,6 +472,7 @@ Future<void> main() async {
   );
   passed += await rich.runRichChecks();
   passed += await collaboration.runCollaborationChecks();
+  passed += await engine.runSpecEngineChecks();
   print(
     '$passed backend checks passed (simulated store and local HTTP transport; live Appwrite acceptance is separate).',
   );
@@ -527,6 +529,15 @@ Future<void> transportCheck() async {
       jsonDecode(uri.queryParameters['queries[3]']!)['method'] == 'cursorAfter',
       'Cursor missing',
     );
+    await rest
+        .list('spec_records', {'appId': 'app1'}, select: [r'$id', 'revision']);
+    final selectedUri = requests.last['uri'] as Uri;
+    final selected =
+        jsonDecode(selectedUri.queryParameters['queries[3]']!) as Map;
+    check(
+        selected['method'] == 'select' &&
+            jsonEncode(selected['values']) == jsonEncode([r'$id', 'revision']),
+        'Metadata select encoding differs from Appwrite query contract');
     check(await rest.beginTransaction() == 'tx1', 'Transaction ID not parsed');
     await rest.update(
         'apps',

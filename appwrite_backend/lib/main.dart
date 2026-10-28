@@ -38,12 +38,17 @@ Future<dynamic> main(dynamic context) async {
       return context.res.json({'error': 'unauthenticated'}, 401);
     }
     final bodyText = context.req.bodyText as String;
-    if (utf8.encode(bodyText).length > 65536) {
+    final bodyBytes = utf8.encode(bodyText).length;
+    if (bodyBytes > 6291456) {
       return context.res.json({'error': 'request_too_large'}, 413);
     }
     final data = jsonDecode(bodyText);
     if (data is! Map<String, dynamic>) {
       return context.res.json({'error': 'invalid_request'}, 400);
+    }
+    if (!(data['op'] is String && (data['op'] as String).startsWith('spec.')) &&
+        bodyBytes > 65536) {
+      return context.res.json({'error': 'request_too_large'}, 413);
     }
     final result = await PlatformService(backend).execute(actor, data);
     return context.res.json(result, 200);

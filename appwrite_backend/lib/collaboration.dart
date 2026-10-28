@@ -303,6 +303,8 @@ extension _Collaboration on PlatformService {
               transactionId: tx);
         }
         final response = <String, dynamic>{'appId': invite['appId']};
+        if (access.app['engine'] == 'appspec.v1')
+          await _specChanged(actor, access, operationId, 'join', tx);
         await _saveReceipt(actor, invite['appId'] as String, operationId,
             request, response, tx);
         return response;
