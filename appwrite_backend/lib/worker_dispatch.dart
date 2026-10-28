@@ -82,19 +82,20 @@ extension _WorkerDispatch on PlatformService {
           }, transactionId: tx);
         });
         if (claim == null) continue;
+        final sending = claim;
         final execution = await wakeups!.schedule(
-          dispatchId: claim[r'$id'] as String,
+          dispatchId: sending[r'$id'] as String,
           proof: proof,
-          at: _time(claim['runAt']),
+          at: _time(sending['runAt']),
         );
         await _workerTransaction((tx) async {
           final row = await store.get(
             'worker_dispatches',
-            claim![r'$id'] as String,
+            sending[r'$id'] as String,
             transactionId: tx,
           );
           if (row == null ||
-              row['generation'] != claim['generation'] ||
+              row['generation'] != sending['generation'] ||
               row['status'] != 'sending')
             return;
           await store.update('worker_dispatches', row[r'$id'] as String, {
@@ -107,15 +108,16 @@ extension _WorkerDispatch on PlatformService {
         scheduled++;
       } catch (_) {
         if (claim == null) continue;
+        final failed = claim;
         try {
           await _workerTransaction((tx) async {
             final row = await store.get(
               'worker_dispatches',
-              claim![r'$id'] as String,
+              failed[r'$id'] as String,
               transactionId: tx,
             );
             if (row == null ||
-                row['generation'] != claim['generation'] ||
+                row['generation'] != failed['generation'] ||
                 row['status'] != 'sending')
               return;
             final attempts = row['attempts'] as int;
@@ -180,6 +182,40 @@ extension _WorkerDispatch on PlatformService {
           await _executeReminder(claim['targetId'] as String);
         case 'reconcile':
           await _planEvent(claim['targetId'] as String);
+        case 'media':
+          final asset = await store.get(
+            'media_assets',
+            claim['targetId'] as String,
+          );
+          if (asset == null || asset['appId'] != claim['appId'])
+            throw const ServiceException('not_found', 404);
+          if (!{
+            'ready',
+            'failed',
+            'deleting',
+            'deleted',
+          }.contains(asset['status'])) {
+            try {
+              await processMedia(claim['targetId'] as String);
+            } on ServiceException {
+              final outcome = await store.get(
+                'media_assets',
+                claim['targetId'] as String,
+              );
+              // A terminal validation/access failure is handled work, never a
+              // claim that an image became ready. The asset remains failed.
+              if (outcome == null || outcome['status'] != 'failed') rethrow;
+            }
+          }
+        case 'media_cleanup':
+          final asset = await store.get(
+            'media_assets',
+            claim['targetId'] as String,
+          );
+          if (asset == null || asset['appId'] != claim['appId'])
+            throw const ServiceException('not_found', 404);
+          await cleanupMedia(limit: 1, assetId: claim['targetId'] as String);
+
         default:
           throw const ServiceException('invalid_request', 400);
       }
@@ -301,6 +337,70 @@ extension _WorkerDispatch on PlatformService {
         });
       }
     }
-    return {...result, 'wakeups': await _flushWakeups(25)};
+    final mediaRecovery = await _scheduleMediaRecovery(min(maximum, 10));
+    return {
+      ...result,
+      'media': mediaRecovery,
+      'wakeups': await _flushWakeups(25),
+    };
+  }
+
+  /// Reconciliation queues proof-bound, one-asset work. It never decodes images
+  /// or performs Storage I/O inside the hourly pass itself.
+  Future<Row> _scheduleMediaRecovery(int maximum) async {
+    if (media == null) return {'available': false, 'scheduled': 0};
+    final now = clock().toUtc();
+    final rows = await _mediaRows('media_assets', {});
+    final retained = <String>{
+      for (final ref in await _mediaRows('media_refs', {}))
+        ...(jsonDecode(ref['assetIdsJson'] as String) as List).cast<String>(),
+    };
+    rows.sort(
+      (a, b) => ((a['maintenanceAt'] ?? a['updatedAt']) as String).compareTo(
+        (b['maintenanceAt'] ?? b['updatedAt']) as String,
+      ),
+    );
+    var scheduled = 0;
+    for (final row in rows) {
+      if (scheduled >= maximum) break;
+      if (row['leaseUntil'] != null &&
+          _mediaDate(row['leaseUntil']).isAfter(now))
+        continue;
+      final status = row['status'];
+      String? mode;
+      var at = now;
+      if ({'queued', 'processing'}.contains(status) &&
+          _mediaDate(row['expiresAt']).isAfter(now)) {
+        mode = 'media';
+      } else if (status == 'ready' && row['originalRemoved'] != true) {
+        mode = 'media_cleanup';
+        if (row['originalDeleteAfter'] != null &&
+            _mediaDate(row['originalDeleteAfter']).isAfter(at))
+          at = _mediaDate(row['originalDeleteAfter']);
+      } else if ({'deleting', 'deleted'}.contains(status) ||
+          status != 'ready' && !_mediaDate(row['expiresAt']).isAfter(now) ||
+          status == 'ready' &&
+              !retained.contains(row[r'$id']) &&
+              _mediaDate(
+                row['updatedAt'],
+              ).isBefore(now.subtract(MediaLimits.unreferencedGrace))) {
+        mode = 'media_cleanup';
+        if (row['deleteAfter'] != null &&
+            _mediaDate(row['deleteAfter']).isAfter(at))
+          at = _mediaDate(row['deleteAfter']);
+      }
+      if (mode == null) continue;
+      await _workerTransaction(
+        (tx) => _queueDispatch(
+          mode!,
+          row[r'$id'] as String,
+          row['appId'] as String,
+          at,
+          tx,
+        ),
+      );
+      scheduled++;
+    }
+    return {'available': true, 'scheduled': scheduled};
   }
 }

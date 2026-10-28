@@ -409,9 +409,10 @@ extension _GenerationRuntime on PlatformService {
         requirements.GenerationRequirements.fromRequest(
           job['requestText'] as String,
         ).validate(candidate);
-      if (candidate.views.any(
-        (view) => view.options.containsKey('imageAssetId'),
-      ))
+      final allowedImages = job['mode'] == 'edit' && job['baseSpecJson'] != null
+          ? _definitionImages(base)
+          : <String>{};
+      if (!allowedImages.containsAll(_definitionImages(candidate)))
         throw const ai.AiResponseException(
           'media_reference',
           'Generated definitions cannot invent private image references. Preserve existing references or omit them.',
@@ -433,6 +434,7 @@ extension _GenerationRuntime on PlatformService {
     } finally {
       await _releaseGenerationSlot(slot);
     }
+    final computedCandidate = candidate;
     final finalJob = await _workerTransaction<Row?>((tx) async {
       final access = await _workerStage(job['appId'] as String, tx);
       final current = await store.get(
@@ -446,6 +448,24 @@ extension _GenerationRuntime on PlatformService {
           !_time(current['leaseUntil']).isAfter(clock().toUtc()))
         return null;
       final stale = !await _generationCurrent(job, access, tx);
+      if (!stale && failure == null && computedCandidate != null) {
+        try {
+          await validateGeneratedMedia(
+            job['actorId'] as String,
+            access,
+            job['baseSpecJson'] == null
+                ? null
+                : spec.AppSpec.parse(job['baseSpecJson'] as String),
+            computedCandidate,
+            tx,
+          );
+        } on ServiceException {
+          failure =
+              'An existing private image is no longer available. Review the source images before retrying.';
+          category = 'media_reference';
+          retryable = false;
+        }
+      }
       final failed = failure != null;
       final terminal =
           stale ||
@@ -508,15 +528,15 @@ extension _GenerationRuntime on PlatformService {
           ),
         ),
       );
-      if (!stale && !failed && candidate != null) {
+      if (!stale && !failed && computedCandidate != null) {
         final data = <String, dynamic>{
           'workspaceId': access.app['workspaceId'],
           'appId': access.app[r'$id'],
           'actorId': job['actorId'],
           'revision': job['mutation'],
           'baseVersionId': job['baseVersionId'],
-          'candidateHash': candidate.hash,
-          'specJson': candidate.canonical,
+          'candidateHash': computedCandidate.hash,
+          'specJson': computedCandidate.canonical,
           'publishedVersionId': null,
         };
         final draft = await store.get(
@@ -539,6 +559,12 @@ extension _GenerationRuntime on PlatformService {
             transactionId: tx,
           );
         }
+        await syncGeneratedMedia(
+          job['actorId'] as String,
+          access,
+          computedCandidate,
+          tx,
+        );
         await store.update(
           'generation_sessions',
           _identity('g', [job['appId'] as String, job['actorId'] as String]),
@@ -555,7 +581,7 @@ extension _GenerationRuntime on PlatformService {
         'compilationJson': !stale && !failed && compilation != null
             ? jsonEncode({
                 ...compilation.toJson(),
-                'finalCandidateHash': candidate!.hash,
+                'finalCandidateHash': computedCandidate!.hash,
               })
             : null,
         'provider': result?.provider,

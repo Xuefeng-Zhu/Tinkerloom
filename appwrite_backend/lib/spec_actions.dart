@@ -126,6 +126,7 @@ extension _SpecActions on PlatformService {
   }
 
   Future<void> _specReferences(
+    String actor,
     AppAccess access,
     spec.CollectionSpec collection,
     Row data,
@@ -136,8 +137,10 @@ extension _SpecActions on PlatformService {
     for (final field in collection.fields) {
       final value = data[field.id];
       if (value == null) continue;
-      if (field.type == spec.FieldType.image)
-        throw const ServiceException('capability_unavailable', 409);
+      if (field.type == spec.FieldType.image) {
+        await _validateMedia(actor, access, {value as String}, tx);
+        continue;
+      }
       if (field.type != spec.FieldType.member) continue;
       // An unchanged revoked assignee is historical data. It must not block an
       // unrelated note/status edit, but a create/change/assignment rechecks it.
@@ -314,7 +317,7 @@ extension _SpecActions on PlatformService {
             throw const ServiceException('invalid_request', 400);
           spec.keys(arguments, {'data', 'capacity'}, 'create input');
           final data = _normalizeSpecData(collection, arguments['data']);
-          await _specReferences(access, collection, data, tx);
+          await _specReferences(actor, access, collection, data, tx);
           for (final behavior in collection.behaviors.where(
             (item) => item.type == 'workflow.v1',
           )) {
@@ -405,6 +408,7 @@ extension _SpecActions on PlatformService {
             }
             final normalized = _normalizeSpecData(collection, data);
             await _specReferences(
+              actor,
               access,
               collection,
               normalized,
@@ -421,6 +425,22 @@ extension _SpecActions on PlatformService {
                 }, transactionId: tx);
             await _specProject(access, record, collection, normalized, tx);
           }
+        }
+        if (!action.capability.startsWith('capacity.')) {
+          final data = jsonDecode(record['dataJson'] as String) as Row;
+          await _syncMedia(
+            actor,
+            access,
+            {
+              for (final field in collection.fields)
+                if (field.type == spec.FieldType.image &&
+                    data[field.id] != null)
+                  data[field.id] as String,
+            },
+            'record',
+            record[r'$id'] as String,
+            tx,
+          );
         }
         await _specChanged(
           actor,

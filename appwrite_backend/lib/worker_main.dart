@@ -23,7 +23,19 @@ Future<dynamic> main(dynamic context) async {
       database.isEmpty)
     return context.res.json({'error': 'backend_unavailable'}, 503);
   final key = headers['x-appwrite-key'] as String;
+  final mediaCapText = Platform.environment['PLATFORM_MEDIA_PROJECT_BYTES'];
+  final mediaCap = mediaCapText == null
+      ? MediaLimits.maxProjectBytes
+      : int.tryParse(mediaCapText);
+  if (mediaCap == null || mediaCap < 1 || mediaCap > 2147483647) {
+    context.error('Invalid media quota configuration');
+    return context.res.json({'error': 'backend_unavailable'}, 503);
+  }
   final backend = AppwriteRest(Uri.parse(endpoint), project, database, key);
+  final bucket = Platform.environment['PLATFORM_MEDIA_BUCKET_ID'];
+  final files = bucket == null || bucket.isEmpty
+      ? null
+      : AppwritePrivateFiles(Uri.parse(endpoint), project, bucket, key);
   final wakeups = AppwriteWorkerWakeups(
     Uri.parse(endpoint),
     project,
@@ -34,6 +46,8 @@ Future<dynamic> main(dynamic context) async {
     final runner = WorkerEngine(
       PlatformService(
         backend,
+        media: files,
+        mediaProjectBytes: mediaCap,
         aiProvider: ChatCompletionProvider.configured(env),
         remindersEnabled: env['PLATFORM_REMINDERS_ENABLED'] == 'true',
         wakeups: wakeups,
@@ -68,6 +82,7 @@ Future<dynamic> main(dynamic context) async {
     context.error('Private work execution failed');
     return context.res.json({'error': 'backend_unavailable'}, 503);
   } finally {
+    files?.close();
     backend.close();
     wakeups.close();
   }

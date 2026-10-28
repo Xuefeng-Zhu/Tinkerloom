@@ -32,7 +32,19 @@ Future<dynamic> main(dynamic context) async {
   if (context.req.method != 'POST') {
     return context.res.json({'error': 'method_not_allowed'}, 405);
   }
+  final mediaCapText = Platform.environment['PLATFORM_MEDIA_PROJECT_BYTES'];
+  final mediaCap = mediaCapText == null
+      ? MediaLimits.maxProjectBytes
+      : int.tryParse(mediaCapText);
+  if (mediaCap == null || mediaCap < 1 || mediaCap > 2147483647) {
+    context.error('Invalid media quota configuration');
+    return context.res.json({'error': 'backend_unavailable'}, 503);
+  }
   final backend = AppwriteRest(Uri.parse(endpoint), project, database, key);
+  final bucket = Platform.environment['PLATFORM_MEDIA_BUCKET_ID'];
+  final files = bucket == null || bucket.isEmpty
+      ? null
+      : AppwritePrivateFiles(Uri.parse(endpoint), project, bucket, key);
   final workerId = Platform.environment['PLATFORM_WORKER_FUNCTION_ID'];
   final wakeups = workerId == null || workerId.isEmpty
       ? null
@@ -58,6 +70,8 @@ Future<dynamic> main(dynamic context) async {
     }
     final service = PlatformService(
       backend,
+      media: files,
+      mediaProjectBytes: mediaCap,
       aiProvider: ChatCompletionProvider.configured(Platform.environment),
       remindersEnabled:
           Platform.environment['PLATFORM_REMINDERS_ENABLED'] == 'true',
@@ -69,7 +83,9 @@ Future<dynamic> main(dynamic context) async {
     try {
       await WorkerEngine(service).flushWakeups(limit: 3);
     } catch (_) {}
-    return context.res.json(result, 200);
+    return context.res.json(result, 200, {
+      'Cache-Control': 'private, no-store',
+    });
   } on FormatException {
     return context.res.json({'error': 'invalid_request'}, 400);
   } on ServiceException catch (error) {
@@ -87,6 +103,7 @@ Future<dynamic> main(dynamic context) async {
     context.error('Function execution failed');
     return context.res.json({'error': 'backend_unavailable'}, 503);
   } finally {
+    files?.close();
     backend.close();
     wakeups?.close();
   }

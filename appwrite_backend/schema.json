@@ -3,7 +3,10 @@
   "specification": "serverless",
   "functionScopes": [
     "rows.read",
-    "rows.write"
+    "rows.write",
+    "files.read",
+    "files.write",
+    "executions.write"
   ],
   "tables": [
     {
@@ -35,9 +38,7 @@
         {
           "key": "owner",
           "type": "key",
-          "columns": [
-            "ownerId"
-          ]
+          "columns": ["ownerId"]
         }
       ]
     },
@@ -140,17 +141,12 @@
         {
           "key": "owner_workspace",
           "type": "key",
-          "columns": [
-            "ownerId",
-            "workspaceId"
-          ]
+          "columns": ["ownerId", "workspaceId"]
         },
         {
           "key": "workspace",
           "type": "key",
-          "columns": [
-            "workspaceId"
-          ]
+          "columns": ["workspaceId"]
         }
       ]
     },
@@ -196,10 +192,7 @@
         {
           "key": "owner_app",
           "type": "key",
-          "columns": [
-            "ownerId",
-            "appId"
-          ]
+          "columns": ["ownerId", "appId"]
         }
       ]
     },
@@ -275,17 +268,12 @@
         {
           "key": "workspace_actor",
           "type": "unique",
-          "columns": [
-            "workspaceId",
-            "actorId"
-          ]
+          "columns": ["workspaceId", "actorId"]
         },
         {
           "key": "actor",
           "type": "key",
-          "columns": [
-            "actorId"
-          ]
+          "columns": ["actorId"]
         }
       ]
     },
@@ -336,25 +324,17 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
         },
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         },
         {
           "key": "actor_workspace",
           "type": "key",
-          "columns": [
-            "actorId",
-            "workspaceId"
-          ]
+          "columns": ["actorId", "workspaceId"]
         }
       ]
     },
@@ -413,18 +393,12 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
         },
         {
           "key": "author_workspace",
           "type": "key",
-          "columns": [
-            "actorId",
-            "workspaceId"
-          ]
+          "columns": ["actorId", "workspaceId"]
         }
       ]
     },
@@ -508,16 +482,12 @@
         {
           "key": "token",
           "type": "unique",
-          "columns": [
-            "tokenHash"
-          ]
+          "columns": ["tokenHash"]
         },
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         }
       ]
     },
@@ -565,9 +535,7 @@
         {
           "key": "actor",
           "type": "unique",
-          "columns": [
-            "actorId"
-          ]
+          "columns": ["actorId"]
         }
       ]
     },
@@ -636,18 +604,12 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
         },
         {
           "key": "author_workspace",
           "type": "key",
-          "columns": [
-            "actorId",
-            "workspaceId"
-          ]
+          "columns": ["actorId", "workspaceId"]
         }
       ]
     },
@@ -703,10 +665,7 @@
         {
           "key": "app_number",
           "type": "unique",
-          "columns": [
-            "appId",
-            "number"
-          ]
+          "columns": ["appId", "number"]
         }
       ]
     },
@@ -785,10 +744,7 @@
         {
           "key": "app_collection",
           "type": "key",
-          "columns": [
-            "appId",
-            "collectionId"
-          ]
+          "columns": ["appId", "collectionId"]
         }
       ]
     },
@@ -859,19 +815,12 @@
         {
           "key": "record_field",
           "type": "unique",
-          "columns": [
-            "recordId",
-            "fieldId"
-          ]
+          "columns": ["recordId", "fieldId"]
         },
         {
           "key": "app_collection_field",
           "type": "key",
-          "columns": [
-            "appId",
-            "collectionId",
-            "fieldId"
-          ]
+          "columns": ["appId", "collectionId", "fieldId"]
         }
       ]
     },
@@ -930,19 +879,12 @@
         {
           "key": "record_behavior",
           "type": "unique",
-          "columns": [
-            "appId",
-            "recordId",
-            "behaviorId"
-          ]
+          "columns": ["appId", "recordId", "behaviorId"]
         },
         {
           "key": "app_record",
           "type": "key",
-          "columns": [
-            "appId",
-            "recordId"
-          ]
+          "columns": ["appId", "recordId"]
         }
       ]
     },
@@ -996,10 +938,7 @@
         {
           "key": "pool_actor",
           "type": "unique",
-          "columns": [
-            "poolId",
-            "actorId"
-          ]
+          "columns": ["poolId", "actorId"]
         }
       ]
     },
@@ -1055,9 +994,7 @@
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         }
       ]
     },
@@ -1141,16 +1078,12 @@
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         },
         {
           "key": "next_attempt",
           "type": "key",
-          "columns": [
-            "nextAttemptAt"
-          ]
+          "columns": ["nextAttemptAt"]
         }
       ]
     },
@@ -1201,18 +1134,12 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
         },
         {
           "key": "actor_workspace",
           "type": "key",
-          "columns": [
-            "actorId",
-            "workspaceId"
-          ]
+          "columns": ["actorId", "workspaceId"]
         }
       ]
     },
@@ -1379,17 +1306,12 @@
         {
           "key": "status",
           "type": "key",
-          "columns": [
-            "status"
-          ]
+          "columns": ["status"]
         },
         {
           "key": "app_actor",
           "type": "key",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
         }
       ]
     },
@@ -1433,10 +1355,7 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": [
-            "appId",
-            "actorId"
-          ]
+          "columns": ["appId", "actorId"]
         }
       ]
     },
@@ -1571,17 +1490,12 @@
         {
           "key": "status",
           "type": "key",
-          "columns": [
-            "status"
-          ]
+          "columns": ["status"]
         },
         {
           "key": "target",
           "type": "key",
-          "columns": [
-            "mode",
-            "targetId"
-          ]
+          "columns": ["mode", "targetId"]
         }
       ]
     },
@@ -1656,17 +1570,12 @@
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         },
         {
           "key": "app_rule",
           "type": "unique",
-          "columns": [
-            "appId",
-            "ruleId"
-          ]
+          "columns": ["appId", "ruleId"]
         }
       ]
     },
@@ -1717,9 +1626,7 @@
         {
           "key": "automation",
           "type": "key",
-          "columns": [
-            "automationId"
-          ]
+          "columns": ["automationId"]
         }
       ]
     },
@@ -1840,31 +1747,22 @@
         {
           "key": "app",
           "type": "key",
-          "columns": [
-            "appId"
-          ]
+          "columns": ["appId"]
         },
         {
           "key": "status",
           "type": "key",
-          "columns": [
-            "status"
-          ]
+          "columns": ["status"]
         },
         {
           "key": "rule_record",
           "type": "key",
-          "columns": [
-            "automationId",
-            "recordId"
-          ]
+          "columns": ["automationId", "recordId"]
         },
         {
           "key": "occurrence",
           "type": "unique",
-          "columns": [
-            "occurrenceKey"
-          ]
+          "columns": ["occurrenceKey"]
         }
       ]
     },
@@ -1933,9 +1831,7 @@
         {
           "key": "run",
           "type": "unique",
-          "columns": [
-            "runId"
-          ]
+          "columns": ["runId"]
         }
       ]
     },
@@ -1986,12 +1882,287 @@
         {
           "key": "actor_notification",
           "type": "unique",
-          "columns": [
-            "actorId",
-            "notificationId"
-          ]
+          "columns": ["actorId", "notificationId"]
         }
       ]
+    },
+    {
+      "tableId": "media_assets",
+      "name": "media_assets",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "uploaderId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "requestJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "inputBytes",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "storedBytes",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "uploadedBytes",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "displayBytes",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "thumbnailBytes",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "width",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "height",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "inputHash",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "inputType",
+          "type": "varchar",
+          "required": true,
+          "size": 32
+        },
+        {
+          "key": "status",
+          "type": "varchar",
+          "required": true,
+          "size": 16
+        },
+        {
+          "key": "chunksJson",
+          "type": "varchar",
+          "required": true,
+          "size": 2048
+        },
+        {
+          "key": "originalRemoved",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "leaseToken",
+          "type": "varchar",
+          "required": false,
+          "size": 36
+        },
+        {
+          "key": "leaseUntil",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "displayHash",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "thumbnailHash",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "contentType",
+          "type": "varchar",
+          "required": false,
+          "size": 32
+        },
+        {
+          "key": "failureCategory",
+          "type": "varchar",
+          "required": false,
+          "size": 32
+        },
+        {
+          "key": "expiresAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "createdAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "updatedAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "originalDeleteAfter",
+          "type": "varchar",
+          "size": 64,
+          "required": false
+        },
+        {
+          "key": "deleteAfter",
+          "type": "varchar",
+          "size": 64,
+          "required": false
+        },
+        {
+          "key": "maintenanceAt",
+          "type": "varchar",
+          "size": 64,
+          "required": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app",
+          "type": "key",
+          "columns": ["appId"]
+        },
+        {
+          "key": "status_updated",
+          "type": "key",
+          "columns": ["status", "updatedAt"]
+        }
+      ]
+    },
+    {
+      "tableId": "media_refs",
+      "name": "media_refs",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "ownerKind",
+          "type": "varchar",
+          "required": true,
+          "size": 16
+        },
+        {
+          "key": "ownerId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "assetIdsJson",
+          "type": "varchar",
+          "required": true,
+          "size": 4096
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app",
+          "type": "key",
+          "columns": ["appId"]
+        },
+        {
+          "key": "app_owner",
+          "type": "key",
+          "columns": ["appId", "ownerKind", "ownerId"]
+        }
+      ]
+    },
+    {
+      "tableId": "media_quotas",
+      "name": "media_quotas",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "bytes",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "assets",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "leasesJson",
+          "type": "varchar",
+          "required": true,
+          "size": 2048
+        },
+        {
+          "key": "guard",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        }
+      ],
+      "indexes": []
     }
   ],
   "workerFunction": {
@@ -1999,12 +2170,24 @@
     "scopes": [
       "rows.read",
       "rows.write",
-      "executions.write"
+      "executions.write",
+      "files.read",
+      "files.write"
     ],
     "entrypoint": "lib/worker_main.dart",
     "interval": "At least 60 minutes on Free; actual-work delayed execution acceptance requires live verification."
   },
-  "optionalCoreWakeupScopes": [
-    "executions.write"
-  ]
+  "optionalCoreWakeupScopes": ["executions.write"],
+  "storage": {
+    "bucketId": "tinkerloom-media",
+    "name": "Private Tinkerloom images",
+    "permissions": [],
+    "fileSecurity": true,
+    "enabled": true,
+    "maximumFileSize": 5242880,
+    "allowedFileExtensions": ["bin"],
+    "compression": "none",
+    "encryption": true,
+    "antivirus": true
+  }
 }

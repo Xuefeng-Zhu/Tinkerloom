@@ -93,6 +93,8 @@ jobs:
         run: dart run test/service_check.dart
       - name: Test generation providers and durable worker contracts
         run: dart test test/providers test/workers_test.dart test/fanout_test.dart
+      - name: Test private media codecs and worker integration
+        run: dart test test/image_resource_test.dart test/image_sanitizer_test.dart test/media_worker_test.dart
       - name: Compile core and private worker entry points with AOT
         run: |
           dart compile aot-snapshot lib/main.dart -o "$RUNNER_TEMP/tinkerloom-core.aot"

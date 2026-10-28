@@ -4,6 +4,7 @@ environment:
   sdk: '>=3.11.0 <4.0.0'
 dependencies:
   crypto: ^3.0.7
+  image: 4.10.1
   http: ^1.2.2
   appnest_spec:
     path: packages/appnest_spec

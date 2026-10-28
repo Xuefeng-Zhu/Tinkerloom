@@ -366,6 +366,14 @@ extension _SpecRuntime on PlatformService {
         } else {
           await store.update('spec_drafts', id, data, transactionId: tx);
         }
+        await _syncMedia(
+          actor,
+          access,
+          _definitionImages(candidate),
+          'draft',
+          id,
+          tx,
+        );
         final current = await _specChanged(
           actor,
           access,
@@ -406,6 +414,7 @@ extension _SpecRuntime on PlatformService {
       if (generation != null && generation['status'] != 'preview ready')
         throw const ServiceException('generation_pending', 409);
       final candidate = spec.AppSpec.parse(draft['specJson'] as String);
+      await _validateMedia(actor, access, _definitionImages(candidate), tx);
       if (rules.any(
         (id) => !candidate.automationRequests.any((rule) => rule.id == id),
       ))
@@ -482,12 +491,9 @@ extension _SpecRuntime on PlatformService {
           (id) => !candidate.automationRequests.any((rule) => rule.id == id),
         ))
           throw const ServiceException('invalid_request', 400);
-        // Durable reminder/media execution is a later migration chunk. Definitions
-        // remain publishable with effects disabled; enabling does not fake success.
-        if (rules.isNotEmpty && !remindersEnabled ||
-            candidate.views.any(
-              (view) => view.options.containsKey('imageAssetId'),
-            ))
+        // Enabling effects requires the configured worker. Private media is
+        // validated and retained atomically below, independently of reminders.
+        if (rules.isNotEmpty && !remindersEnabled)
           throw const ServiceException('capability_unavailable', 409);
         if (base != null) {
           final prior = await _activeSpec(access, tx, expected: base);
@@ -511,6 +517,14 @@ extension _SpecRuntime on PlatformService {
           'publisherId': actor,
           'createdAt': clock().toUtc().toIso8601String(),
         }, transactionId: tx);
+        await _syncMedia(
+          actor,
+          access,
+          _definitionImages(candidate),
+          'version',
+          versionId,
+          tx,
+        );
         if (remindersEnabled)
           await _reconcileRules(
             actor,
@@ -549,6 +563,8 @@ extension _SpecRuntime on PlatformService {
   }
 
   Future<Row> _executeSpec(String actor, Row input) async {
+    if ((input['op'] as String).startsWith('spec.media.'))
+      return _executeMedia(actor, input);
     switch (input['op']) {
       case 'spec.capabilities':
         _inputKeys(input, {'op'});
@@ -563,7 +579,7 @@ extension _SpecRuntime on PlatformService {
               : <String>[],
           'generation': aiProvider != null,
           'guidance': guidanceProvider != null,
-          'privateMedia': false,
+          'privateMedia': media != null,
         };
       case 'spec.templates':
         _inputKeys(input, {'op'});

@@ -8,6 +8,7 @@ import 'rich_contract_check.dart' as rich;
 import 'collaboration_check.dart' as collaboration;
 import 'spec_engine_check.dart' as engine;
 import 'lifecycle_check.dart' as lifecycle;
+import 'media_check.dart' as media;
 
 void check(bool condition, String label) {
   if (!condition) throw StateError(label);
@@ -475,6 +476,7 @@ Future<void> main() async {
   passed += await collaboration.runCollaborationChecks();
   passed += await engine.runSpecEngineChecks();
   passed += await lifecycle.runLifecycleChecks();
+  passed += await media.runMediaChecks();
   print(
     '$passed backend checks passed (simulated store and local HTTP transport; live Appwrite acceptance is separate).',
   );

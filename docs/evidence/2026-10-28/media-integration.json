@@ -1,0 +1,153 @@
+{
+  "checkpoint": "persistent-private-media-merge",
+  "frozenAtUTC": "2026-10-28T22:57:33.952411+00:00",
+  "repository": "/Users/frank/mygit/Tinkerloom",
+  "baseCommit": "60abc92",
+  "sdk": {
+    "primary": "Dart3.11.0 stable macos_arm64",
+    "binary": "/private/tmp/tinkerloom-dart-3.11.0-arm64/dart-sdk/bin/dart",
+    "officialArchiveSHA256": "223245a42eab1b811e502e15625b867075ffe012de9eb5374a4cdde2ee087534",
+    "additionalCompatibility": "Dart3.13 analyze passes"
+  },
+  "checks": {
+    "analyze311": "pass",
+    "analyze313": "pass",
+    "format": "50 files0 changes, includes root wire exporter",
+    "serviceGroups": 118,
+    "combinedDartTests": 302,
+    "combinedBreakdown": {
+      "retainedProvidersWorkersFanout": 174,
+      "originalImageResourceAndSanitizer": 123,
+      "newMediaWorkerIntegration": 5
+    },
+    "standaloneAppSpecTests": 87,
+    "coreAot": "pass final-core.aot",
+    "workerAot": "pass final-worker.aot",
+    "schema": "30 private tables; all27 pre-media tables semantically identical; core/worker required scopes explicit; worker execute[]"
+  },
+  "scope": "Local simulated optimistic row store, real synthetic-image decode/reencode and localhost HTTP transport; scripted AI providers. No live Appwrite/media/native proof.",
+  "files": [
+    {
+      "path": "appwrite_backend/PRIVATE_MEDIA.md",
+      "baseSha256": null,
+      "sha256": "b3c5db39d67497db3f8fe4fef917fa1d5bf24b210ac063741670b0d799110495"
+    },
+    {
+      "path": "appwrite_backend/lib/generation.dart",
+      "baseSha256": "67b475a7d7bd00a3a3389838a07de4aebdba8cc0849a6995cd941bc1f6e0a21f",
+      "sha256": "caebaff85b43c00af41cc91acdfa0ee51fda0f5303be56230f69a65ace1437a6"
+    },
+    {
+      "path": "appwrite_backend/lib/image_preflight.dart",
+      "baseSha256": null,
+      "sha256": "f6ef70c3bc1a3b628d06f7f5a27acf8b1185866765667efe5d6f325fb8519549"
+    },
+    {
+      "path": "appwrite_backend/lib/image_sanitizer.dart",
+      "baseSha256": null,
+      "sha256": "064ea6473ae2a2227e4776a0cf254d772c6fa5a0bd52594fc9634394c0b3359e"
+    },
+    {
+      "path": "appwrite_backend/lib/image_worker.dart",
+      "baseSha256": null,
+      "sha256": "6c32ccee8baae0a411e9e3faf5748e0275308978f514403c16fb096892255c9d"
+    },
+    {
+      "path": "appwrite_backend/lib/main.dart",
+      "baseSha256": "3cc1a33378319b415290632d5b216caaf6a7406e0fed46bba3d570b928c76f23",
+      "sha256": "0b952b8f0307851ac4f536ad53f1656c37a257c5aa2a2975309eaac66018fab6"
+    },
+    {
+      "path": "appwrite_backend/lib/media_rest.dart",
+      "baseSha256": null,
+      "sha256": "a97f0757714e37c90e1c2411dcbba53cf2e05cb75808fe903df15fbc28cd2118"
+    },
+    {
+      "path": "appwrite_backend/lib/media_store.dart",
+      "baseSha256": null,
+      "sha256": "cdf9963e76d5d1ea69b846299440eab618ea374d283fa9ea6a9f89f96a1ca90a"
+    },
+    {
+      "path": "appwrite_backend/lib/private_media.dart",
+      "baseSha256": null,
+      "sha256": "80198fa9aa053e81e91e2b9f961ce0d8a56a024c7ec312084d441d82d31eecdf"
+    },
+    {
+      "path": "appwrite_backend/lib/service.dart",
+      "baseSha256": "9ad87dd163fee783a9c354c2e9afb6798c7d7cbd2faee5eb65ab884fd8e636df",
+      "sha256": "d79052d398b125e83b1bf3adbbcaddb99b1ee995b55305245194759cfa34b21a"
+    },
+    {
+      "path": "appwrite_backend/lib/spec_actions.dart",
+      "baseSha256": "010b2b4db9ab3e789a0cc76dd3e973af200507ba2374b7566ca4c62e5434beba",
+      "sha256": "d0047577d2f0632aae48efbb350ae8266442eb6d1c4769618827e3272095c538"
+    },
+    {
+      "path": "appwrite_backend/lib/spec_runtime.dart",
+      "baseSha256": "f98b7df26e2a6b49cff94364c831683e50da9fe7e93f4fc62b5aa94552610929",
+      "sha256": "fa85beac806b2e0bf70eee21646e8f8124560e8fa4c3ac1907598056a1321c66"
+    },
+    {
+      "path": "appwrite_backend/lib/worker_dispatch.dart",
+      "baseSha256": "d596bf57fc6ff15b93ba0e2a6c0a007b06c370e06eb60dbb02b510a30a0902c5",
+      "sha256": "60458f1c61350b7385ce1b4b8fedc65d081de032d60996ae3286f9bdd2a2e59f"
+    },
+    {
+      "path": "appwrite_backend/lib/worker_main.dart",
+      "baseSha256": "d9812e792e09ba9e32eb1132c0aeff2455f10a5d63dea7271fa71608ecaed0aa",
+      "sha256": "53335fa252687ce8fad155648f22523670ecbdcb3f61f93279896873767d292f"
+    },
+    {
+      "path": "appwrite_backend/pubspec.lock",
+      "baseSha256": "49727135a63c9801c2a8aa7bf338c63fae0c5ee7047281104c26ce0492f60c37",
+      "sha256": "88d537166ba84399f488b10bf70a24d56ef6ae38fbfde46d880ada3e4650b70a"
+    },
+    {
+      "path": "appwrite_backend/pubspec.yaml",
+      "baseSha256": "e6f8980a83b621ef2e019a1fc7f512f1ba681cb85d4b2c6640c4556293604329",
+      "sha256": "cd116fe34445541a51b749a9c8dccf93cd08a77a281d4fe2dfda45a9e1026a8e"
+    },
+    {
+      "path": "appwrite_backend/schema.json",
+      "baseSha256": "76395be34f4fc171f6fd6961208c4e329e5459e9b6aab0d612538facd12dc2f2",
+      "sha256": "30fd4657811ed4b97e61c86b49b66412f9d9c28687e196c6a8c5c40617f77129"
+    },
+    {
+      "path": "appwrite_backend/test/image_resource_test.dart",
+      "baseSha256": null,
+      "sha256": "365b17ff37c4c472e2e7d494099039e1d0888c9fe78a4250abb4fe5aa60c6932"
+    },
+    {
+      "path": "appwrite_backend/test/image_sanitizer_test.dart",
+      "baseSha256": null,
+      "sha256": "4f5bb48fcd27fb8fd6249b35a5552b4921ca463f040ab7dafc3218534b7aae2d"
+    },
+    {
+      "path": "appwrite_backend/test/media_check.dart",
+      "baseSha256": null,
+      "sha256": "e1512e5e12a4a58ac7a429481dcc0c2442657350eae2187e4f911ae8d42709fa"
+    },
+    {
+      "path": "appwrite_backend/test/media_worker_test.dart",
+      "baseSha256": null,
+      "sha256": "54f6720fa27dc8ca6be0cd353698a206c7e709fcdfd47d8c2fe0a15d084fb775"
+    },
+    {
+      "path": "appwrite_backend/test/service_check.dart",
+      "baseSha256": "445179b640c093d770aad3406b8485bd214bf16e3d7f6c6158879ec164664ac0",
+      "sha256": "fb7904cd37811c0765e9f8188d12963b903478e13fa9ce576310c646dab7d459"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "baseSha256": "d6a40229f39c0d8d260ad5d52f69a4834b00e689e4c875097ab8d25b737c0a6a",
+      "sha256": "aec5e50d288a0dc7ee3d9e4dd63c1421a4b3048fb7a4a0193c4d9c7c7fec1b8a"
+    }
+  ],
+  "remainingGates": [
+    "Actual private bucket/file/table denials, full5MiB transport and signed-in native/browser flows.",
+    "Actual private Function scheduling, quota/lease/revocation races and interruption/quiet cleanup receipts.",
+    "Free512MB runtime and performance/bandwidth acceptance; whole-variant hydration per returned chunk currently amplifies worst-case internal reads.",
+    "Root RN media field context, preview memory isolation, picker/cache/session eviction and native verification."
+  ],
+  "gitActions": "No commit, push or cloud change by this agent."
+}

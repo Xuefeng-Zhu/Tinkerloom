@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:appnest_spec/appnest_spec.dart' as spec;
@@ -12,10 +13,14 @@ import 'providers/repair_bindings.dart' as repair;
 import 'definition.dart';
 import 'errors.dart';
 import 'store.dart';
+import 'image_sanitizer.dart';
+import 'media_store.dart';
 
 export 'errors.dart';
 export 'rest.dart';
 export 'store.dart';
+export 'media_store.dart';
+export 'media_rest.dart';
 
 part 'collaboration.dart';
 part 'drafts.dart';
@@ -23,6 +28,7 @@ part 'spec_runtime.dart';
 part 'spec_actions.dart';
 part 'spec_queries.dart';
 part 'spec_lifecycle.dart';
+part 'private_media.dart';
 part 'worker_support.dart';
 part 'reminders.dart';
 part 'generation.dart';
@@ -56,6 +62,8 @@ class PlatformService {
   PlatformService(
     this.store, {
     DateTime Function()? clock,
+    this.media,
+    this.mediaProjectBytes = MediaLimits.maxProjectBytes,
     this.aiProvider,
     ai.GuidanceProvider? guidanceProvider,
     this.remindersEnabled = false,
@@ -67,6 +75,8 @@ class PlatformService {
                ? aiProvider as ai.GuidanceProvider
                : null);
   final RowStore store;
+  final PrivateFileStore? media;
+  final int mediaProjectBytes;
   final DateTime Function() clock;
   final ai.AiProvider? aiProvider;
   final ai.GuidanceProvider? guidanceProvider;
