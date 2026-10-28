@@ -40,7 +40,9 @@ function grantRole(value: unknown): value is GrantRole {
 function instant(value: unknown, mutation: boolean): number {
   if (typeof value !== "string") invalidResponse(mutation);
   const match =
-    /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3}|\d{6})Z$/.exec(value);
+    /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d{3}|\d{6})(?:Z|\+00:00)$/.exec(
+      value,
+    );
   if (
     !match ||
     !isCivilDate(match[1]) ||

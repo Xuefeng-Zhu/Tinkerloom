@@ -59,9 +59,11 @@ jobs:
       - name: Install client dependencies
         run: npm --prefix apps/mobile ci
       - name: Check the live probe syntax without calling Appwrite
-        run: node --check scripts/live_smoke.mjs
+        run: |
+          node --check scripts/live_smoke.mjs
+          node --check scripts/live_collaboration_smoke.mjs
       - name: Test private-row denial classification offline
-        run: node --test scripts/live_smoke_denial.test.mjs
+        run: node --test scripts/live_smoke_denial.test.mjs scripts/live_collaboration_contract.test.mjs
       - name: Analyze, test, and export client bundles
         run: npm run verify
 

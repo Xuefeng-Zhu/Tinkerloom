@@ -1,0 +1,270 @@
+{
+  "schemaVersion": 1,
+  "runId": "qa-collab-mvslru9e-68bee0d6",
+  "startedAt": "2026-10-28T21:04:46.322Z",
+  "completedAt": "2026-10-28T21:05:16.589Z",
+  "status": "failed",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "origin": "http://localhost:8426",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "databaseId": "tinkerloom"
+  },
+  "accounts": [
+    {
+      "label": "QA owner",
+      "id": "qa-ecb64699d987371963cebc8aac9f",
+      "creationStatus": "created"
+    },
+    {
+      "label": "QA builder",
+      "id": "qa-2f318553e1f9d0f1a4e4603596bc",
+      "creationStatus": "created"
+    },
+    {
+      "label": "QA member",
+      "id": "qa-dd0904ffc5cae9f21223a9b8a1f8",
+      "creationStatus": "created"
+    },
+    {
+      "label": "QA viewer",
+      "id": "qa-9441e94ddd19e5cd8ff46876467a",
+      "creationStatus": "created"
+    },
+    {
+      "label": "QA outsider",
+      "id": "qa-9d241ab0f7acd276b29bda7e12c6",
+      "creationStatus": "created"
+    }
+  ],
+  "resources": {
+    "workspaceId": "wor-9d1f229934d2cda740c32ac97739",
+    "appId": "app-080cdce53019e5e90fa1e678d89a",
+    "siblingId": "sib-fa949696b39074845411b2254333",
+    "unpublishedId": "unp-b45b3e7c607a9811245d61a25375",
+    "foreignWorkspace": "for-f073654572acc6c2b322e6741233",
+    "foreignApp": "far-1bdc3366f409c8358c239557db10",
+    "recordId": "rec-9f31e2b4111b389ba7b7f7c34c93"
+  },
+  "checks": [
+    {
+      "name": "qa_owner_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 686,
+      "source": "real_client_session"
+    },
+    {
+      "name": "qa_builder_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 377,
+      "source": "real_client_session"
+    },
+    {
+      "name": "qa_member_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 371,
+      "source": "real_client_session"
+    },
+    {
+      "name": "qa_viewer_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 411,
+      "source": "real_client_session"
+    },
+    {
+      "name": "qa_outsider_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 353,
+      "source": "real_client_session"
+    },
+    {
+      "name": "owner_workspace_and_apps",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 7166
+    },
+    {
+      "name": "foreign_workspace_and_app",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 2459
+    },
+    {
+      "name": "owner_initial_publication",
+      "status": "passed",
+      "assertions": 31,
+      "durationMs": 7875
+    },
+    {
+      "name": "anonymous_function_denial",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 56,
+      "httpStatus": 401,
+      "observedCode": "unrecognized_error",
+      "executionStatus": "unavailable"
+    },
+    {
+      "name": "cross_tenant_function_denials",
+      "status": "passed",
+      "assertions": 34,
+      "durationMs": 3017
+    },
+    {
+      "name": "bound_invitation_review_has_no_membership_side_effect",
+      "status": "failed",
+      "assertions": 14,
+      "durationMs": 2551,
+      "code": "strict_invitation_preview_invalid"
+    },
+    {
+      "name": "join_member_with_explicit_acceptance",
+      "status": "failed",
+      "assertions": 9,
+      "durationMs": 2365,
+      "code": "strict_invitation_preview_invalid"
+    },
+    {
+      "name": "join_viewer_with_explicit_acceptance",
+      "status": "failed",
+      "assertions": 9,
+      "durationMs": 2135,
+      "code": "strict_invitation_preview_invalid"
+    },
+    {
+      "name": "shared_workspace_hides_unpublished_and_ungranted_apps",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "shareable_invitation_is_single_use",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "private_table_reads_are_denied",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "member_and_viewer_capabilities_and_write_denials",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "owner_and_builder_write_records_readers_observe_live_values",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "private_drafts_use_distinct_global_candidates_and_stale_publication_is_denied",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "parallel_publications_have_one_winner_and_reject_the_stale_loser",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "builder_issuer_generation_and_explicit_invitation_revocation",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "parallel_accept_and_revoke_preserve_single_use_authority",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "prepare_archive_receipt_probes",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "rolling_invitation_quota_is_shared_across_apps_and_exact_retries_count_once",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "archived_apps_allow_removal_and_exact_receipts_but_no_new_writes",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "fresh_owner_session_reads_archived_persistent_app",
+      "status": "blocked",
+      "code": "prerequisite_failed",
+      "assertions": 0
+    },
+    {
+      "name": "qa_owner_signout",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 78
+    },
+    {
+      "name": "qa_builder_signout",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 127
+    },
+    {
+      "name": "qa_member_signout",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 81
+    },
+    {
+      "name": "qa_viewer_signout",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 78
+    },
+    {
+      "name": "qa_outsider_signout",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 77
+    }
+  ],
+  "coverage": {
+    "layer": "Real REST user sessions and deployed Function operations only.",
+    "unverified": [
+      "Natural seven-day expiry denial: this bounded run cannot advance the service clock.",
+      "One-hundred-workspace/app admission limits: not filled by this bounded run.",
+      "Network failure injection is not performed; exact-command receipt replays are checked.",
+      "Browser, native device, and UI interactions are not exercised by this script."
+    ]
+  },
+  "budget": {
+    "maxHttpRequests": 240,
+    "maxSyntheticAccounts": 5,
+    "maxInvitationsPerIssuer": 50,
+    "httpRequests": 47
+  },
+  "summary": {
+    "passed": 15,
+    "failed": 3,
+    "blocked": 13,
+    "assertions": 152
+  }
+}

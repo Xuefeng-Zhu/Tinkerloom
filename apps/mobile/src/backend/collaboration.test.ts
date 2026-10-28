@@ -102,6 +102,36 @@ test("invitation inspection validates the real app, role and expiry without acce
   );
 });
 
+test("persisted Appwrite UTC offset metadata is accepted without allowing non-UTC or invalid dates", async () => {
+  const s = scenario();
+  const persisted = {
+    ...invite,
+    createdAt: "2026-10-28T21:05:10.050+00:00",
+    expiresAt: "2026-11-04T21:05:10.050+00:00",
+  };
+  s.succeed({ invitations: [persisted], nextCursor: null });
+  assert.deepEqual((await s.backend.listInvitations("app")).invitations, [
+    persisted,
+  ]);
+  const preview = {
+    appId: "app",
+    appName: "Shared planner",
+    role: "builder",
+    expiresAt: persisted.expiresAt,
+    accepted: false,
+  };
+  s.succeed({ invitation: preview });
+  assert.deepEqual(await s.backend.inspectInvitation(token), preview);
+  for (const expiresAt of [
+    "2026-11-04T21:05:10.050+01:00",
+    "2026-02-30T21:05:10.050+00:00",
+    "2026-11-04T24:05:10.050+00:00",
+  ]) {
+    s.succeed({ invitation: { ...preview, expiresAt } });
+    await assert.rejects(s.backend.inspectInvitation(token), invalid);
+  }
+});
+
 test("invitation creation and acceptance retain exact tokens and operation IDs across unknown responses", async () => {
   const s = scenario();
   const original = JSON.stringify(create);
