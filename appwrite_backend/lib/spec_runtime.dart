@@ -580,6 +580,7 @@ extension _SpecRuntime on PlatformService {
           'generation': aiProvider != null,
           'guidance': guidanceProvider != null,
           'privateMedia': media != null,
+          'invalidations': {'mode': 'poll.v1', 'minimumIntervalMs': 15000},
         };
       case 'spec.templates':
         _inputKeys(input, {'op'});
@@ -620,6 +621,8 @@ extension _SpecRuntime on PlatformService {
         return _specReview(actor, input);
       case 'spec.publish':
         return _specPublish(actor, input);
+      case 'spec.watch':
+        return _specWatch(actor, input);
       case 'spec.getApp':
         _inputKeys(input, {'op', 'appId'});
         return _specRead(actor, _validId(input['appId']), (access, tx) async {

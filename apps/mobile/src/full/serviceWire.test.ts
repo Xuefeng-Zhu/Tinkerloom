@@ -3,6 +3,7 @@ import test from "node:test";
 import wire from "./fixtures/serviceWire.json";
 import { HostLifetime } from "../host/scope";
 import { hostStores } from "../host/storage";
+import type { RuntimeAdapter } from "../runtime/types";
 import { FunctionRuntimeAdapter } from "../runtime/functionAdapter";
 import { FullAppController } from "./FullAppController";
 import { FullWorkspaceController } from "./FullWorkspaceController";
@@ -156,5 +157,68 @@ test("unrelated record changes preserve dirty forms and navigation; later public
   await controller.load();
   assert.equal(controller.runtime, original);
   assert.equal(controller.getSnapshot().runtimeOutdated, true);
+  controller.dispose();
+});
+
+test("a trusted role downgrade hides private candidates before a failed manifest refresh", async () => {
+  let denyRead = false;
+  const controller = new FullAppController({
+    scope,
+    host: host(),
+    newId: () => "operation",
+    transport: async (request) => {
+      if (request.op === "spec.capabilities") return wire.capabilities;
+      if (denyRead) throw new Error("Simulated interrupted authorized refresh");
+      return wire.draft;
+    },
+  });
+  await controller.load();
+  assert.ok(controller.getSnapshot().candidate);
+  denyRead = true;
+  const refresh = controller.observeInvalidation({
+    appId: "app",
+    role: "viewer",
+    archived: false,
+    versionId: null,
+    controlRevision: 3,
+  });
+  assert.equal(controller.getSnapshot().candidate, null);
+  assert.equal(controller.getSnapshot().app, null);
+  await refresh;
+  assert.equal(controller.getSnapshot().candidate, null);
+  assert.equal(controller.getSnapshot().app, null);
+  controller.dispose();
+});
+
+test("focused route leases pause hidden screens without an old cleanup disabling the new route", async () => {
+  const activity: boolean[] = [];
+  const controller = new FullAppController({
+    scope,
+    host: host(),
+    newId: () => "operation",
+    transport: async (request) =>
+      request.op === "spec.capabilities" ? wire.capabilities : wire.published,
+    adapterFactory: (app, transport) => {
+      const adapter: RuntimeAdapter = new FunctionRuntimeAdapter(
+        app,
+        transport,
+      );
+      adapter.setActive = (active) => {
+        activity.push(active);
+      };
+      return adapter;
+    },
+  });
+  const first = controller.acquireLiveLease(true);
+  await controller.load();
+  assert.equal(activity.at(-1), true);
+  const next = controller.acquireLiveLease(true);
+  first();
+  assert.equal(activity.at(-1), true);
+  next();
+  assert.equal(activity.at(-1), false);
+  const builder = controller.acquireLiveLease(false);
+  assert.equal(activity.at(-1), false);
+  builder();
   controller.dispose();
 });

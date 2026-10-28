@@ -1,0 +1,75 @@
+{
+  "checkpoint": "semantic-watch-poll-v1",
+  "frozenAtUTC": "2026-10-28T23:22:04.423304+00:00",
+  "baseCommit": "b542d9f",
+  "repository": "/Users/frank/mygit/Tinkerloom",
+  "sdk": "Verified official Dart3.11.0 macos_arm64",
+  "checks": {
+    "analyze": "pass",
+    "format": "53 files0 changes",
+    "newWatchTests": 11,
+    "retainedServiceGroups": 118,
+    "retainedCombinedTests": 307,
+    "standaloneAppSpecTests": 87,
+    "coreAot": "pass watch-core.aot",
+    "workerAot": "pass watch-worker.aot",
+    "wireExporterCheck": "pass; fixture differs only by capabilities.invalidations",
+    "prettier": "pass"
+  },
+  "contract": {
+    "op": "spec.watch",
+    "allowedKeys": [
+      "op",
+      "appId"
+    ],
+    "returns": [
+      "appId",
+      "versionId",
+      "controlRevision",
+      "role",
+      "archived"
+    ],
+    "invalidations": {
+      "mode": "poll.v1",
+      "minimumIntervalMs": 15000
+    }
+  },
+  "scope": "Simulated optimistic store and scripted providers/local HTTP tests; no Cloud watch or native foreground proof. No media semantics, schema, other mobile source, Git or Cloud changes.",
+  "files": [
+    {
+      "path": "appwrite_backend/lib/spec_watch.dart",
+      "baseSha256": null,
+      "sha256": "f94bf597f54f30f36a17f47f4803b21ea04f3156e9c7d7c5a791e5bd04524aa0"
+    },
+    {
+      "path": "appwrite_backend/lib/service.dart",
+      "baseSha256": "5925c99ab629b9aced0f6bfd0061eb196d8274b13f06240ccb0c6e14b8dfc62a",
+      "sha256": "90efdc1beb8713f54d99d60c4d6ac459e154331be33f050be9b577c81950353b"
+    },
+    {
+      "path": "appwrite_backend/lib/spec_runtime.dart",
+      "baseSha256": "fa85beac806b2e0bf70eee21646e8f8124560e8fa4c3ac1907598056a1321c66",
+      "sha256": "28cf108c60345c7ecbecf2699bd677207619ad5310c2e67ffdaf116b2fed4c8b"
+    },
+    {
+      "path": "appwrite_backend/test/watch_test.dart",
+      "baseSha256": null,
+      "sha256": "c2b7cbc35e67a21ce204092eff6a08017d99318d541c49e758ec638befd34c51"
+    },
+    {
+      "path": "appwrite_backend/WATCH.md",
+      "baseSha256": null,
+      "sha256": "88600c5592b2145abefdd090495d998fca79a3d321d7c53a7c8df47b473e5363"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "baseSha256": "070b14206e26a32e5beb0f8b8b3214dd89522794a6c77afa097b14243fc7230b",
+      "sha256": "1a3b7760c771df7ef89b2be210a2257d7195f6f5998f0b7784d49155fd17e46a"
+    },
+    {
+      "path": "apps/mobile/src/full/fixtures/serviceWire.json",
+      "baseSha256": "58c7b7e9953c92b4d729b3d0c24349254ed5f9b189874a9e95c36bf5ebb6c093",
+      "sha256": "aba07933ee29f22a213cc30113ba939f326abaef449b856a352ab38bcfee6909"
+    }
+  ]
+}

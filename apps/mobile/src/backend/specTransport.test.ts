@@ -55,6 +55,8 @@ test("spec reads and writes preserve definite rejection versus unknown outcome c
   const s = fixture();
   for (const op of [
     "spec.query",
+    "spec.watch",
+    "spec.media.usage",
     "spec.publish",
     "spec.generate",
     "spec.instantiate",
@@ -72,7 +74,8 @@ test("spec reads and writes preserve definite rejection versus unknown outcome c
       s.backend.executeSpec({ op }),
       (error) =>
         error instanceof BackendError &&
-        error.uncertain === (op !== "spec.query"),
+        error.uncertain ===
+          !["spec.query", "spec.watch", "spec.media.usage"].includes(op),
     );
   }
 });

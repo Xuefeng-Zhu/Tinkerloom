@@ -139,6 +139,8 @@ export function manifest(value: unknown, appId: string): FullManifest {
   });
 }
 export interface PlatformCapabilities {
+  invalidations:
+    import("../runtime/invalidationTypes").InvalidationCapability | null;
   generation: boolean;
   guidance: boolean;
   effects: string[];
@@ -156,6 +158,23 @@ export function platformCapabilities(value: unknown): PlatformCapabilities {
     "invalid_response",
     "Platform capabilities could not be confirmed.",
   );
+  let invalidations:
+    import("../runtime/invalidationTypes").InvalidationCapability | null = null;
+  if (data.invalidations !== undefined && data.invalidations !== null) {
+    const capability = row(data.invalidations);
+    ensure(
+      capability.mode === "poll.v1" &&
+        Number.isSafeInteger(capability.minimumIntervalMs) &&
+        (capability.minimumIntervalMs as number) >= 15000 &&
+        (capability.minimumIntervalMs as number) <= 120000,
+      "invalid_response",
+      "The current live refresh capability is unsupported.",
+    );
+    invalidations = {
+      mode: "poll.v1",
+      minimumIntervalMs: capability.minimumIntervalMs as number,
+    };
+  }
   const effects = strings(data.effects);
   ensure(
     effects.every((effect) =>
@@ -167,6 +186,7 @@ export function platformCapabilities(value: unknown): PlatformCapabilities {
     "Unsupported effect capability.",
   );
   return freezeValidated({
+    invalidations,
     generation: data.generation,
     guidance: data.guidance,
     effects,

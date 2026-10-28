@@ -1,3 +1,4 @@
+import type { InvalidationStamp } from "../runtime/invalidationTypes";
 import { BackendError } from "../backend/errors";
 import type { AppSpec } from "../spec/types";
 import { decodeAppSpec } from "../spec/decode";
@@ -12,6 +13,7 @@ import type { RuntimeAdapter, RuntimeTransport } from "../runtime/types";
 import { UtilityTimerController } from "../runtime/timer";
 import {
   ensure,
+  RuntimeError,
   isRuntimeAccessFailure,
   runtimeError,
 } from "../runtime/errors";
@@ -83,6 +85,7 @@ export class FullAppController {
     guidance: null,
   };
   private listeners = new Set<() => void>();
+  private liveLeases = new Map<symbol, boolean>();
   private closed = false;
   private sequence = 0;
   private guidanceSequence = 0;
@@ -308,6 +311,7 @@ export class FullAppController {
         );
         void this.device.initialize().catch(() => {});
         void this.runtime.recover().catch((error) => this.fail(error));
+        this.applyLiveActivity();
       }
     }
     const candidateChanged =
@@ -839,13 +843,51 @@ export class FullAppController {
     this.disposeRuntime();
     await this.load();
   }
-  setLiveActive(active: boolean) {
+  /** A trusted watch denial hides private state even while forms are dirty. */
+  invalidateAccess(error: unknown) {
+    if (!this.closed) this.fail(error, false, true);
+  }
+  async observeInvalidation(stamp: InvalidationStamp) {
+    if (this.closed) return;
+    ensure(
+      stamp.appId === this.options.scope.appId,
+      "invalid_response",
+      "The update belongs to a different app.",
+    );
+    const current = this.state.app;
+    if (
+      current &&
+      (current.role !== stamp.role || current.archived !== stamp.archived)
+    ) {
+      this.invalidateAccess(
+        new RuntimeError(
+          "forbidden",
+          "Your app access changed. Current access is being checked.",
+        ),
+      );
+    }
+    await this.load();
+  }
+  private applyLiveActivity() {
+    const active = !this.closed && [...this.liveLeases.values()].some(Boolean);
     this.device?.setActive(active);
     this.runtime?.adapter.setActive?.(active);
+  }
+  /** Focus leases prevent a retained background route from keeping devices or polling active. */
+  acquireLiveLease(active: boolean): () => void {
+    this.active();
+    const token = Symbol("focused-live-route");
+    this.liveLeases.set(token, active);
+    this.applyLiveActivity();
+    return () => {
+      if (!this.liveLeases.delete(token) || this.closed) return;
+      this.applyLiveActivity();
+    };
   }
   dispose() {
     if (this.closed) return;
     this.closed = true;
+    this.liveLeases.clear();
     this.sequence++;
     this.guidanceSequence++;
     this.stopAutosave();

@@ -28,6 +28,7 @@ part 'spec_runtime.dart';
 part 'spec_actions.dart';
 part 'spec_queries.dart';
 part 'spec_lifecycle.dart';
+part 'spec_watch.dart';
 part 'private_media.dart';
 part 'worker_support.dart';
 part 'reminders.dart';

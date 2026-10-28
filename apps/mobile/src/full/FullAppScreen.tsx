@@ -1,4 +1,5 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useFocusEffect } from "expo-router";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -44,12 +45,13 @@ export function FullAppScreen({
     [localError, setLocalError] = useState<string | null>(null);
   useEffect(() => {
     void controller.load();
-    return () => controller.setLiveActive(false);
   }, [controller]);
-  useEffect(() => {
-    controller.setLiveActive(mode === "live");
-    return () => controller.setLiveActive(false);
-  }, [controller, mode, state.app?.version?.id, controller.device]);
+  useFocusEffect(
+    useCallback(
+      () => controller.acquireLiveLease(mode === "live"),
+      [controller, mode],
+    ),
+  );
   const navigate = async (action: () => void) => {
     if (state.pending) {
       action();

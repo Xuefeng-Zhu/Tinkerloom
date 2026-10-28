@@ -76,6 +76,10 @@ export class RuntimeController {
   private unsubscribe = () => {};
   private recovered = false;
   private recovery: Promise<void> | null = null;
+  private refreshTask: Promise<void> | null = null;
+  private deferredRefresh = false;
+  private retainNextRefresh = true;
+  private pageReads = 0;
   constructor(
     readonly adapter: RuntimeAdapter,
     private readonly operationId: () => string,
@@ -101,7 +105,8 @@ export class RuntimeController {
     };
     if (adapter.features.has("watch"))
       this.unsubscribe = adapter.watch(() => {
-        if (!this.state.dirty && !this.state.pending) void this.refresh();
+        this.deferredRefresh = true;
+        void this.drainRefresh();
       });
   }
   getSnapshot = () => this.state;
@@ -116,12 +121,17 @@ export class RuntimeController {
     this.state = { ...this.state, ...patch };
     for (const listener of this.listeners) listener();
   }
-  private invalidateAccess(error: RuntimeError) {
+  /** Trusted host watch denials bypass dirty/pending refresh deferral. Durable commands stay saved. */
+  invalidateAccess(error: RuntimeError) {
+    if (this.disposed || this.state.accessDenied) return;
     ++this.request;
+    this.deferredRefresh = false;
     this.emit({
       accessDenied: true,
       views: {},
       record: null,
+      pending: null,
+      outcome: null,
       dirty: false,
       loading: false,
       error,
@@ -208,8 +218,12 @@ export class RuntimeController {
     return this.recovery;
   }
   setDirty(dirty: boolean) {
-    if (dirty) ++this.request;
+    if (dirty) {
+      ++this.request;
+      if (this.refreshTask || this.pageReads) this.deferredRefresh = true;
+    }
     this.emit({ dirty, ...(dirty ? { loading: false } : {}) });
+    if (!dirty) void this.drainRefresh();
   }
   /** Dirty or unresolved commands require an explicit host decision before leaving. */
   navigate(location: RuntimeLocation, discard = false): boolean {
@@ -259,6 +273,7 @@ export class RuntimeController {
       "unsaved_changes",
       "Finish or discard the current edit before changing the view.",
     );
+    ++this.request;
     this.settings.set(viewId, { ...this.settingsFor(viewId), ...selection });
     await this.refresh(false);
   }
@@ -366,7 +381,36 @@ export class RuntimeController {
       );
     return result;
   }
-  async refresh(retain = true): Promise<void> {
+  refresh(retain = true): Promise<void> {
+    if (this.disposed || this.state.accessDenied) return Promise.resolve();
+    this.deferredRefresh = true;
+    this.retainNextRefresh = this.retainNextRefresh && retain;
+    return this.drainRefresh();
+  }
+  private drainRefresh(): Promise<void> {
+    if (
+      this.disposed ||
+      this.state.accessDenied ||
+      this.state.dirty ||
+      this.state.pending ||
+      this.pageReads
+    )
+      return Promise.resolve();
+    if (this.refreshTask)
+      return this.refreshTask.then(() => this.drainRefresh());
+    if (!this.deferredRefresh) return Promise.resolve();
+    const retain = this.retainNextRefresh;
+    this.deferredRefresh = false;
+    this.retainNextRefresh = true;
+    const task = this.performRefresh(retain);
+    this.refreshTask = task;
+    return task
+      .finally(() => {
+        if (this.refreshTask === task) this.refreshTask = null;
+      })
+      .then(() => this.drainRefresh());
+  }
+  private async performRefresh(retain = true): Promise<void> {
     if (!this.recovered) {
       try {
         await this.recover();
@@ -413,7 +457,7 @@ export class RuntimeController {
         recordError = runtimeError(error);
       }
     }
-    if (this.disposed || generation !== this.request) return;
+    if (this.disposed) return;
     const denied =
       recordError && isRuntimeAccessFailure(recordError)
         ? recordError
@@ -426,6 +470,7 @@ export class RuntimeController {
       this.invalidateAccess(denied);
       return;
     }
+    if (generation !== this.request) return;
     const next: Record<string, RuntimeViewState> = {};
     results.forEach((result, i) => {
       const view = views[i];
@@ -444,6 +489,9 @@ export class RuntimeController {
   async loadMore(viewId: string): Promise<void> {
     const current = this.state.views[viewId];
     if (
+      this.disposed ||
+      this.state.accessDenied ||
+      this.refreshTask ||
       !current?.nextCursor ||
       current.loading ||
       this.state.dirty ||
@@ -460,6 +508,7 @@ export class RuntimeController {
         [viewId]: { ...current, loading: true, error: undefined },
       },
     });
+    this.pageReads++;
     try {
       const page = await this.adapter.query(view.collectionId!, {
         ...current.query,
@@ -495,12 +544,13 @@ export class RuntimeController {
         },
       });
     } catch (error) {
-      if (!this.disposed && generation === this.request) {
-        const failure = runtimeError(error);
-        if (isRuntimeAccessFailure(failure)) {
-          this.invalidateAccess(failure);
-          return;
-        }
+      if (this.disposed) return;
+      const failure = runtimeError(error);
+      if (isRuntimeAccessFailure(failure)) {
+        this.invalidateAccess(failure);
+        return;
+      }
+      if (generation === this.request) {
         this.emit({
           views: {
             ...this.state.views,
@@ -512,6 +562,9 @@ export class RuntimeController {
           },
         });
       }
+    } finally {
+      this.pageReads--;
+      void this.drainRefresh();
     }
   }
   async execute(
@@ -568,6 +621,7 @@ export class RuntimeController {
     // Fence any in-flight reads before the write. The original spec and record
     // revision stay in this command even if a newer version appears afterwards.
     ++this.request;
+    this.deferredRefresh = true;
     // Persistence precedes the first network call. A failed save is a definite
     // local failure and must never send an unretained command.
     this.emit({
@@ -644,6 +698,7 @@ export class RuntimeController {
     try {
       await this.commands.clear(this.state.pending!.command.operationId);
       this.emit({ pending: null, error: null });
+      await this.drainRefresh();
     } catch {
       this.emit({
         error: new RuntimeError(
@@ -657,7 +712,18 @@ export class RuntimeController {
     if (this.disposed) return;
     this.disposed = true;
     ++this.request;
+    this.deferredRefresh = false;
     this.unsubscribe();
+    this.state = {
+      ...this.state,
+      views: {},
+      record: null,
+      pending: null,
+      dirty: false,
+      loading: false,
+      outcome: null,
+      error: null,
+    };
     this.listeners.clear();
     this.adapter.dispose();
   }

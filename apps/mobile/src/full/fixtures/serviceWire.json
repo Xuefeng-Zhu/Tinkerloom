@@ -59,7 +59,11 @@
     "effects": [],
     "generation": false,
     "guidance": false,
-    "privateMedia": false
+    "privateMedia": false,
+    "invalidations": {
+      "mode": "poll.v1",
+      "minimumIntervalMs": 15000
+    }
   },
   "shell": {
     "app": {

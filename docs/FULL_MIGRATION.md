@@ -354,3 +354,22 @@ represent Cloud proof. Combined client verification passed253 tests with0skips,
 lint, typecheck, formatting and all three Expo exports. Five new metadata service
 tests and the wire comparison pass on Dart3.11. Live full-engine/inbox/worker/media
 and final-source native interaction remain required.
+
+### Foreground semantic refresh checkpoint
+
+The [watch contract](../appwrite_backend/WATCH.md) negotiates authenticated
+foreground polling at no less than15seconds. It exposes only current app/version,
+semantic revision, role and archive state. Renewed transaction guard nonces never
+become watch tokens. The client backs off to120seconds, pauses while hidden or
+backgrounded, fences late account responses, coalesces in-flight refreshes and
+defers record reloads while a form or retained command is unresolved. It never
+automatically replays mutations. Confirmed authority changes hide private data
+before a subsequent manifest read can fail. Expo focus leases also release
+polling/device controls for routes retained behind sharing and inbox screens.
+
+Client verification passed272 tests, lint, typecheck, formatting and all three
+platform exports; read-only watch/media-usage classification has separate focused
+coverage. The backend retained118 service groups,307 combined tests and87 AppSpec
+tests, adds11 watch tests, and compiles both AOT entry points on Dart3.11. These
+are local transport/store/lifecycle proofs; actual Cloud watch timing and native
+foreground behavior remain separate gates.

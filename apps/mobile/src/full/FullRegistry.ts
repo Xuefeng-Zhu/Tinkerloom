@@ -8,6 +8,7 @@ import {
 import { AutomationRunsController } from "../notifications/AutomationRunsController";
 import type { NotificationsServices } from "../notifications/NotificationsContext";
 import { withReminders } from "../notifications/withReminders";
+import { withInvalidation } from "../runtime/invalidation";
 import { FunctionRuntimeAdapter } from "../runtime/functionAdapter";
 import type { HostScope } from "../host/scope";
 import type { RuntimeTransport } from "../runtime/types";
@@ -142,14 +143,26 @@ export class FullRegistry {
             lifetime.dispose(),
           );
           lifetime.onDispose(stop);
-          const adapter = withReminders(
+          const current = () =>
+            lifetime.active &&
+            this.apps.get(appId) === app &&
+            sessionKey(this.options.readSession()) === sessionKey(expected);
+          const watched = withInvalidation(
             new FunctionRuntimeAdapter(manifest, transport),
             transport,
             lifetime,
             {
-              effects: context.platform?.effects ?? [],
+              capability: context.platform?.invalidations ?? null,
+              onManifestChange: (stamp) =>
+                current() ? app?.observeInvalidation(stamp) : undefined,
+              onAccessFailure: (error) => {
+                if (current()) app?.invalidateAccess(error);
+              },
             },
           );
+          const adapter = withReminders(watched, transport, lifetime, {
+            effects: context.platform?.effects ?? [],
+          });
           const dispose = adapter.dispose.bind(adapter);
           adapter.dispose = () => {
             dispose();
