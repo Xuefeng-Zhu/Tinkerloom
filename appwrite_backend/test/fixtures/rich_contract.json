@@ -1,0 +1,949 @@
+{
+  "baseDefinition": {
+    "title": "Ledger",
+    "description": "Amounts and civil dates",
+    "primaryFieldId": "title",
+    "fields": [
+      {
+        "id": "title",
+        "label": "Item",
+        "kind": "text",
+        "required": true
+      },
+      {
+        "id": "amount",
+        "label": "Amount",
+        "kind": "number"
+      },
+      {
+        "id": "when",
+        "label": "Date",
+        "kind": "date"
+      }
+    ]
+  },
+  "validDefinitions": [
+    {
+      "name": "absent-view",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ]
+      },
+      "expected": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ]
+      }
+    },
+    {
+      "name": "list",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "list"
+        }
+      },
+      "expected": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "list"
+        }
+      }
+    },
+    {
+      "name": "table",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "table"
+        }
+      },
+      "expected": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "table"
+        }
+      }
+    },
+    {
+      "name": "agenda-with-optional-date",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "agenda",
+          "dateFieldId": "when"
+        }
+      },
+      "expected": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "agenda",
+          "dateFieldId": "when"
+        }
+      }
+    },
+    {
+      "name": "legacy-canonical-preserved",
+      "input": {
+        "title": "Notes",
+        "description": "",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Title",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "body",
+            "label": "Body",
+            "kind": "longText"
+          }
+        ]
+      },
+      "expected": {
+        "title": "Notes",
+        "description": "",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Title",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "body",
+            "label": "Body",
+            "kind": "longText"
+          }
+        ]
+      }
+    },
+    {
+      "name": "canonical-labels-and-optional-required",
+      "input": {
+        "title": " Ledger ",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": " Amount ",
+            "kind": "number",
+            "required": false
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ]
+      },
+      "expected": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ]
+      }
+    }
+  ],
+  "invalidDefinitions": [
+    {
+      "name": "null-view",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": null
+      }
+    },
+    {
+      "name": "missing-kind",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {}
+      }
+    },
+    {
+      "name": "unknown-kind",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "calendar"
+        }
+      }
+    },
+    {
+      "name": "list-date-property",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "list",
+          "dateFieldId": "when"
+        }
+      }
+    },
+    {
+      "name": "table-null-date-property",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "table",
+          "dateFieldId": null
+        }
+      }
+    },
+    {
+      "name": "agenda-missing-date",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "agenda"
+        }
+      }
+    },
+    {
+      "name": "agenda-unknown-date",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "agenda",
+          "dateFieldId": "missing"
+        }
+      }
+    },
+    {
+      "name": "agenda-non-date",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "agenda",
+          "dateFieldId": "amount"
+        }
+      }
+    },
+    {
+      "name": "unknown-view-property",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ],
+        "view": {
+          "kind": "list",
+          "code": "execute()"
+        }
+      }
+    },
+    {
+      "name": "number-primary-rejected",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "number",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ]
+      }
+    },
+    {
+      "name": "date-primary-rejected",
+      "input": {
+        "title": "Ledger",
+        "description": "Amounts and civil dates",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "date",
+            "required": true
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ]
+      }
+    }
+  ],
+  "validValues": [
+    {
+      "name": "zero-minimum-year",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "0001-01-01"
+      },
+      "expected": {
+        "title": "Item",
+        "amount": 0,
+        "when": "0001-01-01"
+      }
+    },
+    {
+      "name": "upper-number-maximum-year",
+      "input": {
+        "title": "Item",
+        "amount": 1000000000000000,
+        "when": "9999-12-31"
+      },
+      "expected": {
+        "title": "Item",
+        "amount": 1000000000000000,
+        "when": "9999-12-31"
+      }
+    },
+    {
+      "name": "lower-number-leap-century",
+      "input": {
+        "title": "Item",
+        "amount": -1000000000000000,
+        "when": "2000-02-29"
+      },
+      "expected": {
+        "title": "Item",
+        "amount": -1000000000000000,
+        "when": "2000-02-29"
+      }
+    },
+    {
+      "name": "decimal-leap-year",
+      "input": {
+        "title": "Item",
+        "amount": 12.75,
+        "when": "2024-02-29"
+      },
+      "expected": {
+        "title": "Item",
+        "amount": 12.75,
+        "when": "2024-02-29"
+      }
+    },
+    {
+      "name": "negative-fraction",
+      "input": {
+        "title": "Item",
+        "amount": -0.125,
+        "when": "0004-02-29"
+      },
+      "expected": {
+        "title": "Item",
+        "amount": -0.125,
+        "when": "0004-02-29"
+      }
+    },
+    {
+      "name": "empty-optional",
+      "input": {
+        "title": "Item",
+        "amount": "",
+        "when": ""
+      },
+      "expected": {
+        "title": "Item",
+        "amount": "",
+        "when": ""
+      }
+    },
+    {
+      "name": "missing-optional-normalized",
+      "input": {
+        "title": " Item "
+      },
+      "expected": {
+        "title": "Item",
+        "amount": "",
+        "when": ""
+      }
+    }
+  ],
+  "invalidValues": [
+    {
+      "name": "numeric-string",
+      "input": {
+        "title": "Item",
+        "amount": "12",
+        "when": ""
+      }
+    },
+    {
+      "name": "boolean-number",
+      "input": {
+        "title": "Item",
+        "amount": true,
+        "when": ""
+      }
+    },
+    {
+      "name": "null-number",
+      "input": {
+        "title": "Item",
+        "amount": null,
+        "when": ""
+      }
+    },
+    {
+      "name": "number-over-limit",
+      "input": {
+        "title": "Item",
+        "amount": 1000000000000001,
+        "when": ""
+      }
+    },
+    {
+      "name": "number-under-limit",
+      "input": {
+        "title": "Item",
+        "amount": -1000000000000001,
+        "when": ""
+      }
+    },
+    {
+      "name": "whitespace-number",
+      "input": {
+        "title": "Item",
+        "amount": " ",
+        "when": ""
+      }
+    },
+    {
+      "name": "array-number",
+      "input": {
+        "title": "Item",
+        "amount": [],
+        "when": ""
+      }
+    },
+    {
+      "name": "invalid-civil-'0000-01-01'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "0000-01-01"
+      }
+    },
+    {
+      "name": "invalid-civil-'10000-01-01'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "10000-01-01"
+      }
+    },
+    {
+      "name": "invalid-civil-'1900-02-29'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "1900-02-29"
+      }
+    },
+    {
+      "name": "invalid-civil-'2100-02-29'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2100-02-29"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-02-30'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-02-30"
+      }
+    },
+    {
+      "name": "invalid-civil-'2023-02-29'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2023-02-29"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-04-31'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-04-31"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-00-01'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-00-01"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-13-01'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-13-01"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-01-00'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-01-00"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-1-01'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-1-01"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-01-1'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-01-1"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-01-01T00:00:00Z'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-01-01T00:00:00Z"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-01-01+00:00'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-01-01+00:00"
+      }
+    },
+    {
+      "name": "invalid-civil-' 2024-01-01'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": " 2024-01-01"
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-01-01 '",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-01-01 "
+      }
+    },
+    {
+      "name": "invalid-civil-'2024-01-01\\n'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "2024-01-01\n"
+      }
+    },
+    {
+      "name": "invalid-civil-'２０２４-01-01'",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": "２０２４-01-01"
+      }
+    },
+    {
+      "name": "null-date",
+      "input": {
+        "title": "Item",
+        "amount": 0,
+        "when": null
+      }
+    }
+  ]
+}

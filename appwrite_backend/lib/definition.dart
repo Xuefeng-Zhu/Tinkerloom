@@ -5,14 +5,20 @@ import 'errors.dart';
 const definitionBytes = 16384;
 const valuesBytes = 16384;
 final _fieldId = RegExp(r'^[a-z][a-zA-Z0-9_]{0,31}$');
+final _civilDate = RegExp(r'^([0-9]{4})-([0-9]{2})-([0-9]{2})$');
+const numberMagnitude = 1000000000000000;
 
 Map<String, dynamic> jsonObject(Object? value, String error) {
   if (value is! Map<String, dynamic>) throw ServiceException(error, 400);
   return value;
 }
 
-String boundedText(Object? value, int maximum, String error,
-    {bool empty = false}) {
+String boundedText(
+  Object? value,
+  int maximum,
+  String error, {
+  bool empty = false,
+}) {
   if (value is! String) throw ServiceException(error, 400);
   final normalized = value.trim();
   if ((!empty && normalized.isEmpty) || normalized.length > maximum) {
@@ -29,7 +35,16 @@ void _keys(Map<String, dynamic> value, Set<String> allowed, String error) {
 Map<String, dynamic> validateDefinition(Object? value) {
   const error = 'invalid_definition';
   final source = jsonObject(value, error);
-  _keys(source, {'title', 'description', 'primaryFieldId', 'fields'}, error);
+  _keys(
+      source,
+      {
+        'title',
+        'description',
+        'primaryFieldId',
+        'fields',
+        'view',
+      },
+      error);
   final title = boundedText(source['title'], 80, error);
   final description = source['description'];
   if (description is! String || description.length > 240)
@@ -47,14 +62,20 @@ Map<String, dynamic> validateDefinition(Object? value) {
     if (id is! String ||
         !_fieldId.hasMatch(id) ||
         !ids.add(id) ||
-        !{'text', 'longText', 'boolean', 'choice'}.contains(kind))
-      throw const ServiceException(error, 400);
+        !{
+          'text',
+          'longText',
+          'boolean',
+          'choice',
+          'number',
+          'date',
+        }.contains(kind)) throw const ServiceException(error, 400);
     if (field.containsKey('required') && field['required'] is! bool)
       throw const ServiceException(error, 400);
     final normalized = <String, dynamic>{
       'id': id,
       'label': boundedText(field['label'], 64, error),
-      'kind': kind
+      'kind': kind,
     };
     if (field['required'] == true) normalized['required'] = true;
     if (kind == 'choice') {
@@ -72,23 +93,49 @@ Map<String, dynamic> validateDefinition(Object? value) {
     fields.add(normalized);
   }
   final primary = source['primaryFieldId'];
-  if (!fields.any((field) =>
-      field['id'] == primary &&
-      field['kind'] == 'text' &&
-      field['required'] == true)) throw const ServiceException(error, 400);
+  if (!fields.any(
+    (field) =>
+        field['id'] == primary &&
+        field['kind'] == 'text' &&
+        field['required'] == true,
+  )) throw const ServiceException(error, 400);
   final result = <String, dynamic>{
     'title': title,
     'description': description,
     'primaryFieldId': primary,
-    'fields': fields
+    'fields': fields,
   };
+  if (source.containsKey('view')) {
+    final view = jsonObject(source['view'], error);
+    _keys(view, {'kind', 'dateFieldId'}, error);
+    final kind = view['kind'];
+    if (!{'list', 'table', 'agenda'}.contains(kind)) {
+      throw const ServiceException(error, 400);
+    }
+    if (kind == 'agenda') {
+      final dateFieldId = view['dateFieldId'];
+      if (dateFieldId is! String ||
+          !fields.any(
+            (field) => field['id'] == dateFieldId && field['kind'] == 'date',
+          )) {
+        throw const ServiceException(error, 400);
+      }
+      result['view'] = {'kind': kind, 'dateFieldId': dateFieldId};
+    } else {
+      if (view.containsKey('dateFieldId'))
+        throw const ServiceException(error, 400);
+      result['view'] = {'kind': kind};
+    }
+  }
   if (utf8.encode(jsonEncode(result)).length > definitionBytes)
     throw const ServiceException(error, 400);
   return result;
 }
 
 Map<String, dynamic> validateValues(
-    Map<String, dynamic> definition, Object? input) {
+  Map<String, dynamic> definition,
+  Object? input,
+) {
   const error = 'invalid_values';
   final values = jsonObject(input, error);
   final fields = (definition['fields'] as List).cast<Map<String, dynamic>>();
@@ -105,9 +152,25 @@ Map<String, dynamic> validateValues(
     } else if (!values.containsKey(id) || value == '') {
       if (field['required'] == true) throw const ServiceException(error, 400);
       result[id] = '';
+    } else if (kind == 'number') {
+      if (value is! num ||
+          !value.isFinite ||
+          value < -numberMagnitude ||
+          value > numberMagnitude) {
+        throw const ServiceException(error, 400);
+      }
+      result[id] = value;
+    } else if (kind == 'date') {
+      if (value is! String || !isCivilDate(value))
+        throw const ServiceException(error, 400);
+      result[id] = value;
     } else {
-      final text = boundedText(value, kind == 'longText' ? 4000 : 200, error,
-          empty: field['required'] != true);
+      final text = boundedText(
+        value,
+        kind == 'longText' ? 4000 : 200,
+        error,
+        empty: field['required'] != true,
+      );
       if (kind == 'choice' &&
           text.isNotEmpty &&
           !(field['options'] as List).contains(text))
@@ -120,14 +183,30 @@ Map<String, dynamic> validateValues(
   return result;
 }
 
+/// Civil dates have no timezone, instant conversion, or permissive rollover.
+bool isCivilDate(String value) {
+  if (value.length != 10) return false;
+  final match = _civilDate.firstMatch(value);
+  if (match == null) return false;
+  final year = int.parse(match.group(1)!);
+  final month = int.parse(match.group(2)!);
+  final day = int.parse(match.group(3)!);
+  if (year < 1 || month < 1 || month > 12 || day < 1) return false;
+  final leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+  final days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return day <= days[month - 1];
+}
+
 void requireCompatible(
-    Map<String, dynamic> previous, Map<String, dynamic> next) {
+  Map<String, dynamic> previous,
+  Map<String, dynamic> next,
+) {
   if (previous['primaryFieldId'] != next['primaryFieldId'])
     throw const ServiceException('incompatible_definition', 409);
   final oldFields = (previous['fields'] as List).cast<Map<String, dynamic>>();
   final newFields = {
     for (final field in (next['fields'] as List).cast<Map<String, dynamic>>())
-      field['id']: field
+      field['id']: field,
   };
   for (final old in oldFields) {
     final current = newFields[old['id']];
@@ -136,14 +215,14 @@ void requireCompatible(
         (current['required'] == true) != (old['required'] == true))
       throw const ServiceException('incompatible_definition', 409);
     if (old['kind'] == 'choice' &&
-        (old['options'] as List)
-            .any((option) => !(current['options'] as List).contains(option)))
-      throw const ServiceException('incompatible_definition', 409);
+        (old['options'] as List).any(
+          (option) => !(current['options'] as List).contains(option),
+        )) throw const ServiceException('incompatible_definition', 409);
   }
   final oldIds = oldFields.map((field) => field['id']).toSet();
   if (newFields.values.any(
-      (field) => !oldIds.contains(field['id']) && field['required'] == true))
-    throw const ServiceException('incompatible_definition', 409);
+    (field) => !oldIds.contains(field['id']) && field['required'] == true,
+  )) throw const ServiceException('incompatible_definition', 409);
 }
 
 String canonicalJson(Object? value) {
