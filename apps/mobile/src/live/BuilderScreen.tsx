@@ -10,6 +10,7 @@ import type {
   LiveAppState,
 } from "../state/liveAppController";
 import { PendingSaveNotice, styles } from "./LiveAppScreen";
+import { RecordViewPicker } from "./RecordViewPicker";
 
 export function BuilderScreen({
   state,
@@ -40,7 +41,12 @@ export function BuilderScreen({
         ...definition.fields,
         {
           id: `field_${number}`,
-          label: "New field",
+          label:
+            kind === "number"
+              ? "Number"
+              : kind === "date"
+                ? "Date"
+                : "New field",
           kind,
           ...(kind === "choice" ? { options: ["First", "Second"] } : {}),
         },
@@ -177,19 +183,31 @@ export function BuilderScreen({
           ))}
           {definition.fields.length < 10 && (
             <View style={styles.toolbar}>
-              {(["text", "longText", "boolean", "choice"] as const).map(
-                (kind) => (
-                  <Button
-                    key={kind}
-                    label={`Add ${kind === "longText" ? "long text" : kind} field`}
-                    variant="secondary"
-                    disabled={inactive}
-                    onPress={() => addField(kind)}
-                  />
-                ),
-              )}
+              {(
+                [
+                  "text",
+                  "longText",
+                  "boolean",
+                  "choice",
+                  "number",
+                  "date",
+                ] as const
+              ).map((kind) => (
+                <Button
+                  key={kind}
+                  label={`Add ${kind === "longText" ? "long text" : kind} field`}
+                  variant="secondary"
+                  disabled={inactive}
+                  onPress={() => addField(kind)}
+                />
+              ))}
             </View>
           )}
+          <RecordViewPicker
+            definition={definition}
+            disabled={inactive}
+            onChange={(view) => edit({ ...definition, view })}
+          />
           <Button
             label="Save draft"
             disabled={inactive || (!dirty && app.definition !== null)}
@@ -231,6 +249,12 @@ export function BuilderScreen({
                       This makes draft {reviewedRevision} the live version of
                       this app. It includes {app.definition.fields.length}{" "}
                       fields and preserves compatible existing records.
+                    </Text>
+                    <Text style={styles.hint}>
+                      Layout: {app.definition.view?.kind ?? "list"}
+                      {app.definition.view?.kind === "agenda"
+                        ? ` · Grouped by ${app.definition.fields.find((field) => field.id === app.definition?.view?.dateFieldId)?.label ?? "date"}`
+                        : ""}
                     </Text>
                     {app.definition.fields.map((field) => (
                       <Text key={field.id} style={styles.hint}>

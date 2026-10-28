@@ -5,10 +5,11 @@ import { Button } from "../components/Button";
 import { Field } from "../components/Field";
 import { Notice } from "../components/Notice";
 import { colors, space } from "../components/theme";
-import { emptyValues, validateValues } from "../preview/model";
+import { emptyValues } from "../preview/model";
 import type { Definition, Values } from "../preview/model";
 import { ModalFrame } from "../preview/ui";
 import { savePresentation } from "./saveStatus";
+import { prepareRecordValues, recordInputHint } from "./recordInputs";
 
 export function RecordEditor({
   definition,
@@ -38,7 +39,7 @@ export function RecordEditor({
   function save() {
     if (inactive) return;
     try {
-      const valid = validateValues(definition, values);
+      const valid = prepareRecordValues(definition, values);
       setValidation(null);
       onSave(valid);
     } catch (error) {
@@ -106,12 +107,18 @@ export function RecordEditor({
           ) : (
             <Field
               label={field.label}
-              hint={field.required ? "Required" : undefined}
+              hint={recordInputHint(field.kind, field.required)}
               value={String(values[field.id] ?? "")}
               editable={!inactive}
               onChangeText={(value) => update(field.id, value)}
               maxLength={field.kind === "longText" ? 4000 : 200}
               multiline={field.kind === "longText"}
+              autoCapitalize={
+                field.kind === "date" || field.kind === "number"
+                  ? "none"
+                  : "sentences"
+              }
+              autoCorrect={field.kind !== "date" && field.kind !== "number"}
               style={field.kind === "longText" ? styles.longText : undefined}
             />
           )}

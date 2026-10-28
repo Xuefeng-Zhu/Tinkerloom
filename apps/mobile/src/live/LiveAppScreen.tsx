@@ -11,6 +11,7 @@ import type {
 import type { Values } from "../preview/model";
 import { RecordEditor } from "./RecordEditor";
 import { savePresentation } from "./saveStatus";
+import { RecordsView } from "./RecordsView";
 
 export function PendingSaveNotice({
   state,
@@ -130,6 +131,18 @@ export function LiveAppScreen({
                   These are live records saved through Appwrite. Local preview
                   samples are never copied here.
                 </Text>
+                <Text style={styles.hint}>
+                  Loaded records only · {state.records.length} loaded.
+                  {state.nextCursor
+                    ? " Load more to include the next page."
+                    : ""}
+                </Text>
+                {definition.view?.kind === "agenda" && (
+                  <Text style={styles.hint}>
+                    Dates group the loaded records. This is an agenda, with no
+                    full-calendar totals.
+                  </Text>
+                )}
                 {state.records.length === 0 && !state.loading ? (
                   <View style={styles.card}>
                     <Text style={styles.sectionTitle}>A fresh start</Text>
@@ -138,44 +151,14 @@ export function LiveAppScreen({
                     </Text>
                   </View>
                 ) : (
-                  state.records.map((record) => (
-                    <View style={styles.card} key={record.id}>
-                      <View style={styles.toolbar}>
-                        <Text
-                          accessibilityRole="header"
-                          style={styles.recordTitle}
-                        >
-                          {String(
-                            record.values[definition.primaryFieldId] ??
-                              "Untitled",
-                          )}
-                        </Text>
-                        <Button
-                          label="Edit"
-                          accessibilityLabel={`Edit ${String(record.values[definition.primaryFieldId])}`}
-                          variant="quiet"
-                          disabled={state.busy || Boolean(state.pending)}
-                          onPress={() => setEditor({ record })}
-                        />
-                      </View>
-                      {definition.fields
-                        .filter(
-                          (field) => field.id !== definition.primaryFieldId,
-                        )
-                        .map((field) => (
-                          <View key={field.id}>
-                            <Text style={styles.fieldLabel}>{field.label}</Text>
-                            <Text style={styles.body}>
-                              {field.kind === "boolean"
-                                ? record.values[field.id]
-                                  ? "Yes"
-                                  : "No"
-                                : String(record.values[field.id] ?? "") || "—"}
-                            </Text>
-                          </View>
-                        ))}
-                    </View>
-                  ))
+                  <RecordsView
+                    definition={definition}
+                    records={state.records}
+                    onEdit={(record) => setEditor({ record })}
+                    editDisabled={
+                      state.busy || state.loading || Boolean(state.pending)
+                    }
+                  />
                 )}
                 {state.loading && (
                   <Text accessibilityLiveRegion="polite" style={styles.body}>

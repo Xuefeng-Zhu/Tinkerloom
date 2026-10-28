@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { colors, space } from "../components/theme";
+import { RecordsView } from "../live/RecordsView";
 import { CustomizeForm } from "./CustomizeForm";
 import { PreviewForm } from "./PreviewForm";
 import {
@@ -116,78 +117,12 @@ export function PreviewApp({
             {error}
           </Text>
         ) : null}
-        <View style={styles.records}>
-          {session.records.map((record) => (
-            <View key={record.id} style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Text
-                  accessibilityRole="header"
-                  style={[
-                    styles.recordTitle,
-                    booleanField &&
-                      record.values[booleanField.id] === true &&
-                      styles.done,
-                  ]}
-                >
-                  {String(record.values[session.definition.primaryFieldId])}
-                </Text>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`Edit ${record.values[session.definition.primaryFieldId]}`}
-                  onPress={() => setEditor(record)}
-                  style={styles.editButton}
-                >
-                  <Text style={styles.editText}>Edit</Text>
-                </Pressable>
-              </View>
-              {session.definition.fields
-                .filter(
-                  (field) => field.id !== session.definition.primaryFieldId,
-                )
-                .map((field) =>
-                  field.kind === "boolean" ? (
-                    <Pressable
-                      key={field.id}
-                      accessibilityRole="checkbox"
-                      accessibilityLabel={field.label}
-                      accessibilityState={{
-                        checked: record.values[field.id] === true,
-                      }}
-                      onPress={() => toggle(record, field.id)}
-                      style={styles.checkRow}
-                    >
-                      <View
-                        style={[
-                          styles.check,
-                          record.values[field.id] === true && styles.checked,
-                        ]}
-                      >
-                        <Text style={styles.checkMark}>
-                          {record.values[field.id] === true ? "✓" : ""}
-                        </Text>
-                      </View>
-                      <Text style={styles.checkLabel}>{field.label}</Text>
-                    </Pressable>
-                  ) : record.values[field.id] ? (
-                    <View key={field.id} style={styles.field}>
-                      <Text style={styles.fieldLabel}>{field.label}</Text>
-                      <Text
-                        numberOfLines={
-                          field.kind === "longText" ? 3 : undefined
-                        }
-                        style={[
-                          styles.value,
-                          field.kind === "choice" && styles.choice,
-                        ]}
-                      >
-                        {String(record.values[field.id])}
-                      </Text>
-                    </View>
-                  ) : null,
-                )}
-            </View>
-          ))}
-        </View>
+        <RecordsView
+          definition={session.definition}
+          records={session.records}
+          onEdit={setEditor}
+          onToggle={toggle}
+        />
         <View style={styles.footer}>
           <Text style={styles.footerText}>
             Your signed-in workspaces and apps are separate from this preview.
@@ -285,65 +220,6 @@ const styles = StyleSheet.create({
   },
   count: { color: colors.muted, fontSize: 14 },
   toolbarActions: { gap: space.sm, flexDirection: "row", flexWrap: "wrap" },
-  records: { gap: space.md },
-  card: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    padding: space.lg,
-    gap: space.md,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    gap: space.md,
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  recordTitle: {
-    color: colors.ink,
-    fontSize: 20,
-    fontWeight: "600",
-    lineHeight: 28,
-    flex: 1,
-  },
-  done: { textDecorationLine: "line-through", color: colors.muted },
-  editButton: {
-    minWidth: 48,
-    minHeight: 44,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  editText: { color: colors.accent, fontWeight: "600", fontSize: 14 },
-  field: { gap: space.xs, alignItems: "flex-start" },
-  fieldLabel: { color: colors.muted, fontSize: 12, fontWeight: "500" },
-  value: { color: colors.ink, fontSize: 15, lineHeight: 23 },
-  choice: {
-    backgroundColor: colors.canvas,
-    borderRadius: 4,
-    paddingHorizontal: space.sm,
-    paddingVertical: space.xs,
-    overflow: "hidden",
-    fontSize: 13,
-  },
-  checkRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    minHeight: 44,
-  },
-  check: {
-    width: 24,
-    height: 24,
-    borderWidth: 1,
-    borderColor: colors.muted,
-    borderRadius: 6,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checked: { backgroundColor: colors.ink, borderColor: colors.ink },
-  checkMark: { color: colors.surface, fontSize: 16, fontWeight: "600" },
-  checkLabel: { color: colors.ink, fontSize: 14 },
   footer: {
     borderTopWidth: 1,
     borderTopColor: colors.border,

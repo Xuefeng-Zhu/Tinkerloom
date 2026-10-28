@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Text, TextInput, View } from "react-native";
-import { PreviewSession, customizePreview } from "./model";
+import {
+  PreviewSession,
+  customizePreview,
+  Definition,
+  validateDefinition,
+} from "./model";
+import { RecordViewPicker } from "../live/RecordViewPicker";
 import { ModalFrame, PreviewButton, styles } from "./ui";
 
 export function CustomizeForm({
@@ -19,10 +25,14 @@ export function CustomizeForm({
     ),
   );
   const [error, setError] = useState("");
+  const [view, setView] = useState<Definition["view"]>(session.definition.view);
 
   function save() {
     try {
-      onSave(customizePreview(session, title, labels));
+      const next = customizePreview(session, title, labels);
+      if (view !== undefined) next.definition = { ...next.definition, view };
+      validateDefinition(next.definition);
+      onSave(next);
     } catch (failure) {
       setError(
         failure instanceof Error
@@ -58,6 +68,13 @@ export function CustomizeForm({
           />
         </View>
       ))}
+      <RecordViewPicker
+        definition={{
+          ...session.definition,
+          ...(view === undefined ? {} : { view }),
+        }}
+        onChange={setView}
+      />
       {error ? (
         <Text accessibilityRole="alert" style={styles.error}>
           {error}

@@ -8,13 +8,8 @@ import {
   View,
 } from "react-native";
 import { colors, space } from "../components/theme";
-import {
-  Definition,
-  emptyValues,
-  PreviewRecord,
-  Values,
-  validateValues,
-} from "./model";
+import { Definition, emptyValues, PreviewRecord, Values } from "./model";
+import { prepareRecordValues, recordInputHint } from "../live/recordInputs";
 import { ModalFrame, PreviewButton, styles as shared } from "./ui";
 
 export function PreviewForm({
@@ -37,7 +32,7 @@ export function PreviewForm({
 
   function save() {
     try {
-      onSave(validateValues(definition, values));
+      onSave(prepareRecordValues(definition, values));
     } catch (failure) {
       setError(
         failure instanceof Error
@@ -95,11 +90,22 @@ export function PreviewForm({
               onChangeText={(value) => setValue(field.id, value)}
               multiline={field.kind === "longText"}
               maxLength={field.kind === "longText" ? 4000 : 200}
+              autoCapitalize={
+                field.kind === "date" || field.kind === "number"
+                  ? "none"
+                  : "sentences"
+              }
+              autoCorrect={field.kind !== "date" && field.kind !== "number"}
               style={[
                 shared.input,
                 field.kind === "longText" && styles.longText,
               ]}
             />
+          )}
+          {(field.kind === "date" || field.kind === "number") && (
+            <Text style={styles.hint}>
+              {recordInputHint(field.kind, field.required)}
+            </Text>
           )}
         </View>
       ))}

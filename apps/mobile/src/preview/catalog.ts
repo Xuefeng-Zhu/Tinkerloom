@@ -2,6 +2,46 @@ import { PreviewTemplate } from "./model";
 
 export const previewTemplates: PreviewTemplate[] = [
   {
+    id: "planner",
+    caption: "Bring dates and small estimates together in an agenda.",
+    definition: {
+      title: "A little plan",
+      description: "Give each next step a date, or leave space for later.",
+      primaryFieldId: "title",
+      view: { kind: "agenda", dateFieldId: "day" },
+      fields: [
+        { id: "title", label: "Plan", kind: "text", required: true },
+        { id: "day", label: "Planned date", kind: "date" },
+        { id: "minutes", label: "Minutes", kind: "number" },
+        { id: "done", label: "Completed", kind: "boolean" },
+        { id: "notes", label: "A few details", kind: "longText" },
+      ],
+    },
+    samples: [
+      {
+        title: "Plan the community potluck",
+        day: "2026-11-03",
+        minutes: 30,
+        done: false,
+        notes: "Ask everyone for one dish they love.",
+      },
+      {
+        title: "Take a screen-free lunch",
+        day: "2026-11-02",
+        minutes: 0,
+        done: false,
+        notes: "A little time outdoors.",
+      },
+      {
+        title: "Explore a new walking route",
+        day: "",
+        minutes: "",
+        done: false,
+        notes: "Keep this one for a sunny afternoon.",
+      },
+    ],
+  },
+  {
     id: "notes",
     caption: "A quiet place for ideas worth keeping.",
     definition: {
