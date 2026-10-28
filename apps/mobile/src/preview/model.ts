@@ -1,3 +1,5 @@
+import { canonicalText } from "./canonicalText";
+
 export type Field = {
   id: string;
   label: string;
@@ -89,10 +91,10 @@ export function parseNumericInput(input: string): number | "" {
 }
 
 function boundedText(value: unknown, name: string, maximum: number): string {
-  if (typeof value !== "string" || value.trim().length === 0) {
+  if (typeof value !== "string" || canonicalText(value).length === 0) {
     throw new PreviewValidationError(`${name} is required.`);
   }
-  const text = value.trim();
+  const text = canonicalText(value);
   if (text.length > maximum) {
     throw new PreviewValidationError(
       `${name} must be ${maximum} characters or fewer.`,
@@ -247,7 +249,7 @@ export function validateValues(definition: Definition, values: Values): Values {
     if (typeof value !== "string") {
       throw new PreviewValidationError(`${field.label} must be text.`);
     }
-    const text = value.trim();
+    const text = canonicalText(value);
     if (field.required && text.length === 0) {
       throw new PreviewValidationError(`${field.label} is required.`);
     }
@@ -257,7 +259,11 @@ export function validateValues(definition: Definition, values: Values): Values {
         `${field.label} must be ${maximum} characters or fewer.`,
       );
     }
-    if (field.kind === "choice" && text && !field.options?.includes(text)) {
+    if (
+      field.kind === "choice" &&
+      text &&
+      !field.options?.some((option) => canonicalText(option) === text)
+    ) {
       throw new PreviewValidationError(
         `Choose one of the available ${field.label.toLowerCase()} options.`,
       );

@@ -327,6 +327,87 @@
           }
         ]
       }
+    },
+    {
+      "name": "unicode-nel-definition",
+      "input": {
+        "title": "\u0085Ledger\u0085",
+        "description": "\u0085Description stays as entered\u0085",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "\u0085Item\u0085",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "body",
+            "label": "\u0085Body\u0085",
+            "kind": "longText",
+            "required": false
+          },
+          {
+            "id": "category",
+            "label": "\u0085Category\u0085",
+            "kind": "choice",
+            "options": [
+              "\u0085Open\u0085",
+              "\u0085Done\u0085"
+            ],
+            "required": false
+          },
+          {
+            "id": "amount",
+            "label": "\u0085Amount\u0085",
+            "kind": "number",
+            "required": false
+          },
+          {
+            "id": "when",
+            "label": "\u0085Date\u0085",
+            "kind": "date",
+            "required": false
+          }
+        ]
+      },
+      "expected": {
+        "title": "Ledger",
+        "description": "\u0085Description stays as entered\u0085",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "body",
+            "label": "Body",
+            "kind": "longText"
+          },
+          {
+            "id": "category",
+            "label": "Category",
+            "kind": "choice",
+            "options": [
+              "Open",
+              "Done"
+            ]
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ]
+      }
     }
   ],
   "invalidDefinitions": [
@@ -733,6 +814,60 @@
         "title": "Item",
         "amount": "",
         "when": ""
+      }
+    },
+    {
+      "name": "unicode-nel-values",
+      "definition": {
+        "title": "Ledger",
+        "description": "\u0085Description stays as entered\u0085",
+        "primaryFieldId": "title",
+        "fields": [
+          {
+            "id": "title",
+            "label": "Item",
+            "kind": "text",
+            "required": true
+          },
+          {
+            "id": "body",
+            "label": "Body",
+            "kind": "longText"
+          },
+          {
+            "id": "category",
+            "label": "Category",
+            "kind": "choice",
+            "options": [
+              "Open",
+              "Done"
+            ]
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "kind": "number"
+          },
+          {
+            "id": "when",
+            "label": "Date",
+            "kind": "date"
+          }
+        ]
+      },
+      "input": {
+        "title": "\u0085Item\u0085",
+        "body": "\u0085Notes\u0085",
+        "category": "\u0085Open\u0085",
+        "amount": 0,
+        "when": "2024-02-29"
+      },
+      "expected": {
+        "title": "Item",
+        "body": "Notes",
+        "category": "Open",
+        "amount": 0,
+        "when": "2024-02-29"
       }
     }
   ],

@@ -1,4 +1,5 @@
 import { BackendError, normalizeError } from "./errors";
+import { canonicalText } from "../preview/canonicalText";
 import type {
   AppBackend,
   CreateApp,
@@ -78,7 +79,7 @@ function title(value: unknown, mutation = false): string {
     typeof value !== "string" ||
     value.length < 1 ||
     value.length > 128 ||
-    value.trim() !== value
+    canonicalText(value) !== value
   ) {
     invalidResponse(mutation);
   }
@@ -126,7 +127,7 @@ function parseUser(value: unknown): User {
 }
 
 function validateCommand(command: CreateWorkspace): CreateWorkspace {
-  const name = command.name.trim();
+  const name = canonicalText(command.name);
   if (!idPattern.test(command.id) || !name || name.length > 128) {
     throw new BackendError(
       "Use a name between 1 and 128 characters.",
@@ -167,13 +168,13 @@ function definition(value: unknown, mutation = false): Definition {
         invalidResponse(mutation);
       return {
         id: field.id,
-        label: field.label.trim(),
+        label: canonicalText(field.label),
         kind: field.kind as Field["kind"],
         required: field.required === true,
         ...(field.options !== undefined
           ? {
               options: (field.options as string[]).map((option) =>
-                option.trim(),
+                canonicalText(option),
               ),
             }
           : {}),
@@ -186,7 +187,7 @@ function definition(value: unknown, mutation = false): Definition {
     )
       invalidResponse(mutation);
     const result: Definition = {
-      title: data.title.trim(),
+      title: canonicalText(data.title),
       description: data.description,
       primaryFieldId: data.primaryFieldId,
       fields,
@@ -680,7 +681,7 @@ export class AppwriteBackend implements AppBackend {
       Object.entries(command.values).some(
         ([key, value]) =>
           result.values[key] !==
-          (typeof value === "string" ? value.trim() : value),
+          (typeof value === "string" ? canonicalText(value) : value),
       )
     )
       invalidResponse(true);

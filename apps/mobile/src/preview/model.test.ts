@@ -15,12 +15,18 @@ import {
   parseNumericInput,
 } from "./model";
 import type { Definition, Values } from "./model";
+import { canonicalText } from "./canonicalText";
 
 interface RichContract {
   baseDefinition: Definition;
   validDefinitions: { name: string; input: Definition; expected: Definition }[];
   invalidDefinitions: { name: string; input: Definition }[];
-  validValues: { name: string; input: Values; expected: Values }[];
+  validValues: {
+    name: string;
+    definition?: Definition;
+    input: Values;
+    expected: Values;
+  }[];
   invalidValues: { name: string; input: Values }[];
 }
 const richContract = JSON.parse(
@@ -163,7 +169,10 @@ test("shared Dart/TypeScript rich-definition fixtures agree on views and field k
 test("shared Dart/TypeScript values preserve zero and dates while rejecting coercions", () => {
   for (const scenario of richContract.validValues) {
     assert.deepEqual(
-      validateValues(richContract.baseDefinition, scenario.input),
+      validateValues(
+        scenario.definition ?? richContract.baseDefinition,
+        scenario.input,
+      ),
       scenario.expected,
       scenario.name,
     );
@@ -266,4 +275,88 @@ test("numeric form conversion is decimal-only and never turns blank into zero", 
       { name: "PreviewValidationError" },
       value,
     );
+});
+
+test("canonical text matches Dart Unicode whitespace and BOM without altering interior text", () => {
+  const codes = [
+    0x09,
+    0x0a,
+    0x0b,
+    0x0c,
+    0x0d,
+    0x20,
+    0x85,
+    0xa0,
+    0x1680,
+    ...Array.from({ length: 11 }, (_, index) => 0x2000 + index),
+    0x2028,
+    0x2029,
+    0x202f,
+    0x205f,
+    0x3000,
+    0xfeff,
+  ];
+  for (const code of codes) {
+    const whitespace = String.fromCodePoint(code);
+    assert.equal(
+      canonicalText(`${whitespace}Title${whitespace}`),
+      "Title",
+      `U+${code.toString(16)}`,
+    );
+  }
+  assert.equal(
+    canonicalText("\u0085First\u0085Second\u0085"),
+    "First\u0085Second",
+  );
+  assert.equal(canonicalText("\u200bTitle\u200b"), "\u200bTitle\u200b");
+  assert.equal(canonicalText("\u180eTitle\u180e"), "\u180eTitle\u180e");
+});
+
+test("record text and choices trim NEL while civil dates remain strict", () => {
+  const definition: Definition = {
+    title: "Notes",
+    description: "",
+    primaryFieldId: "title",
+    fields: [
+      { id: "title", label: "Title", kind: "text", required: true },
+      { id: "body", label: "Body", kind: "longText" },
+      {
+        id: "category",
+        label: "Category",
+        kind: "choice",
+        options: ["\u0085Blue\u0085", "Gold"],
+      },
+      { id: "when", label: "Date", kind: "date" },
+    ],
+  };
+  assert.deepEqual(
+    validateValues(definition, {
+      title: "\u0085Title\u0085",
+      body: "\u0085Line\u0085inside\u0085",
+      category: "\u0085Blue\u0085",
+      when: "2024-02-29",
+    }),
+    {
+      title: "Title",
+      body: "Line\u0085inside",
+      category: "Blue",
+      when: "2024-02-29",
+    },
+  );
+  assert.throws(
+    () => validateValues(definition, { title: "\u0085" }),
+    /required/,
+  );
+  assert.throws(
+    () =>
+      validateValues(definition, {
+        title: "Title",
+        when: "\u00852024-02-29\u0085",
+      }),
+    /valid date/,
+  );
+  assert.throws(
+    () => validateDefinition({ ...definition, title: "\u0085" }),
+    /required/,
+  );
 });

@@ -61,14 +61,21 @@ Future<int> runRichChecks() async {
     'shared rich value fixtures enforce numeric and civil-date contracts',
     () async {
       for (final item in validValues) {
+        final definition = item.containsKey('definition')
+            ? validateDefinition(item['definition'])
+            : base;
         _check(
-          canonicalJson(validateValues(base, item['input'])) ==
+          canonicalJson(validateValues(definition, item['input'])) ==
               canonicalJson(item['expected']),
           'Value normalization differs for ${item['name']}',
         );
       }
       for (final item in invalidValues) {
-        _reject(() => validateValues(base, item['input']), 'invalid_values');
+        final definition = item.containsKey('definition')
+            ? validateDefinition(item['definition'])
+            : base;
+        _reject(
+            () => validateValues(definition, item['input']), 'invalid_values');
       }
     },
   );

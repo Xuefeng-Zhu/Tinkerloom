@@ -694,3 +694,131 @@ test("nonfinite mutation values cannot be silently serialized to null", async ()
   }
   assert.equal(scenario.requests.length, 0);
 });
+
+test("record replay accepts Dart-normalized NEL content while retaining exact raw command bytes", async () => {
+  const scenario = setup();
+  const command = {
+    appId: "app",
+    id: "record",
+    expectedRevision: 0,
+    operationId: "unicode-save",
+    definitionRevision: 1,
+    values: {
+      title: "\u0085Title\u0085",
+      body: "\u0085Line\u0085inside\u0085",
+      category: "\u0085Blue\u0085",
+      amount: 0,
+      when: "2024-02-29",
+    },
+  };
+  const expected = {
+    title: "Title",
+    body: "Line\u0085inside",
+    category: "Blue",
+    amount: 0,
+    when: "2024-02-29",
+  };
+  const original = JSON.stringify(command);
+  scenario.failExecution(new TypeError("Response lost after commit"));
+  await assert.rejects(
+    scenario.backend.saveRecord(command),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+  scenario.succeed({
+    record: { id: "record", revision: 1, values: expected },
+    definitionRevision: 1,
+  });
+  assert.deepEqual(
+    (await scenario.backend.saveRecord(command)).values,
+    expected,
+  );
+  assert.deepEqual(
+    (await scenario.backend.saveRecord(command)).values,
+    expected,
+  );
+  assert.equal(scenario.requests[0], scenario.requests[1]);
+  assert.equal(scenario.requests[1], scenario.requests[2]);
+  assert.deepEqual(JSON.parse(scenario.requests[0]).values, command.values);
+  assert.equal(JSON.stringify(command), original);
+});
+
+test("draft replay confirms canonical NEL title, labels, and choices without trimming description", async () => {
+  const scenario = setup();
+  const input: Definition = {
+    title: "\u0085Notes\u0085",
+    description: "\u0085Keep description\u0085",
+    primaryFieldId: "title",
+    fields: [
+      {
+        id: "title",
+        label: "\u0085Heading\u0085",
+        kind: "text",
+        required: true,
+      },
+      {
+        id: "category",
+        label: "\u0085Category\u0085",
+        kind: "choice",
+        options: ["\u0085Blue\u0085", "Gold"],
+      },
+    ],
+  };
+  const expected: Definition = {
+    ...input,
+    title: "Notes",
+    fields: [
+      { id: "title", label: "Heading", kind: "text", required: true },
+      {
+        id: "category",
+        label: "Category",
+        kind: "choice",
+        options: ["Blue", "Gold"],
+      },
+    ],
+  };
+  const command = {
+    appId: "app",
+    expectedRevision: 0,
+    operationId: "unicode-draft",
+    definition: input,
+  };
+  scenario.failExecution(new TypeError("Response lost after commit"));
+  await assert.rejects(
+    scenario.backend.saveDraft(command),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+  scenario.succeed({
+    app: {
+      ...appDocument,
+      draftRevision: 1,
+      publishedRevision: 0,
+      publishedDefinition: null,
+      definition: expected,
+    },
+  });
+  const result = await scenario.backend.saveDraft(command);
+  assert.equal(result.definition?.title, "Notes");
+  assert.equal(result.definition?.fields[0].label, "Heading");
+  assert.deepEqual(result.definition?.fields[1].options, ["Blue", "Gold"]);
+  assert.equal(result.definition?.description, input.description);
+  assert.equal(scenario.requests[0], scenario.requests[1]);
+  assert.deepEqual(JSON.parse(scenario.requests[0]).definition, input);
+});
+
+test("workspace and app names use the same canonical NEL trimming as the Function", async () => {
+  const scenario = setup();
+  scenario.succeed({ workspace: { id: "workspace", name: "Workbench" } });
+  const workspaceCommand = { id: "workspace", name: "\u0085Workbench\u0085" };
+  await scenario.backend.createWorkspace(workspaceCommand);
+  assert.equal(JSON.parse(scenario.requests[0]).name, "Workbench");
+  assert.equal(workspaceCommand.name, "\u0085Workbench\u0085");
+  scenario.succeed({
+    app: { id: "app", workspaceId: "workspace", name: "Notes" },
+  });
+  await scenario.backend.createApp({
+    id: "app",
+    workspaceId: "workspace",
+    name: "\u0085Notes\u0085",
+  });
+  assert.equal(JSON.parse(scenario.requests[1]).name, "Notes");
+});
