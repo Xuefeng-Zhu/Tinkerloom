@@ -109,6 +109,9 @@ export function AppScreen() {
           void controller.signOut();
         }}
         onPreview={() => router.push("/preview")}
+        onOpenApp={(appId) =>
+          router.push({ pathname: "/apps/[appId]", params: { appId } })
+        }
       />
       {state.creation?.open && (
         <CreateSheet

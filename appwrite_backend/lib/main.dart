@@ -38,7 +38,7 @@ Future<dynamic> main(dynamic context) async {
       return context.res.json({'error': 'unauthenticated'}, 401);
     }
     final bodyText = context.req.bodyText as String;
-    if (utf8.encode(bodyText).length > 4096) {
+    if (utf8.encode(bodyText).length > 65536) {
       return context.res.json({'error': 'request_too_large'}, 413);
     }
     final data = jsonDecode(bodyText);

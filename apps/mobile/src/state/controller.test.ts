@@ -71,6 +71,21 @@ class FakeBackend implements AppBackend {
     this.appCommands.push({ ...command });
     return this.createAppImpl(command);
   }
+  async getApp(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async saveDraft(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async publishApp(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async listRecords(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
+  async saveRecord(): Promise<never> {
+    throw new Error("Not used by home tests");
+  }
 }
 
 test("a lost creation response keeps its ID, name, and original workspace after close and reopen", async () => {

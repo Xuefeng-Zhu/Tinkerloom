@@ -1,35 +1,70 @@
-# Appwrite backend: first slice
+# Appwrite owner-only builder and records
 
-This is a **partial** backend for authenticated creation and listing of owner-only workspaces and app shells. It does not yet create AppSpec definitions, publish or run mini-apps, share workspaces, handle media or run reminders. Existing AppNest accounts and data are not migrated. Do not use this slice as a production replacement.
+This is the first trusted backend slice for Tinkerloom: owner-only workspaces and apps, saved declarative drafts, exact-revision publication, and published live records. It supports a bounded React Native definition with `text`, `longText`, `boolean`, and `choice` fields. It is not the full AppNest AppSpec/renderer port. Sharing, role revocation, capacity allocation, private media, AI, deletion/archival, reminders, and audit/outbox workers remain to be migrated. Existing accounts and data are not automatically transferred.
 
-The function verifies the invoking user's JWT against Appwrite's `/account` endpoint. It uses the ephemeral execution key solely inside the function for TablesDB operations, checks workspace ownership for every app operation, filters lists by the verified user, and returns no stored data to a caller who does not own the workspace. Clients must provide a stable random row ID for each creation attempt. Retrying the same ID and payload returns the original result; reusing it for different data returns `id_conflict`. This limited guarantee holds only while rows remain present and is not the durable general-purpose command receipt system from AppNest. Lists return `too_many_results` beyond 100 rows rather than silently omit data.
+The Function verifies the invoking user's JWT against Appwrite's `/account` endpoint. Its ephemeral execution key stays inside the Function. Every app operation checks the verified owner and the owning workspace; all data tables deny direct client access. The Function execute permission must be authenticated users only. No Appwrite credentials belong in Flutter, React Native, Git, documentation, or logs.
 
-## Appwrite setup (manual, not performed)
+## Required database schema
 
-Use a compatible Appwrite instance with TablesDB and Dart Functions. Create a serverless database and record its ID. Create two tables with **no client table permissions** and row security enabled. Do not grant direct create/read/update/delete permissions to client roles; the function uses a scoped execution key. Create these required string columns and wait until they are available:
+`schema.json` records the exact table/column/index contract. It is descriptive provisioning input, not a command that runs automatically. Provision a **serverless** database with ID `tinkerloom`, or use another ID via `PLATFORM_DATABASE_ID`. Every table has row security enabled and `permissions: []`; all created rows also have `permissions: []`.
 
-| Table ID | Column | Maximum length |
+- `workspaces`: required varchar `ownerId` (36), `name` (128); owner index.
+- `apps`: required varchar `ownerId` (36), `workspaceId` (36), `name` (128); optional `guard` varchar 36, optional/default-zero integer `draftRevision` and `publishedRevision`; optional mediumtext `draftJson` and `publishedJson`; owner/workspace composite index.
+- `records`: required varchar `ownerId` (36), `appId` (36); required integer `revision` and `definitionRevision` with minimum 1; required mediumtext `valuesJson`; owner/app composite index.
+- `receipts`: required varchar `actorId` (36), `appId` (36); required mediumtext `requestJson` and `responseJson`. Lookup is by Appwrite row ID, the client's stable operation ID.
+
+Use off-page `mediumtext` for JSON. Appwrite's `text` maximum is 16,383 characters, while this service permits 16,384 encoded UTF-8 bytes for definitions/values. Varchar JSON columns would also consume the database's inline row-width budget. Service validation bounds definitions and values to 16 KiB, requests to 32 KiB canonical JSON, receipt responses to 64 KiB, and record pages to 10 rows.
+
+Add the optional/default app columns non-destructively for an existing initial-slice database. Existing app shells are treated as draftRevision 0/publishedRevision 0 with null definitions. Do not recreate tables or delete existing rows to add this slice.
+
+## Function configuration
+
+Create a Dart Function, suggested ID `tinkerloom-core`, with this directory as root and `lib/main.dart` as entrypoint. Use a Dart runtime supported by your instance; the source requires Dart 3.5 or later and is compatible with the selected Cloud Dart 3.11 runtime. Configure `PLATFORM_DATABASE_ID` with the database ID. Grant **`rows.read` and `rows.write` only**. The TablesDB transaction create/commit handlers use the same `rows.write` scope; there are no extra `transactions.*` scopes needed by this implementation. Appwrite supplies `APPWRITE_FUNCTION_API_ENDPOINT`, `APPWRITE_FUNCTION_PROJECT_ID`, the scoped ephemeral key, and the invoking user's JWT.
+
+Register native platform IDs matching `apps/mobile/app.json` and the actual web hostname. The React Native client calls this Function synchronously with POST and JSON bodies. The Function accepts at most 64 KiB per request. Provisioning/deployment and service acceptance are separate from the presence of this source.
+
+## Operations
+
+Initial operations remain `createWorkspace` (`id`,`name`), `listWorkspaces`, `createApp` (`id`,`workspaceId`,`name`), and `listApps` (`workspaceId`). Creation IDs must remain identical while retrying an uncertain initial creation. These initial operations retain their original row-identity retry behavior.
+
+The builder/runtime operations are:
+
+| Operation | Input after `op` | Response |
 | --- | --- | --- |
-| `workspaces` | `ownerId` | 36 |
-| `workspaces` | `name` | 128 |
-| `apps` | `ownerId` | 36 |
-| `apps` | `workspaceId` | 36 |
-| `apps` | `name` | 128 |
+| `getApp` | `appId` | `{app}` |
+| `saveDraft` | `appId`, `operationId`, `expectedRevision`, `definition` | `{app}` |
+| `publishApp` | `appId`, `operationId`, `expectedRevision` | `{app}` |
+| `listRecords` | `appId`, `definitionRevision`, optional `afterId` | `{records,definitionRevision,nextCursor}` |
+| `saveRecord` | `appId`, `id`, `operationId`, `expectedRevision`, `definitionRevision`, full `values` | `{record,definitionRevision}` |
 
-Create a key index for `workspaces.ownerId` and a composite key index for `apps.ownerId, workspaceId`. Verify index status and the `ownerId` column length against the target Appwrite version. Do not put credentials in this repository.
+An app response contains `id`, `workspaceId`, `name`, `draftRevision`, `publishedRevision`, nullable `definition`, and nullable `publishedDefinition`. A record contains `id`, `revision`, and normalized `values`. `expectedRevision` in `saveDraft`/`publishApp` refers to the draft revision being edited/reviewed. Publishing sets the published revision to that exact draft revision. `saveRecord` uses expectedRevision 0 to create; edits require the stored record revision. `definitionRevision` must match the current published revision. Cursor IDs must belong to the authorized app. Lists are deterministically ordered by row ID and return ten rows with an optional next cursor.
 
-Create a Dart Function, for example ID `tinkerloom-core`, with this directory as root and `lib/main.dart` as entrypoint. Use a Dart runtime supported by your instance (the implementation targets Dart 3.5 or later). Configure an environment variable `PLATFORM_DATABASE_ID` with the database ID, grant the function `rows.read` and `rows.write` scopes, and permit execution by authenticated users. Appwrite supplies its endpoint, project ID, ephemeral key and the invoking user's JWT. For the React Native client, register native platform identifiers matching `apps/mobile/app.json`; for web, configure the hostname and origin correctly. No account, table, function, schema, or deployment was created by these instructions.
-
-Invoke the function synchronously with a JSON body:
+Example definition:
 
 ```json
-{"op":"createWorkspace","id":"clientGeneratedUniqueId","name":"My workspace"}
+{"title":"Tasks","description":"A shared little list","primaryFieldId":"title","fields":[{"id":"title","label":"Task","kind":"text","required":true},{"id":"done","label":"Completed","kind":"boolean"}]}
 ```
 
-The other operations are `listWorkspaces`, `createApp` (also requires `workspaceId`), and `listApps` (requires `workspaceId`). A successful response has a `workspace`, `workspaces`, `app`, or `apps` property. Errors have an `error` code and a non-2xx status. Client-generated IDs must match Appwrite's ID constraints: 1–36 alphanumeric, period, hyphen or underscore characters and start with an alphanumeric character.
+This slice is still owner-only despite the example's intended future collaboration. Each definition has 1–10 fields with unique stable IDs, a required text primary field, title up to 80 characters, description up to 240, labels up to 64, choices up to 12 unique options, short text up to 200, and long text up to 4000. JSON byte bounds apply in addition to field bounds. Publication may rename labels/title/description, add optional fields, or add choice options. Removing fields/options, changing types or requiredness, adding required fields, or changing the primary ID is rejected to preserve live records.
 
-## Local checks and missing verification
+## Transactions and recovery
 
-Run `dart analyze` and `dart run test/service_check.dart`. These check local Dart source and simulated business logic, not the Appwrite runtime, real authentication, table permissions, persistence, or network behavior. The function must be exercised against a real isolated Appwrite instance with two accounts, including direct table-denial and cross-user checks, retry-after-lost-response, and persistence across fresh sessions before treating this slice as verified. Further work must reproduce AppNest's grant, concurrency, revision, atomic audit/outbox, and reminder recovery guarantees before migration can be considered complete.
+A mutation first verifies app ownership, checks for a stored receipt, creates an Appwrite transaction, and **stages a fresh common app guard before reading the versions it will validate**. Draft/published/record changes and the matching command receipt are staged and committed atomically. Appwrite checks affected rows for changes since staging. A conflicting shared guard makes concurrent supported writes fail rather than overwrite one another. The Function does not blindly retry mutations.
 
-References: [Function development](https://appwrite.io/docs/products/functions/develop), [Function environment](https://appwrite.io/docs/products/functions/environment-variables), [Appwrite REST queries](https://appwrite.io/docs/apis/rest), [TablesDB](https://appwrite.io/docs/products/databases/tablesdb).
+An exact retry with the same actor/app/operation ID and input returns the original committed response, even after later edits or publication. Reusing that ID for different input returns `operation_conflict`. If a commit response is lost, the outcome remains unknown; the client retains the original command and resolves it through an explicit retry. Transaction conflicts are retryable with that same command. Any failed staging path attempts rollback; if commit had already succeeded, rollback cannot undo it and the stored receipt remains authoritative.
+
+There is no business audit/outbox yet, so this does not establish the original AppNest reminder or multi-user guarantees. The app guard is a new Appwrite optimistic-transaction strategy, not a claim of PostgreSQL row-lock equivalence. Its conflict and visibility semantics must be confirmed against the selected real Appwrite instance.
+
+## Verification
+
+```sh
+dart analyze lib test
+dart format --output=none --set-exit-if-changed lib test
+dart run test/service_check.dart
+```
+
+The 14 authored checks cover owner isolation, retained receipts, exact publication, value/record/schema revisions, simulated concurrent writers, atomic rollback, committed-but-unconfirmed recovery, optional schema evolution, cursor paging, bounded input, and the actual HTTP request encoding against a local fake HTTP server. The optimistic in-memory store models only the documented staging contract; it is not real Appwrite proof.
+
+Run a separate authenticated two-account smoke against the deployed Function to verify real identity, persistence, direct-table denial, tenant isolation, receipt replay, stale write conflicts, Appwrite transaction conflicts, and reload/fresh-session behavior. Do not promote simulated/local HTTP checks to Cloud acceptance.
+
+References: [TablesDB transactions](https://appwrite.io/docs/products/databases/tablesdb/transactions), [explicit text types](https://appwrite.io/blog/post/new-string-types), [Function development](https://appwrite.io/docs/products/functions/develop), [TablesDB transaction create scope](https://github.com/appwrite/appwrite/blob/main/src/Appwrite/Platform/Modules/Databases/Http/TablesDB/Transactions/Create.php), [commit scope](https://github.com/appwrite/appwrite/blob/main/src/Appwrite/Platform/Modules/Databases/Http/TablesDB/Transactions/Update.php).

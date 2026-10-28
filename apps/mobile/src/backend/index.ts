@@ -15,6 +15,12 @@ export type {
   Workspace,
   CreateApp,
   CreateWorkspace,
+  AppDocument,
+  LiveRecord,
+  RecordPage,
+  SaveDraft,
+  PublishApp,
+  SaveRecord,
 } from "./types";
 
 export function createBackend(config: PublicConfig): AppBackend {

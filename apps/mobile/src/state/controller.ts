@@ -68,6 +68,9 @@ export class AppController {
     this.state = { ...initial(), phase: "signedOut", error: message };
     this.set({});
   }
+  expireSession(): void {
+    this.signedOut("Your session has expired. Sign in again to continue.");
+  }
 
   private failure(error: unknown): boolean {
     if (error instanceof BackendError && error.kind === "unauthenticated") {

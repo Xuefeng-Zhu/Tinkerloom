@@ -35,7 +35,7 @@ export function CreateSheet({
   const [name, setName] = useState("");
   const [validation, setValidation] = useState<string | null>(null);
   const locked = submittedName !== undefined;
-  const title = kind === "workspace" ? "New workspace" : "New app shell";
+  const title = kind === "workspace" ? "New workspace" : "New app";
 
   function submit() {
     if (busy) return;
@@ -73,7 +73,7 @@ export function CreateSheet({
             <Text style={styles.description}>
               {kind === "workspace"
                 ? "Keep a collection of useful little tools together."
-                : "Save an app name in the workspace below. The app builder is still being migrated."}
+                : "Choose a name, then open the app to pick a template and make it your own."}
             </Text>
             {kind === "app" && (
               <Text style={styles.recovery}>

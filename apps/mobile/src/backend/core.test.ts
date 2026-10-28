@@ -372,3 +372,146 @@ test("failed signin reconciliation remains uncertain and never repeats the sessi
   );
   assert.deepEqual(scenario.calls, { creates: 0, sessions: 1, reads: 1 });
 });
+
+const definition = {
+  title: "Notes",
+  description: "A notebook",
+  primaryFieldId: "title",
+  fields: [
+    { id: "title", label: "Title", kind: "text" as const, required: true },
+  ],
+};
+const appDocument = {
+  id: "app",
+  workspaceId: "workspace",
+  name: "Notebook",
+  draftRevision: 1,
+  publishedRevision: 1,
+  definition,
+  publishedDefinition: definition,
+};
+
+test("app documents and paginated records must match the requested app/version", async () => {
+  const scenario = setup();
+  scenario.succeed({ app: { ...appDocument, id: "other-app" } });
+  await assert.rejects(
+    scenario.backend.getApp("app"),
+    (error: unknown) =>
+      error instanceof BackendError && error.kind === "invalid_response",
+  );
+  scenario.succeed({ app: appDocument });
+  assert.equal((await scenario.backend.getApp("app")).publishedRevision, 1);
+  scenario.succeed({
+    records: [{ id: "record", revision: 1, values: { title: "One" } }],
+    definitionRevision: 2,
+    nextCursor: null,
+  });
+  await assert.rejects(
+    scenario.backend.listRecords("app", 1),
+    (error: unknown) =>
+      error instanceof BackendError && error.kind === "invalid_response",
+  );
+  scenario.succeed({
+    records: [{ id: "record", revision: 1, values: { title: "One" } }],
+    definitionRevision: 1,
+    nextCursor: "unrelated",
+  });
+  await assert.rejects(
+    scenario.backend.listRecords("app", 1),
+    (error: unknown) =>
+      error instanceof BackendError && error.kind === "invalid_response",
+  );
+});
+
+test("a transaction conflict retains the original draft operation and input", async () => {
+  const scenario = setup();
+  const command = {
+    appId: "app",
+    operationId: "operation",
+    expectedRevision: 0,
+    definition,
+  };
+  scenario.setExecution({
+    status: "completed",
+    responseStatusCode: 409,
+    responseBody: JSON.stringify({ error: "transaction_conflict" }),
+  });
+  await assert.rejects(
+    scenario.backend.saveDraft(command),
+    (error: unknown) =>
+      error instanceof BackendError &&
+      error.uncertain &&
+      error.code === "transaction_conflict",
+  );
+  scenario.succeed({
+    app: { ...appDocument, publishedRevision: 0, publishedDefinition: null },
+  });
+  await scenario.backend.saveDraft(command);
+  assert.equal(scenario.requests[0], scenario.requests[1]);
+});
+
+test("a mismatched record revision or receipt cannot become a confirmed save", async () => {
+  const scenario = setup();
+  const command = {
+    appId: "app",
+    id: "record",
+    operationId: "save",
+    expectedRevision: 2,
+    definitionRevision: 1,
+    values: { title: "Changed" },
+  };
+  scenario.succeed({
+    record: { id: "record", revision: 2, values: command.values },
+    definitionRevision: 1,
+  });
+  await assert.rejects(
+    scenario.backend.saveRecord(command),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+  scenario.succeed({
+    record: { id: "record", revision: 3, values: command.values },
+    definitionRevision: 2,
+  });
+  await assert.rejects(
+    scenario.backend.saveRecord(command),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+  scenario.succeed({
+    record: { id: "record", revision: 3, values: command.values },
+    definitionRevision: 1,
+  });
+  assert.equal((await scenario.backend.saveRecord(command)).revision, 3);
+  scenario.succeed({
+    record: { id: "record", revision: 3, values: { title: "Wrong content" } },
+    definitionRevision: 1,
+  });
+  await assert.rejects(
+    scenario.backend.saveRecord(command),
+    (error: unknown) => error instanceof BackendError && error.uncertain,
+  );
+});
+
+test("oversized UTF-8 record content is rejected before a mutation is sent", async () => {
+  const scenario = setup();
+  const longText = "🌿".repeat(2000);
+  await assert.rejects(
+    scenario.backend.saveRecord({
+      appId: "app",
+      id: "record",
+      operationId: "save",
+      expectedRevision: 0,
+      definitionRevision: 1,
+      values: {
+        title: "Large note",
+        first: longText,
+        second: longText,
+        third: longText,
+      },
+    }),
+    (error: unknown) =>
+      error instanceof BackendError &&
+      error.code === "content_too_large" &&
+      !error.uncertain,
+  );
+  assert.equal(scenario.requests.length, 0);
+});

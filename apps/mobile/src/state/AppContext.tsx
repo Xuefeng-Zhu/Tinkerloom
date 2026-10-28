@@ -9,11 +9,13 @@ import {
 import { createBackend, readPublicConfig } from "../backend";
 import type { AppBackend } from "../backend/types";
 import { AppController, AppState } from "./controller";
+import { LiveAppRegistry } from "./liveAppController";
 
 interface AppContextValue {
   controller: AppController | null;
   state: AppState | null;
   configurationIssues: string[];
+  registry: LiveAppRegistry | null;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -42,14 +44,34 @@ export function RootProvider({
     controller?.getSnapshot ?? emptySnapshot,
     controller?.getSnapshot ?? emptySnapshot,
   );
+  const registry = useMemo(
+    () =>
+      connection.backend && controller
+        ? new LiveAppRegistry(connection.backend, () =>
+            controller.expireSession(),
+          )
+        : null,
+    [connection.backend, controller],
+  );
+  useEffect(() => {
+    registry?.keepUser(state?.user?.id ?? null);
+  }, [registry, state?.user?.id]);
   useEffect(() => {
     if (!controller) return;
     void controller.bootstrap();
-    return () => controller.dispose();
-  }, [controller]);
+    return () => {
+      registry?.dispose();
+      controller.dispose();
+    };
+  }, [controller, registry]);
   const value = useMemo(
-    () => ({ controller, state, configurationIssues: connection.issues }),
-    [controller, state, connection.issues],
+    () => ({
+      controller,
+      state,
+      registry,
+      configurationIssues: connection.issues,
+    }),
+    [controller, state, registry, connection.issues],
   );
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

@@ -1,0 +1,187 @@
+{
+  "databaseId": "tinkerloom",
+  "specification": "serverless",
+  "functionScopes": [
+    "rows.read",
+    "rows.write"
+  ],
+  "tables": [
+    {
+      "tableId": "workspaces",
+      "name": "workspaces",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "ownerId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "name",
+          "type": "varchar",
+          "size": 128,
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "owner",
+          "type": "key",
+          "columns": [
+            "ownerId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "apps",
+      "name": "apps",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "ownerId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "name",
+          "type": "varchar",
+          "size": 128,
+          "required": true
+        },
+        {
+          "key": "guard",
+          "type": "varchar",
+          "size": 36,
+          "required": false
+        },
+        {
+          "key": "draftRevision",
+          "type": "integer",
+          "required": false,
+          "min": 0,
+          "max": 2147483647,
+          "default": 0
+        },
+        {
+          "key": "publishedRevision",
+          "type": "integer",
+          "required": false,
+          "min": 0,
+          "max": 2147483647,
+          "default": 0
+        },
+        {
+          "key": "draftJson",
+          "type": "mediumtext",
+          "required": false
+        },
+        {
+          "key": "publishedJson",
+          "type": "mediumtext",
+          "required": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "owner_workspace",
+          "type": "key",
+          "columns": [
+            "ownerId",
+            "workspaceId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "records",
+      "name": "records",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "ownerId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "revision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "definitionRevision",
+          "type": "integer",
+          "required": true,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
+          "key": "valuesJson",
+          "type": "mediumtext",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "owner_app",
+          "type": "key",
+          "columns": [
+            "ownerId",
+            "appId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "receipts",
+      "name": "receipts",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "requestJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "responseJson",
+          "type": "mediumtext",
+          "required": true
+        }
+      ],
+      "indexes": []
+    }
+  ]
+}

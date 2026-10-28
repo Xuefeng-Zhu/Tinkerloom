@@ -1,0 +1,66 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  client:
+    name: React Native client
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI: "1"
+      EXPO_NO_TELEMETRY: "1"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+      - name: Install client dependencies
+        run: npm --prefix apps/mobile ci
+      - name: Check the live probe syntax without calling Appwrite
+        run: node --check scripts/live_smoke.mjs
+      - name: Test private-row denial classification offline
+        run: node --test scripts/live_smoke_denial.test.mjs
+      - name: Analyze, test, and export client bundles
+        run: npm run verify
+
+  backend:
+    name: Appwrite Dart function
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: appwrite_backend
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Dart 3.11
+        uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
+        with:
+          sdk: "3.11"
+      - name: Resolve dependencies
+        run: dart pub get
+      - name: Analyze authored function source and checks
+        run: dart analyze lib test
+      - name: Check authored-source formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Run backend service and HTTP transport checks
+        run: dart run test/service_check.dart

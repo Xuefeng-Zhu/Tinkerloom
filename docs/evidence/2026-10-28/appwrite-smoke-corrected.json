@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "runId": "qa-mvsclc4x-dc91f96d",
+  "startedAt": "2026-10-28T16:47:46.353Z",
+  "completedAt": "2026-10-28T16:48:08.239Z",
+  "status": "passed",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "origin": "http://127.0.0.1:8426",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "databaseId": "tinkerloom"
+  },
+  "accounts": [
+    {
+      "label": "QA A",
+      "id": "qa-e1e54e91be15df1fdd857a57e5a3",
+      "creationStatus": "created"
+    },
+    {
+      "label": "QA B",
+      "id": "qa-e4666ab171cf62c77e920243492e",
+      "creationStatus": "created"
+    }
+  ],
+  "resources": {
+    "workspaceA": "wsa-6956f4b9ac198a23a5aee7ba0738",
+    "appA": "apa-d4966ab4a24d9658079fb22b458a",
+    "recordId": "rec-33f03bddbd651a944dd55cab3ac8",
+    "workspaceB": "wsb-ef52d4a1df5065d0583c7b3ac3ea",
+    "appB": "apb-a14213483e77b72762b2da6cd5fe",
+    "raceApp": "rac-46a647b857b48edd1cf8d8c7bd56"
+  },
+  "checks": [
+    {
+      "name": "qa_account_a_and_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 515,
+      "source": "real_client_session"
+    },
+    {
+      "name": "qa_account_b_and_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 336,
+      "source": "real_client_session"
+    },
+    {
+      "name": "owner_a_workspace_and_app_creation",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 817,
+      "workspaceId": "wsa-6956f4b9ac198a23a5aee7ba0738",
+      "appId": "apa-d4966ab4a24d9658079fb22b458a"
+    },
+    {
+      "name": "owner_b_workspace_and_app_creation",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 893,
+      "workspaceId": "wsb-ef52d4a1df5065d0583c7b3ac3ea",
+      "appId": "apb-a14213483e77b72762b2da6cd5fe"
+    },
+    {
+      "name": "owned_lists_are_isolated",
+      "status": "passed",
+      "assertions": 12,
+      "durationMs": 1116
+    },
+    {
+      "name": "cross_account_workspace_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 319,
+      "httpStatus": 201,
+      "functionStatus": 404,
+      "executionStatus": "completed",
+      "observedCode": "not_found"
+    },
+    {
+      "name": "anonymous_function_denial",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 55,
+      "httpStatus": 401,
+      "executionStatus": "unavailable",
+      "observedCode": "user_unauthorized"
+    },
+    {
+      "name": "direct_table_read_denial",
+      "status": "passed",
+      "assertions": 2,
+      "durationMs": 65,
+      "httpStatus": 404,
+      "observedCode": "row_not_found"
+    },
+    {
+      "name": "direct_table_create_denial",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 61,
+      "httpStatus": 401,
+      "observedCode": "user_unauthorized"
+    },
+    {
+      "name": "fresh_app_has_no_published_definition",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 685
+    },
+    {
+      "name": "parallel_initial_draft_writes",
+      "status": "passed",
+      "assertions": 14,
+      "durationMs": 2106,
+      "appId": "rac-46a647b857b48edd1cf8d8c7bd56",
+      "draftRevision": 1,
+      "winnerCount": 1
+    },
+    {
+      "name": "save_draft",
+      "status": "passed",
+      "assertions": 9,
+      "durationMs": 1396,
+      "draftRevision": 1,
+      "operationId": "op-a3e2cbf133c5c00a2f101fb3a437"
+    },
+    {
+      "name": "invalid_draft_preserves_previous",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 602
+    },
+    {
+      "name": "stale_draft_revision_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 988
+    },
+    {
+      "name": "publish_reviewed_revision",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1598,
+      "publishedRevision": 1,
+      "operationId": "pub-75ca04f1f6b2488a30d2646e183d"
+    },
+    {
+      "name": "draft_receipt_replay_after_publication",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 262
+    },
+    {
+      "name": "draft_receipt_changed_payload_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 377
+    },
+    {
+      "name": "live_record_create_and_query",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1592,
+      "recordId": "rec-33f03bddbd651a944dd55cab3ac8",
+      "revision": 1,
+      "operationId": "rec-4084abc7833862f757e52f897db3"
+    },
+    {
+      "name": "live_record_edit",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1560,
+      "recordId": "rec-33f03bddbd651a944dd55cab3ac8",
+      "revision": 2
+    },
+    {
+      "name": "stale_record_revision_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 876
+    },
+    {
+      "name": "record_receipt_changed_payload_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 473
+    },
+    {
+      "name": "record_create_receipt_replay_after_edit",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 804
+    },
+    {
+      "name": "cross_account_app_and_record_denial",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 1264
+    },
+    {
+      "name": "parallel_same_revision_writes",
+      "status": "passed",
+      "assertions": 14,
+      "durationMs": 1812,
+      "recordId": "rec-33f03bddbd651a944dd55cab3ac8",
+      "revision": 3,
+      "winnerCount": 1
+    },
+    {
+      "name": "fresh_session_persistence",
+      "status": "passed",
+      "assertions": 13,
+      "durationMs": 1228,
+      "recordId": "rec-33f03bddbd651a944dd55cab3ac8",
+      "revision": 3,
+      "source": "fresh_client_session"
+    },
+    {
+      "name": "qa_account_b_signout",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 75
+    }
+  ],
+  "coverage": "Real REST client sessions and Function operations; not browser, native-device, or full-feature acceptance.",
+  "summary": {
+    "passed": 26,
+    "failed": 0,
+    "blocked": 0,
+    "assertions": 181
+  }
+}

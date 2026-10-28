@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "runId": "qa-mvsce29k-9c52cb5f",
+  "startedAt": "2026-10-28T16:42:06.968Z",
+  "completedAt": "2026-10-28T16:42:33.997Z",
+  "status": "failed",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "origin": "http://127.0.0.1:8426",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "databaseId": "tinkerloom"
+  },
+  "accounts": [
+    {
+      "label": "QA A",
+      "id": "qa-00dac2ee9cc4c8720ccbf6c42a15",
+      "creationStatus": "created"
+    },
+    {
+      "label": "QA B",
+      "id": "qa-ac2c8d21636b20ac66a10be8c400",
+      "creationStatus": "created"
+    }
+  ],
+  "resources": {
+    "workspaceA": "wsa-4770f9e3146b815f53e03d3eaf8c",
+    "appA": "apa-1a136af169f08e7ae4debb4c65d5",
+    "recordId": "rec-20bc3bb3ac17b0efc33f7988cddb",
+    "workspaceB": "wsb-fef8b7435eec60a8301bade9520f",
+    "appB": "apb-bbe239c416d3dd55b371435e0530",
+    "raceApp": "rac-1b2782295943fd298a060964569a"
+  },
+  "checks": [
+    {
+      "name": "qa_account_a_and_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 883,
+      "source": "real_client_session"
+    },
+    {
+      "name": "qa_account_b_and_session",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 386,
+      "source": "real_client_session"
+    },
+    {
+      "name": "owner_a_workspace_and_app_creation",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 4814,
+      "workspaceId": "wsa-4770f9e3146b815f53e03d3eaf8c",
+      "appId": "apa-1a136af169f08e7ae4debb4c65d5"
+    },
+    {
+      "name": "owner_b_workspace_and_app_creation",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1767,
+      "workspaceId": "wsb-fef8b7435eec60a8301bade9520f",
+      "appId": "apb-bbe239c416d3dd55b371435e0530"
+    },
+    {
+      "name": "owned_lists_are_isolated",
+      "status": "passed",
+      "assertions": 12,
+      "durationMs": 1093
+    },
+    {
+      "name": "cross_account_workspace_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 323,
+      "httpStatus": 201,
+      "functionStatus": 404,
+      "executionStatus": "completed",
+      "observedCode": "not_found"
+    },
+    {
+      "name": "anonymous_function_denial",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 50,
+      "httpStatus": 401,
+      "executionStatus": "unavailable",
+      "observedCode": "user_unauthorized"
+    },
+    {
+      "name": "direct_table_read_denial",
+      "status": "failed",
+      "assertions": 1,
+      "durationMs": 178,
+      "code": "direct_table_read_not_denied",
+      "httpStatus": 404,
+      "observedCode": "row_not_found"
+    },
+    {
+      "name": "direct_table_create_denial",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 58,
+      "httpStatus": 401,
+      "observedCode": "user_unauthorized"
+    },
+    {
+      "name": "fresh_app_has_no_published_definition",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 818
+    },
+    {
+      "name": "parallel_initial_draft_writes",
+      "status": "passed",
+      "assertions": 14,
+      "durationMs": 2066,
+      "appId": "rac-1b2782295943fd298a060964569a",
+      "draftRevision": 1,
+      "winnerCount": 1
+    },
+    {
+      "name": "save_draft",
+      "status": "passed",
+      "assertions": 9,
+      "durationMs": 1488,
+      "draftRevision": 1,
+      "operationId": "op-b916d0198d87759e9f80b6dc4d75"
+    },
+    {
+      "name": "invalid_draft_preserves_previous",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 736
+    },
+    {
+      "name": "stale_draft_revision_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 991
+    },
+    {
+      "name": "publish_reviewed_revision",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1429,
+      "publishedRevision": 1,
+      "operationId": "pub-2fe7cc39434ee75d1abfb8d5ceae"
+    },
+    {
+      "name": "draft_receipt_replay_after_publication",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 277
+    },
+    {
+      "name": "draft_receipt_changed_payload_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 367
+    },
+    {
+      "name": "live_record_create_and_query",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1463,
+      "recordId": "rec-20bc3bb3ac17b0efc33f7988cddb",
+      "revision": 1,
+      "operationId": "rec-223e4205e84fcf4c095d066e3693"
+    },
+    {
+      "name": "live_record_edit",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 1392,
+      "recordId": "rec-20bc3bb3ac17b0efc33f7988cddb",
+      "revision": 2
+    },
+    {
+      "name": "stale_record_revision_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 920
+    },
+    {
+      "name": "record_receipt_changed_payload_denial",
+      "status": "passed",
+      "assertions": 4,
+      "durationMs": 446
+    },
+    {
+      "name": "record_create_receipt_replay_after_edit",
+      "status": "passed",
+      "assertions": 8,
+      "durationMs": 798
+    },
+    {
+      "name": "cross_account_app_and_record_denial",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 1263
+    },
+    {
+      "name": "parallel_same_revision_writes",
+      "status": "passed",
+      "assertions": 14,
+      "durationMs": 1829,
+      "recordId": "rec-20bc3bb3ac17b0efc33f7988cddb",
+      "revision": 3,
+      "winnerCount": 1
+    },
+    {
+      "name": "fresh_session_persistence",
+      "status": "passed",
+      "assertions": 13,
+      "durationMs": 1091,
+      "recordId": "rec-20bc3bb3ac17b0efc33f7988cddb",
+      "revision": 3,
+      "source": "fresh_client_session"
+    },
+    {
+      "name": "qa_account_b_signout",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 88
+    }
+  ],
+  "coverage": "Real REST client sessions and Function operations; not browser, native-device, or full-feature acceptance.",
+  "summary": {
+    "passed": 25,
+    "failed": 1,
+    "blocked": 0,
+    "assertions": 180
+  }
+}

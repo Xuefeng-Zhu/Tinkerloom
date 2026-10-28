@@ -25,6 +25,7 @@ export interface HomeScreenProps {
   onCreateApp: () => void;
   onSignOut: () => void;
   onPreview: () => void;
+  onOpenApp: (id: string) => void;
 }
 
 export function HomeScreen({
@@ -40,6 +41,7 @@ export function HomeScreen({
   onCreateApp,
   onSignOut,
   onPreview,
+  onOpenApp,
 }: HomeScreenProps) {
   const workspace = workspaces.find((item) => item.id === workspaceId);
   return (
@@ -134,8 +136,7 @@ export function HomeScreen({
             <View style={styles.empty}>
               <Text style={styles.emptyTitle}>Begin with a workspace</Text>
               <Text style={styles.emptyText}>
-                Give your collection a name. You can create app shells inside it
-                next.
+                Give your collection a name. You can create apps inside it next.
               </Text>
               <Button
                 label="Create your first workspace"
@@ -149,26 +150,32 @@ export function HomeScreen({
             <View style={styles.sectionHeader}>
               <View style={styles.sectionCopy}>
                 <Text style={styles.sectionTitle} accessibilityRole="header">
-                  App shells
+                  Apps
                 </Text>
                 <Text style={styles.sectionDescription}>
                   In {workspace.name}
                 </Text>
               </View>
               <Button
-                label="New app shell"
+                label="New app"
                 onPress={onCreateApp}
                 disabled={loading}
               />
             </View>
             <Text style={styles.migrationNote}>
-              App shells save a name and workspace. The builder and live records
-              are still being migrated.
+              Open an app to customize its draft, publish a version, or use its
+              live records.
             </Text>
             {apps.length > 0 ? (
               <View style={styles.appList}>
                 {apps.map((app) => (
-                  <View key={app.id} style={styles.appRow}>
+                  <Pressable
+                    key={app.id}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Open ${app.name}`}
+                    onPress={() => onOpenApp(app.id)}
+                    style={styles.appRow}
+                  >
                     <View style={styles.appIcon}>
                       <Text style={styles.appGlyph} accessibilityElementsHidden>
                         ⌘
@@ -176,10 +183,12 @@ export function HomeScreen({
                     </View>
                     <View style={styles.appCopy}>
                       <Text style={styles.appName}>{app.name}</Text>
-                      <Text style={styles.appCaption}>Empty app shell</Text>
+                      <Text style={styles.appCaption}>
+                        Open app and builder
+                      </Text>
                     </View>
-                    <Text style={styles.saved}>Saved</Text>
-                  </View>
+                    <Text style={styles.saved}>Open →</Text>
+                  </Pressable>
                 ))}
               </View>
             ) : !loading ? (

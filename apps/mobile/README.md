@@ -26,9 +26,17 @@ Register Apple and Android platforms with the same identifiers in Appwrite. For 
 
 Deploy/configure the separate `../../appwrite_backend` function and tables before testing cloud features. Its execute permission must allow authenticated users and its tables must deny direct client reads/writes as documented there. Client-side code contains only public configuration and uses Appwrite Account sessions. It creates no service keys.
 
-The cloud flow supports sign-up, sign-in, session restoration, sign-out, owned workspaces, and empty app shells. Unknown creation results retain the original ID, name, and workspace for explicit retry while this app session remains open. Closing and reopening the dialog retains the attempt; returning from a preview also retains it. Pending commands are not durable across reloads or process termination. Inspect the server list before starting a new creation after reopening the app. A failed sign-out keeps the account visible and reports the error.
+The cloud flow supports sign-up, sign-in, session restoration, sign-out, owned workspaces, and saved mini-apps. Unknown creation results retain the original ID, name, and workspace for explicit retry while this app session remains open. Closing and reopening the dialog retains the attempt; returning from a preview also retains it. Pending commands are not durable across reloads or process termination. Inspect the server list before starting a new creation after reopening the app. A failed sign-out keeps the account visible and reports the error.
 
 After an auth response is lost, sign-in makes one read-only account check and accepts it only for the attempted email. It does not repeat the sign-in mutation automatically. Unconfirmed account creation directs the user to Sign in; Check existing session can recover a transient startup failure without creating another session. The retry sheet shows an app creation's original workspace even after the workspace selection changes.
+
+## Build and use a saved app
+
+Open an app from the workbench at `/apps/:appId`, then open its builder at `/apps/:appId/edit`. Choose Notes, Tasks, or Reading, customize the title, description, field labels and choice options, and add optional text/long-text/boolean/choice fields. Saving a draft does not publish it or copy preview samples into live storage. Review and publish the exact saved revision before creating live records.
+
+Live records are created, read in pages, and edited through authenticated Function operations. The server owns schema validation, expected revisions, compatibility, and transaction receipts. A stale definition or record revision is rejected rather than overwritten. Unknown saves and transaction conflicts keep the same operation ID, input, and expected versions for explicit retry. Local draft edits and pending saves survive navigation during the current signed-in app session, but not a reload/process termination; they are cleared when the account changes. Refreshing the saved app does not silently advance the original revision of unsaved edits.
+
+This is a bounded mini-app slice using at most ten fields and no arbitrary generated code. It does not yet port the full original AppSpec, rich widgets, sharing, AI, media, capacity workflows, or durable reminders. Native/device and live service verification must be recorded separately from local tests.
 
 ## Checks
 
