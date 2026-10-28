@@ -61,20 +61,19 @@ Map<String, dynamic> draft(
   String operationId,
   int expected, [
   Map<String, dynamic>? spec,
-]) =>
-    {
-      'op': 'saveDraft',
-      'appId': 'app1',
-      'expectedRevision': expected,
-      'operationId': operationId,
-      'definition': spec ?? definition,
-    };
+]) => {
+  'op': 'saveDraft',
+  'appId': 'app1',
+  'expectedRevision': expected,
+  'operationId': operationId,
+  'definition': spec ?? definition,
+};
 Map<String, dynamic> publish(String operationId, int expected) => {
-      'op': 'publishApp',
-      'appId': 'app1',
-      'expectedRevision': expected,
-      'operationId': operationId,
-    };
+  'op': 'publishApp',
+  'appId': 'app1',
+  'expectedRevision': expected,
+  'operationId': operationId,
+};
 Map<String, dynamic> record(
   String operationId,
   String id,
@@ -82,16 +81,15 @@ Map<String, dynamic> record(
   int published = 1,
   String title = 'Walk',
   String appId = 'app1',
-}) =>
-    {
-      'op': 'saveRecord',
-      'appId': appId,
-      'id': id,
-      'expectedRevision': expected,
-      'definitionRevision': published,
-      'operationId': operationId,
-      'values': {'title': title, 'done': false, 'priority': 'Today'},
-    };
+}) => {
+  'op': 'saveRecord',
+  'appId': appId,
+  'id': id,
+  'expectedRevision': expected,
+  'definitionRevision': published,
+  'operationId': operationId,
+  'values': {'title': title, 'done': false, 'priority': 'Today'},
+};
 Future<void> published(PlatformService api) async {
   await api.execute('alice', draft('draft-one', 0));
   await api.execute('alice', publish('publish-one', 1));
@@ -169,8 +167,9 @@ Future<void> main() async {
       'revision_conflict',
     );
     await api.execute('alice', publish('publish-one', 1));
-    final app = (await api
-        .execute('alice', {'op': 'getApp', 'appId': 'app1'}))['app'] as Map;
+    final app =
+        (await api.execute('alice', {'op': 'getApp', 'appId': 'app1'}))['app']
+            as Map;
     check(
       app['publishedRevision'] == 1 &&
           (app['publishedDefinition'] as Map)['title'] == 'Tasks',
@@ -375,8 +374,9 @@ Future<void> main() async {
       () => api.execute('alice', publish('bad-publication', 2)),
       'incompatible_definition',
     );
-    final app = (await api
-        .execute('alice', {'op': 'getApp', 'appId': 'app1'}))['app'] as Map;
+    final app =
+        (await api.execute('alice', {'op': 'getApp', 'appId': 'app1'}))['app']
+            as Map;
     check(
       app['publishedRevision'] == 1,
       'Incompatible version replaced live definition',
@@ -499,10 +499,10 @@ Future<void> transportCheck() async {
         path.endsWith('/transactions')
             ? {r'$id': 'tx1'}
             : path.endsWith('/account')
-                ? {r'$id': 'alice'}
-                : path.endsWith('/rows') && request.method == 'GET'
-                    ? {'total': 0, 'rows': []}
-                    : {r'$id': 'app1', 'ownerId': 'alice'},
+            ? {r'$id': 'alice'}
+            : path.endsWith('/rows') && request.method == 'GET'
+            ? {'total': 0, 'rows': []}
+            : {r'$id': 'app1', 'ownerId': 'alice'},
       ),
     );
     await request.response.close();
@@ -531,23 +531,23 @@ Future<void> transportCheck() async {
       jsonDecode(uri.queryParameters['queries[3]']!)['method'] == 'cursorAfter',
       'Cursor missing',
     );
-    await rest
-        .list('spec_records', {'appId': 'app1'}, select: [r'$id', 'revision']);
+    await rest.list(
+      'spec_records',
+      {'appId': 'app1'},
+      select: [r'$id', 'revision'],
+    );
     final selectedUri = requests.last['uri'] as Uri;
     final selected =
         jsonDecode(selectedUri.queryParameters['queries[3]']!) as Map;
     check(
-        selected['method'] == 'select' &&
-            jsonEncode(selected['values']) == jsonEncode([r'$id', 'revision']),
-        'Metadata select encoding differs from Appwrite query contract');
+      selected['method'] == 'select' &&
+          jsonEncode(selected['values']) == jsonEncode([r'$id', 'revision']),
+      'Metadata select encoding differs from Appwrite query contract',
+    );
     check(await rest.beginTransaction() == 'tx1', 'Transaction ID not parsed');
-    await rest.update(
-        'apps',
-        'app1',
-        {
-          'guard': 'guard1',
-        },
-        transactionId: 'tx1');
+    await rest.update('apps', 'app1', {
+      'guard': 'guard1',
+    }, transactionId: 'tx1');
     check(
       (requests.last['body'] as Map)['transactionId'] == 'tx1',
       'Update transaction ID missing',

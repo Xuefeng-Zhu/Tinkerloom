@@ -35,16 +35,13 @@ void _keys(Map<String, dynamic> value, Set<String> allowed, String error) {
 Map<String, dynamic> validateDefinition(Object? value) {
   const error = 'invalid_definition';
   final source = jsonObject(value, error);
-  _keys(
-      source,
-      {
-        'title',
-        'description',
-        'primaryFieldId',
-        'fields',
-        'view',
-      },
-      error);
+  _keys(source, {
+    'title',
+    'description',
+    'primaryFieldId',
+    'fields',
+    'view',
+  }, error);
   final title = boundedText(source['title'], 80, error);
   final description = source['description'];
   if (description is! String || description.length > 240)
@@ -69,7 +66,8 @@ Map<String, dynamic> validateDefinition(Object? value) {
           'choice',
           'number',
           'date',
-        }.contains(kind)) throw const ServiceException(error, 400);
+        }.contains(kind))
+      throw const ServiceException(error, 400);
     if (field.containsKey('required') && field['required'] is! bool)
       throw const ServiceException(error, 400);
     final normalized = <String, dynamic>{
@@ -82,8 +80,9 @@ Map<String, dynamic> validateDefinition(Object? value) {
       final options = field['options'];
       if (options is! List || options.isEmpty || options.length > 12)
         throw const ServiceException(error, 400);
-      final choices =
-          options.map((option) => boundedText(option, 64, error)).toList();
+      final choices = options
+          .map((option) => boundedText(option, 64, error))
+          .toList();
       if (choices.toSet().length != choices.length)
         throw const ServiceException(error, 400);
       normalized['options'] = choices;
@@ -98,7 +97,8 @@ Map<String, dynamic> validateDefinition(Object? value) {
         field['id'] == primary &&
         field['kind'] == 'text' &&
         field['required'] == true,
-  )) throw const ServiceException(error, 400);
+  ))
+    throw const ServiceException(error, 400);
   final result = <String, dynamic>{
     'title': title,
     'description': description,
@@ -217,12 +217,14 @@ void requireCompatible(
     if (old['kind'] == 'choice' &&
         (old['options'] as List).any(
           (option) => !(current['options'] as List).contains(option),
-        )) throw const ServiceException('incompatible_definition', 409);
+        ))
+      throw const ServiceException('incompatible_definition', 409);
   }
   final oldIds = oldFields.map((field) => field['id']).toSet();
   if (newFields.values.any(
     (field) => !oldIds.contains(field['id']) && field['required'] == true,
-  )) throw const ServiceException('incompatible_definition', 409);
+  ))
+    throw const ServiceException('incompatible_definition', 409);
 }
 
 String canonicalJson(Object? value) {

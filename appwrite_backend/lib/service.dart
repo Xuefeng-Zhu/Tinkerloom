@@ -3,6 +3,11 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:appnest_spec/appnest_spec.dart' as spec;
+import 'providers/provider.dart' as ai;
+import 'providers/creation_compiler.dart' as compiler;
+import 'providers/generation_quality.dart' as quality;
+import 'providers/generation_requirements.dart' as requirements;
+import 'providers/repair_bindings.dart' as repair;
 
 import 'definition.dart';
 import 'errors.dart';
@@ -18,6 +23,11 @@ part 'spec_runtime.dart';
 part 'spec_actions.dart';
 part 'spec_queries.dart';
 part 'spec_lifecycle.dart';
+part 'worker_support.dart';
+part 'reminders.dart';
+part 'generation.dart';
+part 'inbox.dart';
+part 'worker_dispatch.dart';
 
 typedef Row = Map<String, dynamic>;
 
@@ -29,28 +39,45 @@ class AppAccess {
   bool get builder => role == 'owner' || role == 'builder';
   bool get archived => app['archived'] == true;
   Row get capabilities => {
-        'editDefinition': builder && !archived,
-        'share': builder && !archived,
-        // The bounded definition has personal-tracker policy. Workflow/capacity
-        // member actions must go through their future registered handlers.
-        'writeRecords': builder && !archived,
-        'archive': role == 'owner' && !archived,
-        'revokeAccess': builder,
-      };
+    'editDefinition': builder && !archived,
+    'share': builder && !archived,
+    // The bounded definition has personal-tracker policy. Workflow/capacity
+    // member actions must go through their future registered handlers.
+    'writeRecords': builder && !archived,
+    'archive': role == 'owner' && !archived,
+    'revokeAccess': builder,
+  };
 }
 
 /// Private tables are accessed exclusively through this authenticated service.
 /// Membership and app grants are independent requirements. Every supported app
 /// mutation stages the workspace and app guards before rechecking authority.
 class PlatformService {
-  PlatformService(this.store, {DateTime Function()? clock})
-      : clock = clock ?? (() => DateTime.now().toUtc());
+  PlatformService(
+    this.store, {
+    DateTime Function()? clock,
+    this.aiProvider,
+    ai.GuidanceProvider? guidanceProvider,
+    this.remindersEnabled = false,
+    this.wakeups,
+  }) : clock = clock ?? (() => DateTime.now().toUtc()),
+       guidanceProvider =
+           guidanceProvider ??
+           (aiProvider is ai.GuidanceProvider
+               ? aiProvider as ai.GuidanceProvider
+               : null);
   final RowStore store;
   final DateTime Function() clock;
+  final ai.AiProvider? aiProvider;
+  final ai.GuidanceProvider? guidanceProvider;
+  final bool remindersEnabled;
+  final WorkerWakeups? wakeups;
   static final _id = RegExp(r'^[a-zA-Z0-9][a-zA-Z0-9._-]{0,35}$');
   static final _random = Random.secure();
   String _nonce() => List.generate(
-      16, (_) => _random.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
+    16,
+    (_) => _random.nextInt(256).toRadixString(16).padLeft(2, '0'),
+  ).join();
   String _identity(String kind, List<String> parts) =>
       '$kind${sha256.convert(utf8.encode(jsonEncode(parts))).toString().substring(0, 32)}';
 
@@ -68,10 +95,15 @@ class PlatformService {
 
   int _storedRevision(Row row, String key) => (row[key] as int?) ?? 0;
 
-  Future<Row?> _membership(String workspaceId, String actor,
-          {String? transactionId}) =>
-      store.get('memberships', _identity('m', [workspaceId, actor]),
-          transactionId: transactionId);
+  Future<Row?> _membership(
+    String workspaceId,
+    String actor, {
+    String? transactionId,
+  }) => store.get(
+    'memberships',
+    _identity('m', [workspaceId, actor]),
+    transactionId: transactionId,
+  );
 
   bool _validMembership(Row? member, String workspaceId, String actor) =>
       member != null &&
@@ -79,25 +111,36 @@ class PlatformService {
       member['actorId'] == actor &&
       member['active'] == true;
 
-  Future<Row> _workspace(String actor, Object? id,
-      {String? transactionId}) async {
+  Future<Row> _workspace(
+    String actor,
+    Object? id, {
+    String? transactionId,
+  }) async {
     final workspaceId = _validId(id);
-    final row = await store.get('workspaces', workspaceId,
-        transactionId: transactionId);
+    final row = await store.get(
+      'workspaces',
+      workspaceId,
+      transactionId: transactionId,
+    );
     if (row == null) throw const ServiceException('not_found', 404);
     // Existing v1 owners have implicit membership until their first guarded
     // operation creates a membership row. Other actors always need a real row.
     if (row['ownerId'] != actor &&
         !_validMembership(
-            await _membership(workspaceId, actor, transactionId: transactionId),
-            workspaceId,
-            actor)) throw const ServiceException('not_found', 404);
+          await _membership(workspaceId, actor, transactionId: transactionId),
+          workspaceId,
+          actor,
+        ))
+      throw const ServiceException('not_found', 404);
     return row;
   }
 
   Future<Row?> _grant(String appId, String actor, {String? transactionId}) =>
-      store.get('grants', _identity('g', [appId, actor]),
-          transactionId: transactionId);
+      store.get(
+        'grants',
+        _identity('g', [appId, actor]),
+        transactionId: transactionId,
+      );
 
   bool _validGrant(Row? grant, Row app, String actor) =>
       grant != null &&
@@ -107,12 +150,18 @@ class PlatformService {
       grant['revoked'] == false &&
       {'builder', 'member', 'viewer'}.contains(grant['role']);
 
-  Future<AppAccess> _access(String actor, String appId,
-      {String? transactionId}) async {
+  Future<AppAccess> _access(
+    String actor,
+    String appId, {
+    String? transactionId,
+  }) async {
     final app = await store.get('apps', appId, transactionId: transactionId);
     if (app == null) throw const ServiceException('not_found', 404);
-    final workspace = await _workspace(actor, app['workspaceId'],
-        transactionId: transactionId);
+    final workspace = await _workspace(
+      actor,
+      app['workspaceId'],
+      transactionId: transactionId,
+    );
     if (app['ownerId'] == actor) return AppAccess(app, workspace, 'owner');
     final grant = await _grant(appId, actor, transactionId: transactionId);
     if (!_validGrant(grant, app, actor))
@@ -130,24 +179,25 @@ class PlatformService {
   }
 
   Row _publicRow(Row row, {bool app = false}) => {
-        'id': row[r'$id'],
-        'name': row['name'],
-        if (app) 'workspaceId': row['workspaceId'],
-      };
+    'id': row[r'$id'],
+    'name': row['name'],
+    if (app) 'workspaceId': row['workspaceId'],
+  };
 
   Row _publicWorkspace(Row row, String actor) => {
-        ..._publicRow(row),
-        'role': row['ownerId'] == actor ? 'owner' : 'member',
-      };
+    ..._publicRow(row),
+    'role': row['ownerId'] == actor ? 'owner' : 'member',
+  };
 
   Row _appSummary(AppAccess access) => {
-        ..._publicRow(access.app, app: true),
-        'role': access.role,
-        'archived': access.archived,
-        'capabilities': access.capabilities,
-        'engine':
-            access.app['engine'] == 'appspec.v1' ? 'appspec.v1' : 'bounded.v1',
-      };
+    ..._publicRow(access.app, app: true),
+    'role': access.role,
+    'archived': access.archived,
+    'capabilities': access.capabilities,
+    'engine': access.app['engine'] == 'appspec.v1'
+        ? 'appspec.v1'
+        : 'bounded.v1',
+  };
 
   Row? _definition(Row row, String key) {
     final text = row[key];
@@ -157,14 +207,17 @@ class PlatformService {
   }
 
   Row _publicRecord(Row row, Row definition) => {
-        'id': row[r'$id'],
-        'revision': row['revision'],
-        'values':
-            validateValues(definition, jsonDecode(row['valuesJson'] as String)),
-      };
+    'id': row[r'$id'],
+    'revision': row['revision'],
+    'values': validateValues(
+      definition,
+      jsonDecode(row['valuesJson'] as String),
+    ),
+  };
 
   Future<T> _transaction<T>(
-      Future<T> Function(String transactionId) action) async {
+    Future<T> Function(String transactionId) action,
+  ) async {
     final transactionId = await store.beginTransaction();
     var committed = false;
     try {
@@ -188,50 +241,66 @@ class PlatformService {
   }
 
   Future<AppAccess> _stageAccess(
-      String actor, AppAccess initial, String transactionId) async {
-    await store.update(
-        'workspaces', initial.workspace[r'$id'] as String, {'guard': _nonce()},
-        transactionId: transactionId);
-    await store.update(
-        'apps', initial.app[r'$id'] as String, {'guard': _nonce()},
-        transactionId: transactionId);
-    final current = await _access(actor, initial.app[r'$id'] as String,
-        transactionId: transactionId);
+    String actor,
+    AppAccess initial,
+    String transactionId,
+  ) async {
+    await store.update('workspaces', initial.workspace[r'$id'] as String, {
+      'guard': _nonce(),
+    }, transactionId: transactionId);
+    await store.update('apps', initial.app[r'$id'] as String, {
+      'guard': _nonce(),
+    }, transactionId: transactionId);
+    final current = await _access(
+      actor,
+      initial.app[r'$id'] as String,
+      transactionId: transactionId,
+    );
     if (current.app['workspaceId'] != initial.workspace[r'$id'])
       throw const ServiceException('not_found', 404);
     return _adoptLegacyDraft(current, transactionId);
   }
 
   Future<Row?> _receipt(
-      String actor, String appId, String operationId, String request,
-      {String? transactionId}) async {
-    final receipt =
-        await store.get('receipts', operationId, transactionId: transactionId);
+    String actor,
+    String appId,
+    String operationId,
+    String request, {
+    String? transactionId,
+  }) async {
+    final receipt = await store.get(
+      'receipts',
+      operationId,
+      transactionId: transactionId,
+    );
     if (receipt == null) return null;
     if (receipt['actorId'] != actor ||
         receipt['appId'] != appId ||
         receipt['requestJson'] != request)
       throw const ServiceException('operation_conflict', 409);
     return Map<String, dynamic>.from(
-        jsonDecode(receipt['responseJson'] as String) as Map);
+      jsonDecode(receipt['responseJson'] as String) as Map,
+    );
   }
 
-  Future<void> _saveReceipt(String actor, String appId, String operationId,
-      String request, Row response, String transactionId,
-      {int maximumBytes = 65536}) async {
+  Future<void> _saveReceipt(
+    String actor,
+    String appId,
+    String operationId,
+    String request,
+    Row response,
+    String transactionId, {
+    int maximumBytes = 65536,
+  }) async {
     final encoded = jsonEncode(response);
     if (utf8.encode(encoded).length > maximumBytes)
       throw const ServiceException('response_too_large', 500);
-    await store.create(
-        'receipts',
-        operationId,
-        {
-          'actorId': actor,
-          'appId': appId,
-          'requestJson': request,
-          'responseJson': encoded,
-        },
-        transactionId: transactionId);
+    await store.create('receipts', operationId, {
+      'actorId': actor,
+      'appId': appId,
+      'requestJson': request,
+      'responseJson': encoded,
+    }, transactionId: transactionId);
   }
 
   String _request(Row input, {int maximumBytes = 32768}) {
@@ -241,9 +310,14 @@ class PlatformService {
     return request;
   }
 
-  Future<Row?> _authorizedReceipt(String actor, String appId,
-      String operationId, String request, String capability,
-      {Future<void> Function(AppAccess, String?)? authorize}) async {
+  Future<Row?> _authorizedReceipt(
+    String actor,
+    String appId,
+    String operationId,
+    String request,
+    String capability, {
+    Future<void> Function(AppAccess, String?)? authorize,
+  }) async {
     final initial = await _access(actor, appId);
     _require(initial, capability, writable: false);
     if (authorize != null) await authorize(initial, null);
@@ -258,12 +332,16 @@ class PlatformService {
     return receipt;
   }
 
-  Future<Row> _mutate(String actor, Row input, String capability,
-      Future<Row> Function(String transactionId, AppAccess access) action,
-      {bool writable = true,
-      int requestBytes = 32768,
-      int responseBytes = 65536,
-      Future<void> Function(AppAccess, String?)? authorize}) async {
+  Future<Row> _mutate(
+    String actor,
+    Row input,
+    String capability,
+    Future<Row> Function(String transactionId, AppAccess access) action, {
+    bool writable = true,
+    int requestBytes = 32768,
+    int responseBytes = 65536,
+    Future<void> Function(AppAccess, String?)? authorize,
+  }) async {
     final appId = _validId(input['appId']);
     final operationId = _validId(input['operationId']);
     final request = _request(input, maximumBytes: requestBytes);
@@ -276,16 +354,26 @@ class PlatformService {
       throw const ServiceException('unsupported_runtime', 400);
     _require(initial, capability, writable: false);
     final previous = await _authorizedReceipt(
-        actor, appId, operationId, request, capability,
-        authorize: authorize);
+      actor,
+      appId,
+      operationId,
+      request,
+      capability,
+      authorize: authorize,
+    );
     if (previous != null) return previous;
     try {
       return await _transaction((transactionId) async {
         final access = await _stageAccess(actor, initial, transactionId);
         _require(access, capability, writable: false);
         if (authorize != null) await authorize(access, transactionId);
-        final old = await _receipt(actor, appId, operationId, request,
-            transactionId: transactionId);
+        final old = await _receipt(
+          actor,
+          appId,
+          operationId,
+          request,
+          transactionId: transactionId,
+        );
         if (old != null) return old;
         // Archive suppresses new work, while a currently authorized actor may
         // still recover the exact result of a previously committed command.
@@ -294,16 +382,28 @@ class PlatformService {
         if (access.app['engine'] == 'appspec.v1' &&
             !(input['op'] as String).startsWith('spec.')) {
           await _specChanged(
-              actor, access, operationId, input['op'] as String, transactionId);
+            actor,
+            access,
+            operationId,
+            input['op'] as String,
+            transactionId,
+          );
           if (response.containsKey('app'))
             response['app'] = await _publicSpecApp(
-                actor,
-                await _access(actor, appId, transactionId: transactionId),
-                transactionId);
+              actor,
+              await _access(actor, appId, transactionId: transactionId),
+              transactionId,
+            );
         }
         await _saveReceipt(
-            actor, appId, operationId, request, response, transactionId,
-            maximumBytes: receiptResponseBytes);
+          actor,
+          appId,
+          operationId,
+          request,
+          response,
+          transactionId,
+          maximumBytes: receiptResponseBytes,
+        );
         return response;
       });
     } on ServiceException catch (error) {
@@ -313,11 +413,16 @@ class PlatformService {
         'not_published',
         'transaction_conflict',
         'id_conflict',
-        'app_archived'
+        'app_archived',
       }.contains(error.code)) {
         final old = await _authorizedReceipt(
-            actor, appId, operationId, request, capability,
-            authorize: authorize);
+          actor,
+          appId,
+          operationId,
+          request,
+          capability,
+          authorize: authorize,
+        );
         if (old != null) return old;
       }
       rethrow;
@@ -361,9 +466,11 @@ class PlatformService {
         }
         return _transaction((tx) async {
           await _reserveWorkspace(actor, tx);
-          final row = await store.create('workspaces', id,
-              {'ownerId': actor, 'name': name, 'guard': _nonce()},
-              transactionId: tx);
+          final row = await store.create('workspaces', id, {
+            'ownerId': actor,
+            'name': name,
+            'guard': _nonce(),
+          }, transactionId: tx);
           await _ensureMembership(row, actor, tx, owner: true);
           return {'workspace': _publicWorkspace(row, actor)};
         });
@@ -386,12 +493,14 @@ class PlatformService {
           throw const ServiceException('too_many_results', 409);
         final sorted = rows.values.toList()
           ..sort(
-              (a, b) => (a[r'$id'] as String).compareTo(b[r'$id'] as String));
+            (a, b) => (a[r'$id'] as String).compareTo(b[r'$id'] as String),
+          );
         final visible = <Row>[];
         for (final row in sorted) {
           try {
             visible.add(
-                _publicWorkspace(await _workspace(actor, row[r'$id']), actor));
+              _publicWorkspace(await _workspace(actor, row[r'$id']), actor),
+            );
           } on ServiceException catch (error) {
             if (error.code != 'not_found') rethrow;
           }
@@ -403,13 +512,20 @@ class PlatformService {
         final id = _validId(input['id']);
         final name = boundedText(input['name'], 128, 'invalid_name');
         return _transaction((tx) async {
-          await store.update(
-              'workspaces', workspace[r'$id'] as String, {'guard': _nonce()},
-              transactionId: tx);
-          final current =
-              await _workspace(actor, workspace[r'$id'], transactionId: tx);
-          await _ensureMembership(current, actor, tx,
-              owner: current['ownerId'] == actor);
+          await store.update('workspaces', workspace[r'$id'] as String, {
+            'guard': _nonce(),
+          }, transactionId: tx);
+          final current = await _workspace(
+            actor,
+            workspace[r'$id'],
+            transactionId: tx,
+          );
+          await _ensureMembership(
+            current,
+            actor,
+            tx,
+            owner: current['ownerId'] == actor,
+          );
           final old = await store.get('apps', id, transactionId: tx);
           if (old != null) {
             if (old['ownerId'] != actor ||
@@ -417,35 +533,32 @@ class PlatformService {
                 old['name'] != name)
               throw const ServiceException('id_conflict', 409);
             return {
-              'app': _appSummary(await _access(actor, id, transactionId: tx))
+              'app': _appSummary(await _access(actor, id, transactionId: tx)),
             };
           }
-          final apps = await store.list(
-              'apps', {'workspaceId': current[r'$id'] as String},
-              transactionId: tx);
+          final apps = await store.list('apps', {
+            'workspaceId': current[r'$id'] as String,
+          }, transactionId: tx);
           if (apps.length >= 100)
             throw const ServiceException('quota_exceeded', 429);
-          final row = await store.create(
-              'apps',
-              id,
-              {
-                'ownerId': actor,
-                'workspaceId': current[r'$id'],
-                'name': name,
-                'draftRevision': 0,
-                'publishedRevision': 0,
-                'headRevision': 0,
-                'guard': _nonce(),
-                'archived': false,
-              },
-              transactionId: tx);
+          final row = await store.create('apps', id, {
+            'ownerId': actor,
+            'workspaceId': current[r'$id'],
+            'name': name,
+            'draftRevision': 0,
+            'publishedRevision': 0,
+            'headRevision': 0,
+            'guard': _nonce(),
+            'archived': false,
+          }, transactionId: tx);
           return {'app': _appSummary(AppAccess(row, current, 'owner'))};
         });
       case 'listApps':
         _inputKeys(input, {'op', 'workspaceId'});
         final workspace = await _workspace(actor, input['workspaceId']);
-        final rows = await store
-            .list('apps', {'workspaceId': workspace[r'$id'] as String});
+        final rows = await store.list('apps', {
+          'workspaceId': workspace[r'$id'] as String,
+        });
         final result = <Row>[];
         for (final row in rows) {
           try {
@@ -453,7 +566,8 @@ class PlatformService {
             if (access.role != 'owner' &&
                 (row['engine'] == 'appspec.v1'
                     ? row['specVersionId'] == null
-                    : _storedRevision(row, 'publishedRevision') == 0)) continue;
+                    : _storedRevision(row, 'publishedRevision') == 0))
+              continue;
             result.add(_appSummary(access));
           } on ServiceException catch (error) {
             if (error.code != 'not_found') rethrow;
@@ -489,8 +603,9 @@ class PlatformService {
         if (published == 0) throw const ServiceException('not_published', 409);
         if (expected != published)
           throw const ServiceException('definition_conflict', 409);
-        final afterId =
-            input['afterId'] == null ? null : _validId(input['afterId']);
+        final afterId = input['afterId'] == null
+            ? null
+            : _validId(input['afterId']);
         if (afterId != null) {
           final cursor = await store.get('records', afterId);
           if (cursor == null ||
@@ -499,14 +614,12 @@ class PlatformService {
             throw const ServiceException('not_found', 404);
         }
         final rows = await store.list(
-            'records',
-            {
-              'ownerId': access.app['ownerId'] as String,
-              'appId': appId,
-            },
-            limit: 11,
-            afterId: afterId,
-            detectOverflow: false);
+          'records',
+          {'ownerId': access.app['ownerId'] as String, 'appId': appId},
+          limit: 11,
+          afterId: afterId,
+          detectOverflow: false,
+        );
         await _readAgain(actor, access);
         final definition = _definition(access.app, 'publishedJson')!;
         final page = rows.take(10).toList();
@@ -523,7 +636,7 @@ class PlatformService {
           'operationId',
           'expectedRevision',
           'definitionRevision',
-          'values'
+          'values',
         });
         final expected = _revision(input['expectedRevision']);
         final definitionRevision = _revision(input['definitionRevision']);
@@ -554,11 +667,15 @@ class PlatformService {
           };
           final row = old == null
               ? await store.create('records', recordId, data, transactionId: tx)
-              : await store.update('records', recordId, data,
-                  transactionId: tx);
+              : await store.update(
+                  'records',
+                  recordId,
+                  data,
+                  transactionId: tx,
+                );
           return {
             'record': _publicRecord(row, definition),
-            'definitionRevision': published
+            'definitionRevision': published,
           };
         });
       case 'createInvitation':
@@ -578,13 +695,15 @@ class PlatformService {
       case 'archiveApp':
         _inputKeys(input, {'op', 'appId', 'operationId'});
         return _mutate(actor, input, 'owner', (tx, access) async {
-          final app = await store.update(
-              'apps', access.app[r'$id'] as String, {'archived': true},
-              transactionId: tx);
+          final app = await store.update('apps', access.app[r'$id'] as String, {
+            'archived': true,
+          }, transactionId: tx);
           return {
             'app': await _publicApp(
-                actor, AppAccess(app, access.workspace, access.role),
-                transactionId: tx)
+              actor,
+              AppAccess(app, access.workspace, access.role),
+              transactionId: tx,
+            ),
           };
         }, writable: false);
       default:

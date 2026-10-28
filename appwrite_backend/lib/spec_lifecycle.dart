@@ -2,27 +2,36 @@ part of 'service.dart';
 
 extension _SpecLifecycle on PlatformService {
   Future<AppAccess> _metadataAccess(
-      String actor, String appId, String? tx) async {
-    final rows = await store.list('apps', {r'$id': appId},
-        transactionId: tx,
-        limit: 1,
-        select: [
-          r'$id',
-          'workspaceId',
-          'ownerId',
-          'name',
-          'engine',
-          'archived',
-          'guard',
-          'publishedRevision',
-          'specVersionId'
-        ]);
+    String actor,
+    String appId,
+    String? tx,
+  ) async {
+    final rows = await store.list(
+      'apps',
+      {r'$id': appId},
+      transactionId: tx,
+      limit: 1,
+      select: [
+        r'$id',
+        'workspaceId',
+        'ownerId',
+        'name',
+        'engine',
+        'archived',
+        'guard',
+        'publishedRevision',
+        'specVersionId',
+      ],
+    );
     if (rows.isEmpty) throw const ServiceException('not_found', 404);
     final app = rows.single;
     if (app[r'$id'] != appId)
       throw const ServiceException('integrity_error', 500);
-    final workspace =
-        await _workspace(actor, app['workspaceId'], transactionId: tx);
+    final workspace = await _workspace(
+      actor,
+      app['workspaceId'],
+      transactionId: tx,
+    );
     if (app['ownerId'] == actor) return AppAccess(app, workspace, 'owner');
     final grant = await _grant(appId, actor, transactionId: tx);
     if (!_validGrant(grant, app, actor))
@@ -35,8 +44,10 @@ extension _SpecLifecycle on PlatformService {
     final appId = _validId(input['appId']),
         initial = await _metadataAccess(actor, appId, null);
     _publishedOrOwner(initial);
-    return _workspaceCatalog(actor, initial.workspace[r'$id'] as String,
-        (workspace, tx) async {
+    return _workspaceCatalog(actor, initial.workspace[r'$id'] as String, (
+      workspace,
+      tx,
+    ) async {
       final access = await _metadataAccess(actor, appId, tx);
       _publishedOrOwner(access);
       if (access.app['workspaceId'] != workspace[r'$id'])
@@ -48,9 +59,11 @@ extension _SpecLifecycle on PlatformService {
             : await _activeSpec(access, tx);
         response['capabilities'] = {
           ...access.capabilities,
-          'writeRecords': version?.definition.actions.any((action) =>
-                  _specAllowed(access, version.definition, action)) ??
-              false
+          'writeRecords':
+              version?.definition.actions.any(
+                (action) => _specAllowed(access, version.definition, action),
+              ) ??
+              false,
         };
       }
       return {'app': response};
@@ -83,15 +96,15 @@ extension _SpecLifecycle on PlatformService {
   }
 
   Row _versionSummary(_SpecVersion version) => {
-        'id': version.row[r'$id'],
-        'number': version.row['number'],
-        'hash': version.row['hash'],
-        'name': version.definition.name,
-        'theme': version.definition.theme,
-        'icon': version.definition.icon,
-        'publisherId': version.row['publisherId'],
-        'createdAt': _lifecycleTime(version.row['createdAt']),
-      };
+    'id': version.row[r'$id'],
+    'number': version.row['number'],
+    'hash': version.row['hash'],
+    'name': version.definition.name,
+    'theme': version.definition.theme,
+    'icon': version.definition.icon,
+    'publisherId': version.row['publisherId'],
+    'createdAt': _lifecycleTime(version.row['createdAt']),
+  };
 
   Future<Row> _specListVersions(String actor, Row input) async {
     _inputKeys(input, {'op', 'appId', 'beforeNumber', 'limit'});
@@ -105,8 +118,11 @@ extension _SpecLifecycle on PlatformService {
       final versions = <Row>[];
       var number = before - 1;
       for (; number >= 1 && versions.length < limit; number--) {
-        final version = await _specVersion(access,
-            _identity('v', [access.app[r'$id'] as String, '$number']), tx);
+        final version = await _specVersion(
+          access,
+          _identity('v', [access.app[r'$id'] as String, '$number']),
+          tx,
+        );
         if (version.row['number'] != number)
           throw const ServiceException('integrity_error', 500);
         versions.add(_versionSummary(version));
@@ -128,7 +144,7 @@ extension _SpecLifecycle on PlatformService {
       return {
         'version': {
           ..._versionSummary(version),
-          'spec': version.definition.toJson()
+          'spec': version.definition.toJson(),
         },
         'currentVersionId': access.app['specVersionId'],
       };
@@ -137,13 +153,16 @@ extension _SpecLifecycle on PlatformService {
 
   /// Every mutation in a workspace stages this affected row. One workspace
   /// guard protects a catalog snapshot without >100 staged app-guard writes.
-  Future<Row> _workspaceCatalog(String actor, String workspaceId,
-      Future<Row> Function(Row workspace, String tx) read) async {
+  Future<Row> _workspaceCatalog(
+    String actor,
+    String workspaceId,
+    Future<Row> Function(Row workspace, String tx) read,
+  ) async {
     final initial = await _workspace(actor, workspaceId);
     return _transaction((tx) async {
-      await store.update(
-          'workspaces', initial[r'$id'] as String, {'guard': _nonce()},
-          transactionId: tx);
+      await store.update('workspaces', initial[r'$id'] as String, {
+        'guard': _nonce(),
+      }, transactionId: tx);
       final current = await _workspace(actor, workspaceId, transactionId: tx);
       final response = await read(current, tx);
       if (utf8.encode(jsonEncode(response)).length > _specResponseBytes)
@@ -153,29 +172,36 @@ extension _SpecLifecycle on PlatformService {
   }
 
   Future<List<AppAccess>> _lifecycleApps(
-      String actor, Row workspace, String tx) async {
+    String actor,
+    Row workspace,
+    String tx,
+  ) async {
     final workspaceId = workspace[r'$id'] as String;
-    final apps = await store.list('apps', {'workspaceId': workspaceId},
-        transactionId: tx,
-        select: [
-          r'$id',
-          'workspaceId',
-          'ownerId',
-          'name',
-          'engine',
-          'archived',
-          'specVersionId',
-          'specVersionNumber',
-          'controlRevision',
-          r'$createdAt',
-          'publishedRevision',
-          'draftRevision',
-          'headRevision',
-          'draftJson',
-        ]);
-    final grants = await store.list(
-        'grants', {'workspaceId': workspaceId, 'actorId': actor},
-        transactionId: tx);
+    final apps = await store.list(
+      'apps',
+      {'workspaceId': workspaceId},
+      transactionId: tx,
+      select: [
+        r'$id',
+        'workspaceId',
+        'ownerId',
+        'name',
+        'engine',
+        'archived',
+        'specVersionId',
+        'specVersionNumber',
+        'controlRevision',
+        r'$createdAt',
+        'publishedRevision',
+        'draftRevision',
+        'headRevision',
+        'draftJson',
+      ],
+    );
+    final grants = await store.list('grants', {
+      'workspaceId': workspaceId,
+      'actorId': actor,
+    }, transactionId: tx);
     final byApp = <String, Row>{};
     for (final grant in grants) {
       if (grant['workspaceId'] != workspaceId ||
@@ -196,7 +222,8 @@ extension _SpecLifecycle on PlatformService {
               ? app['specVersionId'] != null
               : _storedRevision(app, 'publishedRevision') > 0)) {
         result.add(
-            AppAccess(app, workspace, byApp[app[r'$id']]!['role'] as String));
+          AppAccess(app, workspace, byApp[app[r'$id']]!['role'] as String),
+        );
       }
     }
     result.sort((a, b) {
@@ -214,62 +241,86 @@ extension _SpecLifecycle on PlatformService {
   }
 
   String? _catalogAfter(
-      Row input, String actor, String workspaceId, String kind) {
+    Row input,
+    String actor,
+    String workspaceId,
+    String kind,
+  ) {
     if (input['cursor'] == null) return null;
     try {
       final cursor = jsonObject(
-          jsonDecode(utf8.decode(base64Url
-              .decode(boundedText(input['cursor'], 4096, 'invalid_request')))),
-          'invalid_request');
+        jsonDecode(
+          utf8.decode(
+            base64Url.decode(
+              boundedText(input['cursor'], 4096, 'invalid_request'),
+            ),
+          ),
+        ),
+        'invalid_request',
+      );
       if (cursor.keys.toSet().difference({'scope', 'after'}).isNotEmpty ||
           cursor['scope'] !=
               spec.hashJson({
                 'actor': actor,
                 'workspace': workspaceId,
                 'kind': kind,
-                'pinnedOnly': input['pinnedOnly'] == true
-              })) throw const FormatException();
+                'pinnedOnly': input['pinnedOnly'] == true,
+              }))
+        throw const FormatException();
       return _validId(cursor['after']);
     } catch (_) {
       throw const ServiceException('invalid_request', 400);
     }
   }
 
-  String _catalogCursor(String actor, String workspaceId, String kind,
-          String after, bool pinnedOnly) =>
-      base64Url.encode(utf8.encode(jsonEncode({
+  String _catalogCursor(
+    String actor,
+    String workspaceId,
+    String kind,
+    String after,
+    bool pinnedOnly,
+  ) => base64Url.encode(
+    utf8.encode(
+      jsonEncode({
         'scope': spec.hashJson({
           'actor': actor,
           'workspace': workspaceId,
           'kind': kind,
-          'pinnedOnly': pinnedOnly
+          'pinnedOnly': pinnedOnly,
         }),
         'after': after,
-      })));
+      }),
+    ),
+  );
 
   Future<Map<String, Row>> _ownDraftMetadata(
-      String actor, String workspaceId, String tx,
-      {String table = 'spec_drafts'}) async {
-    final rows =
-        await store.list(table, {'workspaceId': workspaceId, 'actorId': actor},
-            transactionId: tx,
-            select: [
-              r'$id',
-              'workspaceId',
-              'appId',
-              'actorId',
-              'revision',
-              if (table == 'spec_drafts') ...[
-                'baseVersionId',
-                'candidateHash',
-                'publishedVersionId',
-                'updatedAt'
-              ] else ...[
-                'candidateRevision',
-                'basePublishedRevision'
-              ],
-              r'$updatedAt',
-            ]);
+    String actor,
+    String workspaceId,
+    String tx, {
+    String table = 'spec_drafts',
+  }) async {
+    final rows = await store.list(
+      table,
+      {'workspaceId': workspaceId, 'actorId': actor},
+      transactionId: tx,
+      select: [
+        r'$id',
+        'workspaceId',
+        'appId',
+        'actorId',
+        'revision',
+        if (table == 'spec_drafts') ...[
+          'baseVersionId',
+          'candidateHash',
+          'publishedVersionId',
+          'updatedAt',
+        ] else ...[
+          'candidateRevision',
+          'basePublishedRevision',
+        ],
+        r'$updatedAt',
+      ],
+    );
     final result = <String, Row>{};
     for (final row in rows) {
       if (row['workspaceId'] != workspaceId ||
@@ -284,8 +335,10 @@ extension _SpecLifecycle on PlatformService {
 
   Future<Row?> _ownShortcut(String actor, AppAccess access, String tx) async {
     final shortcut = await store.get(
-        'shortcuts', _identity('k', [access.app[r'$id'] as String, actor]),
-        transactionId: tx);
+      'shortcuts',
+      _identity('k', [access.app[r'$id'] as String, actor]),
+      transactionId: tx,
+    );
     if (shortcut != null &&
         (shortcut['actorId'] != actor ||
             shortcut['appId'] != access.app[r'$id'] ||
@@ -310,11 +363,14 @@ extension _SpecLifecycle on PlatformService {
         'revision': draft['revision'],
         'candidateRevision': draft['candidateRevision'],
         'basePublishedRevision': draft['basePublishedRevision'],
-        'currentPublishedRevision':
+        'currentPublishedRevision': _storedRevision(
+          access.app,
+          'publishedRevision',
+        ),
+        'stale':
+            draft['basePublishedRevision'] !=
             _storedRevision(access.app, 'publishedRevision'),
-        'stale': draft['basePublishedRevision'] !=
-            _storedRevision(access.app, 'publishedRevision'),
-        'updatedAt': _lifecycleTime(draft[r'$updatedAt'])
+        'updatedAt': _lifecycleTime(draft[r'$updatedAt']),
       };
     }
     final draft = await _specDraft(actor, access, tx);
@@ -333,15 +389,19 @@ extension _SpecLifecycle on PlatformService {
       'baseVersionId': draft['baseVersionId'],
       'currentVersionId': access.app['specVersionId'],
       'stale': draft['baseVersionId'] != access.app['specVersionId'],
-      'updatedAt': _lifecycleTime(draft['updatedAt'] ?? draft[r'$updatedAt'])
+      'updatedAt': _lifecycleTime(draft['updatedAt'] ?? draft[r'$updatedAt']),
     };
   }
 
   Future<Map<String, Row>> _ownShortcuts(
-      String actor, String workspaceId, String tx) async {
-    final rows = await store.list(
-        'shortcuts', {'actorId': actor, 'workspaceId': workspaceId},
-        transactionId: tx);
+    String actor,
+    String workspaceId,
+    String tx,
+  ) async {
+    final rows = await store.list('shortcuts', {
+      'actorId': actor,
+      'workspaceId': workspaceId,
+    }, transactionId: tx);
     final result = <String, Row>{};
     for (final row in rows) {
       if (row['actorId'] != actor ||
@@ -365,33 +425,48 @@ extension _SpecLifecycle on PlatformService {
   Future<Row> _launcherStats(AppAccess access, String tx) async {
     final appId = access.app[r'$id'] as String;
     if (access.app['engine'] != 'appspec.v1') {
-      final records = await _scanSpecRows('records',
-          {'appId': appId, 'ownerId': access.app['ownerId'] as String}, tx,
-          select: [r'$id', 'appId', 'ownerId']);
-      if (records.any((row) =>
-          row['appId'] != appId || row['ownerId'] != access.app['ownerId']))
+      final records = await _scanSpecRows(
+        'records',
+        {'appId': appId, 'ownerId': access.app['ownerId'] as String},
+        tx,
+        select: [r'$id', 'appId', 'ownerId'],
+      );
+      if (records.any(
+        (row) =>
+            row['appId'] != appId || row['ownerId'] != access.app['ownerId'],
+      ))
         throw const ServiceException('integrity_error', 500);
       return {'recordCount': records.length, 'availablePlaces': 0};
     }
-    final records = await _scanSpecRows('spec_records', {'appId': appId}, tx,
-        select: [r'$id', 'appId', 'workspaceId', 'deleted']);
-    if (records.any((row) =>
-        row['appId'] != appId ||
-        row['workspaceId'] != access.app['workspaceId']))
+    final records = await _scanSpecRows(
+      'spec_records',
+      {'appId': appId},
+      tx,
+      select: [r'$id', 'appId', 'workspaceId', 'deleted'],
+    );
+    if (records.any(
+      (row) =>
+          row['appId'] != appId ||
+          row['workspaceId'] != access.app['workspaceId'],
+    ))
       throw const ServiceException('integrity_error', 500);
     final live = {
       for (final row in records)
-        if (row['deleted'] == false) row[r'$id']
+        if (row['deleted'] == false) row[r'$id'],
     };
-    final pools = await _scanSpecRows('spec_pools', {'appId': appId}, tx,
-        select: [
-          r'$id',
-          'appId',
-          'workspaceId',
-          'recordId',
-          'capacity',
-          'allocated'
-        ]);
+    final pools = await _scanSpecRows(
+      'spec_pools',
+      {'appId': appId},
+      tx,
+      select: [
+        r'$id',
+        'appId',
+        'workspaceId',
+        'recordId',
+        'capacity',
+        'allocated',
+      ],
+    );
     var available = 0;
     for (final pool in pools) {
       if (pool['appId'] != appId ||
@@ -419,12 +494,16 @@ extension _SpecLifecycle on PlatformService {
     return _workspaceCatalog(actor, workspaceId, (workspace, tx) async {
       final shortcuts = await _ownShortcuts(actor, workspaceId, tx);
       final apps = (await _lifecycleApps(actor, workspace, tx))
-          .where((access) =>
-              input['pinnedOnly'] != true ||
-              shortcuts[access.app[r'$id']]?['pinned'] == true)
+          .where(
+            (access) =>
+                input['pinnedOnly'] != true ||
+                shortcuts[access.app[r'$id']]?['pinned'] == true,
+          )
           .toList();
-      final selected =
-              apps.skip(_catalogStart(apps, after)).take(limit + 1).toList(),
+      final selected = apps
+              .skip(_catalogStart(apps, after))
+              .take(limit + 1)
+              .toList(),
           visible = <Row>[];
       for (final access in selected.take(limit)) {
         final full = access.app['engine'] == 'appspec.v1';
@@ -432,9 +511,11 @@ extension _SpecLifecycle on PlatformService {
         final version = !full || versionId == null
             ? null
             : await _specVersion(access, versionId, tx);
-        final allowed = version?.definition.actions
-                .where((action) =>
-                    _specAllowed(access, version.definition, action))
+        final allowed =
+            version?.definition.actions
+                .where(
+                  (action) => _specAllowed(access, version.definition, action),
+                )
                 .map((action) => action.id)
                 .toList() ??
             <String>[];
@@ -443,8 +524,9 @@ extension _SpecLifecycle on PlatformService {
           ..._appSummary(access),
           'capabilities': {
             ...access.capabilities,
-            'writeRecords':
-                full ? allowed.isNotEmpty : access.capabilities['writeRecords']
+            'writeRecords': full
+                ? allowed.isNotEmpty
+                : access.capabilities['writeRecords'],
           },
           if (full) 'allowedActions': allowed,
           'pinned': shortcut?['pinned'] == true,
@@ -453,17 +535,24 @@ extension _SpecLifecycle on PlatformService {
           ...await _launcherStats(access, tx),
           'version': version == null ? null : _versionSummary(version),
           if (!full)
-            'publishedRevision':
-                _storedRevision(access.app, 'publishedRevision'),
-          'draft': await _draftSummary(actor, access, tx)
+            'publishedRevision': _storedRevision(
+              access.app,
+              'publishedRevision',
+            ),
+          'draft': await _draftSummary(actor, access, tx),
         });
       }
       return {
         'apps': visible,
         'nextCursor': selected.length > limit
-            ? _catalogCursor(actor, workspaceId, 'launcher',
-                visible.last['id'] as String, input['pinnedOnly'] == true)
-            : null
+            ? _catalogCursor(
+                actor,
+                workspaceId,
+                'launcher',
+                visible.last['id'] as String,
+                input['pinnedOnly'] == true,
+              )
+            : null,
       };
     });
   }
@@ -475,10 +564,15 @@ extension _SpecLifecycle on PlatformService {
         after = _catalogAfter(input, actor, workspaceId, 'drafts');
     return _workspaceCatalog(actor, workspaceId, (workspace, tx) async {
       final fullDrafts = await _ownDraftMetadata(actor, workspaceId, tx),
-          boundedDrafts =
-              await _ownDraftMetadata(actor, workspaceId, tx, table: 'drafts');
-      final eligible =
-          (await _lifecycleApps(actor, workspace, tx)).where((access) {
+          boundedDrafts = await _ownDraftMetadata(
+            actor,
+            workspaceId,
+            tx,
+            table: 'drafts',
+          );
+      final eligible = (await _lifecycleApps(actor, workspace, tx)).where((
+        access,
+      ) {
         if (!access.builder || access.archived) return false;
         if (access.app['engine'] == 'appspec.v1')
           return fullDrafts[access.app[r'$id']] != null &&
@@ -487,10 +581,10 @@ extension _SpecLifecycle on PlatformService {
         return meta != null
             ? meta['candidateRevision'] != meta['basePublishedRevision']
             : access.app['ownerId'] == actor &&
-                access.app['headRevision'] == null &&
-                _storedRevision(access.app, 'draftRevision') > 0 &&
-                _storedRevision(access.app, 'draftRevision') !=
-                    _storedRevision(access.app, 'publishedRevision');
+                  access.app['headRevision'] == null &&
+                  _storedRevision(access.app, 'draftRevision') > 0 &&
+                  _storedRevision(access.app, 'draftRevision') !=
+                      _storedRevision(access.app, 'publishedRevision');
       }).toList();
       final selected = eligible
               .skip(_catalogStart(eligible, after))
@@ -506,16 +600,26 @@ extension _SpecLifecycle on PlatformService {
       return {
         'drafts': result,
         'nextCursor': selected.length > limit
-            ? _catalogCursor(actor, workspaceId, 'drafts',
-                result.last['appId'] as String, false)
-            : null
+            ? _catalogCursor(
+                actor,
+                workspaceId,
+                'drafts',
+                result.last['appId'] as String,
+                false,
+              )
+            : null,
       };
     });
   }
 
   Future<Row> _specSetPinned(String actor, Row input) async {
-    _inputKeys(
-        input, {'op', 'appId', 'operationId', 'expectedRevision', 'pinned'});
+    _inputKeys(input, {
+      'op',
+      'appId',
+      'operationId',
+      'expectedRevision',
+      'pinned',
+    });
     final expected = _revision(input['expectedRevision']);
     if (input['pinned'] is! bool)
       throw const ServiceException('invalid_request', 400);
@@ -531,7 +635,7 @@ extension _SpecLifecycle on PlatformService {
         'actorId': actor,
         'pinned': input['pinned'],
         'revision': expected + 1,
-        'updatedAt': clock().toUtc().toIso8601String()
+        'updatedAt': clock().toUtc().toIso8601String(),
       };
       if (old == null) {
         await store.create('shortcuts', id, data, transactionId: tx);
@@ -544,8 +648,8 @@ extension _SpecLifecycle on PlatformService {
         'shortcut': {
           'appId': access.app[r'$id'],
           'pinned': input['pinned'],
-          'revision': expected + 1
-        }
+          'revision': expected + 1,
+        },
       };
     }, writable: false);
   }
@@ -559,14 +663,18 @@ extension _SpecLifecycle on PlatformService {
     return spec.AppSpec.parse(jsonEncode(json));
   }
 
-  Future<Row> _structureCreate(String actor, Row input,
-      {spec.AppSpec? template}) async {
+  Future<Row> _structureCreate(
+    String actor,
+    Row input, {
+    spec.AppSpec? template,
+  }) async {
     final id = _validId(input['id']),
         operationId = _validId(input['operationId']),
         workspaceId = _validId(input['workspaceId']);
     final sourceId = template == null ? _validId(input['sourceAppId']) : null;
-    final sourceVersionId =
-        template == null ? _validId(input['sourceVersionId']) : null;
+    final sourceVersionId = template == null
+        ? _validId(input['sourceVersionId'])
+        : null;
     final request = _request(input, maximumBytes: _specRequestBytes);
     Future<AppAccess?> source(String? tx, {bool active = false}) async {
       if (sourceId == null) return null;
@@ -607,89 +715,103 @@ extension _SpecLifecycle on PlatformService {
         if (initialSource != null)
           currentSource = await _stageAccess(actor, initialSource, tx);
         if (initialSource?.workspace[r'$id'] != workspaceId)
-          await store.update(
-              'workspaces', destination[r'$id'] as String, {'guard': _nonce()},
-              transactionId: tx);
-        final workspace =
-            await _workspace(actor, workspaceId, transactionId: tx);
-        await _ensureMembership(workspace, actor, tx,
-            owner: workspace['ownerId'] == actor);
+          await store.update('workspaces', destination[r'$id'] as String, {
+            'guard': _nonce(),
+          }, transactionId: tx);
+        final workspace = await _workspace(
+          actor,
+          workspaceId,
+          transactionId: tx,
+        );
+        await _ensureMembership(
+          workspace,
+          actor,
+          tx,
+          owner: workspace['ownerId'] == actor,
+        );
         if (currentSource != null) await source(tx, active: true);
         final existing = await store.get('apps', id, transactionId: tx);
         if (existing != null) {
           final target = await _access(actor, id, transactionId: tx);
           _require(target, 'owner', writable: false);
-          final old = await _receipt(actor, id, operationId, request,
-              transactionId: tx);
+          final old = await _receipt(
+            actor,
+            id,
+            operationId,
+            request,
+            transactionId: tx,
+          );
           if (old != null) return old;
           throw const ServiceException('id_conflict', 409);
         }
-        if ((await store.list('apps', {'workspaceId': workspaceId},
-                    transactionId: tx))
-                .length >=
-            100) throw const ServiceException('quota_exceeded', 429);
-        final definition = _withoutAssets(template ??
-            (await _specVersion(currentSource!, sourceVersionId!, tx))
-                .definition);
+        if ((await store.list('apps', {
+              'workspaceId': workspaceId,
+            }, transactionId: tx)).length >=
+            100)
+          throw const ServiceException('quota_exceeded', 429);
+        final definition = _withoutAssets(
+          template ??
+              (await _specVersion(
+                currentSource!,
+                sourceVersionId!,
+                tx,
+              )).definition,
+        );
         final versionId = _identity('v', [id, '1']);
-        final app = await store.create(
-            'apps',
-            id,
-            {
-              'workspaceId': workspaceId,
-              'ownerId': actor,
-              'name': definition.name,
-              'guard': _nonce(),
-              'draftRevision': 0,
-              'publishedRevision': 0,
-              'headRevision': 0,
-              'archived': false,
-              'engine': 'appspec.v1',
-              'specVersionId': versionId,
-              'specVersionNumber': 1,
-              'controlRevision': 0,
-            },
-            transactionId: tx);
-        await store.create(
-            'spec_versions',
-            versionId,
-            {
-              'workspaceId': workspaceId,
-              'appId': id,
-              'number': 1,
-              'hash': definition.hash,
-              'specJson': definition.canonical,
-              'publisherId': actor,
-              'createdAt': clock().toUtc().toIso8601String()
-            },
-            transactionId: tx);
-        await store.create(
-            'shortcuts',
-            _identity('k', [id, actor]),
-            {
-              'workspaceId': workspaceId,
-              'appId': id,
-              'actorId': actor,
-              'pinned': true,
-              'revision': 1,
-              'updatedAt': clock().toUtc().toIso8601String(),
-            },
-            transactionId: tx);
+        final app = await store.create('apps', id, {
+          'workspaceId': workspaceId,
+          'ownerId': actor,
+          'name': definition.name,
+          'guard': _nonce(),
+          'draftRevision': 0,
+          'publishedRevision': 0,
+          'headRevision': 0,
+          'archived': false,
+          'engine': 'appspec.v1',
+          'specVersionId': versionId,
+          'specVersionNumber': 1,
+          'controlRevision': 0,
+        }, transactionId: tx);
+        await store.create('spec_versions', versionId, {
+          'workspaceId': workspaceId,
+          'appId': id,
+          'number': 1,
+          'hash': definition.hash,
+          'specJson': definition.canonical,
+          'publisherId': actor,
+          'createdAt': clock().toUtc().toIso8601String(),
+        }, transactionId: tx);
+        await store.create('shortcuts', _identity('k', [id, actor]), {
+          'workspaceId': workspaceId,
+          'appId': id,
+          'actorId': actor,
+          'pinned': true,
+          'revision': 1,
+          'updatedAt': clock().toUtc().toIso8601String(),
+        }, transactionId: tx);
         final access = await _specChanged(
-            actor,
-            AppAccess(app, workspace, 'owner'),
-            operationId,
-            input['op'] as String,
-            tx,
-            payload: {
-              'enabledRuleIds': <String>[],
-              'activateExistingRecordIds': <String>[]
-            });
+          actor,
+          AppAccess(app, workspace, 'owner'),
+          operationId,
+          input['op'] as String,
+          tx,
+          payload: {
+            'enabledRuleIds': <String>[],
+            'activateExistingRecordIds': <String>[],
+          },
+        );
         final response = <String, dynamic>{
-          'app': await _publicSpecApp(actor, access, tx)
+          'app': await _publicSpecApp(actor, access, tx),
         };
-        await _saveReceipt(actor, id, operationId, request, response, tx,
-            maximumBytes: _specResponseBytes);
+        await _saveReceipt(
+          actor,
+          id,
+          operationId,
+          request,
+          response,
+          tx,
+          maximumBytes: _specResponseBytes,
+        );
         return response;
       });
     } on ServiceException catch (error) {
@@ -703,8 +825,13 @@ extension _SpecLifecycle on PlatformService {
   }
 
   Future<Row> _specInstantiate(String actor, Row input) async {
-    _inputKeys(
-        input, {'op', 'id', 'workspaceId', 'operationId', 'templateKey'});
+    _inputKeys(input, {
+      'op',
+      'id',
+      'workspaceId',
+      'operationId',
+      'templateKey',
+    });
     final template = spec.starterTemplates()[input['templateKey']];
     if (template == null) throw const ServiceException('invalid_request', 400);
     return _structureCreate(actor, input, template: template);
@@ -717,7 +844,7 @@ extension _SpecLifecycle on PlatformService {
       'workspaceId',
       'operationId',
       'sourceAppId',
-      'sourceVersionId'
+      'sourceVersionId',
     });
     return _structureCreate(actor, input);
   }

@@ -2,7 +2,12 @@ part of 'service.dart';
 
 class _SpecQueryData {
   const _SpecQueryData(
-      this.version, this.collection, this.query, this.records, this.values);
+    this.version,
+    this.collection,
+    this.query,
+    this.records,
+    this.values,
+  );
   final _SpecVersion version;
   final spec.CollectionSpec collection;
   final spec.RecordQuery query;
@@ -12,17 +17,23 @@ class _SpecQueryData {
 
 extension _SpecQueries on PlatformService {
   Future<List<Row>> _scanSpecRows(
-      String table, Map<String, String> filters, String tx,
-      {List<String>? select}) async {
+    String table,
+    Map<String, String> filters,
+    String tx, {
+    List<String>? select,
+  }) async {
     final result = <Row>[];
     String? cursor;
     while (true) {
-      final page = await store.list(table, filters,
-          transactionId: tx,
-          limit: 100,
-          afterId: cursor,
-          detectOverflow: false,
-          select: select);
+      final page = await store.list(
+        table,
+        filters,
+        transactionId: tx,
+        limit: 100,
+        afterId: cursor,
+        detectOverflow: false,
+        select: select,
+      );
       result.addAll(page);
       if (page.length < 100) return result;
       final next = page.last[r'$id'] as String;
@@ -43,7 +54,8 @@ extension _SpecQueries on PlatformService {
     if (field.type == spec.FieldType.integer &&
         raw is num &&
         raw.isFinite &&
-        raw == raw.toInt()) return field.normalize(raw.toInt());
+        raw == raw.toInt())
+      return field.normalize(raw.toInt());
     return field.normalize(raw);
   }
 
@@ -56,7 +68,10 @@ extension _SpecQueries on PlatformService {
   }
 
   bool _matchesSpecFilters(
-      spec.CollectionSpec collection, Row values, List<Row> filters) {
+    spec.CollectionSpec collection,
+    Row values,
+    List<Row> filters,
+  ) {
     for (final filter in filters) {
       final field = collection.field(filter['fieldId'] as String);
       final actual = values[field.id], expected = filter['value'];
@@ -71,45 +86,53 @@ extension _SpecQueries on PlatformService {
         continue;
       }
       if (op == 'contains') {
-        if (!(actual as String)
-            .toLowerCase()
-            .contains((expected as String).toLowerCase())) return false;
+        if (!(actual as String).toLowerCase().contains(
+          (expected as String).toLowerCase(),
+        ))
+          return false;
         continue;
       }
       final comparison = _compareSpecValue(field, actual, expected as Object);
       if ((op == 'gte' && comparison < 0) ||
           (op == 'lte' && comparison > 0) ||
-          (op == 'lt' && comparison >= 0)) return false;
+          (op == 'lt' && comparison >= 0))
+        return false;
     }
     return true;
   }
 
-  Future<_SpecQueryData> _specQueryData(AppAccess access, Row input, String tx,
-      {Set<String> extraFields = const {}}) async {
-    final version =
-        await _activeSpec(access, tx, expected: _validId(input['versionId']));
-    final collection =
-        version.definition.collection(spec.stableId(input['collectionId']));
+  Future<_SpecQueryData> _specQueryData(
+    AppAccess access,
+    Row input,
+    String tx, {
+    Set<String> extraFields = const {},
+  }) async {
+    final version = await _activeSpec(
+      access,
+      tx,
+      expected: _validId(input['versionId']),
+    );
+    final collection = version.definition.collection(
+      spec.stableId(input['collectionId']),
+    );
     final queryInput = jsonObject(input['query'], 'invalid_query');
     if (utf8.encode(jsonEncode(queryInput)).length > 16384)
       throw const ServiceException('invalid_query', 400);
     final query = spec.RecordQuery.parse(collection, queryInput);
     final rows = await _scanSpecRows(
-        'spec_records',
-        {
-          'appId': access.app[r'$id'] as String,
-          'collectionId': collection.id,
-        },
-        tx,
-        select: [
-          r'$id',
-          'workspaceId',
-          'appId',
-          'collectionId',
-          'revision',
-          'writtenUnderVersionId',
-          'deleted'
-        ]);
+      'spec_records',
+      {'appId': access.app[r'$id'] as String, 'collectionId': collection.id},
+      tx,
+      select: [
+        r'$id',
+        'workspaceId',
+        'appId',
+        'collectionId',
+        'revision',
+        'writtenUnderVersionId',
+        'deleted',
+      ],
+    );
     final live = <Row>[];
     final values = <String, Row>{};
     for (final record in rows) {
@@ -128,14 +151,11 @@ extension _SpecQueries on PlatformService {
     };
     for (final fieldId in fields) {
       final field = collection.field(fieldId);
-      final projections = await _scanSpecRows(
-          'spec_values',
-          {
-            'appId': access.app[r'$id'] as String,
-            'collectionId': collection.id,
-            'fieldId': fieldId,
-          },
-          tx);
+      final projections = await _scanSpecRows('spec_values', {
+        'appId': access.app[r'$id'] as String,
+        'collectionId': collection.id,
+        'fieldId': fieldId,
+      }, tx);
       for (final row in projections) {
         if (row['workspaceId'] != access.app['workspaceId'] ||
             row['appId'] != access.app[r'$id'] ||
@@ -150,8 +170,13 @@ extension _SpecQueries on PlatformService {
       }
     }
     final matching = live
-        .where((record) => _matchesSpecFilters(
-            collection, values[record[r'$id']]!, query.filters))
+        .where(
+          (record) => _matchesSpecFilters(
+            collection,
+            values[record[r'$id']]!,
+            query.filters,
+          ),
+        )
         .toList();
     matching.sort((a, b) {
       for (final order in query.sort) {
@@ -180,58 +205,87 @@ extension _SpecQueries on PlatformService {
         'version': data.version.row[r'$id'],
         'collection': data.collection.id,
         'filters': data.query.filters,
-        'sort': data.query.sort
+        'sort': data.query.sort,
       });
       var start = 0;
       if (data.query.cursor != null) {
         Row cursor;
         try {
           cursor = jsonObject(
-              jsonDecode(utf8.decode(base64Url.decode(data.query.cursor!))),
-              'invalid_request');
+            jsonDecode(utf8.decode(base64Url.decode(data.query.cursor!))),
+            'invalid_request',
+          );
           if (cursor.keys.toSet().difference({'hash', 'id'}).isNotEmpty ||
-              cursor['hash'] != fingerprint) throw const FormatException();
+              cursor['hash'] != fingerprint)
+            throw const FormatException();
           _validId(cursor['id']);
         } catch (_) {
           throw const ServiceException('invalid_request', 400);
         }
-        final anchor =
-            data.records.indexWhere((record) => record[r'$id'] == cursor['id']);
+        final anchor = data.records.indexWhere(
+          (record) => record[r'$id'] == cursor['id'],
+        );
         if (anchor < 0) throw const ServiceException('revision_conflict', 409);
         start = anchor + 1;
       }
       final selected = data.records.skip(start).take(data.query.limit).toList();
       final records = <Row>[];
       for (final metadata in selected) {
-        final record =
-            await _specRecord(access, metadata[r'$id'] as String, tx);
-        records.add(await _specRecordDto(
-            actor, access, data.version.definition, record, tx));
+        final record = await _specRecord(
+          access,
+          metadata[r'$id'] as String,
+          tx,
+        );
+        records.add(
+          await _specRecordDto(
+            actor,
+            access,
+            data.version.definition,
+            record,
+            tx,
+          ),
+        );
       }
       return {
         'records': records,
         'total': data.records.length,
         'versionId': data.version.row[r'$id'],
         'nextCursor': start + selected.length < data.records.length
-            ? base64Url.encode(utf8.encode(
-                jsonEncode({'hash': fingerprint, 'id': selected.last[r'$id']})))
-            : null
+            ? base64Url.encode(
+                utf8.encode(
+                  jsonEncode({
+                    'hash': fingerprint,
+                    'id': selected.last[r'$id'],
+                  }),
+                ),
+              )
+            : null,
       };
     });
   }
 
   Future<Row> _specSummary(String actor, Row input) async {
-    _inputKeys(input,
-        {'op', 'appId', 'versionId', 'collectionId', 'query', 'groupFieldId'});
+    _inputKeys(input, {
+      'op',
+      'appId',
+      'versionId',
+      'collectionId',
+      'query',
+      'groupFieldId',
+    });
     final group = spec.stableId(input['groupFieldId']);
     return _specRead(actor, _validId(input['appId']), (access, tx) async {
-      final data =
-          await _specQueryData(access, input, tx, extraFields: {group});
+      final data = await _specQueryData(
+        access,
+        input,
+        tx,
+        extraFields: {group},
+      );
       final field = data.collection.field(group);
       if (field.type != spec.FieldType.choice)
         throw const ServiceException('invalid_query', 400);
       final groups = <String, int>{
-        for (final choice in field.choices) choice: 0
+        for (final choice in field.choices) choice: 0,
       };
       for (final row in data.records) {
         final value = data.values[row[r'$id']]![group];
@@ -240,13 +294,16 @@ extension _SpecQueries on PlatformService {
       return {
         'total': data.records.length,
         'groups': groups,
-        'versionId': data.version.row[r'$id']
+        'versionId': data.version.row[r'$id'],
       };
     });
   }
 
   Object? _metricValue(
-      spec.AggregateQuery aggregate, List<Row> rows, Map<String, Row> values) {
+    spec.AggregateQuery aggregate,
+    List<Row> rows,
+    Map<String, Row> values,
+  ) {
     if (aggregate.metric == 'count') return rows.length;
     final numbers = rows
         .map((row) => values[row[r'$id']]![aggregate.fieldId])
@@ -259,27 +316,43 @@ extension _SpecQueries on PlatformService {
   }
 
   Future<Row> _specAggregate(String actor, Row input) async {
-    _inputKeys(input,
-        {'op', 'appId', 'versionId', 'collectionId', 'query', 'aggregate'});
+    _inputKeys(input, {
+      'op',
+      'appId',
+      'versionId',
+      'collectionId',
+      'query',
+      'aggregate',
+    });
     return _specRead(actor, _validId(input['appId']), (access, tx) async {
-      final version =
-          await _activeSpec(access, tx, expected: _validId(input['versionId']));
-      final collection =
-          version.definition.collection(spec.stableId(input['collectionId']));
+      final version = await _activeSpec(
+        access,
+        tx,
+        expected: _validId(input['versionId']),
+      );
+      final collection = version.definition.collection(
+        spec.stableId(input['collectionId']),
+      );
       final raw = jsonObject(input['aggregate'], 'invalid_query');
       if (utf8.encode(jsonEncode(raw)).length > 65536)
         throw const ServiceException('invalid_query', 400);
       final aggregate = spec.AggregateQuery.parse(collection, raw);
-      final data = await _specQueryData(access, input, tx, extraFields: {
-        if (aggregate.fieldId != null) aggregate.fieldId!,
-        if (aggregate.groupFieldId != null) aggregate.groupFieldId!,
-        if (aggregate.dateFieldId != null) aggregate.dateFieldId!,
-      });
+      final data = await _specQueryData(
+        access,
+        input,
+        tx,
+        extraFields: {
+          if (aggregate.fieldId != null) aggregate.fieldId!,
+          if (aggregate.groupFieldId != null) aggregate.groupFieldId!,
+          if (aggregate.dateFieldId != null) aggregate.dateFieldId!,
+        },
+      );
       final groups = <Row>[];
       if (aggregate.groupFieldId != null) {
         final field = collection.field(aggregate.groupFieldId!);
-        final hasNull = data.records
-            .any((row) => data.values[row[r'$id']]![field.id] == null);
+        final hasNull = data.records.any(
+          (row) => data.values[row[r'$id']]![field.id] == null,
+        );
         for (final key in <String?>[...field.choices, if (hasNull) null]) {
           final rows = data.records
               .where((row) => data.values[row[r'$id']]![field.id] == key)
@@ -287,7 +360,7 @@ extension _SpecQueries on PlatformService {
           groups.add({
             'key': key ?? '',
             'count': rows.length,
-            'value': _metricValue(aggregate, rows, data.values)
+            'value': _metricValue(aggregate, rows, data.values),
           });
         }
       } else if (aggregate.dateFieldId != null) {
@@ -303,7 +376,7 @@ extension _SpecQueries on PlatformService {
           groups.add({
             'key': bucket['key'],
             'count': rows.length,
-            'value': _metricValue(aggregate, rows, data.values)
+            'value': _metricValue(aggregate, rows, data.values),
           });
         }
       }
@@ -311,7 +384,7 @@ extension _SpecQueries on PlatformService {
         'total': data.records.length,
         'value': _metricValue(aggregate, data.records, data.values),
         'groups': groups,
-        'versionId': data.version.row[r'$id']
+        'versionId': data.version.row[r'$id'],
       };
     });
   }

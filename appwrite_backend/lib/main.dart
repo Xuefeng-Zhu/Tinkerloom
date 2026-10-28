@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'service.dart';
+import 'worker_http.dart';
+import 'providers/provider.dart';
 
 /// Appwrite Dart Function entrypoint. Appwrite injects context and credentials.
 Future<dynamic> main(dynamic context) async {
@@ -31,6 +33,10 @@ Future<dynamic> main(dynamic context) async {
     return context.res.json({'error': 'method_not_allowed'}, 405);
   }
   final backend = AppwriteRest(Uri.parse(endpoint), project, database, key);
+  final workerId = Platform.environment['PLATFORM_WORKER_FUNCTION_ID'];
+  final wakeups = workerId == null || workerId.isEmpty
+      ? null
+      : AppwriteWorkerWakeups(Uri.parse(endpoint), project, workerId, key);
   try {
     final account = await backend.account(jwt);
     final actor = account[r'$id'];
@@ -50,7 +56,19 @@ Future<dynamic> main(dynamic context) async {
         bodyBytes > 65536) {
       return context.res.json({'error': 'request_too_large'}, 413);
     }
-    final result = await PlatformService(backend).execute(actor, data);
+    final service = PlatformService(
+      backend,
+      aiProvider: ChatCompletionProvider.configured(Platform.environment),
+      remindersEnabled:
+          Platform.environment['PLATFORM_REMINDERS_ENABLED'] == 'true',
+      wakeups: wakeups,
+    );
+    final result = await service.execute(actor, data);
+    // Commit precedes optional delivery. A scheduling outage never fabricates
+    // successful work or turns a committed command into a failed command.
+    try {
+      await WorkerEngine(service).flushWakeups(limit: 3);
+    } catch (_) {}
     return context.res.json(result, 200);
   } on FormatException {
     return context.res.json({'error': 'invalid_request'}, 400);
@@ -70,5 +88,6 @@ Future<dynamic> main(dynamic context) async {
     return context.res.json({'error': 'backend_unavailable'}, 503);
   } finally {
     backend.close();
+    wakeups?.close();
   }
 }

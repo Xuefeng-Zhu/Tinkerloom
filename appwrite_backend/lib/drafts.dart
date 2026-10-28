@@ -3,11 +3,16 @@ part of 'service.dart';
 extension _PrivateDrafts on PlatformService {
   String _draftId(String appId, String actor) => _identity('d', [appId, actor]);
 
-  Future<Row?> _privateDraft(String actor, AppAccess access,
-      {String? transactionId}) async {
+  Future<Row?> _privateDraft(
+    String actor,
+    AppAccess access, {
+    String? transactionId,
+  }) async {
     final draft = await store.get(
-        'drafts', _draftId(access.app[r'$id'] as String, actor),
-        transactionId: transactionId);
+      'drafts',
+      _draftId(access.app[r'$id'] as String, actor),
+      transactionId: transactionId,
+    );
     if (draft != null) {
       if (draft['actorId'] != actor ||
           draft['appId'] != access.app[r'$id'] ||
@@ -27,8 +32,10 @@ extension _PrivateDrafts on PlatformService {
           'workspaceId': access.app['workspaceId'],
           'revision': _storedRevision(access.app, 'draftRevision'),
           'candidateRevision': _storedRevision(access.app, 'draftRevision'),
-          'basePublishedRevision':
-              _storedRevision(access.app, 'publishedRevision'),
+          'basePublishedRevision': _storedRevision(
+            access.app,
+            'publishedRevision',
+          ),
           'definitionJson': jsonEncode(definition),
         };
     }
@@ -42,19 +49,27 @@ extension _PrivateDrafts on PlatformService {
     final draft = await _privateDraft(owner, ownerAccess, transactionId: tx);
     if (draft != null && draft[r'$id'] == null) {
       await store.create(
-          'drafts', _draftId(access.app[r'$id'] as String, owner), draft,
-          transactionId: tx);
+        'drafts',
+        _draftId(access.app[r'$id'] as String, owner),
+        draft,
+        transactionId: tx,
+      );
     }
-    final head = max(_storedRevision(access.app, 'draftRevision'),
-        _storedRevision(access.app, 'publishedRevision'));
-    final app = await store.update(
-        'apps', access.app[r'$id'] as String, {'headRevision': head},
-        transactionId: tx);
+    final head = max(
+      _storedRevision(access.app, 'draftRevision'),
+      _storedRevision(access.app, 'publishedRevision'),
+    );
+    final app = await store.update('apps', access.app[r'$id'] as String, {
+      'headRevision': head,
+    }, transactionId: tx);
     return AppAccess(app, access.workspace, access.role);
   }
 
-  Future<Row> _publicApp(String actor, AppAccess access,
-      {String? transactionId}) async {
+  Future<Row> _publicApp(
+    String actor,
+    AppAccess access, {
+    String? transactionId,
+  }) async {
     final draft = access.builder
         ? await _privateDraft(actor, access, transactionId: transactionId)
         : null;
@@ -62,7 +77,8 @@ extension _PrivateDrafts on PlatformService {
       ..._appSummary(access),
       'draftRevision': draft?['revision'] ?? 0,
       'candidateRevision': draft?['candidateRevision'] ?? 0,
-      'basePublishedRevision': draft?['basePublishedRevision'] ??
+      'basePublishedRevision':
+          draft?['basePublishedRevision'] ??
           _storedRevision(access.app, 'publishedRevision'),
       'publishedRevision': _storedRevision(access.app, 'publishedRevision'),
       'definition': draft == null ? null : _definition(draft, 'definitionJson'),
@@ -77,7 +93,7 @@ extension _PrivateDrafts on PlatformService {
       'operationId',
       'expectedRevision',
       'expectedPublishedRevision',
-      'definition'
+      'definition',
     });
     final expected = _revision(input['expectedRevision']);
     final expectedPublished = input.containsKey('expectedPublishedRevision')
@@ -113,28 +129,32 @@ extension _PrivateDrafts on PlatformService {
       };
       if (draft == null) {
         await store.create(
-            'drafts', _draftId(access.app[r'$id'] as String, actor), data,
-            transactionId: tx);
+          'drafts',
+          _draftId(access.app[r'$id'] as String, actor),
+          data,
+          transactionId: tx,
+        );
       } else {
         await store.update(
-            'drafts', _draftId(access.app[r'$id'] as String, actor), data,
-            transactionId: tx);
+          'drafts',
+          _draftId(access.app[r'$id'] as String, actor),
+          data,
+          transactionId: tx,
+        );
       }
-      final app = await store.update(
-          'apps',
-          access.app[r'$id'] as String,
-          {
-            'headRevision': head + 1,
-            // Preserve v1 owner state for explicit migration and old clients; these
-            // columns are never exposed to another builder or used as their draft.
-            if (access.role == 'owner') 'draftRevision': expected + 1,
-            if (access.role == 'owner') 'draftJson': jsonEncode(definition),
-          },
-          transactionId: tx);
+      final app = await store.update('apps', access.app[r'$id'] as String, {
+        'headRevision': head + 1,
+        // Preserve v1 owner state for explicit migration and old clients; these
+        // columns are never exposed to another builder or used as their draft.
+        if (access.role == 'owner') 'draftRevision': expected + 1,
+        if (access.role == 'owner') 'draftJson': jsonEncode(definition),
+      }, transactionId: tx);
       return {
         'app': await _publicApp(
-            actor, AppAccess(app, access.workspace, access.role),
-            transactionId: tx)
+          actor,
+          AppAccess(app, access.workspace, access.role),
+          transactionId: tx,
+        ),
       };
     });
   }
@@ -146,7 +166,7 @@ extension _PrivateDrafts on PlatformService {
       'operationId',
       'expectedRevision',
       'expectedPublishedRevision',
-      'candidateRevision'
+      'candidateRevision',
     });
     final expected = _revision(input['expectedRevision']);
     final expectedPublished = input.containsKey('expectedPublishedRevision')
@@ -175,23 +195,22 @@ extension _PrivateDrafts on PlatformService {
       final revision = draft['candidateRevision'] as int;
       // A published candidate is immutable; all later saves allocate a fresh
       // global candidate identity, independent of the author's local counter.
-      final app = await store.update(
-          'apps',
-          access.app[r'$id'] as String,
-          {
-            'publishedRevision': revision,
-            'publishedJson': jsonEncode(definition),
-          },
-          transactionId: tx);
+      final app = await store.update('apps', access.app[r'$id'] as String, {
+        'publishedRevision': revision,
+        'publishedJson': jsonEncode(definition),
+      }, transactionId: tx);
       await store.update(
-          'drafts',
-          _draftId(access.app[r'$id'] as String, actor),
-          {'basePublishedRevision': revision},
-          transactionId: tx);
+        'drafts',
+        _draftId(access.app[r'$id'] as String, actor),
+        {'basePublishedRevision': revision},
+        transactionId: tx,
+      );
       return {
         'app': await _publicApp(
-            actor, AppAccess(app, access.workspace, access.role),
-            transactionId: tx)
+          actor,
+          AppAccess(app, access.workspace, access.role),
+          transactionId: tx,
+        ),
       };
     });
   }

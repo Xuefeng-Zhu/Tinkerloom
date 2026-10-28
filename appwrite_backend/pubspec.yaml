@@ -1,8 +1,11 @@
 name: platform_function
 publish_to: none
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: '>=3.11.0 <4.0.0'
 dependencies:
   crypto: ^3.0.7
+  http: ^1.2.2
   appnest_spec:
     path: packages/appnest_spec
+dev_dependencies:
+  test: 1.31.1

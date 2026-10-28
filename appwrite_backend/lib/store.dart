@@ -1,12 +1,21 @@
 abstract interface class RowStore {
-  Future<Map<String, dynamic>?> get(String table, String id,
-      {String? transactionId});
+  Future<Map<String, dynamic>?> get(
+    String table,
+    String id, {
+    String? transactionId,
+  });
   Future<Map<String, dynamic>> create(
-      String table, String id, Map<String, dynamic> data,
-      {String? transactionId});
+    String table,
+    String id,
+    Map<String, dynamic> data, {
+    String? transactionId,
+  });
   Future<Map<String, dynamic>> update(
-      String table, String id, Map<String, dynamic> data,
-      {String? transactionId});
+    String table,
+    String id,
+    Map<String, dynamic> data, {
+    String? transactionId,
+  });
   Future<List<Map<String, dynamic>>> list(
     String table,
     Map<String, String> filters, {

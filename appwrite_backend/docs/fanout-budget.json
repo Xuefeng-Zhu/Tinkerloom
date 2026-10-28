@@ -1,0 +1,53 @@
+{
+  "baseline": {
+    "calls": 2024,
+    "byOperation": {
+      "list:outbox": 1,
+      "list:automation_runs": 1,
+      "get:automation_runs": 2,
+      "begin:transaction": 1,
+      "get:apps": 502,
+      "get:workspaces": 502,
+      "update:workspaces": 1,
+      "update:apps": 1,
+      "get:automations": 1,
+      "get:spec_records": 1,
+      "list:spec_pools": 1,
+      "list:spec_claims": 6,
+      "get:memberships": 500,
+      "get:grants": 500,
+      "get:notification_batches": 1,
+      "create:notification_batches": 1,
+      "update:automation_runs": 1,
+      "commit:transaction": 1
+    },
+    "status": "succeeded",
+    "recipientCount": 500
+  },
+  "optimized": {
+    "calls": 36,
+    "byOperation": {
+      "list:outbox": 1,
+      "list:automation_runs": 1,
+      "get:automation_runs": 2,
+      "begin:transaction": 1,
+      "get:apps": 2,
+      "get:workspaces": 2,
+      "update:workspaces": 1,
+      "update:apps": 1,
+      "get:automations": 1,
+      "get:spec_records": 1,
+      "list:spec_pools": 1,
+      "list:spec_claims": 6,
+      "list:memberships": 6,
+      "list:grants": 6,
+      "get:notification_batches": 1,
+      "create:notification_batches": 1,
+      "update:automation_runs": 1,
+      "commit:transaction": 1
+    },
+    "status": "succeeded",
+    "recipientCount": 500
+  },
+  "proof": "Simulated RowStore transport boundary counts; no actual Cloud RTT was measured."
+}

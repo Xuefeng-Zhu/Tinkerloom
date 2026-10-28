@@ -91,3 +91,9 @@ jobs:
         run: dart format --output=none --set-exit-if-changed lib test
       - name: Run backend service and HTTP transport checks
         run: dart run test/service_check.dart
+      - name: Test generation providers and durable worker contracts
+        run: dart test test/providers test/workers_test.dart test/fanout_test.dart
+      - name: Compile core and private worker entry points with AOT
+        run: |
+          dart compile aot-snapshot lib/main.dart -o "$RUNNER_TEMP/tinkerloom-core.aot"
+          dart compile aot-snapshot lib/worker_main.dart -o "$RUNNER_TEMP/tinkerloom-worker.aot"

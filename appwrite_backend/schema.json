@@ -1,7 +1,10 @@
 {
   "databaseId": "tinkerloom",
   "specification": "serverless",
-  "functionScopes": ["rows.read", "rows.write"],
+  "functionScopes": [
+    "rows.read",
+    "rows.write"
+  ],
   "tables": [
     {
       "tableId": "workspaces",
@@ -32,7 +35,9 @@
         {
           "key": "owner",
           "type": "key",
-          "columns": ["ownerId"]
+          "columns": [
+            "ownerId"
+          ]
         }
       ]
     },
@@ -135,12 +140,17 @@
         {
           "key": "owner_workspace",
           "type": "key",
-          "columns": ["ownerId", "workspaceId"]
+          "columns": [
+            "ownerId",
+            "workspaceId"
+          ]
         },
         {
           "key": "workspace",
           "type": "key",
-          "columns": ["workspaceId"]
+          "columns": [
+            "workspaceId"
+          ]
         }
       ]
     },
@@ -186,7 +196,10 @@
         {
           "key": "owner_app",
           "type": "key",
-          "columns": ["ownerId", "appId"]
+          "columns": [
+            "ownerId",
+            "appId"
+          ]
         }
       ]
     },
@@ -262,12 +275,17 @@
         {
           "key": "workspace_actor",
           "type": "unique",
-          "columns": ["workspaceId", "actorId"]
+          "columns": [
+            "workspaceId",
+            "actorId"
+          ]
         },
         {
           "key": "actor",
           "type": "key",
-          "columns": ["actorId"]
+          "columns": [
+            "actorId"
+          ]
         }
       ]
     },
@@ -318,17 +336,25 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": ["appId", "actorId"]
+          "columns": [
+            "appId",
+            "actorId"
+          ]
         },
         {
           "key": "app",
           "type": "key",
-          "columns": ["appId"]
+          "columns": [
+            "appId"
+          ]
         },
         {
           "key": "actor_workspace",
           "type": "key",
-          "columns": ["actorId", "workspaceId"]
+          "columns": [
+            "actorId",
+            "workspaceId"
+          ]
         }
       ]
     },
@@ -387,12 +413,18 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": ["appId", "actorId"]
+          "columns": [
+            "appId",
+            "actorId"
+          ]
         },
         {
           "key": "author_workspace",
           "type": "key",
-          "columns": ["actorId", "workspaceId"]
+          "columns": [
+            "actorId",
+            "workspaceId"
+          ]
         }
       ]
     },
@@ -476,12 +508,16 @@
         {
           "key": "token",
           "type": "unique",
-          "columns": ["tokenHash"]
+          "columns": [
+            "tokenHash"
+          ]
         },
         {
           "key": "app",
           "type": "key",
-          "columns": ["appId"]
+          "columns": [
+            "appId"
+          ]
         }
       ]
     },
@@ -507,13 +543,31 @@
           "key": "invitationTimesJson",
           "type": "mediumtext",
           "required": true
+        },
+        {
+          "key": "generationTimesJson",
+          "type": "mediumtext",
+          "required": false
+        },
+        {
+          "key": "guidanceTimesJson",
+          "type": "mediumtext",
+          "required": false
+        },
+        {
+          "key": "activeGenerationJobId",
+          "type": "varchar",
+          "required": false,
+          "size": 36
         }
       ],
       "indexes": [
         {
           "key": "actor",
           "type": "unique",
-          "columns": ["actorId"]
+          "columns": [
+            "actorId"
+          ]
         }
       ]
     },
@@ -582,12 +636,18 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": ["appId", "actorId"]
+          "columns": [
+            "appId",
+            "actorId"
+          ]
         },
         {
           "key": "author_workspace",
           "type": "key",
-          "columns": ["actorId", "workspaceId"]
+          "columns": [
+            "actorId",
+            "workspaceId"
+          ]
         }
       ]
     },
@@ -643,7 +703,10 @@
         {
           "key": "app_number",
           "type": "unique",
-          "columns": ["appId", "number"]
+          "columns": [
+            "appId",
+            "number"
+          ]
         }
       ]
     },
@@ -709,13 +772,23 @@
           "key": "updatedAt",
           "type": "datetime",
           "required": true
+        },
+        {
+          "key": "createdControlRevision",
+          "type": "integer",
+          "required": false,
+          "min": 0,
+          "max": 2147483647
         }
       ],
       "indexes": [
         {
           "key": "app_collection",
           "type": "key",
-          "columns": ["appId", "collectionId"]
+          "columns": [
+            "appId",
+            "collectionId"
+          ]
         }
       ]
     },
@@ -786,12 +859,19 @@
         {
           "key": "record_field",
           "type": "unique",
-          "columns": ["recordId", "fieldId"]
+          "columns": [
+            "recordId",
+            "fieldId"
+          ]
         },
         {
           "key": "app_collection_field",
           "type": "key",
-          "columns": ["appId", "collectionId", "fieldId"]
+          "columns": [
+            "appId",
+            "collectionId",
+            "fieldId"
+          ]
         }
       ]
     },
@@ -850,12 +930,19 @@
         {
           "key": "record_behavior",
           "type": "unique",
-          "columns": ["appId", "recordId", "behaviorId"]
+          "columns": [
+            "appId",
+            "recordId",
+            "behaviorId"
+          ]
         },
         {
           "key": "app_record",
           "type": "key",
-          "columns": ["appId", "recordId"]
+          "columns": [
+            "appId",
+            "recordId"
+          ]
         }
       ]
     },
@@ -909,7 +996,10 @@
         {
           "key": "pool_actor",
           "type": "unique",
-          "columns": ["poolId", "actorId"]
+          "columns": [
+            "poolId",
+            "actorId"
+          ]
         }
       ]
     },
@@ -965,7 +1055,9 @@
         {
           "key": "app",
           "type": "key",
-          "columns": ["appId"]
+          "columns": [
+            "appId"
+          ]
         }
       ]
     },
@@ -1023,18 +1115,42 @@
           "key": "createdAt",
           "type": "datetime",
           "required": true
+        },
+        {
+          "key": "planningOffset",
+          "type": "integer",
+          "required": false,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "attempts",
+          "type": "integer",
+          "required": false,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "lastError",
+          "type": "varchar",
+          "required": false,
+          "size": 64
         }
       ],
       "indexes": [
         {
           "key": "app",
           "type": "key",
-          "columns": ["appId"]
+          "columns": [
+            "appId"
+          ]
         },
         {
           "key": "next_attempt",
           "type": "key",
-          "columns": ["nextAttemptAt"]
+          "columns": [
+            "nextAttemptAt"
+          ]
         }
       ]
     },
@@ -1085,14 +1201,810 @@
         {
           "key": "app_actor",
           "type": "unique",
-          "columns": ["appId", "actorId"]
+          "columns": [
+            "appId",
+            "actorId"
+          ]
         },
         {
           "key": "actor_workspace",
           "type": "key",
-          "columns": ["actorId", "workspaceId"]
+          "columns": [
+            "actorId",
+            "workspaceId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "generation_jobs",
+      "name": "generation_jobs",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "draftId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "mutation",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "draftAbsent",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "baseVersionId",
+          "type": "varchar",
+          "required": false,
+          "size": 36
+        },
+        {
+          "key": "baseCandidateHash",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "baseSpecJson",
+          "type": "mediumtext",
+          "required": false
+        },
+        {
+          "key": "status",
+          "type": "varchar",
+          "required": true,
+          "size": 32
+        },
+        {
+          "key": "mode",
+          "type": "varchar",
+          "required": true,
+          "size": 16
+        },
+        {
+          "key": "requestText",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "promptVersion",
+          "type": "varchar",
+          "required": true,
+          "size": 128
+        },
+        {
+          "key": "attempts",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "leaseGeneration",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "leaseUntil",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "nextAttemptAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "diagnostics",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "usageJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "repairJson",
+          "type": "mediumtext",
+          "required": false
+        },
+        {
+          "key": "compilationJson",
+          "type": "mediumtext",
+          "required": false
+        },
+        {
+          "key": "failureCategory",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "provider",
+          "type": "varchar",
+          "required": false,
+          "size": 128
+        },
+        {
+          "key": "model",
+          "type": "varchar",
+          "required": false,
+          "size": 256
+        },
+        {
+          "key": "createdAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "updatedAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        }
+      ],
+      "indexes": [
+        {
+          "key": "status",
+          "type": "key",
+          "columns": [
+            "status"
+          ]
+        },
+        {
+          "key": "app_actor",
+          "type": "key",
+          "columns": [
+            "appId",
+            "actorId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "generation_sessions",
+      "name": "generation_sessions",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "latestJobId",
+          "type": "varchar",
+          "required": false,
+          "size": 36
+        },
+        {
+          "key": "generationEstablished",
+          "type": "boolean",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app_actor",
+          "type": "unique",
+          "columns": [
+            "appId",
+            "actorId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "worker_leases",
+      "name": "worker_leases",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "holderJobId",
+          "type": "varchar",
+          "required": false,
+          "size": 36
+        },
+        {
+          "key": "generation",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "leaseUntil",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "guard",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "tableId": "worker_dispatches",
+      "name": "worker_dispatches",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "mode",
+          "type": "varchar",
+          "required": true,
+          "size": 16
+        },
+        {
+          "key": "targetId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "runAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "status",
+          "type": "varchar",
+          "required": true,
+          "size": 16
+        },
+        {
+          "key": "attempts",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "generation",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "proofHash",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "leaseUntil",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "executionId",
+          "type": "varchar",
+          "required": false,
+          "size": 36
+        },
+        {
+          "key": "nextAttemptAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "errorCategory",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "createdAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "completedAt",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        }
+      ],
+      "indexes": [
+        {
+          "key": "status",
+          "type": "key",
+          "columns": [
+            "status"
+          ]
+        },
+        {
+          "key": "target",
+          "type": "key",
+          "columns": [
+            "mode",
+            "targetId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "automations",
+      "name": "automations",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "ruleId",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "ruleVersion",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "ruleJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": true
+        },
+        {
+          "key": "executionActorId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "activatedAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "activationControlRevision",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "activationVersionId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app",
+          "type": "key",
+          "columns": [
+            "appId"
+          ]
+        },
+        {
+          "key": "app_rule",
+          "type": "unique",
+          "columns": [
+            "appId",
+            "ruleId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "enrollments",
+      "name": "enrollments",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "automationId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "ruleVersion",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "recordIdsJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "createdAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        }
+      ],
+      "indexes": [
+        {
+          "key": "automation",
+          "type": "key",
+          "columns": [
+            "automationId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "automation_runs",
+      "name": "automation_runs",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "automationId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "ruleVersion",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "recordId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "occurrenceKey",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "scheduleSignature",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "dueAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "nextAttemptAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "status",
+          "type": "varchar",
+          "required": true,
+          "size": 16
+        },
+        {
+          "key": "attempts",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "leaseGeneration",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "leaseUntil",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "errorCategory",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        },
+        {
+          "key": "recipientCount",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "createdAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        },
+        {
+          "key": "completedAt",
+          "type": "varchar",
+          "required": false,
+          "size": 64
+        }
+      ],
+      "indexes": [
+        {
+          "key": "app",
+          "type": "key",
+          "columns": [
+            "appId"
+          ]
+        },
+        {
+          "key": "status",
+          "type": "key",
+          "columns": [
+            "status"
+          ]
+        },
+        {
+          "key": "rule_record",
+          "type": "key",
+          "columns": [
+            "automationId",
+            "recordId"
+          ]
+        },
+        {
+          "key": "occurrence",
+          "type": "unique",
+          "columns": [
+            "occurrenceKey"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "notification_batches",
+      "name": "notification_batches",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "runId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "recordId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "recipientIdsJson",
+          "type": "mediumtext",
+          "required": true
+        },
+        {
+          "key": "leaseGeneration",
+          "type": "integer",
+          "required": true,
+          "min": 0,
+          "max": 2147483647
+        },
+        {
+          "key": "title",
+          "type": "varchar",
+          "required": true,
+          "size": 256
+        },
+        {
+          "key": "body",
+          "type": "varchar",
+          "required": true,
+          "size": 512
+        },
+        {
+          "key": "createdAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        }
+      ],
+      "indexes": [
+        {
+          "key": "run",
+          "type": "unique",
+          "columns": [
+            "runId"
+          ]
+        }
+      ]
+    },
+    {
+      "tableId": "notification_reads",
+      "name": "notification_reads",
+      "rowSecurity": true,
+      "permissions": [],
+      "columns": [
+        {
+          "key": "workspaceId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "appId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "actorId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "notificationId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "runId",
+          "type": "varchar",
+          "required": true,
+          "size": 36
+        },
+        {
+          "key": "readAt",
+          "type": "varchar",
+          "required": true,
+          "size": 64
+        }
+      ],
+      "indexes": [
+        {
+          "key": "actor_notification",
+          "type": "unique",
+          "columns": [
+            "actorId",
+            "notificationId"
+          ]
         }
       ]
     }
+  ],
+  "workerFunction": {
+    "execute": [],
+    "scopes": [
+      "rows.read",
+      "rows.write",
+      "executions.write"
+    ],
+    "entrypoint": "lib/worker_main.dart",
+    "interval": "At least 60 minutes on Free; actual-work delayed execution acceptance requires live verification."
+  },
+  "optionalCoreWakeupScopes": [
+    "executions.write"
   ]
 }

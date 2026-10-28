@@ -31,14 +31,16 @@ Future<int> runRichChecks() async {
 
   final fixture = Map<String, dynamic>.from(
     jsonDecode(
-      await File.fromUri(Platform.script.resolve('fixtures/rich_contract.json'))
-          .readAsString(),
-    ) as Map,
+          await File.fromUri(
+            Platform.script.resolve('fixtures/rich_contract.json'),
+          ).readAsString(),
+        )
+        as Map,
   );
   final base = validateDefinition(fixture['baseDefinition']);
   final validDefinitions = (fixture['validDefinitions'] as List).cast<Map>();
-  final invalidDefinitions =
-      (fixture['invalidDefinitions'] as List).cast<Map>();
+  final invalidDefinitions = (fixture['invalidDefinitions'] as List)
+      .cast<Map>();
   final validValues = (fixture['validValues'] as List).cast<Map>();
   final invalidValues = (fixture['invalidValues'] as List).cast<Map>();
 
@@ -75,7 +77,9 @@ Future<int> runRichChecks() async {
             ? validateDefinition(item['definition'])
             : base;
         _reject(
-            () => validateValues(definition, item['input']), 'invalid_values');
+          () => validateValues(definition, item['input']),
+          'invalid_values',
+        );
       }
     },
   );
@@ -172,31 +176,32 @@ Future<int> runRichChecks() async {
     },
   );
   await test(
-      'presentation views stay compatible while rich field type changes remain destructive',
-      () async {
-    final prior = validateDefinition(base);
-    for (final view in [
-      {'kind': 'list'},
-      {'kind': 'table'},
-      {'kind': 'agenda', 'dateFieldId': 'when'},
-    ]) {
-      final next = validateDefinition({...base, 'view': view});
-      requireCompatible(prior, next);
-      requireCompatible(next, prior);
-    }
-    final changed = _copy(base);
-    (changed['fields'] as List)[1]['kind'] = 'date';
-    _reject(
-      () => requireCompatible(prior, validateDefinition(changed)),
-      'incompatible_definition',
-    );
-    final removed = _copy(base);
-    (removed['fields'] as List).removeLast();
-    _reject(
-      () => requireCompatible(prior, validateDefinition(removed)),
-      'incompatible_definition',
-    );
-  });
+    'presentation views stay compatible while rich field type changes remain destructive',
+    () async {
+      final prior = validateDefinition(base);
+      for (final view in [
+        {'kind': 'list'},
+        {'kind': 'table'},
+        {'kind': 'agenda', 'dateFieldId': 'when'},
+      ]) {
+        final next = validateDefinition({...base, 'view': view});
+        requireCompatible(prior, next);
+        requireCompatible(next, prior);
+      }
+      final changed = _copy(base);
+      (changed['fields'] as List)[1]['kind'] = 'date';
+      _reject(
+        () => requireCompatible(prior, validateDefinition(changed)),
+        'incompatible_definition',
+      );
+      final removed = _copy(base);
+      (removed['fields'] as List).removeLast();
+      _reject(
+        () => requireCompatible(prior, validateDefinition(removed)),
+        'incompatible_definition',
+      );
+    },
+  );
   await test(
     'rich values still respect the existing encoded JSON byte limit',
     () async {
@@ -234,8 +239,9 @@ Future<int> runRichChecks() async {
       final api = PlatformService(store);
       final legacy = Map<String, dynamic>.from(
         validDefinitions.firstWhere(
-          (item) => item['name'] == 'legacy-canonical-preserved',
-        )['expected'] as Map,
+              (item) => item['name'] == 'legacy-canonical-preserved',
+            )['expected']
+            as Map,
       );
       await api.execute('owner', {
         'op': 'createWorkspace',

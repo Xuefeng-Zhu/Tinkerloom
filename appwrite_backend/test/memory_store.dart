@@ -20,8 +20,11 @@ class MemoryStore implements RowStore {
   String _key(String table, String id) => '$table\u0000$id';
 
   @override
-  Future<Map<String, dynamic>?> get(String table, String id,
-      {String? transactionId}) async {
+  Future<Map<String, dynamic>?> get(
+    String table,
+    String id, {
+    String? transactionId,
+  }) async {
     Map<String, dynamic>? row = rows[table]?[id];
     if (transactionId != null)
       row = transactions[transactionId]!.staged[_key(table, id)] ?? row;
@@ -30,8 +33,11 @@ class MemoryStore implements RowStore {
 
   @override
   Future<Map<String, dynamic>> create(
-      String table, String id, Map<String, dynamic> data,
-      {String? transactionId}) async {
+    String table,
+    String id,
+    Map<String, dynamic> data, {
+    String? transactionId,
+  }) async {
     if (await get(table, id, transactionId: transactionId) != null)
       throw const RestException(409);
     return _write(table, id, {r'$id': id, ...data}, transactionId);
@@ -39,15 +45,22 @@ class MemoryStore implements RowStore {
 
   @override
   Future<Map<String, dynamic>> update(
-      String table, String id, Map<String, dynamic> data,
-      {String? transactionId}) async {
+    String table,
+    String id,
+    Map<String, dynamic> data, {
+    String? transactionId,
+  }) async {
     final old = await get(table, id, transactionId: transactionId);
     if (old == null) throw const RestException(404);
     return _write(table, id, {...old, ...data}, transactionId);
   }
 
-  Map<String, dynamic> _write(String table, String id, Map<String, dynamic> row,
-      String? transactionId) {
+  Map<String, dynamic> _write(
+    String table,
+    String id,
+    Map<String, dynamic> row,
+    String? transactionId,
+  ) {
     final key = _key(table, id);
     if (transactionId != null) {
       final tx = transactions[transactionId]!;
@@ -62,12 +75,14 @@ class MemoryStore implements RowStore {
 
   @override
   Future<List<Map<String, dynamic>>> list(
-      String table, Map<String, String> filters,
-      {String? transactionId,
-      int limit = 100,
-      String? afterId,
-      bool detectOverflow = true,
-      List<String>? select}) async {
+    String table,
+    Map<String, String> filters, {
+    String? transactionId,
+    int limit = 100,
+    String? afterId,
+    bool detectOverflow = true,
+    List<String>? select,
+  }) async {
     final all = {...?rows[table]};
     if (transactionId != null) {
       for (final entry in transactions[transactionId]!.staged.entries) {
@@ -75,23 +90,33 @@ class MemoryStore implements RowStore {
           all[entry.value[r'$id'] as String] = entry.value;
       }
     }
-    final result = all.values
-        .where((row) =>
-            filters.entries.every((entry) => row[entry.key] == entry.value))
-        .toList()
-      ..sort((a, b) => (a[r'$id'] as String).compareTo(b[r'$id'] as String));
+    final result =
+        all.values
+            .where(
+              (row) => filters.entries.every(
+                (entry) => row[entry.key] == entry.value,
+              ),
+            )
+            .toList()
+          ..sort(
+            (a, b) => (a[r'$id'] as String).compareTo(b[r'$id'] as String),
+          );
     if (detectOverflow && result.length > limit)
       throw const ServiceException('too_many_results', 409);
     return result
-        .where((row) =>
-            afterId == null || (row[r'$id'] as String).compareTo(afterId) > 0)
+        .where(
+          (row) =>
+              afterId == null || (row[r'$id'] as String).compareTo(afterId) > 0,
+        )
         .take(limit)
-        .map((row) => select == null
-            ? _copy(row)
-            : {
-                for (final key in select)
-                  if (row.containsKey(key)) key: row[key]
-              })
+        .map(
+          (row) => select == null
+              ? _copy(row)
+              : {
+                  for (final key in select)
+                    if (row.containsKey(key)) key: row[key],
+                },
+        )
         .toList();
   }
 
@@ -103,8 +128,10 @@ class MemoryStore implements RowStore {
   }
 
   @override
-  Future<void> finishTransaction(String transactionId,
-      {required bool commit}) async {
+  Future<void> finishTransaction(
+    String transactionId, {
+    required bool commit,
+  }) async {
     final tx = transactions[transactionId];
     if (tx == null) throw const RestException(409);
     if (!commit) {
