@@ -428,3 +428,21 @@ this path. Header/structure preflight and bounded PNG inflation are documented
 in [PREVIEW_IMAGE_UPLOAD.md](../apps/mobile/src/runtime/PREVIEW_IMAGE_UPLOAD.md).
 All 482 integrated client tests passed with no skips, plus TypeScript, lint,
 format and Web/iOS/Android exports. Native pixel-display proof remains separate.
+
+
+### First media Cloud probe and delayed worker correction (2026-10-28)
+
+The [failed media receipt](evidence/2026-10-28/media-cloud-fc71-initial.failed.json)
+retains ten passing checks, two failures and ten blocked dependent checks. The
+5 MiB original reached the backend through twenty chunks with exact retries
+and changed-payload conflicts. Later [selected operator observations](evidence/2026-10-28/media-first-operator-observations.json)
+show that the real private worker produced a ready asset and Appwrite accepted
+a future cleanup execution. These observations do not relabel the failed probe.
+
+The follow-up fixes keep backend error categories through repeated sanitization,
+allow only bounded completed status-read transaction conflicts, and distinguish
+mandatory anonymous/user authorization denials from an outer reserved-header
+validation rejection. All 23 offline probe tests pass. The delayed worker body
+parser now distinguishes interval reconciliation from proof-bound scheduled
+dispatches; six new and 36 retained worker groups pass on Dart 3.11. A fresh
+deployed delivery/cleanup receipt is still required before reminder enablement.

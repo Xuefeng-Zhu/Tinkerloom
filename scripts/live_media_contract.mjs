@@ -230,14 +230,69 @@ export function safeObservation(value = {}) {
     "assetCount",
     "elapsedMs",
     "httpRequests",
+    "readConflicts",
+    "publicWorkerDenials",
+    "forgedWorkerHeaderRejections",
+    "forgedWorkerPermissionDenials",
   ])
     if (integer(value[key], 1e9)) output[key] = value[key];
-  const code = value.code ?? value.backendCode;
+  // A check's code is a probe failure category, not a backend response code.
+  // Prefer already-sanitized backendCode so repeated sanitization is lossless.
+  const code =
+    value.backendCode ??
+    (mediaProbeCodes.has(value.code) ? undefined : value.code);
   if (code !== undefined)
     output.backendCode = mediaCodes.has(code) ? code : "unrecognized_error";
   for (const key of ["sha256", "displaySha256", "thumbnailSha256"])
     if (digest(value[key])) output[key] = value[key];
   return output;
+}
+/** Media errors have their own allowlist; the full-engine observer must not erase them. */
+export function mediaFunctionObservation(result) {
+  const code = result?.data?.error ?? result?.outer?.data?.type ?? "none";
+  return {
+    ...safeFullObservation({
+      httpStatus: result?.outer?.status,
+      functionStatus: result?.status,
+      executionStatus: result?.executionStatus,
+    }),
+    code: mediaCodes.has(code) ? code : "unrecognized_error",
+  };
+}
+export function isStatusReadConflict(result) {
+  return (
+    Number.isInteger(result?.outer?.status) &&
+    result.outer.status >= 200 &&
+    result?.outer?.status < 300 &&
+    result?.deploymentMatched === true &&
+    result?.executionStatus === "completed" &&
+    result?.status === 409 &&
+    exactKeys(result?.data, ["error"]) &&
+    result.data.error === "transaction_conflict"
+  );
+}
+/** A 400 is header-validation evidence only for an explicitly forged-header request. */
+export function workerExecutionRejection(
+  result,
+  { forgedReservedHeaders = false } = {},
+) {
+  if (
+    storageDenied(result, { kind: "function" }) &&
+    [401, 403].includes(result.status)
+  )
+    return "execution_permission_denied";
+  if (
+    forgedReservedHeaders &&
+    result.status === 400 &&
+    safeErrorEnvelope(result.data) &&
+    result.data.code === 400 &&
+    result.data.type === "general_argument_invalid" &&
+    typeof result.data.message === "string" &&
+    /headers/i.test(result.data.message) &&
+    /start with ["']x-appwrite(?:-["']|["'])/i.test(result.data.message)
+  )
+    return "reserved_headers_rejected_before_execution";
+  return null;
 }
 export function safeErrorEnvelope(value) {
   return (
@@ -410,6 +465,7 @@ export function sanitizedReport(report, privateValues = new Set()) {
     "syntheticAccountsAttempted",
     "maxSyntheticAccounts",
     "readyPollLimit",
+    "readConflicts",
   ])
     clean.budget[key] = integer(report.budget?.[key]) ? report.budget[key] : 0;
   const serialized = JSON.stringify(clean);

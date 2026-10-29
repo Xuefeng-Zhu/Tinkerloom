@@ -1,7 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { readMediaConfiguration, runMediaSmoke } from "./live_media_smoke.mjs";
+import {
+  readMediaConfiguration,
+  runMediaSmoke,
+  pollMediaReady,
+} from "./live_media_smoke.mjs";
 import {
   validAsset,
   validBegin,
@@ -12,6 +16,9 @@ import {
   storageDenied,
   sanitizedReport,
   safeObservation,
+  mediaFunctionObservation,
+  isStatusReadConflict,
+  workerExecutionRejection,
 } from "./live_media_contract.mjs";
 import {
   maximumSyntheticPng,
@@ -436,4 +443,287 @@ test("private denial error envelope rejects nested resource data even under an e
     ),
     false,
   );
+});
+
+const functionResult = (status, data, overrides = {}) => ({
+  outer: { status: 201 },
+  deploymentMatched: true,
+  executionStatus: "completed",
+  status,
+  data,
+  ...overrides,
+});
+test("report sanitizer is idempotent and preserves actual full/media backend codes independently of probe categories", () => {
+  for (const code of [
+    "transaction_conflict",
+    "media_busy",
+    "media_state_conflict",
+  ]) {
+    const observation = mediaFunctionObservation(
+      functionResult(409, { error: code }),
+    );
+    assert.equal(observation.code, code);
+    const first = safeObservation(observation);
+    assert.equal(first.backendCode, code);
+    assert.deepEqual(safeObservation(first), first);
+    const raw = {
+      runId: "qa-media-abc-12345678",
+      status: "failed",
+      checks: [
+        {
+          name: "private_worker_ready",
+          status: "failed",
+          assertions: 1,
+          code: "assertion_failed",
+          ...first,
+        },
+        {
+          name: "maximum_variants_full_bytes_headers_pixels",
+          status: "blocked",
+          assertions: 0,
+          code: "prerequisite_failed",
+        },
+      ],
+    };
+    const once = sanitizedReport(raw),
+      twice = sanitizedReport(once);
+    assert.deepEqual(twice, once);
+    assert.equal(twice.checks[0].code, "assertion_failed");
+    assert.equal(twice.checks[0].backendCode, code);
+    assert.equal(Object.hasOwn(twice.checks[1], "backendCode"), false);
+  }
+  assert.equal(
+    mediaFunctionObservation(
+      functionResult(409, { error: "private-error-must-not-escape" }),
+    ).code,
+    "unrecognized_error",
+  );
+  assert.deepEqual(safeObservation({ code: "prerequisite_failed" }), {});
+});
+test("reserved-header rejection is exact outer validation evidence and never replaces anonymous/user401/403 requirements", () => {
+  const rejected = {
+    status: 400,
+    data: {
+      code: 400,
+      type: "general_argument_invalid",
+      message:
+        'Headers must contain at most 100 keys. Keys cannot start with "x-appwrite".',
+      version: "2.6.2",
+    },
+  };
+  assert.equal(
+    workerExecutionRejection(rejected, { forgedReservedHeaders: true }),
+    "reserved_headers_rejected_before_execution",
+  );
+  assert.equal(workerExecutionRejection(rejected), null);
+  for (const status of [401, 403])
+    assert.equal(
+      workerExecutionRejection({
+        status,
+        data: { code: status, type: "general_unauthorized_scope" },
+      }),
+      "execution_permission_denied",
+    );
+  for (const changed of [
+    { ...rejected, status: 404 },
+    { ...rejected, data: { ...rejected.data, type: "general_bad_request" } },
+    {
+      ...rejected,
+      data: { ...rejected.data, message: "Invalid body parameter" },
+    },
+    { ...rejected, data: { ...rejected.data, code: 201 } },
+    { ...rejected, data: { ...rejected.data, $id: "created-execution" } },
+    {
+      ...rejected,
+      data: { ...rejected.data, responseBody: '{"error":"unauthenticated"}' },
+    },
+    {
+      status: 201,
+      data: {
+        $id: "created",
+        responseStatusCode: 401,
+        responseBody: '{"error":"unauthenticated"}',
+      },
+    },
+  ])
+    assert.equal(
+      workerExecutionRejection(changed, { forgedReservedHeaders: true }),
+      null,
+    );
+});
+test("read-only status conflict consumes the same poll budget/delay, reports conflicts, then accepts real readiness", async () => {
+  const replies = [
+      functionResult(409, { error: "transaction_conflict" }),
+      functionResult(200, wire.complete),
+      functionResult(200, wire.ready),
+    ],
+    waits = [];
+  let calls = 0,
+    conflicts = 0;
+  const result = await pollMediaReady({
+    assetId: wire.ready.asset.assetId,
+    limit: 3,
+    pollMs: 5000,
+    execute: async () => {
+      calls++;
+      return replies.shift();
+    },
+    sleep: async (ms) => waits.push(ms),
+    onReadConflict: () => conflicts++,
+  });
+  assert.equal(calls, 3);
+  assert.equal(conflicts, 1);
+  assert.equal(result.readConflicts, 1);
+  assert.equal(result.polls, 3);
+  assert.deepEqual(result.asset, wire.ready.asset);
+  assert.deepEqual(waits, [5000, 5000]);
+});
+test("status polling never retries other409, malformed/wrong-deployment/incomplete results or uncertain HTTP", async () => {
+  const conflicts = [
+    functionResult(409, { error: "media_busy" }),
+    functionResult(409, { error: "media_state_conflict" }),
+    functionResult(409, { error: "transaction_conflict", private: "leak" }),
+    functionResult(
+      409,
+      { error: "transaction_conflict" },
+      { deploymentMatched: false },
+    ),
+    functionResult(
+      409,
+      { error: "transaction_conflict" },
+      { executionStatus: "processing" },
+    ),
+    functionResult(
+      409,
+      { error: "transaction_conflict" },
+      { outer: { status: 400 } },
+    ),
+    functionResult(
+      409,
+      { error: "transaction_conflict" },
+      { outer: { status: "201" } },
+    ),
+  ];
+  for (const result of conflicts) {
+    assert.equal(isStatusReadConflict(result), false);
+    let calls = 0;
+    await assert.rejects(
+      pollMediaReady({
+        assetId: wire.ready.asset.assetId,
+        execute: async () => {
+          calls++;
+          return result;
+        },
+        sleep: async () => assert.fail("must not retry"),
+      }),
+      (error) => error.code === "assertion_failed",
+    );
+    assert.equal(calls, 1);
+  }
+  let calls = 0;
+  const lost = Error("private uncertain transport");
+  await assert.rejects(
+    pollMediaReady({
+      assetId: wire.ready.asset.assetId,
+      execute: async () => {
+        calls++;
+        throw lost;
+      },
+      sleep: async () => assert.fail("must not retry"),
+    }),
+    (error) => error === lost,
+  );
+  assert.equal(calls, 1);
+});
+test("conflict-only status polling cannot exceed24 reads or extend the existing wait window", async () => {
+  let calls = 0,
+    waits = 0;
+  await assert.rejects(
+    pollMediaReady({
+      assetId: wire.ready.asset.assetId,
+      execute: async () => {
+        calls++;
+        return functionResult(409, { error: "transaction_conflict" });
+      },
+      sleep: async (ms) => {
+        assert.equal(ms, 5000);
+        waits++;
+      },
+    }),
+    (error) =>
+      error.code === "media_ready_timeout" &&
+      error.observation.polls === 24 &&
+      error.observation.readConflicts === 24,
+  );
+  assert.equal(calls, 24);
+  assert.equal(waits, 23);
+  await assert.rejects(
+    pollMediaReady({
+      assetId: wire.ready.asset.assetId,
+      limit: 25,
+      execute: async () => assert.fail("invalid budget must not dispatch"),
+    }),
+    (error) => error.code === "configuration_invalid",
+  );
+});
+
+test("injected run reports two public authorization denials separately from a precise reserved-header400", async () => {
+  const accounts = new Map(),
+    sessions = new Map();
+  let sequence = 0;
+  const response = (status, data, headers = {}) =>
+    new Response(data === undefined ? null : JSON.stringify(data), {
+      status,
+      headers,
+    });
+  const report = await runMediaSmoke(configured(), {
+    fetchImpl: async (url, options) => {
+      const path = new URL(url).pathname.slice(3),
+        body = options.body ? JSON.parse(options.body) : null;
+      const cookie = options.headers.Cookie?.split("=", 2)[1];
+      if (path === "/account" && options.method === "POST") {
+        accounts.set(body.email, body.userId);
+        return response(201, { $id: body.userId });
+      }
+      if (path === "/account/sessions/email") {
+        const token = `opaque-test-session-${++sequence}`;
+        sessions.set(token, accounts.get(body.email));
+        return response(
+          201,
+          {},
+          { "set-cookie": `a_session=${token}; Path=/; HttpOnly` },
+        );
+      }
+      if (path === "/account" && options.method === "GET")
+        return response(200, { $id: sessions.get(cookie) });
+      if (path === "/account/sessions/current" && options.method === "DELETE")
+        return response(204, undefined);
+      if (path === "/functions/synthetic-worker/executions")
+        return Object.keys(body.headers).length
+          ? response(400, {
+              code: 400,
+              type: "general_argument_invalid",
+              message: 'Headers keys cannot start with "x-appwrite".',
+            })
+          : response(401, { code: 401, type: "general_unauthorized_scope" });
+      assert.equal(path, "/functions/synthetic-core/executions");
+      return response(201, {
+        status: "completed",
+        deploymentId: "synthetic-core-deploy",
+        responseStatusCode: 503,
+        responseBody: '{"error":"backend_unavailable"}',
+      });
+    },
+    sleep: async () => assert.fail("blocked media run must not poll"),
+  });
+  const check = report.checks.find(
+    (value) =>
+      value.name === "private_worker_public_execution_and_forged_proof_denial",
+  );
+  assert.equal(check.status, "passed");
+  assert.equal(check.publicWorkerDenials, 2);
+  assert.equal(check.forgedWorkerHeaderRejections, 1);
+  assert.equal(check.forgedWorkerPermissionDenials, 0);
+  assert.equal(report.status, "failed"); // Unavailable core checks remain failed/blocked.
+  assert.equal(report.budget.readConflicts, 0);
 });

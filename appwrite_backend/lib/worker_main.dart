@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'service.dart';
 import 'worker_http.dart';
@@ -53,20 +52,13 @@ Future<dynamic> main(dynamic context) async {
         wakeups: wakeups,
       ),
     );
-    final text = context.req.bodyText as String;
-    if (utf8.encode(text).length > 4096)
-      return context.res.json({'error': 'request_too_large'}, 413);
-    if (headers['x-appwrite-trigger'] == 'schedule') {
-      if (text.trim().isNotEmpty && text.trim() != '{}')
-        return context.res.json({'error': 'invalid_request'}, 400);
+    final input = decodePrivateWorkerBody(
+      headers['x-appwrite-trigger'] as String,
+      context.req.bodyText as String,
+    );
+    if (input == null) {
       return context.res.json(await runner.reconcile(), 200);
     }
-    final input = jsonDecode(text);
-    if (input is! Map<String, dynamic> ||
-        input.keys.toSet().difference({'dispatchId', 'proof'}).isNotEmpty ||
-        input['dispatchId'] is! String ||
-        input['proof'] is! String)
-      return context.res.json({'error': 'invalid_request'}, 400);
     return context.res.json(
       await runner.dispatch(
         input['dispatchId'] as String,

@@ -6,11 +6,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { isDeepStrictEqual as equal } from "node:util";
-import {
-  AppwriteUserClient,
-  HttpBudget,
-  functionObservation,
-} from "./live_full_transport.mjs";
+import { AppwriteUserClient, HttpBudget } from "./live_full_transport.mjs";
 import {
   exactKeys,
   object,
@@ -35,6 +31,9 @@ import {
   decodeReadChunk,
   cacheHeader,
   safeObservation,
+  mediaFunctionObservation as functionObservation,
+  isStatusReadConflict,
+  workerExecutionRejection,
   sanitizedReport,
   storageDenied,
   safeErrorEnvelope,
@@ -53,6 +52,61 @@ const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 const fixturePath = fileURLToPath(
   new URL("./fixtures/live_media/serviceWire.json", import.meta.url),
 );
+/** Injected read-only polling; never retries a mutation or uncertain transport. */
+export async function pollMediaReady({
+  assetId,
+  execute,
+  limit = 24,
+  pollMs = 5000,
+  sleep = pause,
+  onReadConflict = () => {},
+  verify = (condition, observation = {}) => {
+    if (!condition) throw new MediaProbeError("assertion_failed", observation);
+  },
+}) {
+  if (
+    !Number.isInteger(limit) ||
+    limit < 1 ||
+    limit > 24 ||
+    !Number.isInteger(pollMs) ||
+    pollMs < 1000 ||
+    pollMs > 10000
+  )
+    throw new MediaProbeError("configuration_invalid");
+  let readConflicts = 0;
+  for (let poll = 0; poll < limit; poll++) {
+    const result = await execute();
+    if (isStatusReadConflict(result)) {
+      readConflicts++;
+      onReadConflict();
+    } else {
+      verify(
+        result?.outer?.status >= 200 &&
+          result?.outer?.status < 300 &&
+          result?.deploymentMatched === true &&
+          result?.executionStatus === "completed" &&
+          result?.status === 200 &&
+          object(result?.data) &&
+          !Object.hasOwn(result.data, "error"),
+        functionObservation(result),
+      );
+      const response = result.data;
+      verify(
+        exactKeys(response, ["asset"]) && validAsset(response.asset, assetId),
+      );
+      if (response.asset.status === "ready")
+        return { asset: response.asset, polls: poll + 1, readConflicts };
+      verify(
+        ["pending", "queued", "processing"].includes(response.asset.status),
+      );
+    }
+    if (poll + 1 < limit) await sleep(pollMs);
+  }
+  throw new MediaProbeError("media_ready_timeout", {
+    polls: limit,
+    readConflicts,
+  });
+}
 export function readMediaConfiguration(
   args = process.argv.slice(2),
   env = process.env,
@@ -185,6 +239,7 @@ export async function runMediaSmoke(
       reservedCleanupRequests: 6,
       maxSyntheticAccounts: 2,
       readyPollLimit: configuration.readyPolls,
+      readConflicts: 0,
     },
   };
   let assertions = 0,
@@ -372,25 +427,21 @@ export async function runMediaSmoke(
     return { bytes, descriptor: previous, calls };
   }
   async function ready(assetId, actor = actors.owner) {
-    for (let poll = 0; poll < configuration.readyPolls; poll++) {
-      const response = await data(actor, {
-        op: "spec.media.status",
-        appId: report.resources.appId,
-        assetId,
-      });
-      verify(
-        exactKeys(response, ["asset"]) && validAsset(response.asset, assetId),
-      );
-      if (response.asset.status === "ready")
-        return { asset: response.asset, polls: poll + 1 };
-      verify(
-        ["pending", "queued", "processing"].includes(response.asset.status),
-      );
-      if (poll + 1 < configuration.readyPolls)
-        await sleep(configuration.pollMs);
-    }
-    throw new MediaProbeError("media_ready_timeout", {
-      polls: configuration.readyPolls,
+    return pollMediaReady({
+      assetId,
+      limit: configuration.readyPolls,
+      pollMs: configuration.pollMs,
+      sleep,
+      verify,
+      onReadConflict: () => {
+        report.budget.readConflicts++;
+      },
+      execute: () =>
+        actor.client.execute({
+          op: "spec.media.status",
+          appId: report.resources.appId,
+          assetId,
+        }),
     });
   }
   async function beginAndChunks(input, begin, actor = actors.owner) {
@@ -692,6 +743,7 @@ export async function runMediaSmoke(
         );
         return {
           polls: observed.polls,
+          readConflicts: observed.readConflicts,
           byteLength: maximumReady.byteLength,
           sha256: maximumReady.sha256,
         };
@@ -895,6 +947,7 @@ export async function runMediaSmoke(
         verify(validOutcome(edited) && edited.outcome.revision === 2);
         return {
           polls: observed.polls,
+          readConflicts: observed.readConflicts,
           width: 6,
           height: 12,
           displaySha256: orientationReady.sha256,
@@ -1068,7 +1121,11 @@ export async function runMediaSmoke(
         latestReadyAt = now();
         verify(revokedReady.sha256 === wire.orientation.displaySha256);
         await error(actors.owner, revokedComplete, "not_found", 404);
-        return { polls: observed.polls, sha256: revokedReady.sha256 };
+        return {
+          polls: observed.polls,
+          readConflicts: observed.readConflicts,
+          sha256: revokedReady.sha256,
+        };
       },
     );
     await check(
@@ -1189,6 +1246,9 @@ export async function runMediaSmoke(
       async () => {
         const anonymous = client(),
           path = `/functions/${encodeURIComponent(configuration.workerFunctionId)}/executions`;
+        let publicWorkerDenials = 0,
+          forgedWorkerHeaderRejections = 0,
+          forgedWorkerPermissionDenials = 0;
         for (const [current, forged] of [
           [anonymous, false],
           [actors.owner.client, false],
@@ -1208,30 +1268,30 @@ export async function runMediaSmoke(
                 }
               : {},
           });
-          if ([401, 403].includes(response.status))
-            verify(storageDenied(response, { kind: "function" }), {
+          const rejection = workerExecutionRejection(response, {
+            forgedReservedHeaders: forged,
+          });
+          verify(
+            forged
+              ? rejection !== null
+              : rejection === "execution_permission_denied",
+            {
               httpStatus: response.status,
               code: response.data?.type,
-            });
-          else {
-            const execution = response.data;
-            let body;
-            try {
-              body = JSON.parse(execution?.responseBody);
-            } catch {}
-            verify(
-              // Inner authentication is defense in depth; execute:[] itself
-              // must prevent publicly creating the worker execution.
-              false,
-              {
-                httpStatus: response.status,
-                functionStatus: execution?.responseStatusCode,
-                code: body?.error,
-              },
-            );
-          }
+              functionStatus: response.data?.responseStatusCode,
+            },
+          );
+          if (!forged) publicWorkerDenials++;
+          else if (rejection === "reserved_headers_rejected_before_execution")
+            forgedWorkerHeaderRejections++;
+          else forgedWorkerPermissionDenials++;
         }
-        return {};
+        verify(publicWorkerDenials === 2);
+        return {
+          publicWorkerDenials,
+          forgedWorkerHeaderRejections,
+          forgedWorkerPermissionDenials,
+        };
       },
     );
     await check(

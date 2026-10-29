@@ -92,3 +92,20 @@ Before claiming hosted completeness, verify the merged lifecycle/media integrati
 
 The additive [fanout optimization](FANOUT.md) preserves authorization while
 reducing the simulated 500-recipient path from 2,024 to 36 transport calls.
+
+
+## Interval and one-shot trigger distinction
+
+Appwrite marks both interval executions and `scheduledAt` one-shot executions
+with the `schedule` trigger. Only an empty interval body enters reconciliation.
+A scheduled body containing exactly `dispatchId` and `proof` follows the same
+durable proof validation as an immediate HTTP dispatch. Authentication,
+`execute:[]`, no user JWT, the 4 KiB body limit, nonce hashes and dispatch leases
+remain required. Unknown fields/triggers and empty HTTP bodies remain rejected.
+
+The initial Cloud media probe accepted twenty chunks, and later operator reads
+observed the actual asset ready and its cleanup execution scheduled. That
+revealed the original worker entrypoint would reject the nonempty delayed body.
+Six transport regression groups cover this correction in addition to retained
+worker tests. A new deployed delayed-execution receipt is required; an accepted
+schedule is not evidence that cleanup or a reminder was delivered.

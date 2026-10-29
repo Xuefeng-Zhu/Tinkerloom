@@ -94,3 +94,26 @@ bool privateWorkerRequest(
     (headers['x-appwrite-user-id'] == null ||
         headers['x-appwrite-user-id'] == '') &&
     {'http', 'schedule'}.contains(headers['x-appwrite-trigger']);
+
+/// Appwrite uses the schedule trigger for both intervals and scheduledAt
+/// one-shot executions. Interval bodies are empty; one-shots retain the opaque
+/// dispatch proof, which the durable dispatcher must verify before doing work.
+Map<String, dynamic>? decodePrivateWorkerBody(String trigger, String text) {
+  if (utf8.encode(text).length > 4096) {
+    throw const ServiceException('request_too_large', 413);
+  }
+  if (!{'http', 'schedule'}.contains(trigger)) {
+    throw const ServiceException('invalid_request', 400);
+  }
+  if (trigger == 'schedule' && (text.trim().isEmpty || text.trim() == '{}')) {
+    return null;
+  }
+  final input = jsonDecode(text);
+  if (input is! Map<String, dynamic> ||
+      input.keys.toSet().difference({'dispatchId', 'proof'}).isNotEmpty ||
+      input['dispatchId'] is! String ||
+      input['proof'] is! String) {
+    throw const ServiceException('invalid_request', 400);
+  }
+  return input;
+}

@@ -1,0 +1,86 @@
+{
+  "format": "tinkerloom.media-operator-observations.v1",
+  "observedAt": "2026-10-29T00:22:00Z",
+  "source": "Appwrite Console selected row fields and Executions table",
+  "failedProbeReport": "media-cloud-fc71-initial.failed.json",
+  "asset": {
+    "id": "i957d8cdefe3a0d50a986dc96e9420410",
+    "status": "ready",
+    "inputBytes": 5242880,
+    "uploadedBytes": 5242880,
+    "storedBytes": 5243112,
+    "originalRemoved": false,
+    "failureCategory": null,
+    "readyUpdatedAt": "2026-10-29T00:16:22.239123Z"
+  },
+  "workerDeploymentId": "6ae28e92c50d216f1bc6",
+  "executions": [
+    {
+      "id": "6ae29030446699a6bb41",
+      "trigger": "http",
+      "status": "completed",
+      "responseStatusCode": 200,
+      "durationSeconds": 46.47
+    },
+    {
+      "id": "6ae290311a30331aae45",
+      "trigger": "http",
+      "status": "completed",
+      "responseStatusCode": 409,
+      "durationSeconds": 3.44
+    },
+    {
+      "id": "6ae2905e214d327e23ca",
+      "trigger": "http",
+      "status": "completed",
+      "responseStatusCode": 200,
+      "durationSeconds": 2.65
+    },
+    {
+      "id": "6ae2905c1e3c9809f68d",
+      "trigger": "schedule",
+      "status": "scheduled",
+      "responseStatusCode": null
+    },
+    {
+      "id": "6ae2902c043168a7d605",
+      "trigger": "schedule",
+      "status": "completed",
+      "responseStatusCode": 200,
+      "durationSeconds": 5.93
+    }
+  ],
+  "dispatches": [
+    {
+      "id": "de49d4084bc7fc293bd49f242c87b8419",
+      "mode": "media",
+      "status": "delivered",
+      "attempts": 1,
+      "executionId": "6ae29030446699a6bb41",
+      "completedAt": "2026-10-29T00:16:27.060969Z"
+    },
+    {
+      "id": "d7c161fc81dc58573ccd42472901978a4",
+      "mode": "media",
+      "status": "delivered",
+      "attempts": 2,
+      "executionId": "6ae2905e214d327e23ca",
+      "completedAt": "2026-10-29T00:16:32.164142Z"
+    },
+    {
+      "id": "d42925b3ad9dfb97868df1f26c1f92ead",
+      "mode": "media_cleanup",
+      "status": "scheduled",
+      "attempts": 1,
+      "runAt": "2026-10-29T00:32:22.300713Z",
+      "executionId": "6ae2905c1e3c9809f68d"
+    }
+  ],
+  "limits": [
+    "The original failed report is unchanged. Its erased status-read error code is not recovered by these later observations.",
+    "Ready proves one real private processing result, not full download/pixel/header/access-denial acceptance.",
+    "A scheduled cleanup is not delivered cleanup. No source staging charge has been released yet.",
+    "A later source review found the old worker wrongly rejected nonempty schedule bodies; transport regression coverage and a fresh deployment are required.",
+    "Hourly execution status200 proves an execution ran, not all recovery/late-I/O cases."
+  ]
+}
