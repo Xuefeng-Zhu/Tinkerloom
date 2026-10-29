@@ -48,6 +48,7 @@ import type {
   FullRouteRequest,
   DeferredRouteAttempt,
 } from "./navigation";
+import { waitForRouteRuntime } from "./routeRuntimeReadiness";
 const noMediaSnapshot = () => null;
 const noMediaSubscription = () => () => {};
 export interface FullAppScreenProps {
@@ -220,7 +221,8 @@ export function FullAppScreen({
         return;
       }
       if (!runtimeController) {
-        if (!controller.getSnapshot().app) {
+        if (waitForRouteRuntime(controller.getSnapshot().app)) {
+          // A confirmed save may install published metadata before its replacement runtime.
           handledRoute.current = null;
           return;
         }

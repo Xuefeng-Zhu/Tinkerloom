@@ -1,0 +1,50 @@
+{
+  "status": "frozen",
+  "stage": "/private/tmp/tinkerloom-route-runtime-ready-kzcsysx5",
+  "files": [
+    {
+      "path": "apps/mobile/src/full/FullAppScreen.tsx",
+      "sha256": "840843e4720ad52ed8b704cacc79e5c8a88cc820db47641745338b474cbaf92b",
+      "bytes": 32023,
+      "baseSha256": "55209829a56ea5237fe7950f14c2490d837c0ad71122dc0cc503c35e3709060a"
+    },
+    {
+      "path": "apps/mobile/src/full/routeRuntimeReadiness.ts",
+      "sha256": "b20c66dfe540877fced01f0c328f461a17da631981a9562f0fd23880a485e0f7",
+      "bytes": 374,
+      "baseSha256": null
+    },
+    {
+      "path": "apps/mobile/src/full/routeRuntimeReadiness.test.ts",
+      "sha256": "86d06803675dd524b0158d4363dc3960aaf063ccf25d313551edd4872c119f52",
+      "bytes": 8396,
+      "baseSha256": null
+    },
+    {
+      "path": "apps/mobile/docs/ROUTE_RUNTIME_PREPARATION.md",
+      "sha256": "2dccf4c874dc549ce8de3b341d11d88cbe2facb91034b176f6fd6558106f8f11",
+      "bytes": 3200,
+      "baseSha256": null
+    }
+  ],
+  "sourceSha256": "c672c99f1e607c44adab16b3ba1b16a77e3b87ef32bfaa65e1eeacec13fad6b8",
+  "verification": {
+    "tests": 699,
+    "rootBaseline": 683,
+    "workspaceDependencyTests": 12,
+    "newTests": 4,
+    "focusedTests": 4,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "baselineRegression": "Original extracted missing-app-only guard fails actual save ACK/runtime-null/published metadata window; baseline-missing-runtime-guard-failure.log",
+    "FullAppControllerUnchangedSha256": "d425de94b5da7932acf3dce02eb0e40c7284fc7c6f48422dd79590dbc5205f1f",
+    "workspaceDependencyUnchangedSourceSha256": "b95735e333869eb3533cef45f1988e9fc73307b2633e4a62ee43a4ca2c2328d2",
+    "browser": "Original failed916 receipt preserved; fresh exported interaction pending",
+    "native": "916b8773 remains historical; final exact package pending"
+  },
+  "scope": "Source/local only; no persistent edits, Git writes, Cloud/provider/browser/native/device actions or dependency changes. Approved workspace3 is verification support only, excluded from manifest."
+}

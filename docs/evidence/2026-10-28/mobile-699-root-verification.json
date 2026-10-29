@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-10-29T05:34:27.936512+00:00",
+  "rootCommand": "npm run verify",
+  "tests": 699,
+  "failures": 0,
+  "skips": 0,
+  "typecheck": "pass",
+  "lint": "pass",
+  "format": "pass",
+  "exports": [
+    "web",
+    "ios",
+    "android"
+  ],
+  "logSha256": "781a8f7c2e58372c0bf69d8fa08b978c4e99f120c7799ae4d801caefa834e861",
+  "independentFocusedChecks": {
+    "workspace": 12,
+    "readinessAndNavigation": 23
+  },
+  "rootWorkspaceFocused": 12,
+  "browserRetest": "pending; failed916 observation retained",
+  "nativeRepackage": "pending exact combined Git source"
+}

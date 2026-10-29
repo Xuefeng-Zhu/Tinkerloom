@@ -1,0 +1,33 @@
+{
+  "reviewedAt": "2026-10-29T05:31:09.197040+00:00",
+  "status": "clear",
+  "stage": "/private/tmp/tinkerloom-route-runtime-ready-kzcsysx5",
+  "manifest": "route-runtime-ready-files.json",
+  "sourceSha256": "c672c99f1e607c44adab16b3ba1b16a77e3b87ef32bfaa65e1eeacec13fad6b8",
+  "manifestFilesVerified": 4,
+  "workspaceDependencySha256": "b95735e333869eb3533cef45f1988e9fc73307b2633e4a62ee43a4ca2c2328d2",
+  "FullAppControllerUnchangedSha256": "d425de94b5da7932acf3dce02eb0e40c7284fc7c6f48422dd79590dbc5205f1f",
+  "independentTests": {
+    "command": "node --import tsx --test src/full/routeRuntimeReadiness.test.ts src/full/navigation.test.ts src/full/routeNormalization.test.ts",
+    "workdir": "/private/tmp/tinkerloom-route-runtime-ready-kzcsysx5/apps/mobile",
+    "tests": 23,
+    "pass": 23,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "reviewedBoundaries": [
+    "Screen diff restricted to helper import and existing nested runtime-null guard",
+    "Absent app or nonnull validated published version only waits and clears handled-route claim",
+    "Wait branch adds no URL/error write, navigation queue/replay, RPC or command allocation",
+    "True version:null app retains original unpublished-link handling",
+    "Protected original-visit return remains before wait; ready runtime fresh manifest/authorized record path and pending guards unchanged",
+    "Viewer/access loss does not gain builder authority; controllers remain unchanged"
+  ],
+  "findings": [],
+  "limits": [
+    "Local actual-controller/route-decision and related navigation tests only",
+    "Parent-reported699 full/type/lint/format not independently rerun",
+    "No persistent source edits, Git writes, Cloud/browser/provider/native/device actions"
+  ]
+}
