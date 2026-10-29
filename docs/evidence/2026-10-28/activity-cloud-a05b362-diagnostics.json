@@ -1,0 +1,12 @@
+{
+  "observer": "Non-mutating fetch response observer; only allowlisted operation/status/code; at most80 events; no extra HTTP requests",
+  "events": [
+    {
+      "operation": "acceptInvitation",
+      "httpStatus": 201,
+      "functionStatus": 409,
+      "executionStatus": "completed",
+      "backendCode": "transaction_conflict"
+    }
+  ]
+}

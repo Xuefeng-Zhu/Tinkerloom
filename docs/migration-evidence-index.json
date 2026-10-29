@@ -1,0 +1,3794 @@
+{
+  "format": "tinkerloom.migration-evidence-index.v1",
+  "capturedAt": "2026-10-29T02:14:36.583839+00:00",
+  "scope": "Current checkpoint; no final complete claim; historical125 baselines remain untouched",
+  "uniqueRows": 125,
+  "criteriaRows": 15,
+  "nonCriteriaRows": 110,
+  "historicalMatrixSha256": "98ed1609e71357a86165dca48b1058e29741e92e32cae060ed87e8a2f0f61532",
+  "operatorReportedCurrentDeployments": {
+    "coreDeploymentId": "6ae2a7bc1eb91be5b447",
+    "coreSource": "a05b3623154b997e7b40525a22bad10d52c73a8d",
+    "workerDeploymentId": "6ae2a775681ced8b8bab",
+    "workerSource": "7e01ce897a2416dc7afbbdcdd6c220273089b3b9",
+    "reminderFlags": "Both enabled and redeployed per parent operator; no current successful reminder/activity acceptance receipt yet"
+  },
+  "evidence": [
+    {
+      "id": "FULL",
+      "title": "Full-engine authenticated REST",
+      "path": "docs/evidence/2026-10-28/full-cloud-fc71-pooled.passed.json",
+      "sha256": "a959586d526285b6741de8db03d7e3d005ca4c25fec90ad749859e9f96bf62a6",
+      "bytes": 10997,
+      "layer": "live-REST",
+      "runId": "qa-full-mvsu1sfg-6018bc65",
+      "status": "passed",
+      "summary": {
+        "passed": 48,
+        "failed": 0,
+        "blocked": 0,
+        "assertions": 1948
+      },
+      "completedAt": "2026-10-29T01:08:23.521Z",
+      "target": {
+        "coreDeploymentId": "6ae289f866af0d0d2ba7",
+        "workerDeploymentId": "6ae2934255696814d2bb",
+        "sourceCommit": "fc71fe41078c6cd78b3f1987cac5c12dcf04d02c",
+        "sourceSha256": "b0578adff72de82426b2c7ddb0a484b46d7029af2a7bcf034008e680a3cb7957",
+        "sourceAttestation": "operator_supplied_not_server_attested",
+        "workerDeploymentObserved": false,
+        "coreDeploymentMatchedExecutions": 354
+      },
+      "capacityTrial": {
+        "submittedAttempts": 20,
+        "uniqueOperationIds": 20,
+        "distinctAuthenticatedActors": 3,
+        "peakConcurrentHttp": 20,
+        "successResponses": 1,
+        "distinctClaimedActors": 1,
+        "committedAllocationObserved": 1,
+        "serverExecutionBarrier": false
+      },
+      "budget": {
+        "maxHttpRequests": 600,
+        "maxSyntheticAccounts": 5,
+        "maxInvitationsPerIssuer": 50,
+        "httpRequests": 382,
+        "peakConcurrentHttp": 20,
+        "syntheticAccountsAttempted": 5,
+        "syntheticAccountsCreated": 0,
+        "reusedVerifiedSyntheticAccounts": 5,
+        "invitationsIssued": 9
+      }
+    },
+    {
+      "id": "COLLAB",
+      "title": "Collaboration authenticated REST",
+      "path": "docs/evidence/2026-10-28/appwrite-collaboration-passed.json",
+      "sha256": "bc1489eb5c99b3182d30e93978b4965ea3a7c256e4eff430e71a0996e080dacf",
+      "bytes": 7044,
+      "layer": "live-REST",
+      "runId": "qa-collab-mvso7okp-e9eac88e",
+      "status": "passed",
+      "summary": {
+        "passed": 31,
+        "failed": 0,
+        "blocked": 0,
+        "assertions": 940
+      },
+      "completedAt": "2026-10-28T22:16:38.515Z",
+      "target": {}
+    },
+    {
+      "id": "MEDIA",
+      "title": "Private media authenticated REST",
+      "path": "docs/evidence/2026-10-28/media-cloud-8b0deca.passed.json",
+      "sha256": "6131d4e9bbb6bfcf14ac8a662e9642138001aa42d7abf130902ab56d88b95339",
+      "bytes": 7465,
+      "layer": "live-REST",
+      "runId": "qa-media-mvsvqy1g-cf254c76",
+      "status": "passed",
+      "summary": {
+        "passed": 22,
+        "failed": 0,
+        "blocked": 0,
+        "pending": 1,
+        "assertions": 242
+      },
+      "completedAt": "2026-10-29T01:48:55.681Z",
+      "target": {
+        "coreDeploymentId": "6ae289f866af0d0d2ba7",
+        "workerDeploymentId": "6ae2934255696814d2bb",
+        "sourceCommit": "fc71fe41078c6cd78b3f1987cac5c12dcf04d02c",
+        "workerSourceCommit": "7e01ce897a2416dc7afbbdcdd6c220273089b3b9",
+        "sourceSha256": "b0578adff72de82426b2c7ddb0a484b46d7029af2a7bcf034008e680a3cb7957",
+        "workerSourceSha256": "5fc1a75927983f8c522b1e80f3c2a341bf40ddf8df46e59dce7d5026d24d9b73",
+        "coreDeploymentMatchedExecutions": 97
+      },
+      "coverageLimits": [
+        "Exact private-worker deployment/source/configuration is operator-attested; readiness alone does not attest its deployment ID.",
+        "No provider calls, reminder scheduling/delivery, native/browser UI, server clocks or resource deletion are exercised.",
+        "5 MiB valid padded PNG proves byte transport; it is a small image and does not prove worst-case 16MP memory/decode acceptance.",
+        "Storage hydration reads the whole variant per response chunk; this is not a Cloud bandwidth/performance pass.",
+        "16-minute quiet-period release is pending unless the explicit bounded optional phase observes it; unreferenced ready assets remain through normal retention."
+      ],
+      "readConflicts": 3
+    },
+    {
+      "id": "CLEANUP",
+      "title": "One scheduled quiet-period cleanup observation",
+      "path": "docs/evidence/2026-10-28/worker-scheduled-cleanup-7e01.json",
+      "sha256": "2c2b712bab1a6259799c930e1ed28a0c5e890b43feefaa1be8cb0348fb6c23f9",
+      "bytes": 1752,
+      "layer": "operator-Console-observation",
+      "observedAt": "2026-10-29T00:49:00Z"
+    },
+    {
+      "id": "FORM",
+      "title": "Real RN web form observation",
+      "path": "docs/evidence/2026-10-28/rn-browser-form-check.json",
+      "sha256": "9334591b0a759dadc30c1596c5021c6c05c066c55e91cd1f6372fa93faf9fee7",
+      "bytes": 2978,
+      "layer": "browser"
+    },
+    {
+      "id": "CLARIFY",
+      "title": "Real provider-off clarification browser observation",
+      "path": "docs/evidence/2026-10-28/browser-clarification-a05b362.json",
+      "sha256": "c7fcdb1c9b570e71153844ad449399288fc0c38e83b00a1565bfa04ba25f2bde",
+      "bytes": 3450,
+      "layer": "browser",
+      "sourceCommit": "a05b3623154b997e7b40525a22bad10d52c73a8d",
+      "capturedAt": "2026-10-29T01:48:57.170141+00:00"
+    },
+    {
+      "id": "RENDER",
+      "title": "Mounted synthetic renderer browser subset",
+      "path": "docs/evidence/2026-10-28/full-renderer-browser-qa.md",
+      "sha256": "c57a4bb8f45e1ddd8317c9ca1449db369059f925a08277a66b28b51a32193d6b",
+      "bytes": 2617,
+      "layer": "browser"
+    },
+    {
+      "id": "STORAGE",
+      "title": "Real browser encrypted storage harness",
+      "path": "docs/evidence/2026-10-28/host-storage-browser.json",
+      "sha256": "dfee487df3526cc85bb6b130278ea3cf2882ddb1f842985b43467b0f0abd7b14",
+      "bytes": 1055,
+      "layer": "browser",
+      "status": "passed"
+    },
+    {
+      "id": "IMPORT",
+      "title": "Offline import preflight/simulation",
+      "path": "docs/evidence/2026-10-28/import-dry-run.json",
+      "sha256": "8dd14ff5eaf703cdb10c406f04ac2d0c8e567f9345b6992c5a87c0f1731acd38",
+      "bytes": 3548,
+      "layer": "local"
+    },
+    {
+      "id": "RICH",
+      "title": "Earlier bounded rich authenticated REST",
+      "path": "docs/evidence/2026-10-28/appwrite-smoke-rich-unicode.json",
+      "sha256": "0f5a92c9d640237c57774a6a307578325a9ebb5b86890ca7ac2c5f986ce624ea",
+      "bytes": 7564,
+      "layer": "live-REST",
+      "runId": "qa-mvsfgt5g-efe457b4",
+      "status": "passed",
+      "summary": {
+        "passed": 34,
+        "failed": 0,
+        "blocked": 0,
+        "assertions": 314
+      },
+      "completedAt": "2026-10-28T18:08:59.013Z",
+      "target": {}
+    },
+    {
+      "id": "LOCAL",
+      "title": "Latest isolated inspector review verification606",
+      "path": "/private/tmp/tinkerloom-inspector-review-tayocxa0/inspector-review-files.json",
+      "sha256": "cba3b91b971f7121d57263b6009f0618cc517c5dbc014935e4101eab0861dcf5",
+      "bytes": 2893,
+      "layer": "local",
+      "status": "frozen",
+      "relatedReceipts": [
+        {
+          "path": "docs/evidence/2026-10-28/worker-integration.json",
+          "sha256": "93567a83ddf15bc86d07f8c3d4101fa4d224486f687f2a340ec35f64b445dbc6"
+        },
+        {
+          "path": "docs/evidence/2026-10-28/media-integration.json",
+          "sha256": "122d3bfdd973ade156bbb33bde8bc378aafc3501fee4fb573e142e523d2a1a55"
+        },
+        {
+          "path": "docs/evidence/2026-10-28/watch-backend.json",
+          "sha256": "d4a5c8d40cbc90add41d24f85fb006c3e58449c1de3b83473a42c341a5b4b673"
+        }
+      ]
+    },
+    {
+      "id": "N5",
+      "title": "Native source5f build checkpoint",
+      "path": "/private/tmp/tinkerloom-native-final-k5dvctdw/checkpoint-5f006b9c.json",
+      "sha256": "119673e42e24a58714da4580ffaba69eacfa2c4ce8e93afc6b10a7e90e9c5cba",
+      "bytes": 3638,
+      "layer": "native-build",
+      "sourceCommit": "5f006b9ca75dccc031457baab865a0051b3b17fa",
+      "inputSha256": "7e5ffae507371dad0b108cc68a9b9f70a0d4c7882fcf6ab2ee4b0d5a1465f61d",
+      "compiledSourceSha256": "3b5e2cbf1e798b9234d0a93c24b9e301101eee35a426d7c66062ddc9135ba606",
+      "deviceBooted": false,
+      "installed": false,
+      "launched": false,
+      "runtimeOrUiVerified": false
+    },
+    {
+      "id": "ACTIVITY",
+      "title": "Activity source/contract checkpoint, not live pass",
+      "path": "apps/mobile/src/activity/README.md",
+      "sha256": "d66c7dcfeb24ac9a4e4ffd55cc419c3698cc240550bc32a7c5fa3b1c4099dc73",
+      "bytes": 3828,
+      "layer": "local"
+    },
+    {
+      "id": "REMINDER",
+      "title": "Reminder live observation still pending",
+      "path": "/private/tmp/tinkerloom-reminder-cloud-a05b362.json",
+      "sha256": "51244f6a331c50fdc8bc4f10e5ce76898dfe0dab13695b3768f630c503f46f61",
+      "bytes": 1951,
+      "layer": "live-pending",
+      "runId": "qa-reminder-mvsw9uj2-6a6032",
+      "status": "observation_pending",
+      "completedAt": "2026-10-29T01:59:00.069Z",
+      "target": {
+        "coreDeploymentId": "6ae2a7bc1eb91be5b447",
+        "workerDeploymentId": "6ae2a775681ced8b8bab",
+        "sourceCommit": "a05b3623154b997e7b40525a22bad10d52c73a8d",
+        "sourceSha256": "75780c6e736ddf7710d9cf359ef9cd2d8dd8aabc292128e060adbd305d2509ef",
+        "sourceAttestation": "operator_supplied_not_server_attested",
+        "workerDeploymentObserved": false
+      }
+    }
+  ],
+  "preservedFailures": [
+    {
+      "path": "docs/evidence/2026-10-28/appwrite-collaboration-initial-failed.json",
+      "status": "failed",
+      "summary": {
+        "passed": 15,
+        "failed": 3,
+        "blocked": 13,
+        "assertions": 152
+      },
+      "sha256": "d070148be7be86e1da261ae222c9efd7d4403792930848a8f127cb0c53520104"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/appwrite-collaboration-rate-limited.json",
+      "status": "failed",
+      "summary": {
+        "passed": 1,
+        "failed": 5,
+        "blocked": 20,
+        "assertions": 6
+      },
+      "sha256": "4ad78f2aca098eae0d94529cc462fd5df9eb8ff6d6e2d25023d01a0bb28b19e9"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/appwrite-collaboration-utc-failed.json",
+      "status": "failed",
+      "summary": {
+        "passed": 30,
+        "failed": 1,
+        "blocked": 0,
+        "assertions": 932
+      },
+      "sha256": "e84bc8e9f3aa4c17f425fe1feb191250c08ebebba89597b7feafdae32d7511cf"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/appwrite-smoke-first.json",
+      "status": "failed",
+      "summary": {
+        "passed": 25,
+        "failed": 1,
+        "blocked": 0,
+        "assertions": 180
+      },
+      "sha256": "84624b0035b5c1bdfe83845fe4f617643164d9916bfee9a206a76270c4de63e7"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/full-cloud-fc71-initial.failed.json",
+      "status": "failed",
+      "summary": {
+        "passed": 45,
+        "failed": 3,
+        "blocked": 0,
+        "assertions": 1844
+      },
+      "sha256": "d2a72bee2412fde10c48ef228eb9af0fde8ef75f178fbeac0bac6535ecb10d00"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/full-probe-network-isolated.failed.json",
+      "status": "failed",
+      "summary": {
+        "passed": 0,
+        "failed": 5,
+        "blocked": 37,
+        "assertions": 5
+      },
+      "sha256": "5839d91d463626e7feaebbbe20e042f5d87384106027cfdab806dc9d31d63973"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/media-cloud-fc71-initial.failed.json",
+      "status": "failed",
+      "summary": {
+        "passed": 10,
+        "failed": 2,
+        "blocked": 10,
+        "pending": 1,
+        "assertions": 94
+      },
+      "sha256": "f00b6712d8ab5a2f1874f02d9e3b490f35182e538329287422e86ff6b173bf74"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/media-cloud-pooled-e42.failed.json",
+      "status": "failed",
+      "summary": {
+        "passed": 21,
+        "failed": 1,
+        "blocked": 0,
+        "pending": 1,
+        "assertions": 222
+      },
+      "sha256": "38463fb9063f41e6c1f1a59b23f91a295b86877e4bcb02b9b0633336d57742f5"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/media-cloud-worker7e01.failed.json",
+      "status": "failed",
+      "summary": {
+        "passed": 12,
+        "failed": 1,
+        "blocked": 9,
+        "pending": 1,
+        "assertions": 118
+      },
+      "sha256": "7443527be792325b5459b201805933a502031ed06979016ccc47e5f471554832"
+    },
+    {
+      "path": "docs/evidence/2026-10-28/reminder-cloud-a05b362.observation-pending.json",
+      "status": "observation_pending",
+      "summary": null,
+      "sha256": "51244f6a331c50fdc8bc4f10e5ce76898dfe0dab13695b3768f630c503f46f61"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256": "2779a96fd9f3ff571fbee81f66e135cafdea726cee6e9e86487241c8cafc14b3"
+    },
+    {
+      "path": "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt",
+      "sha256": "51560b60fa7645b6527c8fc838f4b086571dcdfa75a935dc1bc3a885127bda01"
+    },
+    {
+      "path": "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+      "sha256": "8f757eec3f72d091bd30f11ced9e46696e7bd75034018e48a3df46a5b0eeff3c"
+    },
+    {
+      "path": "apps/mobile/src/activity/ActivityController.ts",
+      "sha256": "056fc960af30e79d2768cb92868d0417e9e83731196b6e80ba7349fa2c0c4051"
+    },
+    {
+      "path": "apps/mobile/src/activity/ActivityScreen.tsx",
+      "sha256": "53c3150276997f60b982bd4aeb752e156e1c98f571d8c342c7d6f159e5fc932b"
+    },
+    {
+      "path": "apps/mobile/src/backend/core.ts",
+      "sha256": "d6ff6a05067fe66b53eee0787aec5209e487b400b8674f73b27e9a003b0b47eb"
+    },
+    {
+      "path": "apps/mobile/src/full/ClarificationPanel.tsx",
+      "sha256": "1364c1f6240f5f141cd3d35a913d5f056d29023182caccf028b836b0930e69b6"
+    },
+    {
+      "path": "apps/mobile/src/full/FullAppController.ts",
+      "sha256": "2dbaefe951e8d31a871c3e9889d4ee9860fba2d021c9bdf1c64b8d40befd3a9d"
+    },
+    {
+      "path": "apps/mobile/src/full/FullAppScreen.tsx",
+      "sha256": "e158961c1ae36791d1c4c32d242141ad42e428b2699ee52c93310d0c08baceed"
+    },
+    {
+      "path": "apps/mobile/src/full/FullLauncher.tsx",
+      "sha256": "de3e1b4e787b1adec113bacad792dacaf1725d8f22bdd785c6a36a11edd93b4b"
+    },
+    {
+      "path": "apps/mobile/src/full/FullRegistry.ts",
+      "sha256": "edc2ec8d0abcebe5bdd65a487d4201a2c07cadafe7fd94bd4fb08af3fa3104a1"
+    },
+    {
+      "path": "apps/mobile/src/full/FullWorkspaceController.ts",
+      "sha256": "e82bf27e9dc0b478afd64251e0ef28aa09bf56dafec47479a5cef9f4c16ca51d"
+    },
+    {
+      "path": "apps/mobile/src/full/GenerationPanel.tsx",
+      "sha256": "3bc779f1b79fd9226da3307bd44a625876852855d0b4d251e0fba484a2c16d81"
+    },
+    {
+      "path": "apps/mobile/src/full/PreviewSession.ts",
+      "sha256": "7caec51e5dd987c382e073da3839684cac715d7c4291c4f84a600cd7114cad5b"
+    },
+    {
+      "path": "apps/mobile/src/full/PublicationPanel.tsx",
+      "sha256": "62f460a53bee7832dcf8b11db2aa6165a1cddc7e7801bedb0369adba91ee82ed"
+    },
+    {
+      "path": "apps/mobile/src/full/SpecEditor.tsx",
+      "sha256": "c73eef0afe61aacbd572fc2488e989640929853551fac1d52ee00c8f2d990d77"
+    },
+    {
+      "path": "apps/mobile/src/full/clarification.ts",
+      "sha256": "5e594b620dfe14dcb5d6a7af7308c732720ee504fd242f06f46696161e81437f"
+    },
+    {
+      "path": "apps/mobile/src/full/inspectorSelection.ts",
+      "sha256": "23b670aa6fd33fac614cb310dd93634a8cd29073bd19b703201806437bebc743"
+    },
+    {
+      "path": "apps/mobile/src/full/inspectorTextDraft.ts",
+      "sha256": "3ec20434090ef55e078c13ef677f4f09a40eb8364726a69fa3cf09a581c8a32f"
+    },
+    {
+      "path": "apps/mobile/src/full/navigation.ts",
+      "sha256": "91ed213d46fb4a9807800e988ff07884088a928a87e9732dd5c72bf5bfd5f944"
+    },
+    {
+      "path": "apps/mobile/src/host/browserStorage.ts",
+      "sha256": "37eec7617d6881bad4734098b254c9d164a071bc1c5a6f9c07d12d169602e50e"
+    },
+    {
+      "path": "apps/mobile/src/host/device.ts",
+      "sha256": "cc387ebfbcdddebaf7aac16c0fa33680b72c27dfe8034ef2149718ea4121b906"
+    },
+    {
+      "path": "apps/mobile/src/host/deviceDriver.native.ts",
+      "sha256": "6fdde9e942ffb9aecde4ab50401e0e5041094b145276d34bebb26dbc816adf88"
+    },
+    {
+      "path": "apps/mobile/src/host/encryptedFiles.ts",
+      "sha256": "3ee4cc8fb2387b055f4aff46fa08c246b9e4a0b5af3043ff214d91d36584f517"
+    },
+    {
+      "path": "apps/mobile/src/host/staticPreviewImages.ts",
+      "sha256": "f252470555558d88bf9c13434befd8aa6b189e53c5f456fa1bd0047fcacd4a77"
+    },
+    {
+      "path": "apps/mobile/src/host/storage.ts",
+      "sha256": "ddea61ba593d29888d0a9cd8d5fc85ee97c85b2d3ca4c331adb891f7fcbfe9af"
+    },
+    {
+      "path": "apps/mobile/src/media/adapter.ts",
+      "sha256": "2350813c162c7774b9103034062c6668bb40ba018d5f62aa705ad3da749ab6fa"
+    },
+    {
+      "path": "apps/mobile/src/media/controller.ts",
+      "sha256": "5352dd0be0eba29dfb171430beb477ca50459cddfaec44a8278f97c26e57ddfc"
+    },
+    {
+      "path": "apps/mobile/src/notifications/AutomationRunsController.ts",
+      "sha256": "66e97492977f8b1c05dc6cd456aa68ac9c825dfaf5e1abd00c0b7adedc6085ac"
+    },
+    {
+      "path": "apps/mobile/src/notifications/NotificationsController.ts",
+      "sha256": "9b85591ef497fad09f3aa2ed04a430db6e0ed03a832d06ed52527f990314b830"
+    },
+    {
+      "path": "apps/mobile/src/notifications/withReminders.ts",
+      "sha256": "22aa46744ef33333a204bb407453066d3e81af94ef83d489f11fcd3f760e8780"
+    },
+    {
+      "path": "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+      "sha256": "7923b2a6754934cbc0b343f77906d8dea98b3932c40eaf6907452bc4bec8d1c8"
+    },
+    {
+      "path": "apps/mobile/src/renderer/actions.tsx",
+      "sha256": "dffd44c186ca1ef33ff173cdc765c08611f227530fc497f16cd84b76b4396253"
+    },
+    {
+      "path": "apps/mobile/src/renderer/editorSnapshot.ts",
+      "sha256": "7ff349e01c352c9e5e83e70e17026a1dedb72a28d31b39a966a823bc93be74bf"
+    },
+    {
+      "path": "apps/mobile/src/renderer/fields.tsx",
+      "sha256": "6170a6b1f515246e85efc9bc1c6319b4b8be19f46e6da365bb63f4c3be6a7d8f"
+    },
+    {
+      "path": "apps/mobile/src/renderer/form.tsx",
+      "sha256": "7c04aac0fae3e29426866a5bab13a8b512aaad697cd4ba0166424489f6cb58ca"
+    },
+    {
+      "path": "apps/mobile/src/renderer/views.tsx",
+      "sha256": "bdd5dfc4ee0a5573dc13c72aa5a0f3cb6387f1cbf1c13285e014b37462e575b8"
+    },
+    {
+      "path": "apps/mobile/src/runtime/controller.ts",
+      "sha256": "3d09c8d2dac980c34139696aaaa4d2812e97abb2920d00c783846c932a21f527"
+    },
+    {
+      "path": "apps/mobile/src/runtime/functionAdapter.ts",
+      "sha256": "28eb2b72389d7396a584adee7127c7e6107bb8f99515bf59b00eccbd30712645"
+    },
+    {
+      "path": "apps/mobile/src/runtime/invalidation.ts",
+      "sha256": "7448d889013656fbbafaee6d2601bfba1dec813cec31f7a66cce18f220c67cab"
+    },
+    {
+      "path": "apps/mobile/src/runtime/preview.ts",
+      "sha256": "de37232df09932990bc1d0ed9d26b0d8ecc870b0f880a1d28b5a2dac10040ade"
+    },
+    {
+      "path": "apps/mobile/src/runtime/previewImageInflate.ts",
+      "sha256": "ae4df66a72355fe2b2edd54a507708dbebc70082cf31f1d913334ac23c0950b7"
+    },
+    {
+      "path": "apps/mobile/src/runtime/timer.ts",
+      "sha256": "c09374fb4750a4d14ce0766e9ad43be4ca719524f0b6028b78337f4996fc8861"
+    },
+    {
+      "path": "apps/mobile/src/runtime/watchActivity.native.ts",
+      "sha256": "60f8c566cd32115acfb5349ae9b9669373de9e3e7e90731f9a2b006712adb180"
+    },
+    {
+      "path": "apps/mobile/src/screens/AuthScreen.tsx",
+      "sha256": "7b6f028bd3202d5abacc64d92fa799134ffdbc19c28d86d1ba327d24ba0af702"
+    },
+    {
+      "path": "apps/mobile/src/screens/HomeScreen.tsx",
+      "sha256": "0add7161db08a29ad2af9035189102b2441d029b8d1a0f093317ac158d3f5e1a"
+    },
+    {
+      "path": "apps/mobile/src/sharing/InvitationController.ts",
+      "sha256": "f6c378e2ca9e4169063968d6cd43b3301c61a04934abe1dc2cf6384051d63451"
+    },
+    {
+      "path": "apps/mobile/src/sharing/SharingController.ts",
+      "sha256": "b884a249f577ab85044ef7f3e56cad60c4664c3fbb42c6a5714bd82fda3adee5"
+    },
+    {
+      "path": "apps/mobile/src/sharing/SharingScreen.tsx",
+      "sha256": "cbac2dd7e7d0d759dbe185762c1c73fa05dd2264585debcc6ce94f050e194a09"
+    },
+    {
+      "path": "apps/mobile/src/spec/compatibility.ts",
+      "sha256": "21853c6561212f59ef284a8cdf34778808ba594a61af6dd0a66366bee30b0277"
+    },
+    {
+      "path": "apps/mobile/src/spec/decode.ts",
+      "sha256": "b8ae223797ae54311a00418cf425822823e67a29ab0b552424975aeb50453b75"
+    },
+    {
+      "path": "apps/mobile/src/spec/values.ts",
+      "sha256": "43d1f9527f513f50ab6c494ae9718396867a3c58e56746b69802a0c87143bc17"
+    },
+    {
+      "path": "appwrite_backend/lib/activity.dart",
+      "sha256": "ec62eb704d69ddc23939d05a49cce2c7d7e578bfe3904506466d3bad664ad343"
+    },
+    {
+      "path": "appwrite_backend/lib/collaboration.dart",
+      "sha256": "168489924a45c31246b992d3ca2876386a96ac7f7d23605fd5f691f0ba355623"
+    },
+    {
+      "path": "appwrite_backend/lib/generation.dart",
+      "sha256": "caebaff85b43c00af41cc91acdfa0ee51fda0f5303be56230f69a65ace1437a6"
+    },
+    {
+      "path": "appwrite_backend/lib/image_sanitizer.dart",
+      "sha256": "064ea6473ae2a2227e4776a0cf254d772c6fa5a0bd52594fc9634394c0b3359e"
+    },
+    {
+      "path": "appwrite_backend/lib/inbox.dart",
+      "sha256": "a27d2b0807fdeb0413b56644c69730ca7db94873c9b65762ef6af4e774cf8479"
+    },
+    {
+      "path": "appwrite_backend/lib/private_media.dart",
+      "sha256": "80198fa9aa053e81e91e2b9f961ce0d8a56a024c7ec312084d441d82d31eecdf"
+    },
+    {
+      "path": "appwrite_backend/lib/providers/creation_compiler.dart",
+      "sha256": "29d35f37bc296117e992264e481bfeff107fa890c93a095d3f063ac621abded1"
+    },
+    {
+      "path": "appwrite_backend/lib/providers/nvidia_model_profiles.dart",
+      "sha256": "26b6121682eaa3ea13ad6acf8971078fd033562f918ec47dc0cb7b6b632c2cf7"
+    },
+    {
+      "path": "appwrite_backend/lib/providers/provider.dart",
+      "sha256": "52c7b5b9d00ca3fa903700ea9f757c066467143d35a9344f80ba848fc4be4f21"
+    },
+    {
+      "path": "appwrite_backend/lib/reminders.dart",
+      "sha256": "6d3a42c18f5321b837bec3b7d0fd0db79b7ce5415e5fbe5afabf62a076065f34"
+    },
+    {
+      "path": "appwrite_backend/lib/spec_actions.dart",
+      "sha256": "d0047577d2f0632aae48efbb350ae8266442eb6d1c4769618827e3272095c538"
+    },
+    {
+      "path": "appwrite_backend/lib/spec_lifecycle.dart",
+      "sha256": "d05aca5d3ea81196a93d93c96f65fbdf741e0c68f0c4d231b666e3ae024e4e09"
+    },
+    {
+      "path": "appwrite_backend/lib/spec_queries.dart",
+      "sha256": "3cf97f631baa7f8367f9785cc0066ce4731cf0d36dee7de2859b47245b42c94a"
+    },
+    {
+      "path": "appwrite_backend/lib/spec_runtime.dart",
+      "sha256": "815b458a70f581278cd9fb7939cf1f0fa4a6f4974067326e9a5db28c9c5322b8"
+    },
+    {
+      "path": "appwrite_backend/lib/spec_watch.dart",
+      "sha256": "f94bf597f54f30f36a17f47f4803b21ea04f3156e9c7d7c5a791e5bd04524aa0"
+    },
+    {
+      "path": "appwrite_backend/lib/worker_dispatch.dart",
+      "sha256": "60458f1c61350b7385ce1b4b8fedc65d081de032d60996ae3286f9bdd2a2e59f"
+    },
+    {
+      "path": "appwrite_backend/lib/worker_main.dart",
+      "sha256": "9e4040e0364ee2f62a17040ced87a7614953c8580b7d101c82acdc7afeecb8ed"
+    },
+    {
+      "path": "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+      "sha256": "b8e82aa6613bef2451b5221946df408ddb09153ecbf2c28909eda6f990dad6e3"
+    },
+    {
+      "path": "appwrite_backend/schema.json",
+      "sha256": "30fd4657811ed4b97e61c86b49b66412f9d9c28687e196c6a8c5c40617f77129"
+    },
+    {
+      "path": "appwrite_backend/test/providers/provider_test.dart",
+      "sha256": "ebd08e918e98c0a5bc4950ab1535631ce19b11e56d1c1226714471d1c373b1f8"
+    },
+    {
+      "path": "appwrite_backend/tool/import/engine.dart",
+      "sha256": "e6deae8f41d564b400bf04de29e58baca1354b1269fcf4728a8845b0863f943f"
+    },
+    {
+      "path": "appwrite_backend/tool/import/replay.dart",
+      "sha256": "64100ce5bbce95b743b6b967957f0ad0785a65f113a80fa2eda79a6db4d63b0e"
+    },
+    {
+      "path": "docs/IMPORT_DRY_RUN.md",
+      "sha256": "e86aa850d018cc2b58898c97de84a48be4fa72920c49ae18e42f6ba0eb6d3ca1"
+    },
+    {
+      "path": "docs/NATIVE_VERIFICATION.md",
+      "sha256": "fb1f53eab877a72b28257e43cf35a97dba2878c8e09f262fb75592a69ee9c9ed"
+    },
+    {
+      "path": "package.json",
+      "sha256": "e1c77fc0087f6b7bab94c599a3d89c1ea63494f344d2f3d5df5b8980d566a405"
+    }
+  ],
+  "rows": [
+    {
+      "id": "C01",
+      "contract": "One engine, separate definitions, reload persistence",
+      "historicalBaseline": "**Partial**, E1\u2013E3: current six-field-type/single-view subset.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D4",
+      "originalFinalGate": "Multiple full AppSpecs, templates and independently relabelled definitions use one engine; authenticated records and immutable publication survive client/backend reopening.",
+      "sourceLine": 57,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["spec", "engine", "life", "render"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Full-engine templates/versions/records and fresh sessions passed REST; final frozen-client/mounted/native reopen remains.",
+      "relatedRows": ["L01", "L02", "L04", "S06", "B01"],
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "C02",
+      "contract": "App/record/invitation/notification/media tenant isolation",
+      "historicalBaseline": "**Partial**, E2 verifies current owner-only app/record isolation; other domains missing.",
+      "ownerDependency": "Backend + QA / D2\u2013D5",
+      "originalFinalGate": "Substitute IDs/tokens/assets across two workspaces/apps/users in every read/write/list/effect path; safe errors and no private body leakage.",
+      "sourceLine": 58,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["share", "engine", "media", "notify"],
+      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
+      "remainingGate": "App/record/invite/media wire negatives pass; natural invite expiry, actual reminder/inbox/effect isolation and final client/device cases remain.",
+      "relatedRows": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S07",
+        "M01",
+        "M03",
+        "M06",
+        "D07"
+      ],
+      "sourcePaths": [
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "appwrite_backend/lib/inbox.dart",
+        "apps/mobile/src/notifications/NotificationsController.ts",
+        "apps/mobile/src/notifications/withReminders.ts",
+        "apps/mobile/src/notifications/AutomationRunsController.ts"
+      ]
+    },
+    {
+      "id": "C03",
+      "contract": "Members cannot grant rights or edit protected workflow/counters",
+      "historicalBaseline": "**Missing** roles/actions; owner-only denial is not this criterion.",
+      "ownerDependency": "Backend + RN / D3",
+      "originalFinalGate": "Viewer, each Member policy, Builder and Owner matrix; crafted generic inputs cannot mutate grants, counters, workflow or assignments.",
+      "sourceLine": 59,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["spec", "engine", "share"],
+      "evidence": ["LOCAL", "FULL", "COLLAB"],
+      "remainingGate": "Three-policy protected fields/roles pass bounded REST; final mounted role/action controls and all new effect boundaries remain.",
+      "relatedRows": [
+        "P01",
+        "P02",
+        "P03",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "S04"
+      ],
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx"
+      ]
+    },
+    {
+      "id": "C04",
+      "contract": "Twenty concurrent attempts for the final place yield one allocation",
+      "historicalBaseline": "**Missing** capacity. Current draft/record races in E2 are separate.",
+      "ownerDependency": "Backend + QA / D3",
+      "originalFinalGate": "Twenty independent committed live calls: exactly one claim; counter, claim identity and receipts agree.",
+      "sourceLine": 60,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "20 parallel HTTP attempts/20keys/3authenticatedactors observed one allocation. No20-distinct-actor or server execution barrier proof.",
+      "relatedRows": ["A06", "A07"],
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "C05",
+      "contract": "Same command returns stored outcome; changed input fails",
+      "historicalBaseline": "**Partial**, E1/E2 current saves and publication; full actions/effects absent.",
+      "ownerDependency": "Backend + RN / D2\u2013D5",
+      "originalFinalGate": "Each supported action, retry after publication and lost reply, changed-payload conflict, preserved original UI envelope; no automatic replay on reconnect.",
+      "sourceLine": 61,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["engine", "builder", "host", "media", "notify"],
+      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA", "STORAGE"],
+      "remainingGate": "Exact receipt/changed-input cases pass multiple live APIs; integrated forced lost reply/native restart and notification-read receipt acceptance remain.",
+      "relatedRows": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06",
+        "A07",
+        "B10",
+        "B11",
+        "M01",
+        "G09"
+      ],
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "apps/mobile/src/host/storage.ts",
+        "apps/mobile/src/host/browserStorage.ts",
+        "apps/mobile/src/host/encryptedFiles.ts",
+        "apps/mobile/src/runtime/timer.ts",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "appwrite_backend/lib/inbox.dart",
+        "apps/mobile/src/notifications/NotificationsController.ts",
+        "apps/mobile/src/notifications/withReminders.ts",
+        "apps/mobile/src/notifications/AutomationRunsController.ts"
+      ]
+    },
+    {
+      "id": "C06",
+      "contract": "Capacity release and transaction rollback preserve invariants",
+      "historicalBaseline": "**Partial** generic simulated rollback; capacity/outbox absent.",
+      "ownerDependency": "Backend + QA / D2\u2013D5",
+      "originalFinalGate": "Repeated release cannot double-decrement; force failure at each staging boundary and prove business state, projections, counters, receipt, audit and outbox roll back together on real Appwrite.",
+      "sourceLine": 62,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["engine", "worker"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Claim/release/rejection counts pass REST and failures inject locally; all real Appwrite staging-boundary rollback cases remain unrun.",
+      "relatedRows": ["A06", "A07", "D01", "D06"],
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "C07",
+      "contract": "Preview cannot reach live writes or schedules",
+      "historicalBaseline": "**Partial**, E1/E3 local records/layouts isolated.",
+      "ownerDependency": "RN + QA / D4\u2013D6",
+      "originalFinalGate": "Every renderer capability, preview media, timers and device controls use isolated adapters; transport/scheduler/native spies remain unused.",
+      "sourceLine": 63,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["preview", "device"],
+      "evidence": ["LOCAL", "RENDER"],
+      "remainingGate": "Isolated factories, memory bytes and no-live-adapter tests pass; final all-capability mounted/native negative instrumentation remains.",
+      "relatedRows": ["B13", "M05", "U04", "U08"],
+      "sourcePaths": [
+        "apps/mobile/src/runtime/preview.ts",
+        "apps/mobile/src/runtime/previewImageInflate.ts",
+        "apps/mobile/src/host/staticPreviewImages.ts",
+        "apps/mobile/src/full/PreviewSession.ts",
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt"
+      ]
+    },
+    {
+      "id": "C08",
+      "contract": "Optional additions preserve records, claims and stable IDs",
+      "historicalBaseline": "**Partial**, E2/E3 current compatible fields/views; no full collections/claims.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D4",
+      "originalFinalGate": "Full compatibility fixtures plus live records/claims/media across presentation edits and optional additions; destructive/type/required additions reject without a backfill.",
+      "sourceLine": 64,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["spec", "engine", "media"],
+      "evidence": ["LOCAL", "FULL", "MEDIA"],
+      "remainingGate": "Compatible optional fields/IDs/publication/records have local/REST proof; final combined claims/media retention across all evolution cases remains.",
+      "relatedRows": ["L04", "B03", "M03"],
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "C09",
+      "contract": "Stale drafts/jobs and safe publication retries",
+      "historicalBaseline": "**Partial** exact draft revision in E2; no generation jobs/full review hash.",
+      "ownerDependency": "Backend + RN / D1\u2013D5",
+      "originalFinalGate": "Candidate hash, base version, mutation and review/rule scope bind final publication; obsolete/manual-superseded jobs cannot overwrite; repeated publication returns the stored outcome.",
+      "sourceLine": 65,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["builder", "worker", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Private/global draft and exact review/publication REST pass; actual provider stale/superseded job and enabled-rule effect gates remain.",
+      "relatedRows": ["B08", "B09", "B10", "B11"],
+      "sourcePaths": [
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "C10",
+      "contract": "Interruption between committed work and scheduling recovers",
+      "historicalBaseline": "**Missing** durable work.",
+      "ownerDependency": "Backend + Ops + QA / D5",
+      "originalFinalGate": "Stop/restart independent worker processes or executions after commit/before wakeup; reconciler repairs the gap; duplicate wakeups yield one durable notification.",
+      "sourceLine": 66,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["worker"],
+      "evidence": ["LOCAL", "MEDIA", "CLEANUP", "REMINDER"],
+      "remainingGate": "Private media/one scheduled cleanup prove selected work; reminder interruption/missed-wakeup/reconciler/dedup acceptance still pending.",
+      "relatedRows": ["D02", "D03", "D05"],
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "C11",
+      "contract": "Rule/date/archive/grant changes suppress stale effects",
+      "historicalBaseline": "**Missing** effects/grants/archive.",
+      "ownerDependency": "Backend + QA / D3 + D5",
+      "originalFinalGate": "Reload execution eligibility under the shared guard; exercise date/rule/generation/recipient revocation/deletion/archive changes, backoff deadlines and explicit re-enrollment.",
+      "sourceLine": 67,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["worker", "share", "media"],
+      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA", "REMINDER"],
+      "remainingGate": "Archive/revocation wire behavior passes for writes/media; actual stale-effect suppression on dates/rules/claims/grants/archive remains pending.",
+      "relatedRows": ["D04", "D05", "D06", "S07"],
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart",
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "C12",
+      "contract": "Reconnect/repeated invalidations recover state",
+      "historicalBaseline": "**Partial** manual refresh/account fencing; no live invalidations.",
+      "ownerDependency": "Backend + RN + QA / D3\u2013D5",
+      "originalFinalGate": "Subscribe-before-fetch/dirtiness, reconnect/resume, duplicates, stale reads, access failure and cancellation; actual transport stops after close and never repopulates private UI.",
+      "sourceLine": 68,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["watch", "nav", "account"],
+      "evidence": ["LOCAL", "FORM"],
+      "remainingGate": "Polling/focus/account/dirty fences have local proof; live reconnect/resume/cancellation and complete final browser/native recovery remain.",
+      "relatedRows": ["D08", "U01", "G09"],
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_watch.dart",
+        "apps/mobile/src/runtime/invalidation.ts",
+        "apps/mobile/src/runtime/watchActivity.native.ts",
+        "apps/mobile/src/runtime/controller.ts",
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts",
+        "apps/mobile/src/backend/core.ts",
+        "apps/mobile/src/screens/AuthScreen.tsx",
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/full/FullRegistry.ts"
+      ]
+    },
+    {
+      "id": "C13",
+      "contract": "AI failure preserves apps; template mode is explicit",
+      "historicalBaseline": "**Partial** deterministic templates work; AI missing.",
+      "ownerDependency": "Backend + RN + Ops / D4\u2013D5",
+      "originalFinalGate": "Provider unavailable/malformed/transient/terminal cases preserve prior valid app; failed first generation never promotes a placeholder; real provider create/edit and publication have separate receipts.",
+      "sourceLine": 69,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["provider", "builder", "life"],
+      "evidence": ["LOCAL", "FULL", "CLARIFY"],
+      "remainingGate": "Template mode and provider-off clarification pass; no real AI request/spend. B04 conversation/split presentation source gap and approved provider create/edit receipts remain.",
+      "relatedRows": ["B04", "B06", "B07", "B08", "B09", "B10", "B14", "B15"],
+      "sourcePaths": [
+        "appwrite_backend/lib/providers/provider.dart",
+        "appwrite_backend/lib/providers/creation_compiler.dart",
+        "appwrite_backend/lib/providers/nvidia_model_profiles.dart",
+        "appwrite_backend/test/providers/provider_test.dart",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx"
+      ]
+    },
+    {
+      "id": "C14",
+      "contract": "Mobile/desktop, keyboard and large text",
+      "historicalBaseline": "**Partial**, E3/E4 bounded browser/layout checks.",
+      "ownerDependency": "RN + QA / D4 + D6",
+      "originalFinalGate": "All semantic components at narrow/wide sizes and 150% text, keyboard/assistive controls, native build and device interaction; document full accessibility audit separately.",
+      "sourceLine": 70,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["render", "nav", "device"],
+      "evidence": ["LOCAL", "FORM", "RENDER", "N5"],
+      "remainingGate": "1280x720 form/clarification and older synthetic renderer subset pass; full320px/150%/keyboard/AT/native device acceptance is not complete.",
+      "relatedRows": [
+        "V01",
+        "V02",
+        "V03",
+        "V04",
+        "V05",
+        "V06",
+        "V07",
+        "V08",
+        "V09",
+        "V10",
+        "V11",
+        "V12",
+        "V13",
+        "V14",
+        "V15",
+        "V16",
+        "V17",
+        "V18",
+        "V19",
+        "V20",
+        "V21",
+        "U01",
+        "U02",
+        "U03",
+        "U09",
+        "G04",
+        "G05",
+        "G06"
+      ],
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts",
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt"
+      ]
+    },
+    {
+      "id": "C15",
+      "contract": "Discover/resume unfinished apps after reopening",
+      "historicalBaseline": "**Partial** current saved app shells/drafts can reopen; no full author-private draft/job discovery.",
+      "ownerDependency": "Backend + RN / D2 + D4 + D5",
+      "originalFinalGate": "Current-author latest unpublished drafts only, current membership/builder access, archived exclusion, concurrent resume, revoked access, authenticated route reload and saved job/request restoration.",
+      "sourceLine": 71,
+      "section": "Original fifteen acceptance criteria",
+      "sourceState": "Cross-row acceptance partial",
+      "sourceGroups": ["life", "builder", "worker", "host"],
+      "evidence": ["LOCAL", "FULL", "CLARIFY"],
+      "remainingGate": "Author-private draft/lifecycle REST and browser explicit prefill exist; current job restoration/provider recovery and real integrated process reopen remain.",
+      "relatedRows": ["B01", "B10", "S05", "G09"],
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart",
+        "apps/mobile/src/host/storage.ts",
+        "apps/mobile/src/host/browserStorage.ts",
+        "apps/mobile/src/host/encryptedFiles.ts",
+        "apps/mobile/src/runtime/timer.ts"
+      ]
+    },
+    {
+      "id": "L01",
+      "contract": "Strict formatVersion 1 parser/schema, supported capability declarations, bounded keys/depth/references and unsupported diagnostics",
+      "historicalBaseline": "**Missing** in active Function; pure Dart source retained.",
+      "ownerDependency": "Spec / D1",
+      "originalFinalGate": "Original valid/invalid/canonical fixtures and new cross-language fixtures pass; undeclared/unsupported capabilities and arbitrary properties/code fail closed.",
+      "sourceLine": 79,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Final frozen-source parser/canonical negative regression; no missing language implementation identified.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart"
+      ]
+    },
+    {
+      "id": "L02",
+      "contract": "Separate language version, immutable published version ID/number, record revision/written-under version, rule generation",
+      "historicalBaseline": "**Partial** draft/published/record revision numbers; no immutable version history.",
+      "ownerDependency": "Spec + Backend / D1\u2013D2",
+      "originalFinalGate": "Publication creates immutable versions and active pointer atomically; historical definitions remain unchanged; old command receipts remain authoritative.",
+      "sourceLine": 80,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "engine", "life", "worker"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Final deployment history/record-version regression; generation rule-generation behavior still needs hosted reminder evidence.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "L03",
+      "contract": "Canonical JSON/hashes, stable IDs, absent optional presentation stays absent",
+      "historicalBaseline": "**Partial**, E1/E2 bounded canonical/text/view cases.",
+      "ownerDependency": "Spec + RN / D1",
+      "originalFinalGate": "Golden hashes for all old fixtures, optional/default omission, Unicode/numeric/null normalization, semantic edits and existing receipt request/response bytes.",
+      "sourceLine": 81,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "builder"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Retain golden omission/Unicode/numeric/receipt tests in final freeze; do not treat client hashes as server authority.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx"
+      ]
+    },
+    {
+      "id": "L04",
+      "contract": "Typed collections, fields, behaviors, actions, semantic references and compatible evolution",
+      "historicalBaseline": "**Partial** one flat field collection.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D4",
+      "originalFinalGate": "Up to original supported bounds, invalid cross-collection bindings, preserved IDs/values/claims, explicit rejection of destructive migrations.",
+      "sourceLine": 82,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "engine", "builder"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Final compatibility/invalid cross-collection regressions and mounted full-field authoring coverage.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx"
+      ]
+    },
+    {
+      "id": "L05",
+      "contract": "Atomic typed field projections and tenant-consistency integrity",
+      "historicalBaseline": "**Missing** projections; app guard/receipts exist.",
+      "ownerDependency": "Backend / D2",
+      "originalFinalGate": "Appwrite tables/indexes and service invariants replace SQL-specific machinery; record/projection/outbox/receipt atomicity and cross-parent IDs are tested independently.",
+      "sourceLine": 83,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Real REST covers projections/counts and contention; forced rollback at every staging boundary is still local-only.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "L06",
+      "contract": "Capability negotiation never advertises a renderer, action or effect merely because the parser accepts it",
+      "historicalBaseline": "**Missing** full registry/negotiation.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D5",
+      "originalFinalGate": "Full registry below is mapped to actually available handlers/renderers; unsupported clients receive recoverable errors, not partially executable manifests.",
+      "sourceLine": 84,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "engine", "watch", "notify", "media"],
+      "evidence": ["LOCAL", "FULL", "MEDIA"],
+      "remainingGate": "Current redeployed capabilities/effects/watch attestation and unsupported-client recovery remain to be observed; parser support alone never enables effects.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/spec_watch.dart",
+        "apps/mobile/src/runtime/invalidation.ts",
+        "apps/mobile/src/runtime/watchActivity.native.ts",
+        "apps/mobile/src/runtime/controller.ts",
+        "appwrite_backend/lib/inbox.dart",
+        "apps/mobile/src/notifications/NotificationsController.ts",
+        "apps/mobile/src/notifications/withReminders.ts",
+        "apps/mobile/src/notifications/AutomationRunsController.ts",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "L07",
+      "contract": "Preserve bounded Tinkerloom civil dates and long text, old app/record IDs, current templates and APIs",
+      "historicalBaseline": "**Partial**, E1\u2013E3 existing behavior.",
+      "ownerDependency": "Spec + Backend + RN / D1",
+      "originalFinalGate": "Explicit legacy codec/converter tests. Civil dates are not silently converted to instants; long text is not silently truncated; no destructive table replacement or reinterpretation of stored receipts.",
+      "sourceLine": 85,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "account"],
+      "evidence": ["LOCAL", "RICH", "COLLAB"],
+      "remainingGate": "Final bounded-engine regression on latest deployment; actual original-data import/conversion policy remains G07/G08 scope, with no data moved.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/backend/core.ts",
+        "apps/mobile/src/screens/AuthScreen.tsx",
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/full/FullRegistry.ts"
+      ]
+    },
+    {
+      "id": "F01",
+      "contract": "`text`: typed text, required nonblank, original 10,000-character bound",
+      "historicalBaseline": "**Partial** text/longText with smaller bounds.",
+      "ownerDependency": "Spec + RN / D1 + D4",
+      "originalFinalGate": "Boundary/Unicode/required/optional parity, multiline controls and old rich-record regression.",
+      "sourceLine": 93,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "render", "engine"],
+      "evidence": ["LOCAL", "FULL", "FORM"],
+      "remainingGate": "Boundary/Unicode local and REST cases exist; finish mounted multiline/required/optional controls on final narrow/native client.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "F02",
+      "contract": "`integer`: integral JSON, absolute value \u22649,007,199,254,740,991",
+      "historicalBaseline": "**Missing** distinct safe-integer type.",
+      "ownerDependency": "Spec + RN / D1 + D4",
+      "originalFinalGate": "Reject decimals/strings/nonfinite/unsafe values; controls preserve zero, blanks and signed values across both languages.",
+      "sourceLine": 94,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Safe integer versus number distinction and rejection populations passed REST; finish native raw-input/blank/zero presentation.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "F03",
+      "contract": "`number`: finite numeric JSON, absolute value \u22641e15",
+      "historicalBaseline": "**Partial**, E1/E2/E3 numeric input/display.",
+      "ownerDependency": "Spec + RN / D1 + D4",
+      "originalFinalGate": "Full field/collection/form/aggregate semantics; raw input retained until valid submission; no blank-to-zero or coercion.",
+      "sourceLine": 95,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Finite \u00b11e15 validation and global numeric results passed; finish final mounted range/raw-invalid/blank controls across views.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "F04",
+      "contract": "`boolean`: actual JSON boolean",
+      "historicalBaseline": "**Partial**, E1\u2013E3 current forms/lists.",
+      "ownerDependency": "Spec + RN / D1 + D4",
+      "originalFinalGate": "Optional/required normalization, checklist/switch controls, false preservation and action compatibility.",
+      "sourceLine": 96,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Typed false/missing preservation has local/REST proof; complete mounted switch/checklist interaction and native accessibility.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "F05",
+      "contract": "`choice`: declared values, stable options; compatible edits retain old choices",
+      "historicalBaseline": "**Partial** current choice subset.",
+      "ownerDependency": "Spec + RN / D1 + D4",
+      "originalFinalGate": "Original bounds and typed filters/groups/control options; unknown choices and destructive removals reject.",
+      "sourceLine": 97,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Declared-choice validation and workflow cases passed; complete mounted choice/group controls and final compatibility regression.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "F06",
+      "contract": "`timestamp`: explicit Z/offset, normalized UTC; distinct from civil `date`",
+      "historicalBaseline": "**Missing**; current date does not satisfy this row.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D5",
+      "originalFinalGate": "Strict valid calendar/time/offset checks, UTC round trips, optional clearing, DST local-day boundaries and independent due/reminder times. Do not inherit permissive rollover parsing blindly.",
+      "sourceLine": 98,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "render", "engine"],
+      "evidence": ["LOCAL", "FULL", "FORM"],
+      "remainingGate": "Offset/UTC/lossless projection cases passed locally/REST; DST/device-local input behavior needs final mounted/native acceptance.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "F07",
+      "contract": "`member`: eligible app member for new/changed assignments; historical revoked reference grants no access",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Spec + Backend + RN / D3\u2013D4",
+      "originalFinalGate": "Active-member selection, forged ID rejection, revoke\u2192unrelated edit\u2192transition\u2192clear/reassign, no implicit grant.",
+      "sourceLine": 99,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Current eligible assignment/protected-field and revoked-access cases passed REST; complete picker UX and historical revoked reference interactions.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "F08",
+      "contract": "`image`: opaque same-app ready asset identity, no download URL/path",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Spec + Backend + RN / D4\u2013D5",
+      "originalFinalGate": "Authorized upload/read/reference, cross-app/revoked/expired cases, preview-only bytes, no AI-invented asset ID.",
+      "sourceLine": 100,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "render", "media"],
+      "evidence": ["LOCAL", "MEDIA"],
+      "remainingGate": "Broker/private same-app reference cases passed media REST; native picker/cache and mounted image failure/revocation UI remain unverified.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "A01",
+      "contract": "`records.create.v1`",
+      "historicalBaseline": "**Partial** owner-only saveRecord create.",
+      "ownerDependency": "Backend + RN / D2\u2013D4",
+      "originalFinalGate": "Approved action and policy, required/member/media validation, quota, retained-command replay and atomic audit/outbox.",
+      "sourceLine": 108,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Full typed create/receipt/policy REST cases passed; final mounted/native create and actual client lost-response recovery remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "A02",
+      "contract": "`records.patch.v1`",
+      "historicalBaseline": "**Partial** full-value owner-only edit.",
+      "ownerDependency": "Backend + RN / D2\u2013D4",
+      "originalFinalGate": "Allowed ordinary fields only, expected record/version, historical references, concurrency and complete transactional side effects.",
+      "sourceLine": 109,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Full patch/protected-field/receipt REST cases passed; final mounted/native patch and conflict recovery remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "A03",
+      "contract": "`assignment.assign.v1`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3\u2013D4",
+      "originalFinalGate": "Protected assignment handler, eligible member/clear, current actor rights and revoked historical reference behavior.",
+      "sourceLine": 110,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Assignment and protected-field REST tests passed; final RN eligibility/revocation picker flows remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "A04",
+      "contract": "`workflow.transition.v1`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3\u2013D4",
+      "originalFinalGate": "Declared transitions only; direct generic edits cannot bypass state machine; retries/revisions and reversible approved controls.",
+      "sourceLine": 111,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Workflow/protected-state REST and bounded synthetic browser transitions passed; drag/accessibility/native transitions need final coverage.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "A05",
+      "contract": "`capacity.configure.v1`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3\u2013D4",
+      "originalFinalGate": "Builder/owner-only create/configure, one pool/collection, bound 10,000, committed counter/claim invariants.",
+      "sourceLine": 112,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Capacity configuration and unauthorized generic edits passed REST; final mounted role-specific configuration/native recovery remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "A06",
+      "contract": "`capacity.claim.v1`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN + QA / D3\u2013D4",
+      "originalFinalGate": "Own eligible claim only, unique identity, reactivation and final-place contention; never overbook.",
+      "sourceLine": 113,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "20 concurrent HTTP attempts/20 keys/3 actors yielded one allocation; no server execution barrier or 20-distinct-actor proof, and native UI remains.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "A07",
+      "contract": "`capacity.release.v1`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN + QA / D3\u2013D4",
+      "originalFinalGate": "Own claim release, idempotent repeated release, no negative/double-decrement, atomic side effects.",
+      "sourceLine": 114,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Exact release/counter/reactivation REST invariants passed; final mounted/native ambiguous-release recovery remains.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "P01",
+      "contract": "`personalTracker.v1`: Member read-only",
+      "historicalBaseline": "**Partial** owner-only app.",
+      "ownerDependency": "Backend + RN / D3",
+      "originalFinalGate": "Owner/Builder allowed actions and Member/Viewer write denial; app membership is not inferred from workspace membership.",
+      "sourceLine": 115,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "engine", "share"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Three-policy owner/builder/member/viewer/outsider wire cases passed; finish the equivalent mounted client negative-action matrix and final deployment regression.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx"
+      ]
+    },
+    {
+      "id": "P02",
+      "contract": "`groupWorkflow.v1`: Member ordinary edits/notes, eligible assignment, approved transitions",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3",
+      "originalFinalGate": "Full role/action/field matrix, protected-field attacks, revoked assignment and grant rechecks.",
+      "sourceLine": 116,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "engine", "share"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Three-policy owner/builder/member/viewer/outsider wire cases passed; finish the equivalent mounted client negative-action matrix and final deployment regression.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx"
+      ]
+    },
+    {
+      "id": "P03",
+      "contract": "`groupCapacitySignup.v1`: Member own claim/release only",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3",
+      "originalFinalGate": "Member cannot configure pool/edit ordinary records/grant access; cross-actor claim rejection.",
+      "sourceLine": 117,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "engine", "share"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Three-policy owner/builder/member/viewer/outsider wire cases passed; finish the equivalent mounted client negative-action matrix and final deployment regression.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx"
+      ]
+    },
+    {
+      "id": "V01",
+      "contract": "`list`",
+      "historicalBaseline": "**Partial**, E3 flat cards.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Configured field/action bindings, filters/search/order, pagination, detail navigation and page-local grouping labels.",
+      "sourceLine": 127,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine", "nav"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Configured search/filter/sort/paging source and backend REST exist; final live mounted all-bindings and return-state coverage remains.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts"
+      ]
+    },
+    {
+      "id": "V02",
+      "contract": "`form`",
+      "historicalBaseline": "**Partial**, E3 flat record form.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "All typed controls, optional clear, valid ranges, multi-step retention/validation; final Save sends one retained command, intermediate steps send none.",
+      "sourceLine": 128,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine", "nav"],
+      "evidence": ["LOCAL", "FULL", "RENDER", "FORM"],
+      "remainingGate": "Live browser confirms empty-title inline focus, steps and unsaved leave behavior; other types, 320px/large text and native controls remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts"
+      ]
+    },
+    {
+      "id": "V03",
+      "contract": "`details`",
+      "historicalBaseline": "**Missing** dedicated configured detail view/record route.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Authorized lookup/deep link, unavailable/stale record, edit/action navigation and return-state preservation.",
+      "sourceLine": 129,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine", "nav"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Authorized lookup/route source and local races exist; complete final live direct-link/unavailable/access-loss browser/native flows.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts"
+      ]
+    },
+    {
+      "id": "V04",
+      "contract": "`board`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Choice/workflow grouping, legal drag and accessible Move alternative; invalid transitions never write.",
+      "sourceLine": 130,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Synthetic browser button transition and board columns passed; actual drag, accessible Move and live/native workflow UX remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V05",
+      "contract": "`summary`",
+      "historicalBaseline": "**Missing** global totals/groups.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Same validated predicate compiler as query; complete collection totals rather than loaded-page counts.",
+      "sourceLine": 131,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Full-collection totals passed REST; finish mounted summary predicate/empty/access-change cases on final source.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V06",
+      "contract": "`capacity`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Live pool/own-claim summary, protected configure/claim/release controls, concurrent refresh/recovery.",
+      "sourceLine": 132,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "REST capacity and synthetic Join/release browser paths passed; live role/recovery/native capacity presentation remains.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V07",
+      "contract": "`action`",
+      "historicalBaseline": "**Missing** declaratively bound action view.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Correct approved action/record/context, role gating, busy/ambiguous/rejected states and no auto-replay.",
+      "sourceLine": 133,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "All seven action dispatches/policies have source and wire cases; complete mounted per-action busy/unknown/rejected UX.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V08",
+      "contract": "`table`",
+      "historicalBaseline": "**Partial**, E3 loaded-page table only.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Configured columns, collection-wide column sorting, cursor/detail behavior, horizontal/narrow/keyboard interaction; never claim page sort is global.",
+      "sourceLine": 134,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Global sorting/paging backend passed; final mounted narrow horizontal table, column keyboard and detail-return behavior remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V09",
+      "contract": "`calendar`",
+      "historicalBaseline": "**Missing**; civil loaded-record agenda is a retained extension.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Timestamp binding, month badges for all matching rows, paginated selected-day agenda, DST/undated behavior.",
+      "sourceLine": 135,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Timestamp/local-day query logic and counts are implemented; final live month/day/undated/DST mounted interactions remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V10",
+      "contract": "`timeline`",
+      "historicalBaseline": "**Missing** original timestamp/local-day timeline.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Local-day groups, authorized pagination, explicit Undated path, stable return state.",
+      "sourceLine": 136,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Local-day grouping/Undated/paging source exists; final live return/paging and native local-zone behavior remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V11",
+      "contract": "`chart`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Bar/donut/line, count/sum/average, numeric/choice/date bindings, explicit UTC buckets, global results and readable values.",
+      "sourceLine": 137,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Complete numeric/choice/date aggregates passed REST; final mounted bar/donut/line values and narrow/keyboard checks remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V12",
+      "contract": "`metric`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Count/sum/average, optional positive target, actual value retained above target, correct empty/missing-number behavior.",
+      "sourceLine": 138,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Global count/sum/average/empty semantics passed; final mounted positive-target/over-target/empty display checks remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V13",
+      "contract": "`imageCards`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Backend / D4\u2013D5",
+      "originalFinalGate": "Opaque image/caption field binding, authorized bytes, revoked/failed image states and isolated preview.",
+      "sourceLine": 139,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "media", "preview"],
+      "evidence": ["LOCAL", "MEDIA"],
+      "remainingGate": "Private image/caption source and broker REST pass; final mounted/native imageCards bytes, failure and revocation interaction remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "apps/mobile/src/runtime/preview.ts",
+        "apps/mobile/src/runtime/previewImageInflate.ts",
+        "apps/mobile/src/host/staticPreviewImages.ts",
+        "apps/mobile/src/full/PreviewSession.ts"
+      ]
+    },
+    {
+      "id": "V14",
+      "contract": "`gallery`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Backend / D4\u2013D5",
+      "originalFinalGate": "Each item is an authorized record, image/caption bindings, pagination and no bearer/public URL leakage.",
+      "sourceLine": 140,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "media", "preview"],
+      "evidence": ["LOCAL", "MEDIA"],
+      "remainingGate": "Private image-record paging source and broker REST pass; final mounted/native gallery and cache cleanup interaction remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "apps/mobile/src/runtime/preview.ts",
+        "apps/mobile/src/runtime/previewImageInflate.ts",
+        "apps/mobile/src/host/staticPreviewImages.ts",
+        "apps/mobile/src/full/PreviewSession.ts"
+      ]
+    },
+    {
+      "id": "V15",
+      "contract": "`richText`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Spec + RN / D1 + D4",
+      "originalFinalGate": "Restricted Markdown headings/paragraphs/emphasis/lists/quotes/inline code; executable HTML/external embeds rejected.",
+      "sourceLine": 141,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Restricted Markdown source/local parsing exists; final mounted heading/list/code/forbidden-embed/accessibility cases remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "V16",
+      "contract": "`banner`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Spec + RN + Backend / D4\u2013D5",
+      "originalFinalGate": "Collection-free title/body/approved tone, optional private image/description/tab destination, responsive placement.",
+      "sourceLine": 142,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "media", "preview"],
+      "evidence": ["LOCAL", "RENDER", "MEDIA"],
+      "remainingGate": "Banner/layout/source and authorized static preview injection exist; final real-image banner/tab interaction and large-text layouts remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "apps/mobile/src/runtime/preview.ts",
+        "apps/mobile/src/runtime/previewImageInflate.ts",
+        "apps/mobile/src/host/staticPreviewImages.ts",
+        "apps/mobile/src/full/PreviewSession.ts"
+      ]
+    },
+    {
+      "id": "V17",
+      "contract": "`checklist`",
+      "historicalBaseline": "**Missing** full action-bound capability; preview boolean toggles are a subset.",
+      "ownerDependency": "RN + Backend / D3\u2013D4",
+      "originalFinalGate": "Boolean patch or two-state workflow, declared values/actions, revisions/receipt/audit/outbox and accessible control.",
+      "sourceLine": 143,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Boolean/workflow typed patch/policy source exists; final live checklist controls and accessible native action flow remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "V18",
+      "contract": "`clock`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Spec + RN / D4 + D6",
+      "originalFinalGate": "Collection-free analog/digital, system/12/24-hour, seconds/date options, local time and preview parity.",
+      "sourceLine": 144,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Local analog/digital options and isolated source exist; final clock/time-format native/browser interaction remains.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "V19",
+      "contract": "`timer`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN / D4 + D6",
+      "originalFinalGate": "Collection-free 1\u2013180-minute default, deadline/pause/resume/reset, scoped persistence and visible storage failures; not an OS alarm.",
+      "sourceLine": 145,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "host"],
+      "evidence": ["LOCAL", "STORAGE"],
+      "remainingGate": "Scoped persistent timer/deadline logic and storage tests exist; integrated cold reopen/visibility/native timer proof remains; this is not an OS alarm.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "apps/mobile/src/host/storage.ts",
+        "apps/mobile/src/host/browserStorage.ts",
+        "apps/mobile/src/host/encryptedFiles.ts",
+        "apps/mobile/src/runtime/timer.ts"
+      ]
+    },
+    {
+      "id": "V20",
+      "contract": "`deviceInfo`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Ops / D4 + D6",
+      "originalFinalGate": "Supported readings only, local consent/lifecycle, synthetic preview and unsupported web behavior; no data reaches server/AI.",
+      "sourceLine": 146,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "device"],
+      "evidence": ["LOCAL", "N5"],
+      "remainingGate": "Coarse local info/consent/web-unavailable source exists and compiles at N5; real native readings/permission lifecycle remain untested.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt"
+      ]
+    },
+    {
+      "id": "V21",
+      "contract": "`deviceControl`",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Ops / D4 + D6",
+      "originalFinalGate": "Explicit fixed flashlight/brightness/keepAwake/haptic controls, permissions/cleanup/session fencing and physical-device proof.",
+      "sourceLine": 147,
+      "section": "Definition language and persistence contract",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "device"],
+      "evidence": ["LOCAL", "N5"],
+      "remainingGate": "Fixed native controls/lifecycle source compiles at N5; actual hardware torch/brightness/awake/haptics, denial/settings and cleanup remain untested.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt"
+      ]
+    },
+    {
+      "id": "S01",
+      "contract": "Authenticated identity comes from validated Account session/JWT; no actor/tenant shortcut [security]",
+      "historicalBaseline": "**Partial**, E2 current operations.",
+      "ownerDependency": "Backend + RN / D2\u2013D6",
+      "originalFinalGate": "Recheck identity on every new operation/worker boundary; expired sessions, account switch and late requests clear/fence private state.",
+      "sourceLine": 155,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["account", "share"],
+      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
+      "remainingGate": "Basic authenticated REST and account fences pass; final native expiry/switch/cold-session and every new worker boundary need final acceptance.",
+      "sourcePaths": [
+        "apps/mobile/src/backend/core.ts",
+        "apps/mobile/src/screens/AuthScreen.tsx",
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/full/FullRegistry.ts",
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx"
+      ]
+    },
+    {
+      "id": "S02",
+      "contract": "Workspace membership plus explicit app ownership/nonrevoked grant [architecture]",
+      "historicalBaseline": "**Missing** shared model; owner checks work.",
+      "ownerDependency": "Backend + RN / D2\u2013D3",
+      "originalFinalGate": "Membership alone grants no app access; shared records are queried by authorized app scope, not incorrectly filtered to the current actor's ownerId.",
+      "sourceLine": 156,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["share", "engine"],
+      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
+      "remainingGate": "Current workspace-plus-grant isolation passed bounded REST; complete final client and new inbox/activity/effect access cases.",
+      "sourcePaths": [
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "S03",
+      "contract": "Invitations: 256-bit token, stored hash, seven-day expiry, one use, revoke, selected role, optional account binding [architecture]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D2\u2013D3",
+      "originalFinalGate": "Race acceptance/revocation/expiry/wrong account, no raw token storage/logging; accepting opens the same instance.",
+      "sourceLine": 157,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["share"],
+      "evidence": ["LOCAL", "FULL", "COLLAB"],
+      "remainingGate": "Binding/revoke/single-use/role/receipt cases pass; natural seven-day expiry and final mounted/native invitation flow remain unverified.",
+      "sourcePaths": [
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx"
+      ]
+    },
+    {
+      "id": "S04",
+      "contract": "Grant management, member picker/directory and revocation [security]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3",
+      "originalFinalGate": "All roles, current eligibility, no owner escalation/removal, paginated complete directory or explicit bound; do not inherit silent first-100 omission.",
+      "sourceLine": 158,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["share", "render"],
+      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
+      "remainingGate": "Grant/protected field/current-upload authority cases pass; final directory pagination/picker/revocation UI and larger configured bounds remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "S05",
+      "contract": "App launcher, workspace switcher, templates, pin/unpin shortcuts [original apps endpoint][apps-api]",
+      "historicalBaseline": "**Partial** workbench/switcher/four templates; no shared shortcut catalog.",
+      "ownerDependency": "Backend + RN / D3\u2013D4",
+      "originalFinalGate": "Authorized discoverability; unpin changes shortcut only; current membership/grant rechecked.",
+      "sourceLine": 159,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["life", "account"],
+      "evidence": ["LOCAL", "FULL", "COLLAB"],
+      "remainingGate": "Launcher/templates/pins/author drafts implemented; server-backed pin filter/hierarchy fixes are local-tested, awaiting final browser/native return-flow checks.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx",
+        "apps/mobile/src/backend/core.ts",
+        "apps/mobile/src/screens/AuthScreen.tsx",
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/full/FullRegistry.ts"
+      ]
+    },
+    {
+      "id": "S06",
+      "contract": "Instantiate empty template; remix structure only; no copied records/grants/effects/private images [rich] [apps-api]",
+      "historicalBaseline": "**Partial** four template definitions start empty live storage.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D4",
+      "originalFinalGate": "All twelve original templates/fixtures plus current Planner; remix clears image references and requires fresh approvals.",
+      "sourceLine": 160,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["life", "preview"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "All12 canonical template instantiations, empty data, history/remix/personal pins passed REST; finish mounted remix/history and image-strip UI flow.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx",
+        "apps/mobile/src/runtime/preview.ts",
+        "apps/mobile/src/runtime/previewImageInflate.ts",
+        "apps/mobile/src/host/staticPreviewImages.ts",
+        "apps/mobile/src/full/PreviewSession.ts"
+      ]
+    },
+    {
+      "id": "S07",
+      "contract": "Owner-only app archive: readable, no writes/uploads/stale effects [security]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3 + D5",
+      "originalFinalGate": "Owner versus Builder/Member/Viewer, all write/effect entrypoints, archived discovery and authorized historical reads.",
+      "sourceLine": 161,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["share", "engine", "media", "worker"],
+      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
+      "remainingGate": "Archived reads/new-write denial/exact receipt cases passed; actual stale reminder suppression and final mounted/native archive flows remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "S08",
+      "contract": "Activity/audit, inbox/read state and automation run history [apps-api] [runtime-api]",
+      "historicalBaseline": "**Missing**; receipts are not business audit.",
+      "ownerDependency": "Backend + RN / D2\u2013D5",
+      "originalFinalGate": "Authorized scoped histories and read mutations; no private data after revocation; useful bounded/paginated management.",
+      "sourceLine": 162,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["activity", "notify"],
+      "evidence": ["LOCAL", "ACTIVITY", "REMINDER"],
+      "remainingGate": "Activity deployed source plus local10backend/16client cases; current activity Cloud read and inbox/delivery/run-history live acceptance are actively pending.",
+      "sourcePaths": [
+        "appwrite_backend/lib/activity.dart",
+        "apps/mobile/src/activity/ActivityController.ts",
+        "apps/mobile/src/activity/ActivityScreen.tsx",
+        "appwrite_backend/lib/inbox.dart",
+        "apps/mobile/src/notifications/NotificationsController.ts",
+        "apps/mobile/src/notifications/withReminders.ts",
+        "apps/mobile/src/notifications/AutomationRunsController.ts"
+      ]
+    },
+    {
+      "id": "Q01",
+      "contract": "Typed full-collection filters `eq`, `in`, `contains`, `gte`, `lte`, `lt`, field-bound validation [query source][queries]",
+      "historicalBaseline": "**Missing** user queries; owner/app filter only.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D4",
+      "originalFinalGate": "Eight-filter limit, type/operator errors, unset equality, parameterization, text/choice/range search and cross-tenant rejection.",
+      "sourceLine": 163,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["spec", "engine"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Typed multi-filter/search/range proof is local and bounded REST; final all-operator/invalid/empty cases on current frozen deployment remain.",
+      "sourcePaths": [
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "Q02",
+      "contract": "Up to two collection-wide sorts, deterministic ID tie-break, query-bound cursor and explicit stale-anchor failure [architecture]",
+      "historicalBaseline": "**Partial** ten-row ID cursor only.",
+      "ownerDependency": "Backend + RN / D3",
+      "originalFinalGate": "Multi-page non-ID sorts, duplicates/omissions, query changes, deleted/stale/wrong-app cursor; retain state through detail/editor return.",
+      "sourceLine": 164,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "nav"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "115-record rank/global-sort paging passed; final mounted duplicate/stale-query/cursor/source-scroll return and native deep-link tests remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts"
+      ]
+    },
+    {
+      "id": "Q03",
+      "contract": "Database-wide summaries and numeric/choice/date aggregation [rich]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3\u2013D4",
+      "originalFinalGate": "More than one page contributes; \u2264366 nonoverlapping UTC buckets; missing numbers excluded from averages, empty average null/count+sum zero.",
+      "sourceLine": 165,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Global aggregate counts/sum/average/date buckets passed more-than-page REST data; final mounted chart/metric/empty numeric displays remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "Q04",
+      "contract": "User-local Today/overdue/date buckets use separately constructed midnight boundaries, UTC timestamp storage [miniapps]",
+      "historicalBaseline": "**Missing** original timestamp queries.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D4",
+      "originalFinalGate": "23/25-hour DST days and undated tasks. Cloud machine timezone must not silently substitute for the user's local day.",
+      "sourceLine": 166,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "render"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Local-day/DST boundary logic and selected REST/browser cases exist; final actual device-zone and 23/25h calendar/timeline UX remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "Q05",
+      "contract": "Authorized record lookup and full app-owned navigation [miniapps]",
+      "historicalBaseline": "**Partial** app/builder/preview routes only.",
+      "ownerDependency": "Backend + RN / D3\u2013D4",
+      "originalFinalGate": "Entry page, 1\u20135 tabs, \u226416 pages and 1\u20138 sections/page; record/edit URLs are identity only, current access checked.",
+      "sourceLine": 167,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["nav", "engine"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "Current scoped record lookup and pages/routes implemented; final real browser Back/Forward/direct-entry/rejected-leave plus native fallback remain.",
+      "sourcePaths": [
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "B01",
+      "contract": "Server-persisted author-private latest unpublished draft discovery/resume [creation]",
+      "historicalBaseline": "**Partial** saved bounded draft.",
+      "ownerDependency": "Backend + RN / D2\u2013D5",
+      "originalFinalGate": "Continue building, auth gate/reload, concurrent resume, current workspace/builder rights, latest request/job restoration and archived exclusion.",
+      "sourceLine": 168,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["life", "builder"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Author-private latest draft discovery passed REST; job recovery is local-tested only; final mounted reopen/revocation/job restore and native process reopen remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx"
+      ]
+    },
+    {
+      "id": "B02",
+      "contract": "Full manual semantic edits, trusted ID allocation [customization] [Spec][spec]",
+      "historicalBaseline": "**Partial** labels/options/optional fields/single layout.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D4",
+      "originalFinalGate": "RenameField/RenameLabel/AddField/AddChoice/AddView/UpdateView/AddPage/UpdatePage/ReorderPages/SetNavigation/SetTheme/SetAppearance/ReorderView/UpdateReminder/ProposeReminder validation and persistence.",
+      "sourceLine": 169,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["builder", "spec"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Listed semantic edit operations exist with validation/stable IDs; final mounted all-control persistence, failure/Discard and native keyboard acceptance remain.",
+      "sourcePaths": [
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart"
+      ]
+    },
+    {
+      "id": "B03",
+      "contract": "AddField atomically binds selected same-collection lists/tables/forms/details, including final form step [customization]",
+      "historicalBaseline": "**Missing** full binding graph.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D4",
+      "originalFinalGate": "Implicit views remain implicit; explicit order preserved; wrong collection/component targets reject; no guessed IDs.",
+      "sourceLine": 170,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["builder", "spec"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Atomic explicit/implicit AddField and final-step bindings have local/REST evidence; final mounted cross-target and narrow/native editing remain.",
+      "sourcePaths": [
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart"
+      ]
+    },
+    {
+      "id": "B04",
+      "contract": "Describe\u2192preview\u2192refine\u2192publish, explicit template mode without provider [creation]",
+      "historicalBaseline": "**Partial** template/manual path only.",
+      "ownerDependency": "Backend + RN / D4\u2013D5",
+      "originalFinalGate": "Fresh creation hides placeholder until validated candidate; desktop conversation+preview/mobile tabs; no fake progress or generated sample writes.",
+      "sourceLine": 171,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Partial source",
+      "sourceGroups": ["builder", "preview"],
+      "evidence": ["LOCAL", "FULL", "CLARIFY"],
+      "remainingGate": "Partial source: latest request/job + Build/Preview modes exist, but session accepted-prompt conversation history and desktop conversation/preview split are absent. Approved next source slice; real provider loop still needs config/spend decision.",
+      "sourcePaths": [
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "apps/mobile/src/runtime/preview.ts",
+        "apps/mobile/src/runtime/previewImageInflate.ts",
+        "apps/mobile/src/host/staticPreviewImages.ts",
+        "apps/mobile/src/full/PreviewSession.ts"
+      ]
+    },
+    {
+      "id": "B05",
+      "contract": "Optional Help shape my idea, no draft/job side effect until Create/Send [creation]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D5",
+      "originalFinalGate": "Actionable zero-question or 2\u20133 focused questions/3\u20134 choices, local editable selections, stale answer fencing, fallback choices, separate quota and no records sent.",
+      "sourceLine": 172,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["clarify", "builder", "life"],
+      "evidence": ["LOCAL", "CLARIFY"],
+      "remainingGate": "Provider-off built-ins/selection/original/explicit shell prefill passed browser; real provider questions and separate live quota need approved config/spend, plus final narrow/native checks.",
+      "sourcePaths": [
+        "apps/mobile/src/full/clarification.ts",
+        "apps/mobile/src/full/ClarificationPanel.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullLauncher.tsx"
+      ]
+    },
+    {
+      "id": "B06",
+      "contract": "Untrusted full specs for fresh AI, semantic patches for edits; only supported missing requires may be compiled [AI][ai]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Spec + Backend / D1 + D5",
+      "originalFinalGate": "Strict parsing/reference/capability checks, one optional outer fence only, unsupported result, trusted ID allocation; no arbitrary JSON extraction/execution or invented features/grants.",
+      "sourceLine": 173,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["provider", "spec", "worker"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Full-create/semantic-edit parsing and compilation are source/local-tested; current real-provider malformed/unsupported result acceptance remains unrun and requires approval.",
+      "sourcePaths": [
+        "appwrite_backend/lib/providers/provider.dart",
+        "appwrite_backend/lib/providers/creation_compiler.dart",
+        "appwrite_backend/lib/providers/nvidia_model_profiles.dart",
+        "appwrite_backend/test/providers/provider_test.dart",
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "B07",
+      "contract": "Server-only configured provider, public contract/current definition context only [ai]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + Ops / D5",
+      "originalFinalGate": "No keys/records/device readings in client/prompts/logs; provider request/response bounds and approved host/model config; templates work without credentials.",
+      "sourceLine": 174,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["provider", "worker"],
+      "evidence": ["LOCAL", "FULL", "CLARIFY"],
+      "remainingGate": "Server-only configuration/empty provider mode implemented; actual endpoint/model/credentials/spend remain undecided. No provider call or cost acceptance is claimed.",
+      "sourcePaths": [
+        "appwrite_backend/lib/providers/provider.dart",
+        "appwrite_backend/lib/providers/creation_compiler.dart",
+        "appwrite_backend/lib/providers/nvidia_model_profiles.dart",
+        "appwrite_backend/test/providers/provider_test.dart",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "B08",
+      "contract": "Durable generation jobs, leases, retries, quotas, independent actor concurrency [ai] [customization]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + Ops / D2 + D5",
+      "originalFinalGate": "Persist-before-wakeup, one active/actor, 30/day, \u22643 attempts, 120-second lease, bounded Retry-After; expired lease/duplicate/manual mutation/base-version fencing. No provider call inside transaction.",
+      "sourceLine": 175,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["worker", "builder"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Durable jobs/leases/quotas/three attempts/source fences implemented; real configured provider enqueue, lease expiry, concurrency and wakeup recovery remain unverified.",
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx"
+      ]
+    },
+    {
+      "id": "B09",
+      "contract": "Bounded private semantic repair/truncation diagnostics and generation quality/reachability checks [ai] [customization]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Spec + Backend / D5",
+      "originalFinalGate": "Repair context scoped to job/draft mutation/base/mode, cleared on success/stale/terminal; 8k/recognized 12k output allowance where configured; no leaked prompt/output body. Valid edit/add controls or reachable collection-free utility.",
+      "sourceLine": 176,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["provider", "worker"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Bounded repair/quality/adaptation tests use mocks/local HTTP; real malformed/transient/truncated provider behavior and diagnostics need approved profile testing.",
+      "sourcePaths": [
+        "appwrite_backend/lib/providers/provider.dart",
+        "appwrite_backend/lib/providers/creation_compiler.dart",
+        "appwrite_backend/lib/providers/nvidia_model_profiles.dart",
+        "appwrite_backend/test/providers/provider_test.dart",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "B10",
+      "contract": "Lost enqueue recovery, consistent candidate+job snapshot, failure preserves last candidate, Keep previous version [creation] [customization]",
+      "historicalBaseline": "**Missing** AI path.",
+      "ownerDependency": "Backend + RN / D5",
+      "originalFinalGate": "Reconcile without resubmitting; retained editable prompt, late poll fencing; failed first creation cannot promote placeholder; revision-checked failed-edit abandonment.",
+      "sourceLine": 177,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["worker", "builder", "host"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Exact retained enqueue and consistent job+candidate logic tested locally; actual lost enqueue/reopen/provider completion and failed-edit Keep previous UX remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "apps/mobile/src/host/storage.ts",
+        "apps/mobile/src/host/browserStorage.ts",
+        "apps/mobile/src/host/encryptedFiles.ts",
+        "apps/mobile/src/runtime/timer.ts"
+      ]
+    },
+    {
+      "id": "B11",
+      "contract": "Exact candidate publication and explicit rule approval/existing-record scope [architecture]",
+      "historicalBaseline": "**Partial** exact bounded draft revision E2/E3.",
+      "ownerDependency": "Backend + RN / D2\u2013D5",
+      "originalFinalGate": "Candidate/base/review hash and selected rules/scope bind confirmation; atomic immutable version/active pointer/receipt/audit/outbox; no automatic old-record enrollment.",
+      "sourceLine": 178,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["builder", "engine", "worker"],
+      "evidence": ["LOCAL", "FULL"],
+      "remainingGate": "Exact review/hash/base/rule/record-scope REST passes; rejected-input publication barrier now local-tested; enabled effect enrollment/live confirmation and final UI approval remain.",
+      "sourcePaths": [
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "B12",
+      "contract": "Click-to-edit inspector and serial revision-aware save queue [visual]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D4",
+      "originalFinalGate": "App/page/section/field selection, 600ms text debounce/blur and immediate discrete save, coalescing, flush-before-transition, blocked failure/retry/discard, unknown-response reconciliation and stale revision stop.",
+      "sourceLine": 179,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["inspector", "builder"],
+      "evidence": ["LOCAL", "FORM"],
+      "remainingGate": "Inspector targets, serial/joined saves, raw invalid preservation/reset/subscribed guards implemented; latest inspector browser invalid-blur/fix/Discard/publish/Back acceptance remains.",
+      "sourcePaths": [
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/inspectorTextDraft.ts",
+        "apps/mobile/src/full/inspectorSelection.ts",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx"
+      ]
+    },
+    {
+      "id": "B13",
+      "contract": "Presentation-only preview updates preserve records/receipts/navigation; design mode cannot run record actions [visual]",
+      "historicalBaseline": "**Missing** full inspector; preview isolation partial E1/E3.",
+      "ownerDependency": "RN / D4",
+      "originalFinalGate": "Nested selection priority, keyboard/mobile inspector, live edit instrumentation ignored; binding/action/behavior changes recreate preview instead of entering presentation-only path.",
+      "sourceLine": 180,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["preview", "inspector"],
+      "evidence": ["LOCAL", "RENDER"],
+      "remainingGate": "Presentation fingerprint preserves sample data/receipts/routes; semantic change restarts; final keyboard/nested selection/all-controls browser/native interaction remains.",
+      "sourcePaths": [
+        "apps/mobile/src/runtime/preview.ts",
+        "apps/mobile/src/runtime/previewImageInflate.ts",
+        "apps/mobile/src/host/staticPreviewImages.ts",
+        "apps/mobile/src/full/PreviewSession.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/inspectorTextDraft.ts",
+        "apps/mobile/src/full/inspectorSelection.ts",
+        "apps/mobile/src/full/FullAppController.ts"
+      ]
+    },
+    {
+      "id": "B14",
+      "contract": "Preserve original template families and generation modes/provider adaptations [ai]",
+      "historicalBaseline": "**Missing** full catalog/provider; four bounded templates exist.",
+      "ownerDependency": "Spec + Backend + RN / D1\u2013D5",
+      "originalFinalGate": "Reading, Chores, Volunteer, Daily Planner, Notes, Reminders, Calendar, Clock & Focus, Phone Toolkit, Project Hub, Photo Journal, Habit Tracker; template-first edit versus fresh generation; approved optional provider route switches tested without inventing availability/success-rate claims.",
+      "sourceLine": 181,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["life", "provider", "builder"],
+      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "remainingGate": "All12 original template families have source/REST instances; real fresh/edit provider modes and latest mounted full flow still require config/spend and final client acceptance.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx",
+        "appwrite_backend/lib/providers/provider.dart",
+        "appwrite_backend/lib/providers/creation_compiler.dart",
+        "appwrite_backend/lib/providers/nvidia_model_profiles.dart",
+        "appwrite_backend/test/providers/provider_test.dart",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx"
+      ]
+    },
+    {
+      "id": "B15",
+      "contract": "Operator-selected application transport profiles, distinct from evaluation experiments [ai]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + Ops / D5",
+      "originalFinalGate": "Normal schema/json-object path; exact NVIDIA allowlisted Nemotron Lightning/Super/Ultra/Nano instruction-schema thinking-off profiles; explicitly supported GLM Flash profile; scoped OpenRouter Ultra route with no provider fallback and zero-price limits where configured. Strict local validation stays authoritative. Availability, quota, cost and live quality require current receipts.",
+      "sourceLine": 185,
+      "section": "Platform, authoring, and query catalog",
+      "sourceState": "Implemented",
+      "sourceGroups": ["provider"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Allowlisted transport/model profiles implemented and mock-tested; exact chosen route/model availability, quota, cost and live quality are undecided and unverified.",
+      "sourcePaths": [
+        "appwrite_backend/lib/providers/provider.dart",
+        "appwrite_backend/lib/providers/creation_compiler.dart",
+        "appwrite_backend/lib/providers/nvidia_model_profiles.dart",
+        "appwrite_backend/test/providers/provider_test.dart"
+      ]
+    },
+    {
+      "id": "D01",
+      "contract": "Business state/projections/receipt/audit/outbox commit atomically [architecture]",
+      "historicalBaseline": "**Partial** current state+receipt transactions only.",
+      "ownerDependency": "Backend / D2\u2013D3",
+      "originalFinalGate": "Failure injection and independent live contention across every supported action/publication/grant/effect path; no partial audit/outbox.",
+      "sourceLine": 191,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["engine", "worker"],
+      "evidence": ["LOCAL", "FULL", "MEDIA"],
+      "remainingGate": "Business/action/publication atomicity has local injection plus bounded real contention/rejection evidence; every real staging/effect failure boundary remains unexercised.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "D02",
+      "contract": "Persisted outbox planning/invalidation flags and idempotent run identities [architecture]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend / D2 + D5",
+      "originalFinalGate": "Repeat/reorder/delay delivery, deduplication and retained enrollment evidence; cleanup cannot erase required idempotency/approval history.",
+      "sourceLine": 192,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["worker"],
+      "evidence": ["LOCAL", "MEDIA", "CLEANUP"],
+      "remainingGate": "Persistent planning/run/dedupe source exists; media readiness/cleanup proves selected private-worker work only, not reminder reorder/interruption/deduplication acceptance.",
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "D03",
+      "contract": "Durable wakeups and recurring reconciliation recover missed dispatch/expired leases [architecture]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + Ops / D5",
+      "originalFinalGate": "Actual Appwrite execution/schedule constraints checked; documented equivalent recovery cadence, process/execution interruption proof and bounded indexed batches. Do not claim original ten-second cadence without proof.",
+      "sourceLine": 193,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["worker"],
+      "evidence": ["LOCAL", "MEDIA", "CLEANUP", "REMINDER"],
+      "remainingGate": "Actual private media wakeup and one quiet cleanup observed; missed reminder dispatch/expired leases/hourly reconciliation interruption remain pending. No ten-second cadence claim.",
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "D04",
+      "contract": "One-time `beforeTimestamp` reminders, 0\u2013604800-second offset; in-app owner/assignee/active-claimant effects [actions]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D3 + D5",
+      "originalFinalGate": "Independent due/reminder fields, recipient determination at execution, bounded condition and approved channel; no arbitrary external destination.",
+      "sourceLine": 194,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["worker", "notify"],
+      "evidence": ["LOCAL", "REMINDER"],
+      "remainingGate": "Owner/assignee/active-claimant in-app reminder source exists; real enabled reminder recipient/due-condition delivery is actively under probe, not yet a passing receipt.",
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart",
+        "appwrite_backend/lib/inbox.dart",
+        "apps/mobile/src/notifications/NotificationsController.ts",
+        "apps/mobile/src/notifications/withReminders.ts",
+        "apps/mobile/src/notifications/AutomationRunsController.ts"
+      ]
+    },
+    {
+      "id": "D05",
+      "contract": "Explicit approval/enrollment, occurrence identity and terminal deduplication [miniapps]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D5",
+      "originalFinalGate": "Rule generation+record+intended time identity; unrelated edits do not resend, reschedule creates new occurrence, clear/disable/archive/revoke suppress; presentation publication preserves enrollment evidence.",
+      "sourceLine": 195,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["worker", "engine"],
+      "evidence": ["LOCAL", "REMINDER"],
+      "remainingGate": "Approval/enrollment/generation/occurrence/dedup source is tested locally; live reschedule/unrelated edit/disable/archive/revoke and presentation-preserved enrollment remain pending.",
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "D06",
+      "contract": "Retry dueAt/nextAttemptAt enforced after shared guard; common failed-effect rollback/backoff and terminal attempt budget [security]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + QA / D5",
+      "originalFinalGate": "Early direct/reconciler wakeups, contended guard, transient failures and exhaustion; never inherit the historical bypass.",
+      "sourceLine": 196,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["worker"],
+      "evidence": ["LOCAL", "REMINDER"],
+      "remainingGate": "Due/backoff/attempt budget and shared-guard tests are local; hosted early/duplicate wakes, failures and exhaustion remain pending.",
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "D07",
+      "contract": "Typed reminder states and authorized inbox/run history [miniapps]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D5",
+      "originalFinalGate": "unset/disabled/unenrolled/pending/delivered/suppressed/failed, current eligibility/intended time, authorized record navigation and read state.",
+      "sourceLine": 197,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["notify", "render"],
+      "evidence": ["LOCAL", "REMINDER"],
+      "remainingGate": "Strict state mapping/inbox/read/run controllers implemented; real delivered/suppressed/failed states, receipt read retry and target navigation remain pending.",
+      "sourcePaths": [
+        "appwrite_backend/lib/inbox.dart",
+        "apps/mobile/src/notifications/NotificationsController.ts",
+        "apps/mobile/src/notifications/withReminders.ts",
+        "apps/mobile/src/notifications/AutomationRunsController.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "D08",
+      "contract": "Revision-only live invalidations, subscribe-before-fetch, reconnect/resume refresh and fallback [architecture] [security]",
+      "historicalBaseline": "**Missing** automatic refresh; manual refresh exists.",
+      "ownerDependency": "Backend + RN / D3\u2013D5",
+      "originalFinalGate": "Current grants on all reads/events; no private record broadcasts; late results/editors cleared on access error; actual transport cancellation and account switch. Streams are not offline write support.",
+      "sourceLine": 198,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["watch", "nav"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Revision/role/archive polling,15sminimum/120smax backoff and dirty coalescing exist; full Cloud probe excludes watch. Final live reconnect/resume/cancellation/client loss proof remains.",
+      "sourcePaths": [
+        "appwrite_backend/lib/spec_watch.dart",
+        "apps/mobile/src/runtime/invalidation.ts",
+        "apps/mobile/src/runtime/watchActivity.native.ts",
+        "apps/mobile/src/runtime/controller.ts",
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts"
+      ]
+    },
+    {
+      "id": "D09",
+      "contract": "Work scheduling does not let stalled AI starve reminders/reconciliation [review]",
+      "historicalBaseline": "**Missing** workers; historical risk must not be copied.",
+      "ownerDependency": "Backend + Ops + QA / D5",
+      "originalFinalGate": "Deliberately stalled provider executions alongside due reminders, queue depth/lag/leases observed; choose bounded reserved/separate capacity and verify actual Free limits.",
+      "sourceLine": 199,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["worker"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Separate executions and bounded provider/image leases are implemented; no real stalled-provider alongside reminder/queue-lag proof or Free nonstarvation guarantee.",
+      "sourcePaths": [
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "M01",
+      "contract": "Authenticated begin/complete/read image API with opaque IDs [rich]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D2 + D5",
+      "originalFinalGate": "Editable draft or approved record action authorization, scoped ten-minute ticket, display/thumbnail reads recheck current app access; no persisted bearer URL.",
+      "sourceLine": 200,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["media"],
+      "evidence": ["LOCAL", "MEDIA"],
+      "remainingGate": "Real 5MiB begin/chunks/complete, exact receipts, reads and current-authority denials passed; native/mounted picker transport and final session recovery remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "M02",
+      "contract": "Still-image validation/sanitization and bounded resources [rich] [security]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + Ops / D5",
+      "originalFinalGate": "JPEG/PNG/WebP \u22645MiB/16MP/8192 side; predecode budgets, orientation normalization/metadata stripping, \u22642048 display/384 thumbnail; animated/malformed/bomb inputs rejected.",
+      "sourceLine": 201,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["media"],
+      "evidence": ["LOCAL", "MEDIA"],
+      "remainingGate": "Actual sanitizer/resource vectors plus live orientation/metadata/whole-byte/pixel proof pass; padded5MiB image is small, not worst-case16MP/512MB/performance acceptance.",
+      "sourcePaths": [
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "M03",
+      "contract": "Same-app ready references update in owner transaction; retained drafts/immutable versions protect assets [rich]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend / D2 + D5",
+      "originalFinalGate": "Cross-app/unready/deleted asset rejection; records/drafts/publication atomic reference updates; historical retention does not grant access.",
+      "sourceLine": 202,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["media", "engine"],
+      "evidence": ["LOCAL", "MEDIA"],
+      "remainingGate": "Draft publication/record references and cross-app/read/current authority pass REST; historical retention/interruption/late-I/O edge matrix remains local-only.",
+      "sourcePaths": [
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "M04",
+      "contract": "Private app quotas/reservations and leased cleanup/reconciliation [rich]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + Ops / D5",
+      "originalFinalGate": "500 assets/250MiB including reservations, expired pending uploads and 24h unreferenced deletion, interrupted processing/original cleanup/accounting recovery; bounded worker admission.",
+      "sourceLine": 203,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["media", "worker"],
+      "evidence": ["LOCAL", "MEDIA", "CLEANUP"],
+      "remainingGate": "Reservations and one natural16minute original cleanup observed; media pass still has optional quiet phase pending. Full500asset/250MiB/24h/lease interruption/project-quota Cloud gates remain.",
+      "sourcePaths": [
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "M05",
+      "contract": "Preview uploads are memory-only; authorized static bytes injected by host; AI/remix restrictions [rich]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN / D4\u2013D5",
+      "originalFinalGate": "Preview has no storage transport, remix clears static references, AI cannot invent asset IDs or send/receive image bytes/filenames/paths/URLs.",
+      "sourceLine": 204,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["preview", "media", "provider"],
+      "evidence": ["LOCAL", "RENDER", "MEDIA"],
+      "remainingGate": "Memory-only actual byte uploads, static host injection and AI/remix restrictions implemented; final mounted authorized static preview/revocation and no-live-adapter proof remain; provider bytes never sent.",
+      "sourcePaths": [
+        "apps/mobile/src/runtime/preview.ts",
+        "apps/mobile/src/runtime/previewImageInflate.ts",
+        "apps/mobile/src/host/staticPreviewImages.ts",
+        "apps/mobile/src/full/PreviewSession.ts",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "appwrite_backend/lib/providers/provider.dart",
+        "appwrite_backend/lib/providers/creation_compiler.dart",
+        "appwrite_backend/lib/providers/nvidia_model_profiles.dart",
+        "appwrite_backend/test/providers/provider_test.dart"
+      ]
+    },
+    {
+      "id": "M06",
+      "contract": "Native/browser authenticated media transport and revocation behavior [rich] [security]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "Backend + RN + QA / D5\u2013D6",
+      "originalFinalGate": "Actual upload/download transport, session loss/revocation, simultaneous requests, resource cleanup; already-delivered bytes cannot be recalled and must not be claimed otherwise.",
+      "sourceLine": 205,
+      "section": "Durable effects, media, and refresh",
+      "sourceState": "Implemented",
+      "sourceGroups": ["media", "host"],
+      "evidence": ["LOCAL", "MEDIA", "N5"],
+      "remainingGate": "Authenticated REST downloads/revocation pass and modules compile at5f; real browser picker/cache eviction, native session loss/parallel transfer and device transport remain unverified.",
+      "sourcePaths": [
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "apps/mobile/src/host/storage.ts",
+        "apps/mobile/src/host/browserStorage.ts",
+        "apps/mobile/src/host/encryptedFiles.ts",
+        "apps/mobile/src/runtime/timer.ts"
+      ]
+    },
+    {
+      "id": "U01",
+      "contract": "App pages/tabs, details/editor routes, source search/filter/pages/scroll preservation and dirty leave guards [miniapps]",
+      "historicalBaseline": "**Partial** app/builder routes and in-memory draft retention only.",
+      "ownerDependency": "RN + Backend / D4",
+      "originalFinalGate": "Forward/return/external browser Back semantics, direct/native fallback, rejected leave restore, rapid navigation/late discard fencing, unavailable record and access failure.",
+      "sourceLine": 211,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Implemented",
+      "sourceGroups": ["nav", "render"],
+      "evidence": ["LOCAL", "FORM", "RENDER"],
+      "remainingGate": "Route/page/scroll/source state and dirty guards implemented with recent regressions; final browser Back/Forward/push/rapid leave/unavailable/access scenarios and native fallback remain.",
+      "sourcePaths": [
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "U02",
+      "contract": "Clean/Editorial/Playful, theme/icon/accent and typography/density/corner overrides [appearance]",
+      "historicalBaseline": "**Missing** app appearance; host styling is not this feature.",
+      "ownerDependency": "Spec + RN / D1 + D4",
+      "originalFinalGate": "Canonical uppercase #RRGGBB, strict unknown/null rejection, reset semantics, absent defaults remain absent; preview/live same tokens without altering data/actions/access.",
+      "sourceLine": 212,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render", "spec"],
+      "evidence": ["LOCAL", "RENDER"],
+      "remainingGate": "Appearance tokens/strict resets/omission source and tests exist; final all-style/accent/type/density/corner mounted/native screenshots and interactions remain.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "apps/mobile/src/spec/decode.ts",
+        "apps/mobile/src/spec/values.ts",
+        "apps/mobile/src/spec/compatibility.ts",
+        "appwrite_backend/packages/appnest_spec/lib/src/spec.dart"
+      ]
+    },
+    {
+      "id": "U03",
+      "contract": "Stacked/twoColumn/featuredFirst pages, banner above/beside responsive composition [appearance]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN / D4",
+      "originalFinalGate": "Reading order retained, full-width heavy components, 960/640 logical-width rules and stacking at \u2265150% text; no record/query/action changes.",
+      "sourceLine": 213,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Implemented",
+      "sourceGroups": ["render"],
+      "evidence": ["LOCAL", "RENDER"],
+      "remainingGate": "Responsive layout rules exist; broad320px and150% text/narrow-wide component acceptance has not been completed.",
+      "sourcePaths": [
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "U04",
+      "contract": "Local clock/focus utility state independent of mounts, backend/account/app/component scoped [customization]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN / D4 + D6",
+      "originalFinalGate": "Explicit-action serialized persistence, pause/resume/reset/deadline clamp, changed defaults do not reset running timer; visible storage errors and reopening; preview never receives live store.",
+      "sourceLine": 214,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Implemented",
+      "sourceGroups": ["host", "render"],
+      "evidence": ["LOCAL", "STORAGE", "N5"],
+      "remainingGate": "Scoped timers/deadlines/encrypted storage tested; integrated reload/process termination/native persistence and timing UI remain; no OS alarm promised.",
+      "sourcePaths": [
+        "apps/mobile/src/host/storage.ts",
+        "apps/mobile/src/host/browserStorage.ts",
+        "apps/mobile/src/host/encryptedFiles.ts",
+        "apps/mobile/src/runtime/timer.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx"
+      ]
+    },
+    {
+      "id": "U05",
+      "contract": "Local per-app capability consent, initially off, reset/corrupt-store recovery [mobile]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN / D6",
+      "originalFinalGate": "Backend/account/app scope, new groups remain off, publication only lists requests; native camera permission only explicit flashlight-on and no replay after focus interruption.",
+      "sourceLine": 215,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Implemented",
+      "sourceGroups": ["device", "host"],
+      "evidence": ["LOCAL", "N5"],
+      "remainingGate": "Local off-by-default consent and scope/permission-sheet logic tested; physical native grants/settings/corrupt recovery/publication request UX remain untested.",
+      "sourcePaths": [
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt",
+        "apps/mobile/src/host/storage.ts",
+        "apps/mobile/src/host/browserStorage.ts",
+        "apps/mobile/src/host/encryptedFiles.ts",
+        "apps/mobile/src/runtime/timer.ts"
+      ]
+    },
+    {
+      "id": "U06",
+      "contract": "Local readings: battery/charging, model/family, OS, connection, language/region/timezone [mobile]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Ops / D6",
+      "originalFinalGate": "Foreground refresh/subscriptions, no private device identifiers/SSID; connection is not reachability; readings stay in memory and outside records/AI/telemetry/preferences.",
+      "sourceLine": 216,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Implemented",
+      "sourceGroups": ["device"],
+      "evidence": ["LOCAL", "N5"],
+      "remainingGate": "Fixed coarse readings and local-only data path implemented; actual iOS/Android foreground readings/network/localization still need device evidence.",
+      "sourcePaths": [
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt"
+      ]
+    },
+    {
+      "id": "U07",
+      "contract": "Explicit flashlight, foreground brightness/restore, keep-awake and haptic pulse [mobile]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Ops / D6",
+      "originalFinalGate": "Fixed reviewed native methods only, unavailable/busy/denied guidance, settings path, OS/hardware limits; actual supported Android/iOS device interaction.",
+      "sourceLine": 217,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Implemented",
+      "sourceGroups": ["device"],
+      "evidence": ["LOCAL", "N5"],
+      "remainingGate": "Torch/brightness/keep-awake/haptic native module compiles; actual supported hardware action, denial and restoration proof remains pending by user preference.",
+      "sourcePaths": [
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt"
+      ]
+    },
+    {
+      "id": "U08",
+      "contract": "Lifecycle releases resources and fences late cleanup across apps/accounts; preview/web cannot invoke native bridge [mobile]",
+      "historicalBaseline": "**Missing**.",
+      "ownerDependency": "RN + Ops + QA / D6",
+      "originalFinalGate": "Background/close/customize/revoke/component removal/app switch, flashlight-off/prior-brightness/keep-awake restoration, session fencing; document unavoidable abrupt-termination OS limits.",
+      "sourceLine": 218,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Implemented",
+      "sourceGroups": ["device", "watch"],
+      "evidence": ["LOCAL", "N5"],
+      "remainingGate": "Lease/lifecycle/late-effect fences implemented and tested; actual background/app-switch/resource release and abrupt-termination OS limits need hardware observation.",
+      "sourcePaths": [
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt",
+        "appwrite_backend/lib/spec_watch.dart",
+        "apps/mobile/src/runtime/invalidation.ts",
+        "apps/mobile/src/runtime/watchActivity.native.ts",
+        "apps/mobile/src/runtime/controller.ts"
+      ]
+    },
+    {
+      "id": "U09",
+      "contract": "Everyday-use UX and corrected form/account/launcher behavior [original UX corrections][ux]",
+      "historicalBaseline": "**Partial** current workbench/templates/labels; full host/renderer parity absent.",
+      "ownerDependency": "RN + QA / D4\u2013D6",
+      "originalFinalGate": "Returning users reach recent/pinned apps/drafts first; explained isolated template previews; contextual phone record actions; inline validation and first-error focus; pristine versus dirty editor snapshot handling; consistent account tools/copy ID/explained roles; readable localized inbox dates; visible focus/radio/headings/touch targets and 320px/large-text layout checks.",
+      "sourceLine": 222,
+      "section": "Navigation, appearance, utilities, and devices",
+      "sourceState": "Partial acceptance",
+      "sourceGroups": [
+        "nav",
+        "render",
+        "life",
+        "account",
+        "notify",
+        "inspector"
+      ],
+      "evidence": ["LOCAL", "FORM", "CLARIFY"],
+      "remainingGate": "Inline focus/steps/leave and local clarification browser cases passed. Returning pins, raw inspector, contextual mobile actions/account/inbox/radio fixes have source/local proof; full320px/150%/AT/native UX remains partial.",
+      "sourcePaths": [
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "appwrite_backend/lib/spec_lifecycle.dart",
+        "apps/mobile/src/full/FullWorkspaceController.ts",
+        "apps/mobile/src/full/FullLauncher.tsx",
+        "apps/mobile/src/backend/core.ts",
+        "apps/mobile/src/screens/AuthScreen.tsx",
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/full/FullRegistry.ts",
+        "appwrite_backend/lib/inbox.dart",
+        "apps/mobile/src/notifications/NotificationsController.ts",
+        "apps/mobile/src/notifications/withReminders.ts",
+        "apps/mobile/src/notifications/AutomationRunsController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/inspectorTextDraft.ts",
+        "apps/mobile/src/full/inspectorSelection.ts",
+        "apps/mobile/src/full/FullAppController.ts"
+      ]
+    },
+    {
+      "id": "G01",
+      "contract": "Repeatable full verification across Spec, Function, RN renderer/controllers and deployment packaging",
+      "historicalBaseline": "**Partial** E1 current slice; CI for current source only.",
+      "ownerDependency": "QA + Ops / D1\u2013D7",
+      "originalFinalGate": "Exact SDKs/lockfiles, all required suites, negative/concurrency/restart checks, formatting and artifact/source hash checks; every contract family included.",
+      "sourceLine": 230,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Verification gate",
+      "sourceGroups": ["ops"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Repeatable client606 slice, backend/spec/provider/media/import suites and exports exist; root final combined frozen-source verify/exports and matching packages remain in progress.",
+      "sourcePaths": [
+        ".github/workflows/verify.yml",
+        "package.json",
+        "appwrite_backend/schema.json",
+        "docs/NATIVE_VERIFICATION.md"
+      ]
+    },
+    {
+      "id": "G02",
+      "contract": "Real Free-cloud deployment/schema/permission/transaction acceptance",
+      "historicalBaseline": "**Partial**, E2 current deployment.",
+      "ownerDependency": "Backend + Ops + QA / D2\u2013D7",
+      "originalFinalGate": "Actual project plan/region, indexes/columns available, least privilege, private tables, no persistent client/admin secret; each new full capability tested against exact deployed archive.",
+      "sourceLine": 231,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Live gate partial",
+      "sourceGroups": ["ops", "engine", "share", "media"],
+      "evidence": ["FULL", "COLLAB", "MEDIA"],
+      "remainingGate": "Actual Free schema/permissions/transactions have bounded passes; latest activity/effect deployments need their live receipts and final source/archive/client alignment.",
+      "sourcePaths": [
+        ".github/workflows/verify.yml",
+        "package.json",
+        "appwrite_backend/schema.json",
+        "docs/NATIVE_VERIFICATION.md",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts",
+        "appwrite_backend/lib/collaboration.dart",
+        "apps/mobile/src/sharing/SharingController.ts",
+        "apps/mobile/src/sharing/InvitationController.ts",
+        "apps/mobile/src/sharing/SharingScreen.tsx",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "G03",
+      "contract": "Free project resource/runtime/scheduler/storage limits respected",
+      "historicalBaseline": "**Partial** current serverless DB and three registrations.",
+      "ownerDependency": "Ops / D2\u2013D7",
+      "originalFinalGate": "Live quota/runtime/schedule constraints verified before design relies on them; localhost web + Android + Apple slots, no paid resource assumed or silently enabled. Missing external capacity remains explicit.",
+      "sourceLine": 232,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Resource gate partial",
+      "sourceGroups": ["ops", "worker", "media"],
+      "evidence": ["FULL", "MEDIA", "CLEANUP"],
+      "remainingGate": "Two Functions/private bucket and hour-scale recovery design operate in development; worst-case memory/bandwidth/body/quota/scale and enabled-reminder cadence remain unproven.",
+      "sourcePaths": [
+        ".github/workflows/verify.yml",
+        "package.json",
+        "appwrite_backend/schema.json",
+        "docs/NATIVE_VERIFICATION.md",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "G04",
+      "contract": "Actual native compilation",
+      "historicalBaseline": "**Partial**; baseline and 169-file custom-module builds passed; later full-host/final-source build remains pending.",
+      "ownerDependency": "RN + Ops / D6",
+      "originalFinalGate": "Fresh Xcode and Gradle build receipts for the migrated source, native dependencies/configuration/platform identifiers, signing status clearly recorded. Paid EAS is not required.",
+      "sourceLine": 233,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Native checkpoint passed",
+      "sourceGroups": ["ops", "device"],
+      "evidence": ["N5"],
+      "remainingGate": "Both5f native compilations passed; later UI/guard/clarification/navigation changes need final incremental native source/hash/package receipts. No install implied.",
+      "sourcePaths": [
+        ".github/workflows/verify.yml",
+        "package.json",
+        "appwrite_backend/schema.json",
+        "docs/NATIVE_VERIFICATION.md",
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt"
+      ]
+    },
+    {
+      "id": "G05",
+      "contract": "Native installation/auth/session/device behavior",
+      "historicalBaseline": "**Unverified** and independent of G04.",
+      "ownerDependency": "RN + Ops + QA / D6",
+      "originalFinalGate": "Install/open on supported simulator/device; sign-up/sign-in/sign-out, cold reopen and expiry/account switch; required device controls on real hardware; no claim from bundle generation or platform registration.",
+      "sourceLine": 234,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Execution gate unverified",
+      "sourceGroups": ["account", "device", "media"],
+      "evidence": ["N5"],
+      "remainingGate": "No simulator/device boot, install, launch, native auth/session/CRUD or physical device acceptance. Pending by user preference; builds do not satisfy it.",
+      "sourcePaths": [
+        "apps/mobile/src/backend/core.ts",
+        "apps/mobile/src/screens/AuthScreen.tsx",
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/full/FullRegistry.ts",
+        "apps/mobile/src/host/device.ts",
+        "apps/mobile/src/host/deviceDriver.native.ts",
+        "apps/mobile/modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+        "apps/mobile/modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "G06",
+      "contract": "Full browser/route/accessibility/recovery acceptance",
+      "historicalBaseline": "**Partial**, E3 current flows.",
+      "ownerDependency": "RN + QA / D4\u2013D7",
+      "originalFinalGate": "All view/action/role flows, direct URLs, narrow/large-text/keyboard/access errors and disconnected/unknown-response behavior; distinguish exhaustive accessibility audit from bounded checks.",
+      "sourceLine": 235,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Browser gate partial",
+      "sourceGroups": ["nav", "render", "inspector"],
+      "evidence": ["RENDER", "FORM", "CLARIFY"],
+      "remainingGate": "Bounded browser flows pass; all views/actions/roles/routes/unknown recovery,320px/150% text/full keyboard/AT and final inspector proof remain incomplete.",
+      "sourcePaths": [
+        "apps/mobile/src/full/navigation.ts",
+        "apps/mobile/src/full/FullAppScreen.tsx",
+        "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+        "apps/mobile/src/renderer/editorSnapshot.ts",
+        "apps/mobile/src/renderer/views.tsx",
+        "apps/mobile/src/renderer/fields.tsx",
+        "apps/mobile/src/renderer/form.tsx",
+        "apps/mobile/src/renderer/actions.tsx",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/inspectorTextDraft.ts",
+        "apps/mobile/src/full/inspectorSelection.ts",
+        "apps/mobile/src/full/FullAppController.ts"
+      ]
+    },
+    {
+      "id": "G07",
+      "contract": "Preserve/migrate current bounded Tinkerloom apps and existing original definitions/data",
+      "historicalBaseline": "**Missing** import/cutover; current synthetic rows persist.",
+      "ownerDependency": "Spec + Backend + Ops / D1 + D6",
+      "originalFinalGate": "Read-only inventory and dry run, explicit identity/schema mapping, counts/checksums/rejected-item report; resumable idempotent batches and rollback/recovery plan; original source remains preserved.",
+      "sourceLine": 236,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Dry-run only; scope pending",
+      "sourceGroups": ["import", "engine"],
+      "evidence": ["IMPORT", "RICH", "FULL"],
+      "remainingGate": "Source preserved and32-test offline planner/simulator exists; actual data-move scope/consistent export/mappings/write runner/checksums/rollback are unresolved. No live writes or actual data moved.",
+      "sourcePaths": [
+        "appwrite_backend/tool/import/engine.dart",
+        "appwrite_backend/tool/import/replay.dart",
+        "docs/IMPORT_DRY_RUN.md",
+        "appwrite_backend/lib/spec_runtime.dart",
+        "appwrite_backend/lib/spec_actions.dart",
+        "appwrite_backend/lib/spec_queries.dart",
+        "apps/mobile/src/runtime/functionAdapter.ts"
+      ]
+    },
+    {
+      "id": "G08",
+      "contract": "Account identity/password/media/effect migration",
+      "historicalBaseline": "**Missing**, migration acceptance rather than an old feature.",
+      "ownerDependency": "Backend + Ops + QA / D6",
+      "originalFinalGate": "Link/map accounts without guessing password compatibility or transferring secrets to clients/logs; authorized recovery where needed; media/reference mapping, preserved app/record IDs where feasible, approvals/grants mapped; imported old records do not automatically trigger reminders.",
+      "sourceLine": 237,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Cutover scope unresolved",
+      "sourceGroups": ["import", "account", "media"],
+      "evidence": ["IMPORT"],
+      "remainingGate": "No account/password/media/effect cutover occurred. Explicit ownership/recovery mappings, media resanitization/reference strategy, legacy history/receipt retention and effect approvals remain required scope decisions.",
+      "sourcePaths": [
+        "appwrite_backend/tool/import/engine.dart",
+        "appwrite_backend/tool/import/replay.dart",
+        "docs/IMPORT_DRY_RUN.md",
+        "apps/mobile/src/backend/core.ts",
+        "apps/mobile/src/screens/AuthScreen.tsx",
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/full/FullRegistry.ts",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts"
+      ]
+    },
+    {
+      "id": "G09",
+      "contract": "Durable client command recovery across reload/process termination",
+      "historicalBaseline": "**Additional gate**, not original completed parity; current envelopes are memory-only.",
+      "ownerDependency": "RN + Backend / D6",
+      "originalFinalGate": "If included in delivery, encrypted/account-scoped envelope lifecycle, explicit reconciliation/retry and conflict handling, no automatic business replay; interruption receipts. Until implemented, state this limitation rather than claim offline/durable support.",
+      "sourceLine": 238,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Additional gate partial",
+      "sourceGroups": ["host", "builder", "notify"],
+      "evidence": ["LOCAL", "STORAGE"],
+      "remainingGate": "Encrypted scoped command/CAS source and browser storage reload pass; integrated real lost-response app reload and native process-termination recovery remain unverified.",
+      "sourcePaths": [
+        "apps/mobile/src/host/storage.ts",
+        "apps/mobile/src/host/browserStorage.ts",
+        "apps/mobile/src/host/encryptedFiles.ts",
+        "apps/mobile/src/runtime/timer.ts",
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/full/SpecEditor.tsx",
+        "apps/mobile/src/full/GenerationPanel.tsx",
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "appwrite_backend/lib/inbox.dart",
+        "apps/mobile/src/notifications/NotificationsController.ts",
+        "apps/mobile/src/notifications/withReminders.ts",
+        "apps/mobile/src/notifications/AutomationRunsController.ts"
+      ]
+    },
+    {
+      "id": "G10",
+      "contract": "Password recovery, email verification, account management and deployed abuse controls",
+      "historicalBaseline": "**Additional readiness gate**, original production setup unproven.",
+      "ownerDependency": "Backend + RN + Ops / D6\u2013D7",
+      "originalFinalGate": "Actual configured recovery/verification transport and safe account flows, user-visible errors and abuse limits; no fabricated email/provider success. Do not call basic sign-in parity a recovery implementation.",
+      "sourceLine": 239,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Additional gate incomplete",
+      "sourceGroups": ["account"],
+      "evidence": ["LOCAL"],
+      "remainingGate": "Basic auth/session/account ID tools exist; no active password-recovery/email-verification/account-management transport/UI and no deployed abuse/recovery proof beyond configured limits.",
+      "sourcePaths": [
+        "apps/mobile/src/backend/core.ts",
+        "apps/mobile/src/screens/AuthScreen.tsx",
+        "apps/mobile/src/screens/HomeScreen.tsx",
+        "apps/mobile/src/full/FullRegistry.ts"
+      ]
+    },
+    {
+      "id": "G11",
+      "contract": "Operational deployment readiness, backups/restoration, retention/quotas and observability",
+      "historicalBaseline": "**Additional readiness gate**, original deferred.",
+      "ownerDependency": "Backend + Ops / D7",
+      "originalFinalGate": "Readiness/privilege separation, restore rehearsal, retention that preserves receipts/enrollment, sanitized correlation logs and capacity measurements; no implied production or multi-instance guarantee.",
+      "sourceLine": 240,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Additional gate incomplete",
+      "sourceGroups": ["ops", "media", "worker"],
+      "evidence": ["LOCAL", "CLEANUP"],
+      "remainingGate": "Retention/quotas/audit/correlation source exists; backup/restore rehearsal, production deployment readiness and actual capacity/operational runbooks remain incomplete.",
+      "sourcePaths": [
+        ".github/workflows/verify.yml",
+        "package.json",
+        "appwrite_backend/schema.json",
+        "docs/NATIVE_VERIFICATION.md",
+        "appwrite_backend/lib/private_media.dart",
+        "appwrite_backend/lib/image_sanitizer.dart",
+        "apps/mobile/src/media/controller.ts",
+        "apps/mobile/src/media/adapter.ts",
+        "appwrite_backend/lib/generation.dart",
+        "appwrite_backend/lib/reminders.dart",
+        "appwrite_backend/lib/worker_dispatch.dart",
+        "appwrite_backend/lib/worker_main.dart"
+      ]
+    },
+    {
+      "id": "G12",
+      "contract": "Independent final requirement audit and complete evidence index",
+      "historicalBaseline": "**Missing** full audit.",
+      "ownerDependency": "QA / D7",
+      "originalFinalGate": "Every required row cross-linked to actual replacement source and final receipts; original fifteen criteria rerun; unresolved blockers/failures listed, historical results never relabelled current.",
+      "sourceLine": 241,
+      "section": "Full acceptance, native, import, and Free-cloud gates",
+      "sourceState": "Audit checkpoint; not final",
+      "sourceGroups": ["ops"],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "FORM",
+        "CLARIFY",
+        "N5",
+        "IMPORT"
+      ],
+      "remainingGate": "This companion covers every125uniqueID and15criteria without rewriting baseline. Final frozen source/live/browser/native/device/cutover gates and unresolved failures prevent completion.",
+      "sourcePaths": [
+        ".github/workflows/verify.yml",
+        "package.json",
+        "appwrite_backend/schema.json",
+        "docs/NATIVE_VERIFICATION.md"
+      ]
+    }
+  ],
+  "notPerformed": [
+    "actual legacy/current data cutover",
+    "account/password migration",
+    "media transfer from original app",
+    "AI provider calls or model spend",
+    "native installation/device runtime acceptance"
+  ],
+  "openScopeDecisions": [
+    "Which actual source data/identities must move, if any, and corresponding authorized export/cutover/rollback scope",
+    "AI provider/model/credentials/route/spend authorization; current real-provider acceptance is unrun"
+  ],
+  "evidenceBoundary": "No source pass is silently promoted to live/browser/native/device acceptance. Final new deployment and native/source freeze remain pending."
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "offline_controller_and_raw_buffer_reproduction",
+  "sourceInputs": [
+    {
+      "name": "FullAppController.ts",
+      "sha256": "2dbaefe951e8d31a871c3e9889d4ee9860fba2d021c9bdf1c64b8d40befd3a9d"
+    },
+    {
+      "name": "inspectorTextDraft.ts",
+      "sha256": "3ec20434090ef55e078c13ef677f4f09a40eb8364726a69fa3cf09a581c8a32f"
+    }
+  ],
+  "sourceUnchanged": true,
+  "before": {
+    "generalDirty": false,
+    "rejectedRaw": true,
+    "targetCollection": "books",
+    "targetField": "title"
+  },
+  "after": {
+    "candidateReplaced": true,
+    "targetCollection": "notes",
+    "targetField": "title",
+    "epochUnchanged": true,
+    "rawResetByIdentityChange": true,
+    "conflict": false,
+    "guardNowAccepts": true
+  },
+  "mountedBrowserProof": false,
+  "networkAttempts": 0
+}
