@@ -142,3 +142,10 @@ explicit enrollment, repeated worker drains, one owner notification, one member
 notification, cross-recipient isolation, matching read receipts, and a revoked
 recipient count of zero. It has no Cloud or provider adapter. The JSON fixture
 contains synthetic wire data, never deployed credentials or private recipients.
+
+
+## First real development probe
+
+The preserved `evidence/2026-10-28/reminder-cloud-a05b362.observation-pending.json` confirms authenticated operational effects against the redeployed Core, then stops during synthetic setup with an uncertain write outcome. Eleven HTTP requests included both own-session signouts. No delivery assertion ran and no uncertain mutation was replayed. This receipt lacks the failed operation and execution status; the reporter now retains only allowlisted operation names and sanitized HTTP/Function diagnostics, with idempotent sanitization and no-retry regression checks. A later run cannot retroactively pass this receipt.
+
+`reminder-development-deployments.json` and the SHA-bound worker configuration receipt document current flags, private worker permissions and the redeployment chain. Variable changes alone were not treated as runtime configuration proof.

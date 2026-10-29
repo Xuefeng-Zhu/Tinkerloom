@@ -69,6 +69,7 @@ const response = (body, status = 200, headers = {}) =>
 function fakeCloud({
   effects = ["notifyOwner", "notifyAssignee"],
   unknownWorkspace = false,
+  conflictInstantiate = false,
   conflictCapabilities = 0,
   auth429 = false,
   existingAccounts = [],
@@ -209,6 +210,8 @@ function fakeCloud({
         if (unknownWorkspace) throw new Error("PRIVATE_PASSWORD_OR_PROOF");
         return execution({ workspace: { id: request.id } });
       case "spec.instantiate": {
+        if (conflictInstantiate)
+          return execution({ error: "transaction_conflict" }, 409);
         const spec = structuredClone(wire.templates[request.templateKey]);
         const app = {
           id: request.id,
@@ -833,4 +836,59 @@ test("pooled credentials require a fresh authenticated account ID match before r
   assert.equal(report.budget.cleanupSessions, 1);
   assert.equal(fake.commands().length, 0);
   assert.equal(fake.calls.filter((call) => call.path === "/account").length, 1);
+});
+
+test("uncertain instantiate preserves only allowlisted execution diagnostics and never retries the write", async () => {
+  const fake = fakeCloud({ conflictInstantiate: true });
+  const report = await runReminderSmoke(config(), {
+    fetchImpl: fake.fetchImpl,
+    sleep: async () => assert.fail("no write retry"),
+  });
+  assert.equal(report.status, "observation_pending");
+  const failed = report.checks.find(
+    (check) =>
+      check.name === "setup_explicit_owner_approval_and_member_acceptance",
+  );
+  assert.equal(failed.operation, "spec.instantiate");
+  assert.equal(failed.httpStatus, 201);
+  assert.equal(failed.functionStatus, 409);
+  assert.equal(failed.backendCode, "transaction_conflict");
+  assert.equal(failed.executionStatus, "completed");
+  assert.equal(
+    fake.commands().filter((command) => command.op === "spec.instantiate")
+      .length,
+    1,
+  );
+  assert.equal(report.budget.cleanupSessions, 2);
+  assert.deepEqual(safeReminderReport(report), report);
+});
+
+test("failure diagnostics cannot export raw operations, payloads, messages or execution fields", () => {
+  const report = safeReminderReport({
+    status: "failed",
+    checks: [
+      {
+        name: "preflight",
+        status: "failed",
+        code: "assertion_failed",
+        assertions: 1,
+        operation: "PRIVATE_PAYLOAD",
+        observation: {
+          httpStatus: 201,
+          functionStatus: 500,
+          executionStatus: "PRIVATE_MESSAGE",
+          code: "PRIVATE_CODE",
+          payload: "PRIVATE_BODY",
+          headers: { Authorization: "PRIVATE_KEY" },
+          responseBody: "PRIVATE_RESPONSE",
+          executionId: "PRIVATE_ID",
+        },
+      },
+    ],
+  });
+  const text = JSON.stringify(report);
+  assert(!text.includes("PRIVATE_"));
+  assert.equal(report.checks[0].httpStatus, 201);
+  assert.equal(report.checks[0].functionStatus, 500);
+  assert.equal(Object.hasOwn(report.checks[0], "operation"), false);
 });

@@ -138,7 +138,8 @@ export async function runReminderSmoke(
       cleanupSessions: 0,
     },
   };
-  let assertionCount = 0;
+  let assertionCount = 0,
+    lastOperation;
   let observationDeadline = null;
   const actorIds = new Set();
   const actorEmails = new Set();
@@ -186,6 +187,8 @@ export async function runReminderSmoke(
               ? error.code
               : "unexpected_probe_error",
         assertions: assertionCount - before,
+        operation: lastOperation,
+        observation: error?.observation,
       });
       throw error;
     }
@@ -195,6 +198,7 @@ export async function runReminderSmoke(
     request,
     { mutation = false, status = 200, code } = {},
   ) => {
+    lastOperation = request.op;
     try {
       if (observationDeadline !== null) {
         const remaining = observationDeadline - Date.now();

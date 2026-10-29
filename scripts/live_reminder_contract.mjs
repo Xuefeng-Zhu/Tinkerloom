@@ -379,6 +379,36 @@ export function safeReminderReport(input, privateValues = new Set()) {
       status: statuses.has(check.status) ? check.status : "failed",
       code: codes.has(check.code) ? check.code : "unexpected_probe_error",
       assertions: count(check.assertions) ? check.assertions : 0,
+      ...([
+        "createWorkspace",
+        "spec.instantiate",
+        "spec.saveDraft",
+        "spec.review",
+        "spec.publish",
+        "spec.execute",
+        "createInvitation",
+        "inspectInvitation",
+        "acceptInvitation",
+        "spec.capabilities",
+        "spec.getApp",
+        "spec.getRecord",
+        "spec.reminderState",
+        "spec.runs",
+        "spec.inbox",
+        "setGrant",
+        "spec.readNotification",
+        "revokeGrant",
+      ].includes(check.operation)
+        ? { operation: check.operation }
+        : {}),
+      ...safeFullObservation(
+        check.observation ?? {
+          httpStatus: check.httpStatus,
+          functionStatus: check.functionStatus,
+          backendCode: check.backendCode,
+          executionStatus: check.executionStatus,
+        },
+      ),
       ...Object.fromEntries(
         Object.entries(check.observations ?? {}).filter(
           ([key, value]) => counts.has(key) && count(value),

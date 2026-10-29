@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T02:07:26.210530+00:00",
+  "environment": "Appwrite Tinkerloom Development Free",
+  "core": {
+    "deploymentId": "6ae2a7bc1eb91be5b447",
+    "redeployedFrom": "6ae2a69a64a80f65b16c",
+    "sourceCommit": "a05b3623154b997e7b40525a22bad10d52c73a8d",
+    "archiveSha256": "75780c6e736ddf7710d9cf359ef9cd2d8dd8aabc292128e060adbd305d2509ef",
+    "remindersEnabled": true,
+    "execute": [
+      "users"
+    ]
+  },
+  "worker": {
+    "deploymentId": "6ae2a775681ced8b8bab",
+    "redeployedFrom": "6ae2934255696814d2bb",
+    "sourceCommit": "7e01ce897a2416dc7afbbdcdd6c220273089b3b9",
+    "archiveSha256": "5fc1a75927983f8c522b1e80f3c2a341bf40ddf8df46e59dce7d5026d24d9b73",
+    "remindersEnabled": true,
+    "execute": [],
+    "domains": [],
+    "events": [],
+    "intervalMinutes": 60
+  },
+  "both": {
+    "scopes": [
+      "rows.read",
+      "rows.write",
+      "executions.write",
+      "files.read",
+      "files.write"
+    ],
+    "emailEnabled": false,
+    "runtime": "dart-3.11",
+    "runtimeSpecification": "s-0.5vcpu-512mb"
+  },
+  "observation": "Console confirmed variable edits require redeployment; used current-configuration Redeploy preserving each original deployment code. Both Active in Console, then exact current deployments/flags/scopes verified with functions get. Worker Domains explicitly showed No domains yet.",
+  "limits": [
+    "Operator Console metadata, not public server attestation.",
+    "New reminder run confirmed operational effects but stopped setup after an uncertain mutation; delivery remains unverified.",
+    "Previous scheduled media cleanup proves delayed dispatch on the same worker source, not every delivery/recovery case."
+  ]
+}

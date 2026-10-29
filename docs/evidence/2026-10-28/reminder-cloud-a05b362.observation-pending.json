@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "runId": "qa-reminder-mvsw9uj2-6a6032",
+  "startedAt": "2026-10-29T01:58:42.638Z",
+  "completedAt": "2026-10-29T01:59:00.069Z",
+  "status": "observation_pending",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "coreDeploymentId": "6ae2a7bc1eb91be5b447",
+    "workerFunctionId": "tinkerloom-worker",
+    "workerDeploymentId": "6ae2a775681ced8b8bab",
+    "sourceCommit": "a05b3623154b997e7b40525a22bad10d52c73a8d",
+    "sourceSha256": "75780c6e736ddf7710d9cf359ef9cd2d8dd8aabc292128e060adbd305d2509ef",
+    "workerReceiptSha256": "8eeaabace81d06fce6aa0725bae608c486d455aa5950292b11b66767c857d615",
+    "sourceAttestation": "operator_supplied_not_server_attested",
+    "workerDeploymentObserved": false
+  },
+  "checks": [
+    {
+      "name": "authenticate_owner_and_confirm_effects",
+      "status": "passed",
+      "code": "none",
+      "assertions": 1
+    },
+    {
+      "name": "setup_explicit_owner_approval_and_member_acceptance",
+      "status": "observation_pending",
+      "code": "write_outcome_unknown",
+      "assertions": 2
+    }
+  ],
+  "accounts": [
+    {
+      "label": "owner",
+      "creationStatus": "reused_verified"
+    },
+    {
+      "label": "member",
+      "creationStatus": "reused_verified"
+    }
+  ],
+  "budget": {
+    "reusedVerifiedSyntheticAccounts": 2,
+    "maxHttpRequests": 300,
+    "httpRequests": 11,
+    "maxSyntheticAccounts": 2,
+    "syntheticAccounts": 0,
+    "cleanupSessions": 2
+  },
+  "coverage": {
+    "layer": "authenticated_user_client_when_explicitly_executed",
+    "oneShotCausality": "not_observable_from_public_client",
+    "hourlyRecovery": "not_proven_by_five_minute_window",
+    "unverified": [
+      "worker_process_interruption",
+      "retry_backoff_exhaustion",
+      "provider_starvation",
+      "active_claimant_fanout",
+      "email_push_provider_device_UI"
+    ]
+  }
+}
