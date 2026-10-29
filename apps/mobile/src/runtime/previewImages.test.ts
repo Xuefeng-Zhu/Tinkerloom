@@ -160,7 +160,7 @@ test("try/design previews with static assets make zero backend or host callbacks
     );
     assert.equal(
       (preview.features as ReadonlySet<string>).has("imageUpload"),
-      false,
+      true,
     );
     await assert.rejects(
       preview.uploadImage({
@@ -168,7 +168,7 @@ test("try/design previews with static assets make zero backend or host callbacks
         mimeType: "image/jpeg",
         name: "sample.jpg",
       }),
-      /Use an example image/,
+      (error) => (error as { code?: string }).code === "invalid_preview_image",
     );
     assert.match(
       (await preview.readImage("preview_image_0")).uri,

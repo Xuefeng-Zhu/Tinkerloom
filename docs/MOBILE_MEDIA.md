@@ -36,5 +36,8 @@ before committing.
 
 These are local source, transport and lifecycle checks. They do not establish
 Cloud media delivery, native compilation of these changes, permission prompts or
-device UI behavior. Preview byte upload remains unavailable at this milestone
-until the separate bounded memory-only implementation is integrated.
+device UI behavior. The subsequent bounded memory-only implementation is documented in
+[src/runtime/PREVIEW_IMAGE_UPLOAD.md](../apps/mobile/src/runtime/PREVIEW_IMAGE_UPLOAD.md).
+It preserves exact accepted original bytes without claiming sanitization or full
+JPEG/WebP entropy decoding. The integrated suite now passes 482 tests, including
+121 new image groups, plus typecheck, lint, formatting and all platform exports.

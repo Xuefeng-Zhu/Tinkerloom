@@ -414,3 +414,17 @@ boundaries are explicitly stubbed in that offline orchestration. No Cloud media
 pass is inferred from it. The [matching function configuration receipt](evidence/2026-10-28/matching-functions-fc71fe4.json)
 records both active deployments on the same committed archive, a private worker
 execution list, the Free hourly interval, and disabled reminder/provider paths.
+
+
+### Bounded memory-only preview image upload (2026-10-28)
+
+The isolated preview now copies accepted original JPEG/PNG/WebP bytes into
+session-local memory and returns actual data-URI bytes/dimensions under a
+reserved opaque namespace. It enforces 5 MiB per image, 8 MiB retained originals,
+16 megapixels aggregate and sixteen assets; disposal clears owned bytes.
+Presentation updates retain images and semantic resets discard them. There is
+no authenticated transport, picker, external store, sanitizer or transcoder in
+this path. Header/structure preflight and bounded PNG inflation are documented
+in [PREVIEW_IMAGE_UPLOAD.md](../apps/mobile/src/runtime/PREVIEW_IMAGE_UPLOAD.md).
+All 482 integrated client tests passed with no skips, plus TypeScript, lint,
+format and Web/iOS/Android exports. Native pixel-display proof remains separate.

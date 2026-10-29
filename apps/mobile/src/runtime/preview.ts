@@ -1,4 +1,12 @@
 import {
+  checkPreviewImage,
+  previewImageDataUri,
+  PREVIEW_IMAGE_COUNT,
+  PREVIEW_TOTAL_IMAGE_BYTES,
+  PREVIEW_TOTAL_IMAGE_PIXELS,
+} from "./previewImagePreflight";
+import type { CheckedPreviewImage } from "./previewImagePreflight";
+import {
   observePreviewImages,
   snapshotPreviewImages,
   staticPreviewImageIds,
@@ -46,6 +54,7 @@ import type {
   RuntimeSummary,
 } from "./types";
 
+let memoryImageEpoch = 0;
 const copy = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 const sampleImage =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aWQAAAABJRU5ErkJggg==";
@@ -193,6 +202,7 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
     "members",
     "reminders",
     "imageRead",
+    "imageUpload",
     "watch",
   ] as const);
   private rows = new Map<string, RuntimeRecord>();
@@ -208,6 +218,11 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
   private staticImages: ReadonlyMap<string, Readonly<ImageAsset>> = new Map();
   private stopImages = () => {};
   private imageEpoch = 0;
+  private readonly memoryImagePrefix = `preview_memory_${++memoryImageEpoch}_`;
+  private memoryImageSequence = 0;
+  private readonly memoryImages = new Map<string, CheckedPreviewImage>();
+  private memoryBytes = 0;
+  private memoryPixels = 0;
   get imageRevision() {
     return this.imageEpoch;
   }
@@ -627,6 +642,14 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
   }
   async readImage(assetId: string): Promise<ImageAsset> {
     this.active();
+    const local = this.memoryImages.get(assetId);
+    if (local)
+      return {
+        uri: previewImageDataUri(local),
+        width: local.width,
+        height: local.height,
+        alt: "Local preview image (original bytes; not uploaded)",
+      };
     const owned = this.staticImages.get(assetId);
     if (owned) return { ...owned };
     ensure(
@@ -646,11 +669,28 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
       "Native image picking in an isolated preview. Use an example image instead",
     );
   }
-  async uploadImage(_image: PickedImage): Promise<string> {
+  async uploadImage(image: PickedImage): Promise<string> {
     this.active();
-    return unavailable(
-      "Byte uploads in an isolated preview. Use an example image or host-authorized static image instead",
-    );
+    const checked = checkPreviewImage(image);
+    try {
+      ensure(
+        this.memoryImages.size < PREVIEW_IMAGE_COUNT &&
+          this.memoryBytes + checked.bytes.length <=
+            PREVIEW_TOTAL_IMAGE_BYTES &&
+          this.memoryPixels + checked.width * checked.height <=
+            PREVIEW_TOTAL_IMAGE_PIXELS,
+        "preview_image_budget",
+        "This preview's image budget is full. Start a new sample session to clear its images.",
+      );
+      const id = `${this.memoryImagePrefix}${++this.memoryImageSequence}`;
+      this.memoryImages.set(id, checked);
+      this.memoryBytes += checked.bytes.length;
+      this.memoryPixels += checked.width * checked.height;
+      return id;
+    } catch (error) {
+      checked.bytes.fill(0);
+      throw error;
+    }
   }
   watch(listener: () => void) {
     this.active();
@@ -664,6 +704,9 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
     this.stopImages();
     this.staticImages = new Map();
     this.staticImageAssets = undefined;
+    for (const image of this.memoryImages.values()) image.bytes.fill(0);
+    this.memoryImages.clear();
+    this.memoryBytes = this.memoryPixels = 0;
     this.listeners.clear();
     this.rows.clear();
     this.receipts.clear();

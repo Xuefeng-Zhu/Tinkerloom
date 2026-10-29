@@ -87,6 +87,7 @@ export function createOwnedPreviewImageAssets(
     ensure(
       assetIdPattern.test(id) &&
         !id.startsWith("preview_image_") &&
+        !id.startsWith("preview_memory_") &&
         !images.has(id),
       "invalid_preview_images",
       "Use unique static image identifiers.",
