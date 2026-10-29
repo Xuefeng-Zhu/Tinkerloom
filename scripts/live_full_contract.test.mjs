@@ -11,6 +11,8 @@ import {
   validRuntimeRecord,
   sha,
   fullNumericCases,
+  fullProbeReadOperations,
+  isFullProbeReadConflict,
 } from "./live_full_contract.mjs";
 import {
   AppwriteUserClient,
@@ -19,7 +21,11 @@ import {
   authCooldown,
   functionObservation,
 } from "./live_full_transport.mjs";
-import { readFullConfiguration, runFullSmoke } from "./live_full_smoke.mjs";
+import {
+  readFullConfiguration,
+  runFullSmoke,
+  executeFullProbeOperation,
+} from "./live_full_smoke.mjs";
 const configuration = {
   endpoint: "https://example.test/v1",
   projectId: "project",
@@ -607,4 +613,391 @@ test("generic record DTO accepts valid safe integers above number bound but reje
       validRuntimeRecord({ ...record, data: { rating: value } }, "books"),
       false,
     );
+});
+
+const readConflict = (change = {}) => ({
+  outer: {
+    status: 201,
+    data: {
+      status: "completed",
+      deploymentId: "deployment",
+      responseStatusCode: 409,
+    },
+  },
+  executionStatus: "completed",
+  deploymentMatched: true,
+  status: 409,
+  data: { error: "transaction_conflict" },
+  ...change,
+});
+const readOptions = (extra = {}) => ({
+  coreDeploymentId: "deployment",
+  sleep: async () => {},
+  ...extra,
+});
+test("full-probe retry classifier allows only known read ops with exact completed same-deployment transaction conflict", () => {
+  for (const op of fullProbeReadOperations)
+    assert.equal(
+      isFullProbeReadConflict(readConflict(), { op }, 200, "deployment"),
+      true,
+    );
+  for (const op of [
+    "spec.execute",
+    "spec.saveDraft",
+    "spec.publish",
+    "spec.instantiate",
+    "spec.remix",
+    "spec.createApp",
+    "createWorkspace",
+    "createInvitation",
+    "acceptInvitation",
+    "setGrant",
+    "archiveApp",
+    "spec.generate",
+    "spec.guidance",
+    "spec.media.begin",
+    "spec.media.chunk",
+    "spec.readNotification",
+    "spec.setPinned",
+    "unknown-secret",
+  ])
+    assert.equal(
+      isFullProbeReadConflict(readConflict(), { op }, 200, "deployment"),
+      false,
+    );
+  for (const status of [undefined, null, "200", 201, 400, 403, 404, 409, 500])
+    assert.equal(
+      isFullProbeReadConflict(
+        readConflict(),
+        { op: "spec.getApp" },
+        status,
+        "deployment",
+      ),
+      false,
+    );
+});
+test("full-probe classifier rejects wrong actual deployment, execution/status mismatch, extra data and every other409", () => {
+  const base = readConflict();
+  const wrong = [
+    readConflict({ outer: { ...base.outer, status: 409 } }),
+    readConflict({ outer: { ...base.outer, status: "201" } }),
+    readConflict({ outer: { ...base.outer, status: 500 } }),
+    readConflict({ executionStatus: "processing" }),
+    readConflict({ executionStatus: "failed" }),
+    readConflict({ deploymentMatched: false }),
+    readConflict({ deploymentMatched: undefined }),
+    readConflict({
+      outer: {
+        ...base.outer,
+        data: { ...base.outer.data, deploymentId: "other-deployment" },
+      },
+    }),
+    readConflict({
+      outer: {
+        ...base.outer,
+        data: { ...base.outer.data, status: "processing" },
+      },
+    }),
+    readConflict({
+      outer: {
+        ...base.outer,
+        data: { ...base.outer.data, responseStatusCode: 200 },
+      },
+    }),
+    readConflict({
+      outer: {
+        ...base.outer,
+        data: { ...base.outer.data, responseStatusCode: "409" },
+      },
+    }),
+    readConflict({ status: "409" }),
+    readConflict({ status: 403 }),
+    readConflict({ status: 404 }),
+    readConflict({ status: 500 }),
+    ...[
+      { error: "revision_conflict" },
+      { error: "definition_conflict" },
+      { error: "cursor_rejected" },
+      { error: "forbidden" },
+      { error: "not_found" },
+      { error: "transaction_conflict", private: "SECRET" },
+      { error: { message: "transaction_conflict" } },
+      {},
+      [],
+      null,
+    ].map((data) => readConflict({ data })),
+  ];
+  for (const result of wrong)
+    assert.equal(
+      isFullProbeReadConflict(result, { op: "spec.getApp" }, 200, "deployment"),
+      false,
+    );
+  for (const deployment of [undefined, null, "", "other"])
+    assert.equal(
+      isFullProbeReadConflict(base, { op: "spec.getApp" }, 200, deployment),
+      false,
+    );
+});
+test("read conflict recovers within two identical extra reads with original payload/IDs retained and no extra logical assertion", async () => {
+  const payload = {
+      op: "spec.getApp",
+      appId: "original-id",
+      query: { limit: 2 },
+    },
+    bodies = [],
+    pauses = [];
+  let conflicts = 0,
+    retries = 0;
+  const client = {
+    budget: { used: 0 },
+    async execute(input) {
+      this.budget.used++;
+      bodies.push(JSON.stringify(input));
+      return bodies.length < 3
+        ? readConflict()
+        : { status: 200, data: { app: "fresh" } };
+    },
+  };
+  const result = await executeFullProbeOperation(
+    client,
+    payload,
+    readOptions({
+      sleep: async (ms) => {
+        pauses.push(ms);
+        payload.appId = "changed-caller-id";
+        payload.query.limit = 99;
+      },
+      onReadConflict: () => conflicts++,
+      onReadRetry: () => retries++,
+    }),
+  );
+  assert.equal(result.status, 200);
+  assert.equal(conflicts, 2);
+  assert.equal(retries, 2);
+  assert.equal(client.budget.used, 3);
+  assert.deepEqual(pauses, [250, 250]);
+  assert.equal(new Set(bodies).size, 1);
+  assert.deepEqual(JSON.parse(bodies[2]), {
+    op: "spec.getApp",
+    appId: "original-id",
+    query: { limit: 2 },
+  });
+});
+test("three read conflicts exhaust bounded recovery and return original final response for unchanged assertion checks", async () => {
+  let calls = 0,
+    conflicts = 0,
+    retries = 0;
+  const terminal = readConflict();
+  const result = await executeFullProbeOperation(
+    {
+      execute: async () => {
+        calls++;
+        return terminal;
+      },
+    },
+    { op: "spec.getApp" },
+    readOptions({
+      onReadConflict: () => conflicts++,
+      onReadRetry: () => retries++,
+    }),
+  );
+  assert.equal(result, terminal);
+  assert.equal(calls, 3);
+  assert.equal(conflicts, 3);
+  assert.equal(retries, 2);
+});
+test("mutation conflicts and expected denial/status checks are always single call with original object", async () => {
+  for (const [payload, status] of [
+    [{ op: "spec.saveDraft", operationId: "same-command" }, 200],
+    [{ op: "spec.execute", operationId: "same-command" }, 200],
+    [{ op: "spec.getApp" }, 404],
+    [{ op: "spec.query", query: { cursor: "bad" } }, 409],
+  ]) {
+    let calls = 0;
+    const result = readConflict();
+    assert.equal(
+      await executeFullProbeOperation(
+        {
+          execute: async (input) => {
+            assert.equal(input, payload);
+            calls++;
+            return result;
+          },
+        },
+        payload,
+        readOptions({
+          expectedStatus: status,
+          sleep: async () => assert.fail("no pacing for noneligible call"),
+        }),
+      ),
+      result,
+    );
+    assert.equal(calls, 1);
+  }
+});
+test("read failures, uncertain replies and authority/cursor/status errors never trigger another request", async () => {
+  for (const result of [
+    readConflict({ status: 403, data: { error: "forbidden" } }),
+    readConflict({ status: 404, data: { error: "not_found" } }),
+    readConflict({ data: { error: "revision_conflict" } }),
+    readConflict({ outer: { status: 502 } }),
+    readConflict({ executionStatus: "processing" }),
+    readConflict({ deploymentMatched: false }),
+  ]) {
+    let calls = 0;
+    assert.equal(
+      await executeFullProbeOperation(
+        {
+          execute: async () => {
+            calls++;
+            return result;
+          },
+        },
+        { op: "spec.getApp" },
+        readOptions(),
+      ),
+      result,
+    );
+    assert.equal(calls, 1);
+  }
+  const secret = new Error("PRIVATE_LOST_REPLY");
+  let calls = 0;
+  await assert.rejects(
+    executeFullProbeOperation(
+      {
+        execute: async () => {
+          calls++;
+          throw secret;
+        },
+      },
+      { op: "spec.getApp" },
+      readOptions(),
+    ),
+    (e) => e === secret,
+  );
+  assert.equal(calls, 1);
+});
+test("read counters count actual HTTP retries including transport failure, exclude pre-dispatch budget denial, and cannot affect results", async () => {
+  let calls = 0,
+    retries = 0;
+  const client = {
+    budget: { used: 0 },
+    async execute() {
+      calls++;
+      if (calls === 2) throw new FullProbeError("http_budget_exhausted");
+      this.budget.used++;
+      return readConflict();
+    },
+  };
+  await assert.rejects(
+    executeFullProbeOperation(
+      client,
+      { op: "spec.getApp" },
+      readOptions({ onReadRetry: () => retries++ }),
+    ),
+    (e) => e.code === "http_budget_exhausted",
+  );
+  assert.equal(retries, 0);
+  assert.equal(client.budget.used, 1);
+  calls = 0;
+  client.budget.used = 0;
+  client.execute = async () => {
+    calls++;
+    client.budget.used++;
+    if (calls === 2) throw new Error("PRIVATE_TRANSPORT");
+    return readConflict();
+  };
+  await assert.rejects(
+    executeFullProbeOperation(
+      client,
+      { op: "spec.getApp" },
+      readOptions({ onReadRetry: () => retries++ }),
+    ),
+  );
+  assert.equal(retries, 1);
+  assert.equal(client.budget.used, 2);
+  calls = 0;
+  const final = { status: 200, data: {} };
+  const harmless = {
+    execute: async () => (++calls === 1 ? readConflict() : final),
+  };
+  assert.equal(
+    await executeFullProbeOperation(
+      harmless,
+      { op: "spec.getApp" },
+      readOptions({
+        onReadConflict: () => {
+          throw new Error("PRIVATE_DIAG");
+        },
+        onReadRetry: () => {
+          throw new Error("PRIVATE_DIAG");
+        },
+      }),
+    ),
+    final,
+  );
+});
+test("full report sanitizer retains only bounded read counters and does not insert new logical checks/assertions", () => {
+  const report = {
+    schemaVersion: 1,
+    runId: "qa-full-test-01234567",
+    status: "failed",
+    checks: [
+      {
+        name: "private_author_drafts_and_global_stale_publication",
+        status: "failed",
+        assertions: 21,
+      },
+    ],
+    budget: {
+      httpRequests: 152,
+      readConflicts: 1,
+      readRetries: 1,
+      private: "SECRET",
+    },
+    summary: { assertions: 9999 },
+  };
+  const clean = safeFinalReport(report, new Set());
+  assert.equal(clean.budget.readConflicts, 1);
+  assert.equal(clean.budget.readRetries, 1);
+  assert.equal(clean.budget.httpRequests, 152);
+  assert.equal(clean.summary.assertions, 21);
+  assert.equal(clean.checks.length, 1);
+  assert.equal(JSON.stringify(clean).includes("SECRET"), false);
+  report.budget.readConflicts = "SECRET";
+  report.budget.readRetries = Infinity;
+  const invalid = safeFinalReport(report, new Set());
+  assert.equal(invalid.budget.readConflicts, 0);
+  assert.equal(invalid.budget.readRetries, 0);
+});
+test("actual user transport hard HTTP budget forbids an extra read before fetch and leaves retry request count zero", async () => {
+  const budget = new HttpBudget(1, 0);
+  let fetches = 0,
+    retries = 0;
+  const client = new AppwriteUserClient(configuration, {
+    budget,
+    fetchImpl: async () => {
+      fetches++;
+      return response(
+        {
+          deploymentId: "deployment",
+          status: "completed",
+          responseStatusCode: 409,
+          responseBody: JSON.stringify({ error: "transaction_conflict" }),
+        },
+        201,
+      );
+    },
+  });
+  await assert.rejects(
+    executeFullProbeOperation(
+      client,
+      { op: "spec.getApp", appId: "same" },
+      readOptions({ onReadRetry: () => retries++ }),
+    ),
+    (e) => e.code === "http_budget_exhausted",
+  );
+  assert.equal(fetches, 1);
+  assert.equal(budget.used, 1);
+  assert.equal(retries, 0);
 });

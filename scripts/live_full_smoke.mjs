@@ -31,6 +31,8 @@ import {
   fullNumericCases,
   validVersion,
   isFullPrivateRowDenied,
+  isFullProbeRead,
+  isFullProbeReadConflict,
 } from "./live_full_contract.mjs";
 import {
   validInvitation,
@@ -53,6 +55,54 @@ const templateKeys = [
 ];
 const randomId = (prefix) =>
   prefix.slice(0, 3) + "-" + randomBytes(14).toString("hex");
+/** Same retained read, max two extra requests; no client mutation retry. */
+export async function executeFullProbeOperation(
+  client,
+  payload,
+  {
+    expectedStatus = 200,
+    coreDeploymentId,
+    sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+    onReadConflict = () => {},
+    onReadRetry = () => {},
+  } = {},
+) {
+  if (!isFullProbeRead(payload, expectedStatus)) return client.execute(payload);
+  // Retain the exact initial JSON values/IDs even if the caller changes its object
+  // while awaiting a read. No command or identifier is allocated here.
+  const retained = JSON.parse(JSON.stringify(payload));
+  const observe = (callback) => {
+    try {
+      callback();
+    } catch {}
+  };
+  for (let attempt = 0; ; attempt++) {
+    if (attempt) await sleep(250);
+    const before = client.budget?.used;
+    let result;
+    try {
+      result = await client.execute(retained);
+    } finally {
+      // A budget rejection before HTTP dispatch is not an actual retry request.
+      if (
+        attempt &&
+        (typeof before !== "number" || client.budget.used > before)
+      )
+        observe(onReadRetry);
+    }
+    if (
+      !isFullProbeReadConflict(
+        result,
+        retained,
+        expectedStatus,
+        coreDeploymentId,
+      )
+    )
+      return result;
+    observe(onReadConflict);
+    if (attempt >= 2) return result;
+  }
+}
 function publicEnvironment(path) {
   const values = {};
   if (existsSync(path))
@@ -215,6 +265,8 @@ export async function runFullSmoke(
       maxSyntheticAccounts: maxAccounts,
       maxInvitationsPerIssuer: 50,
       httpRequests: 0,
+      readConflicts: 0,
+      readRetries: 0,
     },
     capacityTrial: {
       submittedAttempts: 0,
@@ -315,7 +367,21 @@ export async function runFullSmoke(
     return result.data;
   };
   const execute = async (actor, payload, status = 200, code) =>
-    expect(await actor.client.execute(payload), status, code);
+    expect(
+      await executeFullProbeOperation(actor.client, payload, {
+        expectedStatus: status,
+        coreDeploymentId: configuration.coreDeploymentId,
+        sleep,
+        onReadConflict: () => {
+          report.budget.readConflicts++;
+        },
+        onReadRetry: () => {
+          report.budget.readRetries++;
+        },
+      }),
+      status,
+      code,
+    );
   const app = async (actor, appId) => {
     const data = await execute(actor, { op: "spec.getApp", appId });
     verify(

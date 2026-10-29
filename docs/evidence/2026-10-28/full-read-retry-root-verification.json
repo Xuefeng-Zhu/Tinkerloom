@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-29T05:01:36.291740+00:00",
+  "rootReviewed": true,
+  "rootFocusedPureTests": 22,
+  "rootActualServiceTests": 3,
+  "failures": 0,
+  "skips": 0,
+  "dart": "3.11.0",
+  "candidateSourceSha256": "70aebdf4712c29098afb367f93510620b1d0f0c6b362ff0e8b58911941862ae7",
+  "logs": {
+    "tinkerloom-root-full-read-contract-tests.log": "a43e284268be99c78e8cce7242adcd5cb53d3ef03fbc78a53519c831d13978cc",
+    "tinkerloom-root-full-read-service-tests.log": "a87f42e0df115efa3173552dd1694b336657a2ea72b9350de98104b37743a194"
+  },
+  "changesBackendRuntime": false,
+  "mutationOrUnknownRetry": false,
+  "originalHostedFailureRetained": true,
+  "newHostedOutcome": "not yet run"
+}

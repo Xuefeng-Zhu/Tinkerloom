@@ -5,6 +5,51 @@ import { exactKeys } from "./live_collaboration_contract.mjs";
 export { exactKeys };
 export const object = (v) =>
   v !== null && typeof v === "object" && !Array.isArray(v);
+/** Only already-used full-probe reads; no mutation/provider/file/worker op. */
+export const fullProbeReadOperations = Object.freeze([
+  "inspectInvitation",
+  "spec.capabilities",
+  "spec.templates",
+  "spec.getApp",
+  "spec.getRecord",
+  "spec.getVersion",
+  "spec.launcher",
+  "spec.listDrafts",
+  "spec.listVersions",
+  "spec.query",
+  "spec.summary",
+  "spec.aggregate",
+  "spec.review",
+]);
+const fullReadOps = new Set(fullProbeReadOperations);
+export function isFullProbeRead(payload, expectedStatus) {
+  return (
+    expectedStatus === 200 && object(payload) && fullReadOps.has(payload.op)
+  );
+}
+export function isFullProbeReadConflict(
+  result,
+  payload,
+  expectedStatus,
+  deploymentId,
+) {
+  return (
+    isFullProbeRead(payload, expectedStatus) &&
+    typeof deploymentId === "string" &&
+    deploymentId.length > 0 &&
+    Number.isInteger(result?.outer?.status) &&
+    result.outer.status >= 200 &&
+    result.outer.status < 300 &&
+    result.executionStatus === "completed" &&
+    result.deploymentMatched === true &&
+    result.outer.data?.status === "completed" &&
+    result.outer.data?.deploymentId === deploymentId &&
+    result.outer.data?.responseStatusCode === 409 &&
+    result.status === 409 &&
+    exactKeys(result.data, ["error"]) &&
+    result.data.error === "transaction_conflict"
+  );
+}
 export const id = (v) =>
   typeof v === "string" && /^[A-Za-z0-9][A-Za-z0-9._-]{0,35}$/.test(v);
 const stableId = (v) =>
@@ -597,6 +642,8 @@ export function safeFinalReport(report, privateValues) {
         "syntheticAccountsCreated",
         "reusedVerifiedSyntheticAccounts",
         "invitationsIssued",
+        "readConflicts",
+        "readRetries",
       ].map((key) => [key, safeCount(report.budget?.[key])]),
     ),
     capacityTrial: {

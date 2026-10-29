@@ -1,0 +1,74 @@
+{
+  "stage": "/private/tmp/tinkerloom-full-read-retry-3CQnS3",
+  "baselineCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+  "sourceSha256": "70aebdf4712c29098afb367f93510620b1d0f0c6b362ff0e8b58911941862ae7",
+  "files": [
+    {
+      "path": "scripts/live_full_smoke.mjs",
+      "baseSha256": "560da5eb1db38c8d9cdb7ca7cf8e0d83a5c9fabb960cee90f49960f30e65eaac",
+      "sha256": "8bef876496c730076def8e5cf81166fdc58530ea9a6c644069fb2eda82ef6da3",
+      "bytes": 72272
+    },
+    {
+      "path": "scripts/live_full_contract.mjs",
+      "baseSha256": "cfef4fd0e2bc66a7cfe34386c21199365a9f86677d798de7a4f651cf71b78d80",
+      "sha256": "25989f098661dd982c65dcdc899e8a332cdb6a079ed5aabb639c56ce290b4096",
+      "bytes": 22316
+    },
+    {
+      "path": "scripts/live_full_contract.test.mjs",
+      "baseSha256": "cd1cabbc67bd0c3989fd0fb811e5b275aae54211f7e859cf3eb429e3897c49f9",
+      "sha256": "47e2bae689dddfa86d63111e1d37bc982cf91c6303a1b4276608fbdef174f2cc",
+      "bytes": 29469
+    },
+    {
+      "path": "scripts/live_full_read_retry_service.test.mjs",
+      "baseSha256": null,
+      "sha256": "75df44fe0fefd8ffb9a763c13b5d1b04971c31b5be90652581ae734b7ab836ae",
+      "bytes": 8587
+    },
+    {
+      "path": "appwrite_backend/test/full_read_retry_bridge.dart",
+      "baseSha256": null,
+      "sha256": "fca3d0e29a84a559b573347d1cc7741eb42a1c20a131311b7d020dc99e3011f7",
+      "bytes": 5481
+    },
+    {
+      "path": "docs/FULL_PROBE_READ_RETRY.md",
+      "baseSha256": null,
+      "sha256": "2a918ed02da8a8087ef1c0b9d0480f22d2836e6687de10c07352c847909b4ef8",
+      "bytes": 3798
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "baseSha256": "3b39ec6b7d0b22805c5ca7f1ff3a9df678d24ca6709936592d11daf29606a370",
+      "sha256": "02fd91f720563b7858d3a3cfcceec958d91d1d6ee1c780c11419d23322987fac",
+      "bytes": 4476
+    }
+  ],
+  "verification": {
+    "pureTests": 108,
+    "fullContractTests": 22,
+    "newPureGroups": 9,
+    "actualServiceWorkerBridgeTests": 3,
+    "logicalVerifyCallSitesUnchanged": 120,
+    "logicalCheckCallSitesUnchanged": 26,
+    "baselineFailureRecreatedAtAssertion": 21,
+    "healthyAndRecoveredPhaseAssertions": 29,
+    "extraHttpForRecoveredPhase": 1,
+    "businessReceiptAuditOutboxPopulationUnchangedByRead": true,
+    "actualRevocationAfterConflictDeniedWithoutFurtherRetry": true,
+    "dart311BridgeAnalysis": "pass",
+    "dart311BridgeFormat": "pass",
+    "nodeSyntax": "pass",
+    "prettier": "pass",
+    "yamlParse": "pass",
+    "preservedReportSha256": "4feba0406bb9470edafdef69d6c0280866f8146e20a53f08ec616cc13d79a203",
+    "preservedDiagnosticsSha256": "d094874a2bfbaa8438b60f6e9db09a5667a6c92446af83a642b1637b5498e7e2",
+    "cloudCalls": 0,
+    "persistentEdits": false,
+    "gitActions": false,
+    "backendRuntimeOrMobileChanges": false
+  },
+  "scope": "Probe-only exact read-conflict recovery; no mutation/unknown retry, no Cloud/Git/persistent edits, no mobile/backend runtime changes; status673 stage unchanged"
+}
