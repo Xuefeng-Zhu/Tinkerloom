@@ -1,0 +1,37 @@
+{
+  "status": "clear",
+  "reviewer": "commit_retry_review",
+  "manifest": "/private/tmp/tinkerloom-route-alias-boundary-k9po99h6/route-warning-files.json",
+  "sourceSha256": "73e40b7cbca81aad4c34c243350df8ca0036685baee9b8dc54ea385b2fa60cd3",
+  "allFourFrozenHashesMatch": true,
+  "findings": [],
+  "resolvedFinding": {
+    "priorSourceSha256": "eddd2fd469f78bb3d4235c008016e6468c8e1be4f8e1df0ffa3308a452e5ca02",
+    "issue": "Prior helper treated omitted record pages as entry aliases even though actual authorized resolveLocation derives details/form pages.",
+    "independentCounterexample": "/private/tmp/tinkerloom-route-warning-record-alias-counterexample.json",
+    "counterexampleSha256": "50b5b5109f33a159de54830ebd9c77b237d6626c9cff4860f63c3ca7548552b2",
+    "resolution": "Original exact canonical-key acceptance is preserved first, including legacy omitted-page record routes. Added equivalence requires omitted requested page, no requested/current record or edit state, same mode and current validated entry page."
+  },
+  "sourceReview": [
+    "Supported ACK/runtime-replacement/busy ordering is observed with actual FullAppController; record-free initial Build alias now remains a current-location no-op rather than a false retained-operation warning",
+    "Screen uses equivalence only in preexisting locked-current-location early return and excludes explicit externalAttempt; no arbitrary error clearing, automatic route replay, navigation or command creation",
+    "Different page/record/edit/mode/error requests still pass through existing pending/dirty/form guards and fresh manifest/authorized lookup path",
+    "No blanket effect cleanup cancellation added; deliberate restore-before-flush explicit intent behavior remains unchanged",
+    "FullAppScreen byte-identical to already-reviewed initial route-warning Screen; only helper/boundary tests/docs amended"
+  ],
+  "independentFocusedTests": {
+    "command": "node --import tsx --test src/full/routeNormalization.test.ts src/full/navigation.test.ts",
+    "workingDirectory": "/private/tmp/tinkerloom-route-alias-boundary-k9po99h6/apps/mobile",
+    "passed": 19,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/private/tmp/tinkerloom-independent-route-alias-final-tests.log",
+    "logSha256": "b36cec6223f9d049926ba431ad928de9e34da40381042ba47a890fd18b4dec13"
+  },
+  "limits": [
+    "Local actual-controller/route-resolution/navigation tests only",
+    "No mounted React/browser/native/Cloud proof",
+    "Parent owns combined673 validation, fresh export and browser interaction"
+  ],
+  "persistentEdits": false
+}

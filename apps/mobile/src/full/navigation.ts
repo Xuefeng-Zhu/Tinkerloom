@@ -66,6 +66,30 @@ export function fullRouteParams(
     mode: mode === "live" ? undefined : mode,
   };
 }
+/** Preserve exact canonical matches. Only a record-free, nonediting request may
+ * also omit its current entry page; record-page inference requires authorized get. */
+export function isCurrentFullRoute(
+  request: FullRouteRequest,
+  location: RuntimeLocation,
+  mode: FullMode,
+  entryPageId: string,
+): boolean {
+  if (
+    request.key ===
+    parseFullRoute(fullRouteParams("unused", location, mode)).key
+  )
+    return true;
+  return (
+    !request.error &&
+    request.mode === mode &&
+    request.location.pageId === undefined &&
+    request.location.recordId === undefined &&
+    !request.location.editing &&
+    location.recordId === undefined &&
+    !location.editing &&
+    sameLocation({ pageId: entryPageId }, location)
+  );
+}
 /** In-memory ownership is scoped to one signed-in controller, never taken from URLs. */
 export interface DeferredRouteAttempt {
   id: number;

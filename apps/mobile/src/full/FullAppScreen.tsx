@@ -41,6 +41,7 @@ import {
   guardHostNavigation,
   fullRouteParams,
   parseFullRoute,
+  isCurrentFullRoute,
 } from "./navigation";
 import type {
   FullMode,
@@ -255,19 +256,19 @@ export function FullAppScreen({
         }, true);
         return;
       }
-      const canonical = parseFullRoute(
-        fullRouteParams(
-          controller.host.lifetime.scope.appId,
-          runtimeController.getSnapshot().location,
-          modeRef.current,
-        ),
-      );
       if (
         !externalAttempt &&
-        !requested.error &&
-        requested.key === canonical.key &&
+        isCurrentFullRoute(
+          requested,
+          runtimeController.getSnapshot().location,
+          modeRef.current,
+          runtimeController.adapter.spec.navigation?.entryPageId ??
+            "__legacy__",
+        ) &&
         !controller.canLeave
       )
+        // A confirmed save can install its fresh runtime before busy is cleared.
+        // Its existing location is not a blocked link merely because the URL omits the entry page.
         return;
       const valid = epoch.next();
       const active = () =>

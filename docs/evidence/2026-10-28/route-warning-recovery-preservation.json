@@ -1,0 +1,46 @@
+{
+  "files": [
+    {
+      "path": "apps/mobile/src/full/FullAppScreen.tsx",
+      "frozenRecoverySha256": "1d8a9fa85ca774efa61f9a7ec0eeb5bc222e5c1b0ad8bf65a7e81adf99039bc1",
+      "rootSha256": "1d8a9fa85ca774efa61f9a7ec0eeb5bc222e5c1b0ad8bf65a7e81adf99039bc1",
+      "stageSha256": "55209829a56ea5237fe7950f14c2490d837c0ad71122dc0cc503c35e3709060a",
+      "status": "intentional current-location alias delta only"
+    },
+    {
+      "path": "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+      "frozenRecoverySha256": "d62c076dfd727ca1ef64529620cd93441551b5d8d9c1c3ba91ad2630666b4561",
+      "rootSha256": "d62c076dfd727ca1ef64529620cd93441551b5d8d9c1c3ba91ad2630666b4561",
+      "stageSha256": "d62c076dfd727ca1ef64529620cd93441551b5d8d9c1c3ba91ad2630666b4561",
+      "status": "unchanged"
+    },
+    {
+      "path": "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+      "frozenRecoverySha256": "57dbb265171baadee9d1744d50c82b4d68f8a16a79dab73965599ff6ae262e7f",
+      "rootSha256": "57dbb265171baadee9d1744d50c82b4d68f8a16a79dab73965599ff6ae262e7f",
+      "stageSha256": "57dbb265171baadee9d1744d50c82b4d68f8a16a79dab73965599ff6ae262e7f",
+      "status": "unchanged"
+    },
+    {
+      "path": "apps/mobile/src/renderer/recordRecovery.ts",
+      "frozenRecoverySha256": "35e403b1ef08bbeb5406d1afa5beb93b91b63ae82eaea222f4d039a2e72ab6cf",
+      "rootSha256": "35e403b1ef08bbeb5406d1afa5beb93b91b63ae82eaea222f4d039a2e72ab6cf",
+      "stageSha256": "35e403b1ef08bbeb5406d1afa5beb93b91b63ae82eaea222f4d039a2e72ab6cf",
+      "status": "unchanged"
+    },
+    {
+      "path": "apps/mobile/src/renderer/recordRecovery.test.ts",
+      "frozenRecoverySha256": "d8239dd357dab1fd19e3bc2b8262cda2782878babf830bd7de75c499bdf374b7",
+      "rootSha256": "d8239dd357dab1fd19e3bc2b8262cda2782878babf830bd7de75c499bdf374b7",
+      "stageSha256": "d8239dd357dab1fd19e3bc2b8262cda2782878babf830bd7de75c499bdf374b7",
+      "status": "unchanged"
+    },
+    {
+      "path": "apps/mobile/docs/RECORD_RECOVERY_SURFACES.md",
+      "frozenRecoverySha256": "ed75d26bb8ba17ba566d3faf89115e32832235c7270fce30b623a65e8e1bff4c",
+      "rootSha256": "ed75d26bb8ba17ba566d3faf89115e32832235c7270fce30b623a65e8e1bff4c",
+      "stageSha256": "ed75d26bb8ba17ba566d3faf89115e32832235c7270fce30b623a65e8e1bff4c",
+      "status": "unchanged"
+    }
+  ]
+}

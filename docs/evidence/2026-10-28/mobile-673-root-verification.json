@@ -1,0 +1,21 @@
+{
+  "rootCommand": "npm run verify",
+  "rootPassed": true,
+  "tests": 673,
+  "failures": 0,
+  "skips": 0,
+  "typecheck": "pass",
+  "lint": "pass",
+  "format": "pass",
+  "exports": [
+    "web",
+    "ios",
+    "android"
+  ],
+  "log": "/private/tmp/tinkerloom-mobile-final-673-verify.log",
+  "logSha256": "72c9fedab2b418bf9b0ee3cdedea9a1cfc932cb9de284b8435c7a06aa02df375",
+  "candidateSourceSha256": "73e40b7cbca81aad4c34c243350df8ca0036685baee9b8dc54ea385b2fa60cd3",
+  "independentFocusedChecks": 19,
+  "browserRetest": "pending; original665 failure retained",
+  "nativeRepackage": "pending exact committed source"
+}

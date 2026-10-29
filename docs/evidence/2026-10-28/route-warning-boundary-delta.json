@@ -1,0 +1,42 @@
+{
+  "status": "frozen",
+  "stage": "/private/tmp/tinkerloom-route-alias-boundary-k9po99h6",
+  "files": [
+    {
+      "path": "apps/mobile/src/full/navigation.ts",
+      "sha256": "4b7435cd71dac66bc4cef94a7d62b56209394d8087a96467fb687c47628a70af",
+      "bytes": 7159,
+      "baseSha256": "712748629e49e70ba5c066ada4fde934384df1b575bc98a2bc42287a2d5f3044"
+    },
+    {
+      "path": "apps/mobile/src/full/routeNormalization.test.ts",
+      "sha256": "27dca0065e620ad9d39d7b4edf13eef42a39377c00374870e307ff46df50ad4e",
+      "bytes": 11406,
+      "baseSha256": "2927ab7ecfcd0883e52a61cc2a2812bc64f287858e13b7d7fa3fd906a143447f"
+    },
+    {
+      "path": "apps/mobile/docs/CURRENT_LOCATION_ROUTE_ALIASES.md",
+      "sha256": "839462e226cc87906d0a684261e64b994f0d4f8998a6759a2da4c3ae185ed13b",
+      "bytes": 4622,
+      "baseSha256": "6d5b6d5416d2d63706b3a7227fea2e809e755884e67879a226f466df58cfe3f9"
+    }
+  ],
+  "verification": {
+    "tests": 673,
+    "baseline": 667,
+    "newTests": 6,
+    "deltaTests": 2,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "focusedTests": 19,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "regressions": [
+      "actual save ACK/replacement-runtime busy window; extracted original textual predicate failure retained",
+      "actual PhotoJournal resolveLocation details/form targets; prior integrated alias helper fails negative; legacy exact canonical matches preserved"
+    ],
+    "browser": "Original failed browser observation preserved; fresh exported interaction pending"
+  }
+}
