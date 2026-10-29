@@ -318,7 +318,9 @@ export function validRuntimeRecord(record, collectionId) {
       (v) =>
         typeof v === "string" ||
         typeof v === "boolean" ||
-        (typeof v === "number" && Number.isFinite(v) && Math.abs(v) <= 1e15),
+        (typeof v === "number" &&
+          Number.isFinite(v) &&
+          (Number.isSafeInteger(v) || Math.abs(v) <= 1e15)),
     ) &&
     revision(record.revision) &&
     record.revision > 0 &&
@@ -649,4 +651,29 @@ export function safeFinalReport(report, privateValues) {
     assertions: clean.checks.reduce((sum, v) => sum + v.assertions, 0),
   };
   return clean;
+}
+
+/** JSON-wire cases follow the declared AppSpec numeric type, never a UI label. */
+export function fullNumericCases(type) {
+  if (type === "integer")
+    return Object.freeze({
+      valid: Object.freeze([
+        Number.MIN_SAFE_INTEGER,
+        1000000000000001,
+        Number.MAX_SAFE_INTEGER,
+        0,
+      ]),
+      invalid: Object.freeze([
+        Number.MIN_SAFE_INTEGER - 1,
+        Number.MAX_SAFE_INTEGER + 1,
+        1.25,
+        "1",
+      ]),
+    });
+  if (type === "number")
+    return Object.freeze({
+      valid: Object.freeze([-1e15, 1e15, 1.25, 0]),
+      invalid: Object.freeze([-1000000000000001, 1000000000000001, "1"]),
+    });
+  throw new FullProbeError("assertion_failed");
 }

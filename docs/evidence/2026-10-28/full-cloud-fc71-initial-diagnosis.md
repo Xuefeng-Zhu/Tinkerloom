@@ -1,0 +1,14 @@
+# Failed full Cloud probe diagnosis
+
+The original Cloud report is preserved verbatim as `tinkerloom-full-cloud-fc71-initial.json`, SHA-256 `d2a72bee2412fde10c48ef228eb9af0fde8ef75f178fbeac0bac6535ecb10d00`. Its 45 passed / 3 failed / 1844 assertions remain failed evidence. No live rerun was performed.
+
+1. `numeric_rejections_leave_record_population_unchanged`, assertion4: the first supplied rating was `1000000000000001`. Reading's actual `rating` is `integer`; its original and current bound is ±9007199254740991. The ±1e15 bound belongs to `number`. The Function correctly returned inner200 for the valid integer. The check aborted before `1.25`, which must reject for integer. Accepting this extra create explains the later hardcoded115 fresh-session population assertion; the failure report does not print the resulting total, so116 is a source/response inference, not a newly observed Cloud query.
+2. `immutable_history_remix_and_actor_private_pins`, assertion73: independently, this is the owner launcher assertion. The probe only pins/unpins the viewer; it never pins the owner's manually created reading app. Manual `spec.createApp` intentionally has no automatic shortcut. The corrected setup explicitly pins owner at revision0→1, then checks viewer pin/unpin does not alter it. No manual auto-pin backend behavior changes.
+
+The correction retains strict numeric coverage. INTEGER invalid cases are unsafe positive/negative integers, fractional1.25 and a numeric string. A separate real `habitTracker.minutes` NUMBER field is checked with accepted endpoints±1e15, fraction1.25 and zero, persisted values read back, then rejection beyond±1e15 and strings with no extra population. Integer valid endpoints and the originally misclassified valid value are exercised in the actual-service offline regression. Nonfinite values are tested against actual FieldSpec; they are deliberately not sent as JSON because JSON.stringify would convert them to null.
+
+The generic record DTO validator also mixed these bounds. It now accepts the union of safe integers and finite numbers within±1e15, rather than applying the number-only bound to all numeric fields. It still rejects unsafe integers and oversized fractional values. Per-field semantics are asserted using the actual published field types and Function outcomes.
+
+Offline checks:13 Node contract groups pass; actual PlatformService with simulated MemoryStore passes4 groups /36 assertions. The service regression confirms exact receipt replay, rejection rollback across all durable rows (including receipts/audit/outbox), valid integer and number populations, absence of a manual auto-pin, and owner/viewer pin independence. It is not Appwrite transport, transaction or Cloud timing proof.
+
+Runtime code, database schema and persistent source were not modified. The four-file patch is ready for root review. Root owns any subsequent live execution and preserves the failed report alongside it.

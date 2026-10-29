@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 1,
+  "runId": "qa-full-mvsrq8hv-e3e1ea62",
+  "startedAt": "2026-10-28T23:51:29.155Z",
+  "completedAt": "2026-10-29T00:02:13.443Z",
+  "status": "failed",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "origin": "http://localhost:8426",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "databaseId": "tinkerloom",
+    "coreDeploymentId": "6ae289f866af0d0d2ba7",
+    "workerDeploymentId": "6ae2814bef35c817e99c",
+    "workerFunctionId": "tinkerloom-worker",
+    "sourceCommit": "fc71fe41078c6cd78b3f1987cac5c12dcf04d02c",
+    "sourceSha256": "b0578adff72de82426b2c7ddb0a484b46d7029af2a7bcf034008e680a3cb7957",
+    "sourceAttestation": "operator_supplied_not_server_attested",
+    "databaseBinding": "operator_supplied_not_server_attested",
+    "workerDeploymentObserved": false,
+    "coreDeploymentMatchedExecutions": 335
+  },
+  "accounts": [
+    {
+      "label": "owner",
+      "id": "usr-faf420bf32286e498df59d7c7f47",
+      "creationStatus": "created"
+    },
+    {
+      "label": "builder",
+      "id": "usr-0dd66976ff07f2756d00224d4f6e",
+      "creationStatus": "created"
+    },
+    {
+      "label": "member",
+      "id": "usr-c7ab26fa925cb29d5aa7c2173a16",
+      "creationStatus": "created"
+    },
+    {
+      "label": "viewer",
+      "id": "usr-9a5461273575a6d1c9303d6cd173",
+      "creationStatus": "created"
+    },
+    {
+      "label": "outsider",
+      "id": "usr-92a617b60f2162befc3550c661e3",
+      "creationStatus": "created"
+    }
+  ],
+  "resources": {
+    "workspaceId": "wor-0a4356169690820c8949e0885c8b",
+    "foreignWorkspace": "for-a0c1ed4e2ee653874a334d527df8",
+    "readingId": "rea-59f517a21ea70bbcf9d93b5a59a0",
+    "capacityRecord": "dc0b834eaeffdd1b0571bfa65929ef7d",
+    "foreignAppId": "far-c9f176ca8f5163c1e062b922be91",
+    "firstRecordId": "482bc32a4a98656d3e9e938fc097cf24",
+    "templateApps": {
+      "planner": "tpl-9c05197c375fe8381e1b94807cdd",
+      "projectHub": "tpl-3f89a2058027cd14f35de94cc70e",
+      "volunteer": "tpl-8ab3329197ceb2c6245a67b723a2",
+      "reading": "tpl-3f24fa03c2550e0dc1159e2f6926",
+      "habitTracker": "tpl-6dd32cda4f0648dc0e5ebd0edde6",
+      "calendar": "tpl-25d7593e07487381e069c19c6e4f",
+      "notes": "tpl-c7a9d4a9a78ebb1a590610d12d75",
+      "chores": "tpl-0b423e953ed5e73670481540ec7a",
+      "photoJournal": "tpl-7e937fa1de2112186157933c5899",
+      "reminders": "tpl-7f45232018d48214a148426573f0",
+      "focus": "tpl-a8c6c039e8bb424113e1987681e4",
+      "phoneToolkit": "tpl-fb0dc710909d20d17e24b410a735"
+    }
+  },
+  "checks": [
+    {
+      "name": "authenticate_owner",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 658
+    },
+    {
+      "name": "authenticate_builder",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 375
+    },
+    {
+      "name": "authenticate_member",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 396
+    },
+    {
+      "name": "authenticate_viewer",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 357
+    },
+    {
+      "name": "authenticate_outsider",
+      "status": "passed",
+      "assertions": 5,
+      "durationMs": 362
+    },
+    {
+      "name": "create_owner_and_foreign_workspaces",
+      "status": "passed",
+      "assertions": 10,
+      "durationMs": 4861
+    },
+    {
+      "name": "catalog_and_operational_capabilities",
+      "status": "passed",
+      "assertions": 13,
+      "durationMs": 916,
+      "templates": 12
+    },
+    {
+      "name": "manual_empty_shell_and_exact_review_publication",
+      "status": "passed",
+      "assertions": 28,
+      "durationMs": 8494,
+      "versions": 1
+    },
+    {
+      "name": "join_reading_as_builder",
+      "status": "passed",
+      "assertions": 23,
+      "durationMs": 6459
+    },
+    {
+      "name": "join_reading_as_member",
+      "status": "passed",
+      "assertions": 23,
+      "durationMs": 8468
+    },
+    {
+      "name": "join_reading_as_viewer",
+      "status": "passed",
+      "assertions": 23,
+      "durationMs": 6882
+    },
+    {
+      "name": "instantiate_planner",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 2687
+    },
+    {
+      "name": "instantiate_projectHub",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 2947
+    },
+    {
+      "name": "instantiate_volunteer",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 3062
+    },
+    {
+      "name": "instantiate_reading",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 2743
+    },
+    {
+      "name": "instantiate_habitTracker",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 3354
+    },
+    {
+      "name": "instantiate_calendar",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 2706
+    },
+    {
+      "name": "instantiate_notes",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 3272
+    },
+    {
+      "name": "instantiate_chores",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 2622
+    },
+    {
+      "name": "instantiate_photoJournal",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 3180
+    },
+    {
+      "name": "instantiate_reminders",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 2707
+    },
+    {
+      "name": "instantiate_focus",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 2551
+    },
+    {
+      "name": "instantiate_phoneToolkit",
+      "status": "passed",
+      "assertions": 16,
+      "durationMs": 3720
+    },
+    {
+      "name": "template_instances_have_no_copied_records",
+      "status": "passed",
+      "assertions": 17,
+      "durationMs": 3817,
+      "templates": 12
+    },
+    {
+      "name": "private_author_drafts_and_global_stale_publication",
+      "status": "passed",
+      "assertions": 70,
+      "durationMs": 22869,
+      "versions": 3
+    },
+    {
+      "name": "exact_definition_receipts_survive_newer_publication_and_changed_input_conflicts",
+      "status": "passed",
+      "assertions": 25,
+      "durationMs": 3513
+    },
+    {
+      "name": "private_drafts_do_not_leak_to_member_or_viewer",
+      "status": "passed",
+      "assertions": 22,
+      "durationMs": 4553
+    },
+    {
+      "name": "seed_115_typed_records_and_exact_create_receipt",
+      "status": "passed",
+      "assertions": 585,
+      "durationMs": 320461,
+      "records": 115
+    },
+    {
+      "name": "owner_builder_member_viewer_and_outsider_personal_policy",
+      "status": "passed",
+      "assertions": 75,
+      "durationMs": 18884
+    },
+    {
+      "name": "ranked_pages_and_global_numeric_aggregates",
+      "status": "passed",
+      "assertions": 158,
+      "durationMs": 36466,
+      "records": 115,
+      "pages": 6
+    },
+    {
+      "name": "grant_roles_chores",
+      "status": "passed",
+      "assertions": 54,
+      "durationMs": 17943
+    },
+    {
+      "name": "grant_roles_volunteer",
+      "status": "passed",
+      "assertions": 54,
+      "durationMs": 19981
+    },
+    {
+      "name": "workflow_assignment_and_protected_fields",
+      "status": "passed",
+      "assertions": 56,
+      "durationMs": 26753
+    },
+    {
+      "name": "capacity_create_policy_timestamp_and_date_bucket_boundaries",
+      "status": "passed",
+      "assertions": 31,
+      "durationMs": 8033
+    },
+    {
+      "name": "twenty_concurrent_unique_final_capacity_attempts",
+      "status": "passed",
+      "assertions": 67,
+      "durationMs": 14761,
+      "attempts": 20,
+      "distinctActors": 3,
+      "uniqueOperations": 20,
+      "successResponses": 1,
+      "claimedActors": 1,
+      "allocated": 1,
+      "capacity": 1,
+      "peakConcurrentHttp": 20
+    },
+    {
+      "name": "capacity_receipt_counter_release_reactivation_and_configuration",
+      "status": "passed",
+      "assertions": 74,
+      "durationMs": 21780,
+      "allocated": 1,
+      "capacity": 1
+    },
+    {
+      "name": "numeric_rejections_leave_record_population_unchanged",
+      "status": "failed",
+      "assertions": 4,
+      "durationMs": 2719,
+      "code": "assertion_failed",
+      "httpStatus": 201,
+      "functionStatus": 200,
+      "expectedFunctionStatus": 400,
+      "assertionIndex": 4,
+      "backendCode": "none",
+      "executionStatus": "completed"
+    },
+    {
+      "name": "immutable_history_remix_and_actor_private_pins",
+      "status": "failed",
+      "assertions": 73,
+      "durationMs": 21221,
+      "code": "assertion_failed",
+      "assertionIndex": 73
+    },
+    {
+      "name": "cross_workspace_and_parent_substitution_denials",
+      "status": "passed",
+      "assertions": 35,
+      "durationMs": 6290
+    },
+    {
+      "name": "known_existing_private_rows_and_direct_write_are_denied",
+      "status": "passed",
+      "assertions": 19,
+      "durationMs": 766,
+      "rowDenials": 9
+    },
+    {
+      "name": "fresh_cookie_session_reloads_persisted_versions_and_records",
+      "status": "failed",
+      "assertions": 20,
+      "durationMs": 4882,
+      "code": "assertion_failed",
+      "assertionIndex": 20
+    },
+    {
+      "name": "archive_keeps_exact_receipts_but_blocks_new_writes",
+      "status": "passed",
+      "assertions": 62,
+      "durationMs": 14168
+    },
+    {
+      "name": "temporary_session_signout_0",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 92
+    },
+    {
+      "name": "temporary_session_signout_1",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 179
+    },
+    {
+      "name": "temporary_session_signout_2",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 105
+    },
+    {
+      "name": "temporary_session_signout_3",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 81
+    },
+    {
+      "name": "temporary_session_signout_4",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 84
+    },
+    {
+      "name": "temporary_session_signout_5",
+      "status": "passed",
+      "assertions": 1,
+      "durationMs": 101
+    }
+  ],
+  "budget": {
+    "maxHttpRequests": 600,
+    "maxSyntheticAccounts": 5,
+    "maxInvitationsPerIssuer": 50,
+    "httpRequests": 368,
+    "peakConcurrentHttp": 20,
+    "syntheticAccountsAttempted": 5,
+    "invitationsIssued": 9
+  },
+  "capacityTrial": {
+    "submittedAttempts": 20,
+    "uniqueOperationIds": 20,
+    "distinctAuthenticatedActors": 3,
+    "peakConcurrentHttp": 20,
+    "successResponses": 1,
+    "distinctClaimedActors": 1,
+    "committedAllocationObserved": 1,
+    "serverExecutionBarrier": false
+  },
+  "coverage": {
+    "layer": "Real authenticated REST only when this script is explicitly run against Cloud.",
+    "unverified": [
+      "Provider spend/generation, reminders, media, spec.watch, UI/native behavior, maximum Cloud bodies, server execution barriers and production scale are not covered.",
+      "Declared source/worker deployment provenance and private database binding are not server-attested.",
+      "No resource/account/record deletion; temporary probe sessions are signed out."
+    ]
+  },
+  "summary": {
+    "passed": 45,
+    "failed": 3,
+    "blocked": 0,
+    "assertions": 1844
+  }
+}

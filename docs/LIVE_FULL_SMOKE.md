@@ -59,3 +59,20 @@ Each attempt writes `output/live-full/<run-id>/report.json` with exclusive creat
 The offline suite injects HTTP; it never contacts Appwrite. Eleven tests cover inert imports/configuration/provenance, cookie-only auth transport, cleanup-budget enforcement, exact deployment metadata, transport-vs-business denial classification, body bounds, explicit-only auth cooldown, private-row error classification/leak detection, strict DTO/review contracts, report allowlists/secret scan, and whole-run failure/block retention without auth retries. These results establish local script behavior only.
 
 The script reuses unchanged `scripts/live_collaboration_contract.mjs` and `scripts/live_smoke_denial.mjs`. Its new contract/transport modules do not alter existing collaboration smoke semantics or any failed prior receipt.
+
+
+## Preserved first Cloud run and concrete probe corrections
+
+The [initial failed report](evidence/2026-10-28/full-cloud-fc71-initial.failed.json)
+remains verbatim: 45 passed, three failed, 1,844 assertions, 368 HTTP requests,
+five synthetic accounts and peak concurrency twenty with three eligible actors.
+The [diagnosis](evidence/2026-10-28/full-cloud-fc71-initial-diagnosis.md) separates
+the two setup/expectation errors: applying NUMBER's 1e15 limit to a valid safe
+INTEGER, and expecting an owner shortcut that the probe had never pinned.
+The fresh-session count failure is consistent with the extra accepted create.
+
+The corrected probe retains numeric and pin-isolation assertions, adds separate
+real INTEGER/NUMBER boundary checks, and explicitly establishes the owner's pin.
+Thirteen Node contract groups and four actual-service/MemoryStore groups with
+36 assertions pass. No backend behavior changed. A new live report is required
+to establish the corrected Cloud outcome; offline checks do not replace it.

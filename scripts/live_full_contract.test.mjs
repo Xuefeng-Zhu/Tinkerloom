@@ -10,6 +10,7 @@ import {
   validRuntimePage,
   validRuntimeRecord,
   sha,
+  fullNumericCases,
 } from "./live_full_contract.mjs";
 import {
   AppwriteUserClient,
@@ -550,4 +551,60 @@ test("whole probe retains all failed auth checks and blocked dependencies withou
     ).status,
     "blocked",
   );
+});
+
+test("numeric rejection plan preserves distinct safe-integer and finite-number boundaries without JSON coercion", () => {
+  const integers = fullNumericCases("integer"),
+    numbers = fullNumericCases("number");
+  assert(integers.valid.includes(1000000000000001));
+  assert(integers.valid.includes(Number.MIN_SAFE_INTEGER));
+  assert(integers.valid.includes(Number.MAX_SAFE_INTEGER));
+  assert(integers.invalid.includes(Number.MIN_SAFE_INTEGER - 1));
+  assert(integers.invalid.includes(Number.MAX_SAFE_INTEGER + 1));
+  assert(integers.invalid.includes(1.25));
+  assert(numbers.valid.includes(1e15));
+  assert(numbers.valid.includes(-1e15));
+  assert(numbers.valid.includes(1.25));
+  assert(numbers.invalid.includes(1000000000000001));
+  assert(numbers.invalid.includes(-1000000000000001));
+  for (const value of integers.invalid) assert(!Number.isSafeInteger(value));
+  for (const value of numbers.invalid)
+    assert(
+      typeof value !== "number" ||
+        !Number.isFinite(value) ||
+        Math.abs(value) > 1e15,
+    );
+  for (const cases of [integers, numbers])
+    for (const value of [...cases.valid, ...cases.invalid])
+      assert.deepEqual(JSON.parse(JSON.stringify(value)), value);
+  assert(Object.isFrozen(integers.invalid));
+  assert.throws(() => fullNumericCases("text"));
+});
+
+test("generic record DTO accepts valid safe integers above number bound but rejects unsafe or oversized fractional data", () => {
+  const record = {
+    id: "record",
+    collectionId: "books",
+    data: { rating: 1000000000000001 },
+    revision: 1,
+    writtenUnderVersionId: "version",
+    capacity: null,
+    allocated: null,
+    claimed: false,
+    allowedActions: [],
+  };
+  assert(validRuntimeRecord(record, "books"));
+  for (const value of [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER])
+    assert(validRuntimeRecord({ ...record, data: { rating: value } }, "books"));
+  for (const value of [
+    Number.MAX_SAFE_INTEGER + 1,
+    Number.MIN_SAFE_INTEGER - 1,
+    1000000000000001.25,
+    Infinity,
+    NaN,
+  ])
+    assert.equal(
+      validRuntimeRecord({ ...record, data: { rating: value } }, "books"),
+      false,
+    );
 });

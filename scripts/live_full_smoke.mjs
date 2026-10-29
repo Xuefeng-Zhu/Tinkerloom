@@ -27,6 +27,7 @@ import {
   validRuntimeRecord,
   validRuntimePage,
   validAggregate,
+  fullNumericCases,
   validVersion,
   isFullPrivateRowDenied,
 } from "./live_full_contract.mjs";
@@ -1666,10 +1667,17 @@ export async function runFullSmoke(
     );
     await check(
       "numeric_rejections_leave_record_population_unchanged",
-      ["ranked_pages_and_global_numeric_aggregates"],
+      [
+        "ranked_pages_and_global_numeric_aggregates",
+        "instantiate_habitTracker",
+      ],
       async () => {
         const version = currentReading.version.id;
-        for (const rating of [1000000000000001, 1.25])
+        const ratingField = currentReading.version.spec.collections
+          .find((value) => value.id === "books")
+          ?.fields.find((value) => value.id === "rating");
+        verify(ratingField?.type === "integer");
+        for (const rating of fullNumericCases(ratingField.type).invalid)
           await execute(
             actors.owner,
             command(readingId, version, "addBook", {
@@ -1681,6 +1689,59 @@ export async function runFullSmoke(
         verify(
           (await query(actors.owner, readingId, version, "books", { limit: 1 }))
             .total === 115,
+        );
+        // Keep NUMBER's distinct ±1e15 requirement on a real number field.
+        const habit = instances.get("habitTracker").app;
+        const minutesField = habit.version.spec.collections
+          .find((value) => value.id === "checkins")
+          ?.fields.find((value) => value.id === "minutes");
+        verify(minutesField?.type === "number");
+        const numberCases = fullNumericCases(minutesField.type);
+        const numberBase = {
+          title: "Numeric boundary",
+          loggedAt: "2026-01-01T00:00:00.000Z",
+        };
+        const beforeNumbers = await query(
+          actors.owner,
+          habit.id,
+          habit.version.id,
+          "checkins",
+          { limit: 1 },
+        );
+        for (const minutes of numberCases.valid) {
+          const written = await action(
+            actors.owner,
+            command(habit.id, habit.version.id, "addRecord", {
+              data: { ...numberBase, minutes },
+            }),
+          );
+          const persisted = await getRecord(
+            actors.owner,
+            habit.id,
+            habit.version.id,
+            written.recordId,
+            "checkins",
+          );
+          verify(persisted.data.minutes === minutes);
+        }
+        for (const minutes of numberCases.invalid)
+          await execute(
+            actors.owner,
+            command(habit.id, habit.version.id, "addRecord", {
+              data: { ...numberBase, minutes },
+            }),
+            400,
+            "invalid_values",
+          );
+        const afterNumbers = await query(
+          actors.owner,
+          habit.id,
+          habit.version.id,
+          "checkins",
+          { limit: 1 },
+        );
+        verify(
+          afterNumbers.total === beforeNumbers.total + numberCases.valid.length,
         );
         return { records: 115 };
       },
@@ -1764,6 +1825,19 @@ export async function runFullSmoke(
           { op: "spec.getApp", appId: copyId },
           404,
           "not_found",
+        );
+        // Manual spec.createApp intentionally does not auto-pin its creator.
+        const ownerPinned = await execute(actors.owner, {
+          op: "spec.setPinned",
+          appId: readingId,
+          pinned: true,
+          expectedRevision: 0,
+          operationId: randomId("own"),
+        });
+        verify(
+          equal(ownerPinned, {
+            shortcut: { appId: readingId, pinned: true, revision: 1 },
+          }),
         );
         const pin = {
             op: "spec.setPinned",
