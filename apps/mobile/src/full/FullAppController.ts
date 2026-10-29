@@ -43,6 +43,7 @@ import {
   runtimeError,
 } from "../runtime/errors";
 import { freezeValidated } from "../runtime/immutable";
+import { runtimeJsonSnapshot } from "../runtime/json";
 import { FullCommandJournal, type RetainedFullCommand } from "./commandJournal";
 import {
   manifest,
@@ -60,6 +61,11 @@ import {
 import { applySemanticEdit, type SemanticEdit } from "./semanticEdits";
 
 export type HostStorage = ReturnType<typeof createHostStorage>;
+type KnownFullRead = Record<string, unknown> & {
+  op:
+    "spec.getApp" | "spec.capabilities" | "spec.review" | "spec.getGeneration";
+};
+const supersededRead = Symbol("superseded-full-read");
 export interface FullAppOptions {
   scope: HostScope;
   transport: RuntimeTransport;
@@ -607,6 +613,35 @@ export class FullAppController {
       "This account's app session is closed.",
     );
   }
+  /** Only definite completed read conflicts may repeat, with one immutable request. */
+  private async readKnown(input: KnownFullRead, sequence: number) {
+    const request = freezeValidated(
+      runtimeJsonSnapshot(input) as KnownFullRead,
+    );
+    const current = () =>
+      !this.closed && this.host.lifetime.active && sequence === this.sequence;
+    for (let attempt = 0; ; attempt++) {
+      if (!current()) return supersededRead;
+      try {
+        const response = await this.options.transport(request);
+        return current() ? response : supersededRead;
+      } catch (error) {
+        if (!current()) return supersededRead;
+        if (
+          attempt >= 2 ||
+          !(error instanceof BackendError) ||
+          error.kind !== "service" ||
+          error.status !== 409 ||
+          error.code !== "transaction_conflict" ||
+          error.uncertain !== false
+        )
+          throw error;
+        await new Promise((resolve) =>
+          setTimeout(resolve, 100 * (attempt + 1)),
+        );
+      }
+    }
+  }
   private editable() {
     this.active();
     ensure(
@@ -815,21 +850,27 @@ export class FullAppController {
     const sequence = ++this.sequence;
     this.emit({ loading: true, error: null });
     try {
-      const response = row(
-        await this.options.transport({
+      const value = await this.readKnown(
+        {
           op: "spec.getApp",
           appId: this.options.scope.appId,
-        }),
+        },
+        sequence,
       );
+      if (value === supersededRead) return;
+      const response = row(value);
       if (this.closed || sequence !== this.sequence) return;
       const app = manifest(response.app, this.options.scope.appId);
       // Apply current authority before any optional capability request. Delay
       // constructing a new runtime until its operational features are known.
       this.install(app, false, false);
       try {
-        const capabilities = platformCapabilities(
-          await this.options.transport({ op: "spec.capabilities" }),
+        const value = await this.readKnown(
+          { op: "spec.capabilities" },
+          sequence,
         );
+        if (value === supersededRead) return;
+        const capabilities = platformCapabilities(value);
         if (this.closed || sequence !== this.sequence) return;
         this.emit({ platform: capabilities });
       } catch (error) {
@@ -1187,17 +1228,18 @@ export class FullAppController {
       );
       const sequence = ++this.sequence;
       this.emit({ busy: true, error: null, review: null, reviewSpec: null });
-      const result = publicationReview(
-        row(
-          await this.options.transport({
-            op: "spec.review",
-            appId: this.options.scope.appId,
-            expectedRevision: draft.revision,
-            enabledRuleIds: rules,
-            activateExistingRecordIds: records,
-          }),
-        ).review,
+      const value = await this.readKnown(
+        {
+          op: "spec.review",
+          appId: this.options.scope.appId,
+          expectedRevision: draft.revision,
+          enabledRuleIds: rules,
+          activateExistingRecordIds: records,
+        },
+        sequence,
       );
+      if (value === supersededRead) return;
+      const result = publicationReview(row(value).review);
       if (this.closed || sequence !== this.sequence) return;
       ensure(
         result.candidateHash === draft.candidateHash &&
@@ -1306,13 +1348,16 @@ export class FullAppController {
       return;
     const sequence = ++this.sequence;
     try {
-      const response = row(
-        await this.options.transport({
+      const value = await this.readKnown(
+        {
           op: "spec.getGeneration",
           appId: this.options.scope.appId,
           jobId: job.id,
-        }),
+        },
+        sequence,
       );
+      if (value === supersededRead) return;
+      const response = row(value);
       if (this.closed || sequence !== this.sequence) return;
       const app = manifest(response.app, this.options.scope.appId);
       ensure(

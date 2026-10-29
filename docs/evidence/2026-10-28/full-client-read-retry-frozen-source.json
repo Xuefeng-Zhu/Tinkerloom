@@ -1,0 +1,77 @@
+{
+  "status": "frozen",
+  "stage": "/private/tmp/tinkerloom-full-read-retry-vc97dax6",
+  "baselineSourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+  "files": [
+    {
+      "path": "apps/mobile/src/full/FullAppController.ts",
+      "sha256": "d425de94b5da7932acf3dce02eb0e40c7284fc7c6f48422dd79590dbc5205f1f",
+      "bytes": 50627,
+      "baseSha256": "68b1855adc25285c46d49383355e900b13826c5ee14ae7e401e02fc0afb840b7"
+    },
+    {
+      "path": "apps/mobile/src/full/fullReadRetry.test.ts",
+      "sha256": "2b436e5c3b38fcec0853b6f0e657591cab979f4c4fc0cbe9b0ee501505ffa3c8",
+      "bytes": 17076,
+      "baseSha256": null
+    },
+    {
+      "path": "apps/mobile/docs/FULL_READ_CONFLICTS.md",
+      "sha256": "8d51c0fc2c21a9f4114d3ee594ec78d350afe9be784f5b46a4588fb51a0b709f",
+      "bytes": 3313,
+      "baseSha256": null
+    }
+  ],
+  "sourceSha256": "4bb090fa50a5b1b62bf3e8ce6f52ba6d83291db556df337b5c9c4b3121eda369",
+  "sourceHashInput": "SHA256 compact sorted-key JSON array of listed path/sha256 pairs in manifest order",
+  "verification": {
+    "tests": 683,
+    "baseline": 673,
+    "newTests": 10,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "focusedTests": 10,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "baselineTargeted": {
+      "tests": 3,
+      "failed": 3,
+      "log": "baseline-targeted-failure.log"
+    },
+    "sdkPipeline": "Actual FullAppController + accountTransport + AppwriteBackend.executeSpec with synthetic completed SDK409 responses",
+    "independentSourceReview": {
+      "reviewer": "rn_preview",
+      "result": "clear",
+      "testsIndependentlyRun": false
+    },
+    "initialMissingFixtureFailure": "initial-missing-fixtures.log preserved; copied exact unchanged support then all683 pass"
+  },
+  "eligibleReads": [
+    "spec.getApp",
+    "spec.capabilities",
+    "spec.review",
+    "spec.getGeneration"
+  ],
+  "attemptLimit": 3,
+  "extraBackoffMs": [
+    100,
+    200
+  ],
+  "certainty": "BackendError service/status===409/code===transaction_conflict/uncertain===false",
+  "currentFences": [
+    "controller not closed",
+    "host lifetime active",
+    "same sequence before every dispatch and after each settlement",
+    "accountTransport checks account session before/after each SDK operation"
+  ],
+  "excluded": [
+    "mutations",
+    "provider guidance",
+    "journal retries",
+    "runtime adapter retry wrapper",
+    "new operation IDs"
+  ],
+  "scope": "Temporary source/local tests only; no persistent/Git/Cloud/UI/provider/native/dependency edits"
+}
