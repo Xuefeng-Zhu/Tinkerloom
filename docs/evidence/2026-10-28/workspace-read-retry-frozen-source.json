@@ -1,0 +1,42 @@
+{
+  "status": "frozen",
+  "stage": "/private/tmp/tinkerloom-workspace-read-retry-tehzv2i5",
+  "files": [
+    {
+      "path": "apps/mobile/src/full/FullWorkspaceController.ts",
+      "sha256": "916b5bb8ccbadef1491c505378bbdea1a6042544fc7f06520a6d6ab9e04ccb0c",
+      "bytes": 25150,
+      "baseSha256": "e82bf27e9dc0b478afd64251e0ef28aa09bf56dafec47479a5cef9f4c16ca51d"
+    },
+    {
+      "path": "apps/mobile/src/full/workspaceReadRetry.test.ts",
+      "sha256": "e348531aefacc80bb071e44f6c6e7f389ca9fd449621c270d72738252c8ecf18",
+      "bytes": 24030,
+      "baseSha256": null
+    },
+    {
+      "path": "apps/mobile/docs/WORKSPACE_READ_CONFLICT_RECOVERY.md",
+      "sha256": "ab1b62989ad5f316d421ff92938aafd8e9ca35af305ab31a731d0cff7855c13d",
+      "bytes": 3838,
+      "baseSha256": null
+    }
+  ],
+  "sourceSha256": "b95735e333869eb3533cef45f1988e9fc73307b2633e4a62ee43a4ca2c2328d2",
+  "verification": {
+    "tests": 695,
+    "baseline": 683,
+    "newTests": 12,
+    "focusedTests": 12,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "baselineRegression": "Exact original FullWorkspaceController fails actual post-instantiate SDK409 refresh scenario in baseline-post-instantiate-failure.log",
+    "FullAppControllerUnchangedSha256": "d425de94b5da7932acf3dce02eb0e40c7284fc7c6f48422dd79590dbc5205f1f",
+    "browser": "Root observed original failure; fresh exported-browser check pending",
+    "native": "916b8773 remains historical; final packaging requires combined source"
+  },
+  "scope": "Source/local only; no persistent edits, Git writes, Cloud/provider/browser/native/device actions or dependency changes."
+}

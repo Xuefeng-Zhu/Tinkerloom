@@ -1,0 +1,33 @@
+{
+  "reviewedAt": "2026-10-29T05:24:59.030379+00:00",
+  "status": "clear",
+  "stage": "/private/tmp/tinkerloom-workspace-read-retry-tehzv2i5",
+  "manifest": "workspace-read-retry-files.json",
+  "sourceSha256": "b95735e333869eb3533cef45f1988e9fc73307b2633e4a62ee43a4ca2c2328d2",
+  "manifestFilesVerified": 3,
+  "FullAppControllerUnchangedSha256": "d425de94b5da7932acf3dce02eb0e40c7284fc7c6f48422dd79590dbc5205f1f",
+  "independentTests": {
+    "command": "node --import tsx --test src/full/workspaceReadRetry.test.ts",
+    "workdir": "/private/tmp/tinkerloom-workspace-read-retry-tehzv2i5/apps/mobile",
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "reviewedBoundaries": [
+    "Only launcher/listDrafts/listVersions/getVersion call the private helper",
+    "Actual BackendError(service, numeric409, transaction_conflict, uncertain===false) only; at most two extras at100/200ms",
+    "Single snapshotted deep-frozen request; exact filter/cursor and serialized wire retained",
+    "Closed/lifetime/catalog-or-history token pre/post each attempt; stale sentinel before decode/install/failure",
+    "Injected accountTransport checks session before dispatch and after settlement",
+    "Confirmed created result and cleared journal survive ordinary read exhaustion; current access denial clears private state",
+    "Mutation/journal/clarification capability/provider paths remain direct and unchanged"
+  ],
+  "findings": [],
+  "limits": [
+    "Local SDK-pipeline test evidence only",
+    "No independent full-suite/typecheck/lint rerun claimed",
+    "No persistent source edits, Git writes, Cloud/browser/native/provider/device actions"
+  ]
+}

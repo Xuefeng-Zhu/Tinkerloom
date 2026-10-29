@@ -16,6 +16,7 @@ import {
 } from "../runtime/errors";
 import type { RuntimeTransport } from "../runtime/types";
 import { freezeValidated } from "../runtime/immutable";
+import { runtimeJsonSnapshot } from "../runtime/json";
 import { FullCommandJournal, type RetainedFullCommand } from "./commandJournal";
 import {
   row,
@@ -26,6 +27,15 @@ import {
   platformCapabilities,
 } from "./contracts";
 import type { HostStorage } from "./FullAppController";
+
+type KnownWorkspaceRead = Record<string, unknown> & {
+  op:
+    | "spec.launcher"
+    | "spec.listDrafts"
+    | "spec.listVersions"
+    | "spec.getVersion";
+};
+const supersededRead = Symbol("superseded-workspace-read");
 
 export interface VersionSummary {
   id: string;
@@ -237,6 +247,35 @@ export class FullWorkspaceController {
       "This account's workbench is closed.",
     );
   }
+  /** Only definite completed read conflicts may repeat, using one immutable envelope. */
+  private async readKnown(input: KnownWorkspaceRead, isCurrent: () => boolean) {
+    const request = freezeValidated(
+      runtimeJsonSnapshot(input) as KnownWorkspaceRead,
+    );
+    const current = () =>
+      !this.closed && this.host.lifetime.active && isCurrent();
+    for (let attempt = 0; ; attempt++) {
+      if (!current()) return supersededRead;
+      try {
+        const response = await this.options.transport(request);
+        return current() ? response : supersededRead;
+      } catch (error) {
+        if (!current()) return supersededRead;
+        if (
+          attempt >= 2 ||
+          !(error instanceof BackendError) ||
+          error.kind !== "service" ||
+          error.status !== 409 ||
+          error.code !== "transaction_conflict" ||
+          error.uncertain !== false
+        )
+          throw error;
+        await new Promise((resolve) =>
+          setTimeout(resolve, 100 * (attempt + 1)),
+        );
+      }
+    }
+  }
   private fail(error: unknown, mutation = false, accessRead = false) {
     if (this.closed) return;
     const failure = runtimeError(error, mutation);
@@ -284,14 +323,17 @@ export class FullWorkspaceController {
     const pinnedOnly = this.state.pinnedOnly;
     this.emit({ loading: true, error: null });
     try {
-      const result = row(
-        await this.options.transport({
+      const value = await this.readKnown(
+        {
           op: "spec.launcher",
           pinnedOnly,
           workspaceId: this.options.workspaceId,
           limit: 50,
-        }),
+        },
+        () => sequence === this.sequence,
       );
+      if (value === supersededRead) return;
+      const result = row(value);
       if (this.closed || sequence !== this.sequence) return;
       ensure(
         Array.isArray(result.apps),
@@ -310,13 +352,16 @@ export class FullWorkspaceController {
         apps,
         cursor: nullableText(result.nextCursor),
       });
-      const drafts = row(
-        await this.options.transport({
+      const draftValue = await this.readKnown(
+        {
           op: "spec.listDrafts",
           workspaceId: this.options.workspaceId,
           limit: 50,
-        }),
+        },
+        () => sequence === this.sequence,
       );
+      if (draftValue === supersededRead) return;
+      const drafts = row(draftValue);
       if (this.closed || sequence !== this.sequence) return;
       ensure(
         Array.isArray(drafts.drafts),
@@ -361,15 +406,18 @@ export class FullWorkspaceController {
     const pinnedOnly = this.state.pinnedOnly;
     this.emit({ loading: true, error: null });
     try {
-      const result = row(
-        await this.options.transport({
+      const value = await this.readKnown(
+        {
           op: kind === "apps" ? "spec.launcher" : "spec.listDrafts",
           ...(kind === "apps" ? { pinnedOnly } : {}),
           workspaceId: this.options.workspaceId,
           cursor,
           limit: 50,
-        }),
+        },
+        () => sequence === this.sequence,
       );
+      if (value === supersededRead) return;
+      const result = row(value);
       if (this.closed || sequence !== this.sequence) return;
       if (kind === "apps") {
         ensure(
@@ -701,14 +749,17 @@ export class FullWorkspaceController {
       ...(!more ? { versions: [], historical: null } : {}),
     });
     try {
-      const result = row(
-        await this.options.transport({
+      const value = await this.readKnown(
+        {
           op: "spec.listVersions",
           appId,
           limit: 25,
           ...(before !== null ? { beforeNumber: before } : {}),
-        }),
+        },
+        () => sequence === this.historySequence,
       );
+      if (value === supersededRead) return;
+      const result = row(value);
       if (this.closed || sequence !== this.historySequence) return;
       ensure(
         Array.isArray(result.versions),
@@ -732,13 +783,16 @@ export class FullWorkspaceController {
     const sequence = ++this.historySequence;
     this.emit({ loading: true, error: null, historical: null });
     try {
-      const result = row(
-        await this.options.transport({
+      const value = await this.readKnown(
+        {
           op: "spec.getVersion",
           appId,
           versionId,
-        }),
+        },
+        () => sequence === this.historySequence,
       );
+      if (value === supersededRead) return;
+      const result = row(value);
       if (this.closed || sequence !== this.historySequence) return;
       const version = row(result.version),
         summary = versionSummary(version);
