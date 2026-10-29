@@ -96,6 +96,8 @@ export function Choices<T extends string>({
             accessibilityRole="radio"
             accessibilityLabel={`${label}: ${item}`}
             accessibilityState={{ checked: item === value, disabled }}
+            aria-checked={item === value}
+            aria-disabled={disabled}
             disabled={disabled}
             onPress={() => onChange(item)}
             style={[
@@ -127,6 +129,8 @@ export function Toggle({
       accessibilityRole="checkbox"
       accessibilityLabel={label}
       accessibilityState={{ checked: value, disabled }}
+      aria-checked={value}
+      aria-disabled={disabled}
       disabled={disabled}
       onPress={() => onChange(!value)}
       style={[styles.choice, value && styles.chosen]}

@@ -1,4 +1,10 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ElementRef,
+} from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -33,11 +39,23 @@ export function FullLauncher({
     ),
     [name, setName] = useState(""),
     [starters, setStarters] = useState(false),
-    [pinnedOnly, setPinnedOnly] = useState(false);
+    [creationOpen, setCreationOpen] = useState(false);
+  const scroll = useRef<ElementRef<typeof ScrollView>>(null);
+  const creationOffset = useRef(0);
+  const creationRequested = useRef(false);
   useEffect(() => {
     void controller.load();
   }, [controller]);
   const locked = state.busy || !!state.pending;
+  const firstTime =
+    state.catalogLoaded &&
+    !state.pinnedOnly &&
+    state.apps.length === 0 &&
+    state.drafts.length === 0;
+  const showCreation = creationOpen || firstTime;
+  const scrollToCreation = () => {
+    scroll.current?.scrollTo({ y: creationOffset.current, animated: true });
+  };
   const open = (engine: string, id: string) =>
     engine === "appspec.v1" ? onOpenApp(id) : onOpenBoundedApp(id);
   if (state.historical)
@@ -64,6 +82,13 @@ export function FullLauncher({
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
+        ref={scroll}
+        onContentSizeChange={() => {
+          if (creationRequested.current) {
+            creationRequested.current = false;
+            scrollToCreation();
+          }
+        }}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.content}
       >
@@ -74,6 +99,17 @@ export function FullLauncher({
               Small tools, woven together.
             </Text>
           </View>
+          <Button
+            label="New app"
+            accessibilityLabel="New app: jump to creation options"
+            variant="secondary"
+            disabled={locked}
+            onPress={() => {
+              creationRequested.current = !showCreation;
+              setCreationOpen(true);
+              scrollToCreation();
+            }}
+          />
           <Button
             label="Refresh workbench"
             variant="secondary"
@@ -141,173 +177,217 @@ export function FullLauncher({
             />
           </Card>
         )}
-        <Card title="Start something useful">
-          <Field
-            label="New app name"
-            value={name}
-            editable={!locked}
-            maxLength={120}
-            onChangeText={setName}
-          />
-          <View style={styles.row}>
-            <Button
-              label="Create private builder shell"
-              disabled={locked || !name.trim()}
-              onPress={() => {
-                void controller.create(name);
-              }}
-            />
-            <Button
-              label={
-                starters
-                  ? "Hide starter templates"
-                  : "Choose a starter template"
-              }
-              variant="secondary"
-              onPress={() => setStarters(!starters)}
-            />
-          </View>
-          <Text style={styles.muted}>
-            A builder shell starts without a placeholder definition. Starters
-            create independent version 1 with no sample records or enabled
-            effects.
-          </Text>
-          {starters &&
-            fullTemplates.map((template) => (
-              <View key={template.id} style={styles.card}>
-                <Text style={styles.title}>{template.spec.name}</Text>
-                <Text style={styles.body}>{template.caption}</Text>
-                <Button
-                  label={`Create ${template.spec.name}`}
-                  variant="secondary"
-                  disabled={locked}
-                  onPress={() => {
-                    void controller.instantiate(template.id);
-                  }}
-                />
-              </View>
-            ))}
-        </Card>
-        <Card title="Resume your private drafts">
-          <Text style={styles.muted}>
-            Only your own unconsumed drafts with current editor access appear
-            here.
-          </Text>
-          {state.drafts.length === 0 && !state.loading && (
-            <Text style={styles.body}>No private drafts to resume.</Text>
-          )}
-          {state.drafts.map((draft) => (
-            <View key={draft.appId} style={styles.card}>
-              <Text style={styles.title}>{draft.name}</Text>
-              <Text style={styles.muted}>
-                Revision {draft.revision}
-                {draft.stale
-                  ? " · Published version changed; review the base before publishing"
-                  : ""}
+        {!firstTime && (
+          <>
+            <View style={styles.row}>
+              <Text accessibilityRole="header" style={styles.title}>
+                {state.pinnedOnly
+                  ? "Your pinned apps"
+                  : "Recent apps you can access"}
               </Text>
-              <Button
-                label={`Resume ${draft.name}`}
-                variant="secondary"
-                onPress={() =>
-                  onResumeDraft
-                    ? onResumeDraft(draft.appId, draft.engine)
-                    : open(draft.engine, draft.appId)
-                }
+              <Toggle
+                label="Show pinned apps only"
+                value={state.pinnedOnly}
+                disabled={state.busy}
+                onChange={(value) => {
+                  void controller.setPinnedOnly(value);
+                }}
               />
             </View>
-          ))}
-          {state.draftCursor && (
-            <Button
-              label="Load more private drafts"
-              variant="secondary"
-              disabled={state.loading}
-              onPress={() => {
-                void controller.loadMore("drafts");
-              }}
-            />
-          )}
-        </Card>
-        <View style={styles.row}>
-          <Text accessibilityRole="header" style={styles.title}>
-            Apps you can access
-          </Text>
-          <Toggle
-            label="Show pinned among loaded apps"
-            value={pinnedOnly}
-            onChange={setPinnedOnly}
-          />
-        </View>
-        {state.apps.length === 0 && !state.loading && (
-          <Notice text="No accessible apps in this workspace yet." />
-        )}
-        {state.apps
-          .filter((app) => !pinnedOnly || app.pinned)
-          .map((app) => (
-            <Card key={app.id} title={app.name}>
-              <Text style={styles.muted}>
-                {app.role} ·{" "}
-                {app.engine === "appspec.v1"
-                  ? `Version ${app.version?.number ?? "not published"}`
-                  : "Classic records app"}
-                {app.archived ? " · Archived" : ""}
-              </Text>
-              <Text style={styles.body}>
-                {app.recordCount} live records
-                {app.availablePlaces === null
-                  ? ""
-                  : ` · ${app.availablePlaces} available places`}
-              </Text>
-              <View style={styles.row}>
-                <Button
-                  label={`Open ${app.name}`}
-                  onPress={() => open(app.engine, app.id)}
+            {state.catalogLoaded &&
+              state.apps.length === 0 &&
+              !state.loading && (
+                <Notice
+                  text={
+                    state.pinnedOnly
+                      ? "No pinned apps in this workspace. Switch off the filter to browse and pin an app."
+                      : "No accessible apps in this workspace yet."
+                  }
                 />
+              )}
+            {state.apps.map((app) => (
+              <Card key={app.id} title={app.name}>
+                <Text style={styles.muted}>
+                  {app.role} ·{" "}
+                  {app.engine === "appspec.v1"
+                    ? `Version ${app.version?.number ?? "not published"}`
+                    : "Classic records app"}
+                  {app.archived ? " · Archived" : ""}
+                </Text>
+                <Text style={styles.body}>
+                  {app.recordCount} live records
+                  {app.availablePlaces === null
+                    ? ""
+                    : ` · ${app.availablePlaces} available places`}
+                </Text>
+                <View style={styles.row}>
+                  <Button
+                    label={`Open ${app.name}`}
+                    onPress={() => open(app.engine, app.id)}
+                  />
+                  <Button
+                    label={app.pinned ? `Unpin ${app.name}` : `Pin ${app.name}`}
+                    variant="secondary"
+                    disabled={locked}
+                    onPress={() => {
+                      void controller.setPinned(app, !app.pinned);
+                    }}
+                  />
+                  {app.engine === "appspec.v1" && app.version && (
+                    <>
+                      <Button
+                        label="Version history"
+                        variant="secondary"
+                        onPress={() => {
+                          void controller.history(app.id);
+                        }}
+                      />
+                      <Button
+                        label="Remix current version"
+                        variant="secondary"
+                        disabled={locked}
+                        onPress={() => {
+                          void controller.remix(app.id, app.version!.id);
+                        }}
+                      />
+                    </>
+                  )}
+                </View>
+              </Card>
+            ))}
+            {state.cursor && (
+              <Button
+                label="Load more apps"
+                variant="secondary"
+                disabled={state.loading}
+                onPress={() => {
+                  void controller.loadMore("apps");
+                }}
+              />
+            )}
+            {state.cursor && (
+              <Text style={styles.muted}>
+                {state.pinnedOnly
+                  ? "More pinned apps are available."
+                  : "More accessible apps are available."}
+              </Text>
+            )}
+            <Card title="Resume your private drafts">
+              <Text style={styles.muted}>
+                Only your own unconsumed drafts with current editor access
+                appear here.
+              </Text>
+              {state.catalogLoaded &&
+                state.drafts.length === 0 &&
+                !state.loading && (
+                  <Text style={styles.body}>No private drafts to resume.</Text>
+                )}
+              {state.drafts.map((draft) => (
+                <View key={draft.appId} style={styles.card}>
+                  <Text style={styles.title}>{draft.name}</Text>
+                  <Text style={styles.muted}>
+                    Revision {draft.revision}
+                    {draft.stale
+                      ? " · Published version changed; review the base before publishing"
+                      : ""}
+                  </Text>
+                  <Button
+                    label={`Resume ${draft.name}`}
+                    variant="secondary"
+                    onPress={() =>
+                      onResumeDraft
+                        ? onResumeDraft(draft.appId, draft.engine)
+                        : open(draft.engine, draft.appId)
+                    }
+                  />
+                </View>
+              ))}
+              {state.draftCursor && (
                 <Button
-                  label={app.pinned ? `Unpin ${app.name}` : `Pin ${app.name}`}
+                  label="Load more private drafts"
                   variant="secondary"
-                  disabled={locked}
+                  disabled={state.loading}
                   onPress={() => {
-                    void controller.setPinned(app, !app.pinned);
+                    void controller.loadMore("drafts");
                   }}
                 />
-                {app.engine === "appspec.v1" && app.version && (
-                  <>
-                    <Button
-                      label="Version history"
-                      variant="secondary"
-                      onPress={() => {
-                        void controller.history(app.id);
-                      }}
-                    />
-                    <Button
-                      label="Remix current version"
-                      variant="secondary"
-                      disabled={locked}
-                      onPress={() => {
-                        void controller.remix(app.id, app.version!.id);
-                      }}
-                    />
-                  </>
-                )}
-              </View>
+              )}
             </Card>
-          ))}
-        {state.cursor && (
-          <Button
-            label="Load more apps"
-            variant="secondary"
-            disabled={state.loading}
-            onPress={() => {
-              void controller.loadMore("apps");
-            }}
-          />
+          </>
         )}
-        {state.cursor && (
-          <Text style={styles.muted}>
-            More accessible apps are available. The pinned filter applies to
-            loaded apps only.
-          </Text>
-        )}
+        <View
+          onLayout={(event) => {
+            creationOffset.current = event.nativeEvent.layout.y;
+          }}
+        >
+          <Card
+            title={firstTime ? "Start something useful" : "Create a new app"}
+          >
+            {!showCreation && (
+              <Button
+                label="Show creation options"
+                variant="secondary"
+                onPress={() => setCreationOpen(true)}
+              />
+            )}
+            {showCreation && (
+              <>
+                <Field
+                  label="New app name"
+                  value={name}
+                  editable={!locked}
+                  maxLength={120}
+                  onChangeText={setName}
+                />
+                <View style={styles.row}>
+                  <Button
+                    label="Create private builder shell"
+                    disabled={locked || !name.trim()}
+                    onPress={() => {
+                      void controller.create(name);
+                    }}
+                  />
+                  <Button
+                    label={
+                      starters
+                        ? "Hide starter templates"
+                        : "Choose a starter template"
+                    }
+                    variant="secondary"
+                    onPress={() => setStarters(!starters)}
+                  />
+                </View>
+                <Text style={styles.muted}>
+                  A builder shell starts without a placeholder definition.
+                  Starters create independent version 1 with no sample records
+                  or enabled effects.
+                </Text>
+                {starters &&
+                  fullTemplates.map((template) => (
+                    <View key={template.id} style={styles.card}>
+                      <Text style={styles.title}>{template.spec.name}</Text>
+                      <Text style={styles.body}>{template.caption}</Text>
+                      <Button
+                        label={`Create ${template.spec.name}`}
+                        variant="secondary"
+                        disabled={locked}
+                        onPress={() => {
+                          void controller.instantiate(template.id);
+                        }}
+                      />
+                    </View>
+                  ))}
+                {!firstTime && (
+                  <Button
+                    label="Hide creation options"
+                    variant="quiet"
+                    onPress={() => setCreationOpen(false)}
+                  />
+                )}
+              </>
+            )}
+          </Card>
+        </View>
         {state.historyAppId && (
           <Card title="Immutable version history">
             <Text style={styles.muted}>

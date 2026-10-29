@@ -118,6 +118,8 @@ export interface WorkspaceOptions {
   onAccessFailure?: (code: string) => void;
 }
 export interface WorkspaceState {
+  pinnedOnly: boolean;
+  catalogLoaded: boolean;
   apps: LauncherApp[];
   drafts: PrivateDraftSummary[];
   cursor: string | null;
@@ -141,6 +143,8 @@ export class FullWorkspaceController {
   private historySequence = 0;
   private listeners = new Set<() => void>();
   private state: WorkspaceState = {
+    pinnedOnly: false,
+    catalogLoaded: false,
     apps: [],
     drafts: [],
     cursor: null,
@@ -237,11 +241,13 @@ export class FullWorkspaceController {
   async load() {
     this.active();
     const sequence = ++this.sequence;
+    const pinnedOnly = this.state.pinnedOnly;
     this.emit({ loading: true, error: null });
     try {
       const result = row(
         await this.options.transport({
           op: "spec.launcher",
+          pinnedOnly,
           workspaceId: this.options.workspaceId,
           limit: 50,
         }),
@@ -252,8 +258,16 @@ export class FullWorkspaceController {
         "invalid_response",
         "Apps could not be read.",
       );
+      const apps = result.apps.map((v) =>
+        launcherApp(v, this.options.workspaceId),
+      );
+      ensure(
+        !pinnedOnly || apps.every((app) => app.pinned),
+        "invalid_response",
+        "The pinned apps response contains an unpinned app.",
+      );
       this.emit({
-        apps: result.apps.map((v) => launcherApp(v, this.options.workspaceId)),
+        apps,
         cursor: nullableText(result.nextCursor),
       });
       const drafts = row(
@@ -281,20 +295,35 @@ export class FullWorkspaceController {
         pending: this.journal.pending,
         pendingStatus: this.journal.status,
         loading: false,
+        catalogLoaded: true,
       });
     } catch (error) {
       if (sequence === this.sequence) this.fail(error);
     }
   }
+  async setPinnedOnly(pinnedOnly: boolean) {
+    try {
+      this.active();
+      if (pinnedOnly === this.state.pinnedOnly || this.state.busy) return;
+      // Catalog cursors are scoped to the filter. Clear them before any new read.
+      this.emit({ pinnedOnly, apps: [], cursor: null, catalogLoaded: false });
+      await this.load();
+    } catch (error) {
+      this.fail(error);
+    }
+  }
   async loadMore(kind: "apps" | "drafts") {
+    this.active();
     const cursor = kind === "apps" ? this.state.cursor : this.state.draftCursor;
     if (!cursor || this.state.loading) return;
     const sequence = this.sequence;
+    const pinnedOnly = this.state.pinnedOnly;
     this.emit({ loading: true, error: null });
     try {
       const result = row(
         await this.options.transport({
           op: kind === "apps" ? "spec.launcher" : "spec.listDrafts",
+          ...(kind === "apps" ? { pinnedOnly } : {}),
           workspaceId: this.options.workspaceId,
           cursor,
           limit: 50,
@@ -311,7 +340,13 @@ export class FullWorkspaceController {
           launcherApp(v, this.options.workspaceId),
         );
         ensure(
-          next.every((v) => !this.state.apps.some((old) => old.id === v.id)),
+          !pinnedOnly || next.every((app) => app.pinned),
+          "invalid_response",
+          "The pinned apps response contains an unpinned app.",
+        );
+        ensure(
+          new Set(next.map((app) => app.id)).size === next.length &&
+            next.every((v) => !this.state.apps.some((old) => old.id === v.id)),
           "invalid_response",
           "The launcher page overlaps an earlier page.",
         );
@@ -343,7 +378,7 @@ export class FullWorkspaceController {
         });
       }
     } catch (error) {
-      this.fail(error);
+      if (sequence === this.sequence) this.fail(error);
     }
   }
   private async transmit() {
