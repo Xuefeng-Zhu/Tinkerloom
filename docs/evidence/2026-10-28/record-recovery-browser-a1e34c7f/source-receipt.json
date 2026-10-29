@@ -1,0 +1,737 @@
+{
+  "createdAt": "2026-10-29T04:44:06.487Z",
+  "frozenProductCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+  "sourceMode": "Exact tracked Git blobs; all actual esbuild product inputs compared byte-for-byte",
+  "actualProductModules": [
+    {
+      "path": "source/apps/mobile/src/backend/errors.ts",
+      "gitPath": "apps/mobile/src/backend/errors.ts",
+      "sha256": "8a19e0a3a91d522bd58fe81bba7d389c2e02cae3d8c19bda8961e9c527474d63",
+      "bytes": 1668,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/errors.ts",
+      "gitPath": "apps/mobile/src/runtime/errors.ts",
+      "sha256": "1ae0672ab36f920394302c6f02519fdef19238e5ea1cf5378b533c91c010b838",
+      "bytes": 1856,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/host/scope.ts",
+      "gitPath": "apps/mobile/src/host/scope.ts",
+      "sha256": "62c04e8f27f11973c0d90cade8a69b73ac555a0485528a86616afadf8a0419a3",
+      "bytes": 2027,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/spec/schema.json",
+      "gitPath": "apps/mobile/src/spec/schema.json",
+      "sha256": "c6c2080fbf8ebfb8f15bf729325e3162099a37aaf5b5dec94b9ce0bb5ffdaf3d",
+      "bytes": 37527,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/spec/errors.ts",
+      "gitPath": "apps/mobile/src/spec/errors.ts",
+      "sha256": "aa8f2932fd016e97917bff2e0b47dcf772693adb47ffae73e404e30bbb800219",
+      "bytes": 427,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/spec/types.ts",
+      "gitPath": "apps/mobile/src/spec/types.ts",
+      "sha256": "0c2603d2ca9d0216124dec7eae18102c7fe456fd8c65a5e65b474df7a37502ab",
+      "bytes": 7812,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/spec/schema.ts",
+      "gitPath": "apps/mobile/src/spec/schema.ts",
+      "sha256": "cd13bcda7545f33190e1171fdd6dca6d42a9cfa3778f1813c19be1c969fa5879",
+      "bytes": 8813,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/json.ts",
+      "gitPath": "apps/mobile/src/runtime/json.ts",
+      "sha256": "0e2601db133d2faf6b1fc34607bc921522e7ca184d955f7a52f1fe5fc273cf38",
+      "bytes": 2641,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/immutable.ts",
+      "gitPath": "apps/mobile/src/runtime/immutable.ts",
+      "sha256": "db48097350820b0dd12c4cd9b0906e8ef207699a33e2491d1385aa061e4488ae",
+      "bytes": 305,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/commands.ts",
+      "gitPath": "apps/mobile/src/runtime/commands.ts",
+      "sha256": "b7174c668599e5a3675739e341c40a4baa3db70f8fd331b1c3f12350562fb1b4",
+      "bytes": 2716,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/spec/values.ts",
+      "gitPath": "apps/mobile/src/spec/values.ts",
+      "sha256": "43d1f9527f513f50ab6c494ae9718396867a3c58e56746b69802a0c87143bc17",
+      "bytes": 13164,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/timer.ts",
+      "gitPath": "apps/mobile/src/runtime/timer.ts",
+      "sha256": "c09374fb4750a4d14ce0766e9ad43be4ca719524f0b6028b78337f4996fc8861",
+      "bytes": 5860,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/host/storage.ts",
+      "gitPath": "apps/mobile/src/host/storage.ts",
+      "sha256": "ddea61ba593d29888d0a9cd8d5fc85ee97c85b2d3ca4c331adb891f7fcbfe9af",
+      "bytes": 6774,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/conversation.ts",
+      "gitPath": "apps/mobile/src/full/conversation.ts",
+      "sha256": "639d9d795af234bb1b7bc643adb0b5fd8f3c793c4e073a8d15edcd1eef9959e5",
+      "bytes": 4846,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/clarification.ts",
+      "gitPath": "apps/mobile/src/full/clarification.ts",
+      "sha256": "5e594b620dfe14dcb5d6a7af7308c732720ee504fd242f06f46696161e81437f",
+      "bytes": 9594,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/spec/bindings.ts",
+      "gitPath": "apps/mobile/src/spec/bindings.ts",
+      "sha256": "c98f7f2937768d111e46e537840966899346ec548f91d9ee8dd84d78bbdd98d0",
+      "bytes": 4325,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/spec/decode.ts",
+      "gitPath": "apps/mobile/src/spec/decode.ts",
+      "sha256": "b8ae223797ae54311a00418cf425822823e67a29ab0b552424975aeb50453b75",
+      "bytes": 26602,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/previewImageAssets.ts",
+      "gitPath": "apps/mobile/src/runtime/previewImageAssets.ts",
+      "sha256": "4db007116e9b3ac2ab7f2d896106ac27d6ee33340945a4ac1828952b27b0fa05",
+      "bytes": 4805,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/host/staticPreviewImages.ts",
+      "gitPath": "apps/mobile/src/host/staticPreviewImages.ts",
+      "sha256": "f252470555558d88bf9c13434befd8aa6b189e53c5f456fa1bd0047fcacd4a77",
+      "bytes": 4262,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/host/browserStorage.ts",
+      "gitPath": "apps/mobile/src/host/browserStorage.ts",
+      "sha256": "37eec7617d6881bad4734098b254c9d164a071bc1c5a6f9c07d12d169602e50e",
+      "bytes": 7267,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/host/createHostStorage.web.ts",
+      "gitPath": "apps/mobile/src/host/createHostStorage.web.ts",
+      "sha256": "7eaa59e124b376cca275cc9e9a5ac8563a6118d9da4643af37f96c5bb0bca792",
+      "bytes": 353,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/types.ts",
+      "gitPath": "apps/mobile/src/media/types.ts",
+      "sha256": "49dca514cb2a3045284625c4bfd2dca9d14809f681b460d115afe486526ffc7b",
+      "bytes": 3916,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/codec.ts",
+      "gitPath": "apps/mobile/src/media/codec.ts",
+      "sha256": "56b498f6f10f30dbad4706a1a2e179c879812ebeb65fc1f25fa1183f738b1558",
+      "bytes": 8508,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/controller.ts",
+      "gitPath": "apps/mobile/src/media/controller.ts",
+      "sha256": "5352dd0be0eba29dfb171430beb477ca50459cddfaec44a8278f97c26e57ddfc",
+      "bytes": 30553,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/recovery.ts",
+      "gitPath": "apps/mobile/src/media/recovery.ts",
+      "sha256": "e37483aa0bc140c3c1a6d8dcece58c907d8c929732edc58503cd182f0d7fb4b0",
+      "bytes": 7960,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/picker.ts",
+      "gitPath": "apps/mobile/src/media/picker.ts",
+      "sha256": "01e7eb08eca6c71349a039e1d24d5c307a550dbfdbfc79e12cce0647d3c04e90",
+      "bytes": 1913,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/platform.web.ts",
+      "gitPath": "apps/mobile/src/media/platform.web.ts",
+      "sha256": "12d3db5ebf809fec28a861ec80f0c903dfd73d78823792986bdfac68a5ace73f",
+      "bytes": 4078,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/draft.ts",
+      "gitPath": "apps/mobile/src/media/draft.ts",
+      "sha256": "94d0e4fc7a730c4d397d5008c2619ea35edb2f4fc7e2f2a7c68ceabf4d0d4ec8",
+      "bytes": 6421,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/host/device.ts",
+      "gitPath": "apps/mobile/src/host/device.ts",
+      "sha256": "cc387ebfbcdddebaf7aac16c0fa33680b72c27dfe8034ef2149718ea4121b906",
+      "bytes": 11927,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/host/createDeviceBridge.web.ts",
+      "gitPath": "apps/mobile/src/host/createDeviceBridge.web.ts",
+      "sha256": "fb88eb5a88e2f777f2054e67c51775d874063a6360e8d000f52d82f98c1547e0",
+      "bytes": 778,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/spec/ownValue.ts",
+      "gitPath": "apps/mobile/src/spec/ownValue.ts",
+      "sha256": "d2421f8b9d9516e443ffd6b3531afc7fc48aba202c7a7f572a6383734e2e5925",
+      "bytes": 437,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/query.ts",
+      "gitPath": "apps/mobile/src/runtime/query.ts",
+      "sha256": "3aaedae3afc9ca6573deaee27e7692fa0fcbdce733f8df45dcef1b5bd4526738",
+      "bytes": 9375,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/location.ts",
+      "gitPath": "apps/mobile/src/runtime/location.ts",
+      "sha256": "4c391b57c53e5e014300214a16dac57a4c49490695dc4f08fd77eda03ebc2e55",
+      "bytes": 4467,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/controller.ts",
+      "gitPath": "apps/mobile/src/runtime/controller.ts",
+      "sha256": "98b75011b1bfad048fa2ed1d7abddca199c0865902d30fdb73ac9224c3fa5ef4",
+      "bytes": 26799,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/permissions.ts",
+      "gitPath": "apps/mobile/src/runtime/permissions.ts",
+      "sha256": "253dff43934bfe707649fccbaef865a956868b5bdb195432c0d5bd183067bf0b",
+      "bytes": 1203,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/functionAdapter.ts",
+      "gitPath": "apps/mobile/src/runtime/functionAdapter.ts",
+      "sha256": "28eb2b72389d7396a584adee7127c7e6107bb8f99515bf59b00eccbd30712645",
+      "bytes": 15363,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/contracts.ts",
+      "gitPath": "apps/mobile/src/full/contracts.ts",
+      "sha256": "071ef2b2bb5a70fe0131108a248decb931874a9d4f5052eafb69fea65a5c47fa",
+      "bytes": 6938,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/commandJournal.ts",
+      "gitPath": "apps/mobile/src/full/commandJournal.ts",
+      "sha256": "951ebdf972b67f81c8d4f8241307c86d13fee9b8f2dce90435c2aca992b4448a",
+      "bytes": 5242,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/previewImageInflate.ts",
+      "gitPath": "apps/mobile/src/runtime/previewImageInflate.ts",
+      "sha256": "ae4df66a72355fe2b2edd54a507708dbebc70082cf31f1d913334ac23c0950b7",
+      "bytes": 6443,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/previewImagePreflight.ts",
+      "gitPath": "apps/mobile/src/runtime/previewImagePreflight.ts",
+      "sha256": "1f748994463385b6d60be031a29f3f1b10f0267b0c50433ea1acf5f41fc78cd9",
+      "bytes": 16029,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/preview.ts",
+      "gitPath": "apps/mobile/src/runtime/preview.ts",
+      "sha256": "de37232df09932990bc1d0ed9d26b0d8ecc870b0f880a1d28b5a2dac10040ade",
+      "bytes": 24523,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/semanticEdits.ts",
+      "gitPath": "apps/mobile/src/full/semanticEdits.ts",
+      "sha256": "d30a14a2e6a31bcf7975ef89333efe55cb57ab9108cc1852fba10b5f2e7d727f",
+      "bytes": 11607,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/FullAppController.ts",
+      "gitPath": "apps/mobile/src/full/FullAppController.ts",
+      "sha256": "68b1855adc25285c46d49383355e900b13826c5ee14ae7e401e02fc0afb840b7",
+      "bytes": 49042,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/components/theme.ts",
+      "gitPath": "apps/mobile/src/components/theme.ts",
+      "sha256": "0ec5d9b954f1c9e47b4657b54ad635cbbe8f9e4dbbd1c2511eaabe2bcccb9baf",
+      "bytes": 288,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/components/Button.tsx",
+      "gitPath": "apps/mobile/src/components/Button.tsx",
+      "sha256": "897a711e976f33e7f8df0333254e2b242ddd1c2681c4c906bfd3cb2d003ba9e5",
+      "bytes": 1885,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/components/Notice.tsx",
+      "gitPath": "apps/mobile/src/components/Notice.tsx",
+      "sha256": "e2e5ff2a5a2ee884003cff55c8c6d27a081bc182d792e31d5460f4768b2cb852",
+      "bytes": 730,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/context.tsx",
+      "gitPath": "apps/mobile/src/renderer/context.tsx",
+      "sha256": "6d4779254f81c61412b0f618e21ccfea00543fc2f70cc9b2b52f37b5765ba812",
+      "bytes": 1015,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/containerWidth.ts",
+      "gitPath": "apps/mobile/src/renderer/containerWidth.ts",
+      "sha256": "f09af8da2a90b650e07e75807ec6d3b87329e57397c358bf64879548d244dd50",
+      "bytes": 1046,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/recordRecovery.ts",
+      "gitPath": "apps/mobile/src/renderer/recordRecovery.ts",
+      "sha256": "35e403b1ef08bbeb5406d1afa5beb93b91b63ae82eaea222f4d039a2e72ab6cf",
+      "bytes": 3410,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+      "gitPath": "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+      "sha256": "57dbb265171baadee9d1744d50c82b4d68f8a16a79dab73965599ff6ae262e7f",
+      "bytes": 3205,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/appearance.ts",
+      "gitPath": "apps/mobile/src/renderer/appearance.ts",
+      "sha256": "948fc7908c2570dff44720fc74534a83424b439872cd2fb826ba6b9410d5f60d",
+      "bytes": 3073,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/primitives.tsx",
+      "gitPath": "apps/mobile/src/renderer/primitives.tsx",
+      "sha256": "6204d47c52d58f74941daa9e46a54ebb6839df1825f896067dcf5ad0d9584bf8",
+      "bytes": 4499,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/model.ts",
+      "gitPath": "apps/mobile/src/renderer/model.ts",
+      "sha256": "ee2fbeaa9ac5267defe5e436539946af4e729b6c2f04b5aaa5c187665d0b0308",
+      "bytes": 10572,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/attachment.ts",
+      "gitPath": "apps/mobile/src/media/attachment.ts",
+      "sha256": "205a972a9cf403df00cc676bf41eba392b591f5aa21ca54a1f955395b04c2176",
+      "bytes": 992,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/RecoveryPanel.tsx",
+      "gitPath": "apps/mobile/src/media/RecoveryPanel.tsx",
+      "sha256": "248ad685a4ac4b431e7a55fdce0881a7be5af6435966c6dd1d0407dbe068a0cb",
+      "bytes": 6390,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/imageInteraction.ts",
+      "gitPath": "apps/mobile/src/renderer/imageInteraction.ts",
+      "sha256": "2e746be98e9dfd351210102f32c8c4fdb931505e4af3dde732fc1dd318ef1e8e",
+      "bytes": 2249,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/fields.tsx",
+      "gitPath": "apps/mobile/src/renderer/fields.tsx",
+      "sha256": "6fc489475227dc87aeace3a3e3d090a8394615f9dd951571f456ea9bbb1d8f8b",
+      "bytes": 18060,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/form.tsx",
+      "gitPath": "apps/mobile/src/renderer/form.tsx",
+      "sha256": "a73fe3a80dea8838dace2acdda6e2d3869d2200f532a0cdf16f0214422ad5964",
+      "bytes": 10539,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/actions.tsx",
+      "gitPath": "apps/mobile/src/renderer/actions.tsx",
+      "sha256": "3064a5b6aa1e2fea0919c08973af348a7d9f56bda21384afd32fc6bcab5e51aa",
+      "bytes": 6213,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/board.tsx",
+      "gitPath": "apps/mobile/src/renderer/board.tsx",
+      "sha256": "c8c2216a0a1898b3b22cc4b718baa1bb4d17952e1309fe0b7c08d80fdf9ce2fe",
+      "bytes": 3609,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/charts.tsx",
+      "gitPath": "apps/mobile/src/renderer/charts.tsx",
+      "sha256": "4657ef2134c292720a9149785779d7c052753e60ea41cf9de4c029eb0c062fc2",
+      "bytes": 7356,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/utilities.tsx",
+      "gitPath": "apps/mobile/src/renderer/utilities.tsx",
+      "sha256": "f24b0406b284a1fca061bb66d0dacead47c349232dbe8d5517e534904fd4a39e",
+      "bytes": 11044,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/views.tsx",
+      "gitPath": "apps/mobile/src/renderer/views.tsx",
+      "sha256": "ac35fc4f6a5f934bd041f71633918bd8803c758de5084ef8a53f943d93aefb30",
+      "bytes": 34210,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/editorSnapshot.ts",
+      "gitPath": "apps/mobile/src/renderer/editorSnapshot.ts",
+      "sha256": "7ff349e01c352c9e5e83e70e17026a1dedb72a28d31b39a966a823bc93be74bf",
+      "bytes": 556,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/renderer/RuntimeRenderer.tsx",
+      "gitPath": "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+      "sha256": "d62c076dfd727ca1ef64529620cd93441551b5d8d9c1c3ba91ad2630666b4561",
+      "bytes": 17514,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/calendar.json",
+      "gitPath": "apps/mobile/src/full/templates/calendar.json",
+      "sha256": "67573065f6ed16ca949f4f6584a2e704799192f2333c711307643fd46cef5e4e",
+      "bytes": 3097,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/chores.json",
+      "gitPath": "apps/mobile/src/full/templates/chores.json",
+      "sha256": "b62faaea12f63b930d0b5df7ed63555ed29e5b0e09acbc420c34b148e297c5d3",
+      "bytes": 3062,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/focus.json",
+      "gitPath": "apps/mobile/src/full/templates/focus.json",
+      "sha256": "bfd791c960a98605296c10ac2ad697b6179ea132cd185dbe0977778f875c91a1",
+      "bytes": 840,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/habitTracker.json",
+      "gitPath": "apps/mobile/src/full/templates/habitTracker.json",
+      "sha256": "26a87dda527187145e93996a8c622b63b025e6f38543380a664539c25ec1659f",
+      "bytes": 5658,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/notes.json",
+      "gitPath": "apps/mobile/src/full/templates/notes.json",
+      "sha256": "ef29299ca2643086898839dfe511bae2bdfd07a02dbb3b04e3656754e910e054",
+      "bytes": 2873,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/phoneToolkit.json",
+      "gitPath": "apps/mobile/src/full/templates/phoneToolkit.json",
+      "sha256": "d5fb37595ef082434864441ef6358eb9395201ae14ba733b9ed7524b28e83ced",
+      "bytes": 1982,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/photoJournal.json",
+      "gitPath": "apps/mobile/src/full/templates/photoJournal.json",
+      "sha256": "f9bb0a5671160edd7e06502c75efc4b2095aa9cc7ec8e6609218cc4a43ca25f7",
+      "bytes": 4728,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/planner.json",
+      "gitPath": "apps/mobile/src/full/templates/planner.json",
+      "sha256": "2de399787924f027d7b5f7ee5280e42ac3cd6867d9fc16500aa690ad90bfebb2",
+      "bytes": 6979,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/projectHub.json",
+      "gitPath": "apps/mobile/src/full/templates/projectHub.json",
+      "sha256": "be9bd451d162fa274ad4c748338c99db336b4c3e21fd5fb27bfc2fee880d56f2",
+      "bytes": 6229,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/reading.json",
+      "gitPath": "apps/mobile/src/full/templates/reading.json",
+      "sha256": "745ee171f4d99f59e7a283dc2384511682db1147f092c658e7fe0dbe58a19d95",
+      "bytes": 1819,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/reminders.json",
+      "gitPath": "apps/mobile/src/full/templates/reminders.json",
+      "sha256": "6594944549653c6cb0045c57eb42db850eb993dccf479e8998c207c47d971acd",
+      "bytes": 6888,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/templates/volunteer.json",
+      "gitPath": "apps/mobile/src/full/templates/volunteer.json",
+      "sha256": "f058a039a76ce734ca8c1566187505796f04772a23778c2898e4c36d430f8986",
+      "bytes": 2595,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/catalog.ts",
+      "gitPath": "apps/mobile/src/full/catalog.ts",
+      "sha256": "3c958f2d1ea74fda36dd9b48b7cc6a5dacf33f77e60a9360d35d07e60f0e2d24",
+      "bytes": 2071,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/ui.tsx",
+      "gitPath": "apps/mobile/src/full/ui.tsx",
+      "sha256": "b570c755282534e1598043e2aac1f9f495de1df6f55e49b9b09ca5f468ce0c53",
+      "bytes": 3509,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/DeviceAccessPanel.tsx",
+      "gitPath": "apps/mobile/src/full/DeviceAccessPanel.tsx",
+      "sha256": "f43a78fcc1bd77a279b2ece5d83e987be060dac60b4f9c92560666f3b140cf70",
+      "bytes": 2947,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/components/Field.tsx",
+      "gitPath": "apps/mobile/src/components/Field.tsx",
+      "sha256": "39bde92ba85ec0df39c334bffc3fc92f724c4f5fd21a4e0139f631511228359a",
+      "bytes": 1191,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/ConversationHistory.tsx",
+      "gitPath": "apps/mobile/src/full/ConversationHistory.tsx",
+      "sha256": "a59e2132a8fd474cac0ed037e84e170561dd49ebba5c75571a486a56a1ef9bfe",
+      "bytes": 1516,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/ClarificationPanel.tsx",
+      "gitPath": "apps/mobile/src/full/ClarificationPanel.tsx",
+      "sha256": "1364c1f6240f5f141cd3d35a913d5f056d29023182caccf028b836b0930e69b6",
+      "bytes": 5414,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/GenerationPanel.tsx",
+      "gitPath": "apps/mobile/src/full/GenerationPanel.tsx",
+      "sha256": "b55e0246600dcdaa6f3e33f1e3d3dd7c3caa066eeeafc36a61b0648b6453dee0",
+      "bytes": 5982,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/PublishedBasePanel.tsx",
+      "gitPath": "apps/mobile/src/full/PublishedBasePanel.tsx",
+      "sha256": "40bb2bf21c95070ac3fc62c7d56622923c68be1bca28c387fd06f52d62282463",
+      "bytes": 1149,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/BuilderWorkspace.tsx",
+      "gitPath": "apps/mobile/src/full/BuilderWorkspace.tsx",
+      "sha256": "d348832820e008593f632a91e01c67924fb1e5b7c290757efe94c9f26d05432c",
+      "bytes": 3378,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/runtime/createPreview.ts",
+      "gitPath": "apps/mobile/src/runtime/createPreview.ts",
+      "sha256": "9d1b4f2e91a214fc917075998ce77994879c8e926e967d28291193f09c11d329",
+      "bytes": 846,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/createDesignPreview.ts",
+      "gitPath": "apps/mobile/src/full/createDesignPreview.ts",
+      "sha256": "31f8efdf0daf983f1f5e10b1f0335cb85530004bdf5ff0f6ceb9785e8056a136",
+      "bytes": 1384,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/PreviewSession.ts",
+      "gitPath": "apps/mobile/src/full/PreviewSession.ts",
+      "sha256": "7caec51e5dd987c382e073da3839684cac715d7c4291c4f84a600cd7114cad5b",
+      "bytes": 2210,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/IsolatedPreview.tsx",
+      "gitPath": "apps/mobile/src/full/IsolatedPreview.tsx",
+      "sha256": "2eac9ae353ae817441502d6dc270a38d89c429eb121859113b16bb297c4b5e97",
+      "bytes": 1566,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/PublicationPanel.tsx",
+      "gitPath": "apps/mobile/src/full/PublicationPanel.tsx",
+      "sha256": "62f460a53bee7832dcf8b11db2aa6165a1cddc7e7801bedb0369adba91ee82ed",
+      "bytes": 6156,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/inspectorSelection.ts",
+      "gitPath": "apps/mobile/src/full/inspectorSelection.ts",
+      "sha256": "23b670aa6fd33fac614cb310dd93634a8cd29073bd19b703201806437bebc743",
+      "bytes": 3441,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/inspectorTextDraft.ts",
+      "gitPath": "apps/mobile/src/full/inspectorTextDraft.ts",
+      "sha256": "3ec20434090ef55e078c13ef677f4f09a40eb8364726a69fa3cf09a581c8a32f",
+      "bytes": 3514,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/DesignCanvas.tsx",
+      "gitPath": "apps/mobile/src/full/DesignCanvas.tsx",
+      "sha256": "612676d99e4e3564af53fb98fa276a89c0c0c41ec3984e20e1547929fd15366b",
+      "bytes": 5932,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/SpecEditor.tsx",
+      "gitPath": "apps/mobile/src/full/SpecEditor.tsx",
+      "sha256": "c73eef0afe61aacbd572fc2488e989640929853551fac1d52ee00c8f2d990d77",
+      "bytes": 47357,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/media/DraftMediaUploadPanel.tsx",
+      "gitPath": "apps/mobile/src/media/DraftMediaUploadPanel.tsx",
+      "sha256": "65f73fd5b3117dd3d7656805653deff704b4d47546ee25f569a285bd7c0219f6",
+      "bytes": 6521,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/DraftBannerImages.tsx",
+      "gitPath": "apps/mobile/src/full/DraftBannerImages.tsx",
+      "sha256": "e0ac164c66b4db87571e576f3dd3f4ac16635ffe05babe530e89fdeccbaffea7",
+      "bytes": 4628,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/navigation.ts",
+      "gitPath": "apps/mobile/src/full/navigation.ts",
+      "sha256": "4b7435cd71dac66bc4cef94a7d62b56209394d8087a96467fb687c47628a70af",
+      "bytes": 7159,
+      "exactFrozenGitBlob": true
+    },
+    {
+      "path": "source/apps/mobile/src/full/FullAppScreen.tsx",
+      "gitPath": "apps/mobile/src/full/FullAppScreen.tsx",
+      "sha256": "55209829a56ea5237fe7950f14c2490d837c0ad71122dc0cc503c35e3709060a",
+      "bytes": 31847,
+      "exactFrozenGitBlob": true
+    }
+  ],
+  "dependencyRoot": "/Users/frank/mygit/Tinkerloom/apps/mobile/node_modules",
+  "harnessSha256": "391f4233b5c448f036c8a38b5b37979de8d8a96f579c598fba46ebfe28f4122c",
+  "routerBoundarySha256": "d7a6216d52d4a16673a59c37ed72407364b29a41d12ed50febacbb5b2e1b333d",
+  "bundleSha256": "8b9ff0aa913689c66562165e1c282d98cab805841bf17a7373587e9278a2603d",
+  "bundleBytes": 2584861,
+  "markers": [
+    {
+      "text": "RecordRecoveryPanel",
+      "present": true
+    },
+    {
+      "text": "Retry original record request",
+      "present": true
+    },
+    {
+      "text": "may apply the original change",
+      "present": true
+    },
+    {
+      "text": "RecordRecoveryGate",
+      "present": true
+    },
+    {
+      "text": "FullAppScreen",
+      "present": true
+    },
+    {
+      "text": "FunctionRuntimeAdapter",
+      "present": true
+    }
+  ],
+  "boundaries": [
+    "Synthetic in-memory RPC/storage only",
+    "Inert Expo router focus/removal hooks",
+    "Real SafeAreaProvider, RNWeb Modal and product screen/controller code",
+    "CSP connect-src none"
+  ]
+}

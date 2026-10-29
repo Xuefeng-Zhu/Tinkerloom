@@ -1,0 +1,8 @@
+{
+  "url": "http://127.0.0.1:8437/harness.js",
+  "expectedBundleSha256": "8b9ff0aa913689c66562165e1c282d98cab805841bf17a7373587e9278a2603d",
+  "servedBundleSha256": "8b9ff0aa913689c66562165e1c282d98cab805841bf17a7373587e9278a2603d",
+  "match": true,
+  "verifiedAt": "2026-10-29T04:45:59.690Z",
+  "pid": 41871
+}

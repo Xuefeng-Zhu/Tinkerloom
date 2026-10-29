@@ -1,0 +1,496 @@
+{
+  "schemaVersion": 1,
+  "checkpoint": "a1e34c7f-native-build-source-checkpoint",
+  "sourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+  "priorNativeSourceCommit": "10fed99f87d0b435ee91f55d60f54a6aef6a65a0",
+  "sourceFiles": 301,
+  "inputSha256": "aee5aa804841946d7705b0783c772ab72badc10375afc7baa64c5abca886d786",
+  "compiledSourceSha256": "8f90b7b84d124e986db67c435336cbbc63c70b294053efc9828d58981b9eedb0",
+  "nativeConfigDependenciesAndAll11ModuleFilesUnchanged": true,
+  "knownCngPackageScriptsOnly": true,
+  "artifacts": {
+    "android": {
+      "phase": "android",
+      "sourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+      "inputSha256": "aee5aa804841946d7705b0783c772ab72badc10375afc7baa64c5abca886d786",
+      "compiledSourceSha256": "8f90b7b84d124e986db67c435336cbbc63c70b294053efc9828d58981b9eedb0",
+      "cwd": "/private/tmp/tinkerloom-native-module-4g365zp6/app/android",
+      "commands": [
+        [
+          "./gradlew",
+          ":app:assembleDebug",
+          "--offline",
+          "--no-daemon",
+          "--console=plain",
+          "--max-workers=2"
+        ]
+      ],
+      "runnerPid": 42256,
+      "startedAt": "2026-10-29T04:45:06.788181+00:00",
+      "freeGiBBefore": 11.488,
+      "deviceBooted": false,
+      "installed": false,
+      "launched": false,
+      "exitCode": 0,
+      "elapsedSeconds": 32.16,
+      "finishedAt": "2026-10-29T04:45:38.947994+00:00",
+      "results": [
+        {
+          "command": [
+            "./gradlew",
+            ":app:assembleDebug",
+            "--offline",
+            "--no-daemon",
+            "--console=plain",
+            "--max-workers=2"
+          ],
+          "exitCode": 0,
+          "log": "/private/tmp/tinkerloom-native-next-c0hgwvkg/logs/android-0.log",
+          "logSha256": "4b35ed86b1c142da63ca5022c208a617cb5571a963b889541a14e00fbbb6d3ec"
+        }
+      ],
+      "log": "/private/tmp/tinkerloom-native-next-c0hgwvkg/logs/android-0.log",
+      "command": [
+        "./gradlew",
+        ":app:assembleDebug",
+        "--offline",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2"
+      ],
+      "authoredSourceChangesDuringPhase": [],
+      "priorEvidenceVerified": 1038,
+      "freeGiBAfter": 11.943,
+      "deviceRuntimeVerified": false,
+      "inputSourceSha256": "aee5aa804841946d7705b0783c772ab72badc10375afc7baa64c5abca886d786",
+      "allPriorEvidenceHashesPreserved": true,
+      "priorEvidenceCount": 28,
+      "allPreservedFileCount": 1038,
+      "nativeModuleSourceFilesVerified": true,
+      "finalSourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+      "artifact": "/private/tmp/tinkerloom-native-next-c0hgwvkg/artifacts/Tinkerloom-android-debug-a1e34c7f-8f90b7b8.apk",
+      "bytes": 263603780,
+      "sha256": "ee3f23a822e17adb0a135857beed7a17bb972ba687e6908ba482981b8506869b",
+      "packageMetadata": [
+        "package: name='com.tinkerloom.app' versionCode='1' versionName='0.1.0' platformBuildVersionName='17' platformBuildVersionCode='37' compileSdkVersion='37' compileSdkVersionCodename='17'",
+        "minSdkVersion:'24'",
+        "targetSdkVersion:'36'"
+      ],
+      "architectures": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "x86",
+        "x86_64"
+      ],
+      "packagedPermissions": [
+        "android.permission.ACCESS_LOCAL_NETWORK",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.tinkerloom.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "blockedStorageAudioPermissionsAbsent": true,
+      "torchCameraRetained": true,
+      "nativeClassesInDex": {
+        "TinkerloomDeviceModule": true,
+        "ImagePickerModule": true
+      },
+      "signatureVerificationExitCode": 0,
+      "productionSigning": false,
+      "embeddedJavaScript": false,
+      "runtimeRequirement": "Debug APK requires Metro when embeddedJavaScript=false.",
+      "separateJavaScriptReceipt": "/private/tmp/tinkerloom-native-next-c0hgwvkg/javascript-receipt.json",
+      "actualNewJavaScriptExportVerified": true,
+      "androidDebugRequiresMetro": true,
+      "separateAndroidJavaScript": {
+        "expectedRouteKeysVerified": 16,
+        "platform": "android",
+        "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/javascript-export/_expo/static/js/android/entry-76016a04ce4db67196865a3253805f58.hbc",
+        "sha256": "fbc6228f04a16d62b2ef0721c18d4674c64b4e3078bceed6769a7a8381b87cdb",
+        "bytes": 5087329,
+        "sourceMarkers": {
+          "formBusy": true,
+          "imageInteractionMessage": true
+        },
+        "embeddedInAndroidDebugApk": false,
+        "hermesBytecodeVersion": 99
+      },
+      "freeGiBAfterPackaging": 11.67,
+      "verifiedAt": "2026-10-29T04:45:54.886176+00:00"
+    },
+    "ios": {
+      "phase": "ios",
+      "sourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+      "inputSha256": "aee5aa804841946d7705b0783c772ab72badc10375afc7baa64c5abca886d786",
+      "compiledSourceSha256": "8f90b7b84d124e986db67c435336cbbc63c70b294053efc9828d58981b9eedb0",
+      "cwd": "/private/tmp/tinkerloom-native-module-4g365zp6/app",
+      "commands": [
+        [
+          "xcodebuild",
+          "-workspace",
+          "ios/Tinkerloom.xcworkspace",
+          "-scheme",
+          "Tinkerloom",
+          "-configuration",
+          "Release",
+          "-sdk",
+          "iphonesimulator",
+          "-destination",
+          "generic/platform=iOS Simulator",
+          "-derivedDataPath",
+          "/private/tmp/tinkerloom-native-module-4g365zp6/ios-derived-data",
+          "-jobs",
+          "3",
+          "CODE_SIGNING_ALLOWED=NO",
+          "build"
+        ]
+      ],
+      "runnerPid": 42246,
+      "startedAt": "2026-10-29T04:45:05.923057+00:00",
+      "freeGiBBefore": 11.488,
+      "deviceBooted": false,
+      "installed": false,
+      "launched": false,
+      "exitCode": 0,
+      "elapsedSeconds": 22.18,
+      "finishedAt": "2026-10-29T04:45:28.106542+00:00",
+      "results": [
+        {
+          "command": [
+            "xcodebuild",
+            "-workspace",
+            "ios/Tinkerloom.xcworkspace",
+            "-scheme",
+            "Tinkerloom",
+            "-configuration",
+            "Release",
+            "-sdk",
+            "iphonesimulator",
+            "-destination",
+            "generic/platform=iOS Simulator",
+            "-derivedDataPath",
+            "/private/tmp/tinkerloom-native-module-4g365zp6/ios-derived-data",
+            "-jobs",
+            "3",
+            "CODE_SIGNING_ALLOWED=NO",
+            "build"
+          ],
+          "exitCode": 0,
+          "log": "/private/tmp/tinkerloom-native-next-c0hgwvkg/logs/ios-0.log",
+          "logSha256": "bce9b92437b8a14a4e95220ee02b540bf9f9a004ef4f6dd1e50d3fecef824b99"
+        }
+      ],
+      "log": "/private/tmp/tinkerloom-native-next-c0hgwvkg/logs/ios-0.log",
+      "command": [
+        "xcodebuild",
+        "-workspace",
+        "ios/Tinkerloom.xcworkspace",
+        "-scheme",
+        "Tinkerloom",
+        "-configuration",
+        "Release",
+        "-sdk",
+        "iphonesimulator",
+        "-destination",
+        "generic/platform=iOS Simulator",
+        "-derivedDataPath",
+        "/private/tmp/tinkerloom-native-module-4g365zp6/ios-derived-data",
+        "-jobs",
+        "3",
+        "CODE_SIGNING_ALLOWED=NO",
+        "build"
+      ],
+      "authoredSourceChangesDuringPhase": [],
+      "priorEvidenceVerified": 1038,
+      "freeGiBAfter": 11.936,
+      "deviceRuntimeVerified": false,
+      "inputSourceSha256": "aee5aa804841946d7705b0783c772ab72badc10375afc7baa64c5abca886d786",
+      "allPriorEvidenceHashesPreserved": true,
+      "priorEvidenceCount": 28,
+      "allPreservedFileCount": 1038,
+      "nativeModuleSourceFilesVerified": true,
+      "finalSourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+      "artifact": "/private/tmp/tinkerloom-native-next-c0hgwvkg/artifacts/Tinkerloom-ios-simulator-release-a1e34c7f-8f90b7b8.zip",
+      "bytes": 23549319,
+      "sha256": "b995566d824ca1ecb85ef2dc69806cb7071275e73236351984729c8bee4e456e",
+      "binarySha256": "7d1a915ab4fb343cbe528debbf3dc8ed09bca140c02306aa442ba3fa57554225",
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "bundleId": "com.tinkerloom.app",
+      "minimumOsVersion": "16.4",
+      "sdk": "iphonesimulator27.1",
+      "platform": "iphonesimulator",
+      "embeddedJavaScript": true,
+      "embeddedJavaScriptSha256": "ceb651b24a13c15bb9c82377c147814506e564bb8fbc40638864369cd6aceee5",
+      "embeddedJavaScriptFormat": "/private/tmp/tinkerloom-native-module-4g365zp6/ios-derived-data/Build/Products/Release-iphonesimulator/Tinkerloom.app/main.jsbundle: Hermes JavaScript bytecode, version 99",
+      "hermesBytecodeVersion": 99,
+      "nativeModuleLinkedSymbols": {
+        "TinkerloomDeviceModule": true,
+        "ImagePickerModule": true
+      },
+      "codeSigningAllowed": false,
+      "packagedUsageDescriptions": {
+        "camera": "Allow Tinkerloom to use the camera permission only when you turn on a mini-app flashlight. No photos or video are captured.",
+        "photoLibrary": "Select an image to upload privately to the mini-app you are using.",
+        "microphoneAbsent": true
+      },
+      "nativeWarnings": [],
+      "separateJavaScriptReceipt": "/private/tmp/tinkerloom-native-next-c0hgwvkg/javascript-receipt.json",
+      "actualNewJavaScriptExportVerified": true,
+      "embeddedJavaScriptChangedSince5f": true,
+      "newSourceMarkers": {
+        "formBusy": true,
+        "imageInteractionMessage": true
+      },
+      "freeGiBAfterPackaging": 11.639,
+      "verifiedAt": "2026-10-29T04:45:56.737205+00:00"
+    },
+    "android-release": {
+      "phase": "android-release",
+      "sourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+      "inputSha256": "aee5aa804841946d7705b0783c772ab72badc10375afc7baa64c5abca886d786",
+      "compiledSourceSha256": "8f90b7b84d124e986db67c435336cbbc63c70b294053efc9828d58981b9eedb0",
+      "cwd": "/private/tmp/tinkerloom-native-module-4g365zp6/app/android",
+      "commands": [
+        [
+          "./gradlew",
+          ":app:assembleRelease",
+          "--offline",
+          "--no-daemon",
+          "--console=plain",
+          "--max-workers=2"
+        ]
+      ],
+      "runnerPid": 43013,
+      "startedAt": "2026-10-29T04:46:06.653671+00:00",
+      "freeGiBBefore": 11.627,
+      "deviceBooted": false,
+      "installed": false,
+      "launched": false,
+      "exitCode": 0,
+      "elapsedSeconds": 48.23,
+      "finishedAt": "2026-10-29T04:46:54.880814+00:00",
+      "results": [
+        {
+          "command": [
+            "./gradlew",
+            ":app:assembleRelease",
+            "--offline",
+            "--no-daemon",
+            "--console=plain",
+            "--max-workers=2"
+          ],
+          "exitCode": 0,
+          "log": "/private/tmp/tinkerloom-native-next-c0hgwvkg/logs/android-release-0.log",
+          "logSha256": "4c1f582ea6e8daa1a23bf769591bb42eead1beec01ee972410f38c0d68c8c93d"
+        }
+      ],
+      "log": "/private/tmp/tinkerloom-native-next-c0hgwvkg/logs/android-release-0.log",
+      "command": [
+        "./gradlew",
+        ":app:assembleRelease",
+        "--offline",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2"
+      ],
+      "authoredSourceChangesDuringPhase": [],
+      "priorEvidenceVerified": 1038,
+      "freeGiBAfter": 11.442,
+      "deviceRuntimeVerified": false,
+      "inputSourceSha256": "aee5aa804841946d7705b0783c772ab72badc10375afc7baa64c5abca886d786",
+      "allPriorEvidenceHashesPreserved": true,
+      "priorEvidenceCount": 28,
+      "allPreservedFileCount": 1038,
+      "nativeModuleSourceFilesVerified": true,
+      "finalSourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+      "artifact": "/private/tmp/tinkerloom-native-next-c0hgwvkg/artifacts/Tinkerloom-android-local-release-debug-signed-a1e34c7f-8f90b7b8.apk",
+      "bytes": 116524506,
+      "sha256": "e205ad93487099829c0959b5d3d82334b317d6372969f2832ac0b756364f9633",
+      "packageMetadata": [
+        "package: name='com.tinkerloom.app' versionCode='1' versionName='0.1.0' platformBuildVersionName='17' platformBuildVersionCode='37' compileSdkVersion='37' compileSdkVersionCodename='17'",
+        "minSdkVersion:'24'",
+        "targetSdkVersion:'36'"
+      ],
+      "architectures": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "x86",
+        "x86_64"
+      ],
+      "packagedPermissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.tinkerloom.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "blockedStorageAudioPermissionsAbsent": true,
+      "torchCameraRetained": true,
+      "nativeClassesInDex": {
+        "ImagePickerModule": true,
+        "TinkerloomDeviceModule": true
+      },
+      "signatureVerificationExitCode": 0,
+      "productionSigning": false,
+      "embeddedJavaScript": true,
+      "runtimeRequirement": "Debug APK requires Metro when embeddedJavaScript=false.",
+      "separateJavaScriptReceipt": "/private/tmp/tinkerloom-native-next-c0hgwvkg/javascript-receipt.json",
+      "actualNewJavaScriptExportVerified": true,
+      "embeddedJavaScriptSha256": "9ecae2483f7c5f744fac7a9bf6c86f0645fc0b6dbadbff47095f3837178a8fdf",
+      "hermesBytecodeVersion": 99,
+      "nativeClassDescriptorsFromActualR8Mapping": {
+        "ImagePickerModule": "Lfg2;",
+        "TinkerloomDeviceModule": "Lys5;"
+      },
+      "r8MappingSha256": "52aef4354741a46b30b0fa7d93b1d554b734f0736b10f83b32dba6f1c00a0eb4",
+      "r8MappingPath": "/private/tmp/tinkerloom-native-module-4g365zp6/app/android/app/build/outputs/mapping/release/mapping.txt",
+      "nativeClassesVerifiedInDexClassDefinitions": true,
+      "buildVariant": "release",
+      "signing": "unchanged generated development debug signing",
+      "requiresMetro": false,
+      "localDevelopmentArtifact": true,
+      "freeGiBAfterPackaging": 11.332,
+      "verifiedAt": "2026-10-29T04:47:12.824916+00:00"
+    }
+  },
+  "receipts": [
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/source-manifest.json",
+      "sha256": "dff17733267422516ead7ab3a503401eae65749c5943cfe9f4bd43001aabaa9c",
+      "bytes": 150969
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/preservation.json",
+      "sha256": "872c98f87d5c82b07b7843ac9ad9adb8eb00d9f8cc21607d1ac33ab6a1297b21",
+      "bytes": 255396
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/prior-checkpoint-verified.json",
+      "sha256": "ddda5e798c961c42a591329573c97c9c2442ee68da91e08242364ea45202f833",
+      "bytes": 2110
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/toolchain.json",
+      "sha256": "b494a766a003302bb4edc19dfa971225e1769fe0c71ce61b70c6189f26488dca",
+      "bytes": 478
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/freeze-authorization.json",
+      "sha256": "6d1f0a9acaa8c94fa82dd61b87a11018a111636d865d500253249b58ce849156",
+      "bytes": 295
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/javascript-receipt.json",
+      "sha256": "9c3026f061b6c836dabc17b3ce2991e4c068248bc1e68cf19792c4b709642239",
+      "bytes": 7554
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/exports-source-coverage.json",
+      "sha256": "4e09140deadea621fb43c1d1538c5aac2b8dc6a904352097ff2d523488066042",
+      "bytes": 8780
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/ios-source-coverage.json",
+      "sha256": "7dc8b5afe99b1819d1af01657f39aecd6887a3280d70546ac0d3f17e1fe29ab5",
+      "bytes": 1554
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/android-release-source-coverage.json",
+      "sha256": "67b1d2ae1b2f362f8bd88c93298e84a8ed1e18895eb7309bf2e08f082ce01257",
+      "bytes": 1590
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/android-release-packaged-source-coverage.json",
+      "sha256": "813de6ce877c4bfafdc0266f2263f34c6b838819d315dd5b5911081e1cb44fce",
+      "bytes": 855
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/android-development-signing.json",
+      "sha256": "389a74d25b8b71f1513c449a72bed5d6f00f10e5340608ced64dcf50c7096e21",
+      "bytes": 1174
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/android-release-native-registration.json",
+      "sha256": "66a71945e6b16d0023969a085d8d7fa26c10e9591218076995d2aa753da4e596",
+      "bytes": 914
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/checks-result.json",
+      "sha256": "1b852bcf5eecfff0478301d8f26c06a0e9d8ee34bd2a872af1a17fd3ac10be92",
+      "bytes": 1556
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/bundle-result.json",
+      "sha256": "b42bfcaa6e51894ffbb60730d0f511dcc0eca7d0dab456c39747fa29c7765677",
+      "bytes": 1674
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/android-result.json",
+      "sha256": "7460adc4d92dc7e5523ed9a9d3bb9bba185b9f7cd16b12ec191d8dc701e9484e",
+      "bytes": 1520
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/ios-result.json",
+      "sha256": "d7868ece674038330241b46bb2b446f6b02dbf84370744c8ec97f26f6c13a2e3",
+      "bytes": 2373
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/android-release-result.json",
+      "sha256": "f0cfc5608ba0a353ec9414d30f2fbfeaaca6c558dbfd71d3e9ddc62f75f918c3",
+      "bytes": 1550
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/artifacts/android-receipt.json",
+      "sha256": "ccaccff4c2a5f6e8a6b7c2a4e9eacf5fcce49224a97f8c8ddf10a0b3b027e3a8",
+      "bytes": 4253
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/artifacts/ios-receipt.json",
+      "sha256": "fef02353fe85882ab798c68e784519eb4b8f0063be6757de724fcb80eb6f2804",
+      "bytes": 4362
+    },
+    {
+      "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/artifacts/android-release-receipt.json",
+      "sha256": "227ccee926343224a19871ea488dd758e049071a0849cbffa74a7c26332f0b01",
+      "bytes": 4383
+    }
+  ],
+  "preservedFileCount": 1038,
+  "original28Preserved": true,
+  "prior5fArtifactsPreserved": true,
+  "prior10fed99ArtifactsPreserved": true,
+  "all12MarkersAnd16RouteKeysInActualExportsAndBothEmbeddedReleases": true,
+  "sourceMarkerInclusionIsNotSemanticRuntimeProof": true,
+  "deviceBooted": false,
+  "installed": false,
+  "launched": false,
+  "uiOrHardwareVerified": false,
+  "appwriteNativeSignInVerified": false,
+  "productionSigning": false,
+  "allAuthoredSourcesUnchangedDuringBuild": true,
+  "overallMigrationComplete": false,
+  "freeGiB": 11.318,
+  "finishedAt": "2026-10-29T04:48:29.912332+00:00"
+}

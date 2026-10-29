@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-10-29T04:56:11.171781+00:00",
+  "sourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+  "layer": "Actual mounted React Native Web UI with synthetic RPC and memory-only atomic storage",
+  "boundary": [
+    "Only Expo router focus/removal hooks inert",
+    "CSP connect-src none; no external service calls",
+    "Real FullAppScreen, RuntimeRenderer, RecordRecoveryPanel, controllers, host command store and web Modal portal",
+    "No native/device or real persistent-storage/restart/Cloud proof"
+  ],
+  "checks": [
+    {
+      "name": "restored_build",
+      "status": "passed",
+      "observed": "0 executions,0 simulated commits,0 IDs; exactly one retry panel. Explicit success used matching original envelope and cleared entry with1 execution/1commit/0IDs."
+    },
+    {
+      "name": "restored_preview_unknown_then_receipt",
+      "status": "passed",
+      "observed": "First explicit retry gave1execution/1commit/0IDs, retained uncertain,1retry/0ack controls. Success receipt retry gave2executions/1commit/0IDs and cleared same envelope."
+    },
+    {
+      "name": "restored_live_definite_failure",
+      "status": "passed",
+      "observed": "1execution/0commits/0IDs; only1ack/0retry controls. Ack cleared entry without another execution."
+    },
+    {
+      "name": "actual_form_modal_unknown",
+      "status": "passed",
+      "observed": "Opened Edit item; typed Synthetic revised title; Save allocated1ID and1execution/1simulatedcommit, retained uncertain. Exactly1retry control and Cancel disabled. Retrying inside modal gave2executions/1commit/1ID and retained exact input/envelope with no duplicate control."
+    },
+    {
+      "name": "actual_form_modal_rejection_ack_dirty_prompt",
+      "status": "passed",
+      "observed": "After synthetic-only reload/reset, definite rejection gave1execution/0commits/1ID,1ack/0retry. Ack cleared entry without anotherexecution and kept input. Cancel then showed Discard unsaved changes; Keep editing preserved exact title; explicit discard closed modal."
+    }
+  ],
+  "screenshotObserved": {
+    "viewport": [
+      1280,
+      720
+    ],
+    "description": "Real web Modal overlay visibly contains retained Title, disabled Save/Cancel and one full-width exact-retry button"
+  },
+  "overallAcceptanceComplete": false
+}

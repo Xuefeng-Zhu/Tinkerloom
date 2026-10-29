@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "a1e34c7f1d26bd14a91b92dc4dd7d9d4d1a9551e",
+  "checkpointSha256": "0bb76bae90cdf9f417a10a88c75c770672a170e6c21149ff44d9b09e74af79bf",
+  "independentAudit": {
+    "path": "/private/tmp/tinkerloom-native-next-c0hgwvkg/independent-native-audit.json",
+    "sha256": "dc12f87d1939c10107b1052afc39101db13ffcace58e498be5150082cd2f5bae"
+  },
+  "status": "completed_source_specific_checkpoint_with_independent_audit",
+  "nextStep": "Hold warm cache until parent supplies a later exact committed JS freeze. Do not rebuild mutable root.",
+  "signingEvidenceScope": {
+    "publicCertificateInspectionUsesApkOnly": true,
+    "agentDirectPrivateKeystoreRead": false,
+    "privateKeystoreModified": false,
+    "authorizedBuildUsesExistingGeneratedDevelopmentSigning": true,
+    "productionSigning": false
+  },
+  "noUiDeviceRuntimeOrCloudProofAdded": true,
+  "allAuthoredInputsStillMatch": true,
+  "allPriorFilesPreserved": 1038,
+  "recordedAt": "2026-10-29T04:49:55.375095+00:00"
+}
