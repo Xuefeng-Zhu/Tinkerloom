@@ -1,0 +1,38 @@
+{
+  "capturedAt": "2026-10-29T04:37:37.319481+00:00",
+  "repository": "Xuefeng-Zhu/Tinkerloom",
+  "sourceCommit": "9000ba8a59f1aed75005a342ff070fa8df1b4b8f",
+  "runId": 40817924176,
+  "url": "https://github.com/Xuefeng-Zhu/Tinkerloom/actions/runs/40817924176",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "Appwrite Dart function",
+      "conclusion": "success",
+      "checks": [
+        "authored analysis/format",
+        "service and numeric/pin regressions",
+        "all standard Dart tests, including confirmed abort/database retry",
+        "actual-service offline activity/media/reminder bridges",
+        "client wire fixtures",
+        "Core and worker AOT"
+      ]
+    },
+    {
+      "name": "Full AppSpec contract",
+      "conclusion": "success"
+    },
+    {
+      "name": "React Native client",
+      "conclusion": "success",
+      "checks": [
+        "script syntax",
+        "99 pure probe/observer contracts",
+        "root client verify and all-platform export"
+      ]
+    }
+  ],
+  "liveNetworkProbesInCI": false,
+  "nativeBuildOrDeviceProof": false
+}

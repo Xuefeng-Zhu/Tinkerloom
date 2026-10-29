@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T04:16:41.331813Z",
+  "projectId": "6ae1928a003a65851e95",
+  "coreFunctionId": "tinkerloom-core",
+  "coreDeploymentId": "6ae2c7c4c9c5bd7f2d7c",
+  "workerFunctionId": "tinkerloom-worker",
+  "workerDeploymentId": "6ae2a775681ced8b8bab",
+  "execute": [],
+  "domains": [],
+  "intervalMinutes": 60,
+  "configuredWorkerIdentityMatches": true,
+  "remindersEnabled": {
+    "core": true,
+    "worker": true
+  },
+  "executionScopesVerified": {
+    "core": true,
+    "worker": true
+  },
+  "oneShot": {
+    "accepted": true,
+    "executionId": "6ae2905c1e3c9809f68d"
+  }
+}

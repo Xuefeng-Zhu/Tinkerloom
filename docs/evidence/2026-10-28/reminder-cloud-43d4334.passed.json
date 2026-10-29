@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "runId": "qa-reminder-mvt1lclm-ab5805",
+  "startedAt": "2026-10-29T04:27:37.353Z",
+  "completedAt": "2026-10-29T04:34:06.102Z",
+  "status": "passed",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "coreDeploymentId": "6ae2c7c4c9c5bd7f2d7c",
+    "workerFunctionId": "tinkerloom-worker",
+    "workerDeploymentId": "6ae2a775681ced8b8bab",
+    "sourceCommit": "43d4334a8f1dbe59ac6d5afa657f9128bef678a8",
+    "sourceSha256": "ddb4fef635c0cc66b8bc994b29c95c2e89cefce786c1601e2ba481fc14f52cd7",
+    "workerReceiptSha256": "3f205aa29ef6e6637676d4a062643998e1c8a5433f925dfe3f961cb54c483df0",
+    "sourceAttestation": "operator_supplied_not_server_attested",
+    "workerDeploymentObserved": false
+  },
+  "checks": [
+    {
+      "name": "authenticate_owner_and_confirm_effects",
+      "status": "passed",
+      "code": "none",
+      "assertions": 1
+    },
+    {
+      "name": "setup_explicit_owner_approval_and_member_acceptance",
+      "status": "passed",
+      "code": "none",
+      "assertions": 20
+    },
+    {
+      "name": "set_real_future_dates_and_member_self_assignment",
+      "status": "passed",
+      "code": "none",
+      "assertions": 10
+    },
+    {
+      "name": "observe_planning_then_invalidate_before_due",
+      "status": "passed",
+      "code": "none",
+      "assertions": 3
+    },
+    {
+      "name": "observe_terminal_runs_and_private_inboxes",
+      "status": "passed",
+      "code": "none",
+      "assertions": 20,
+      "ownerItems": 1,
+      "memberItems": 1,
+      "deliveredRuns": 2,
+      "suppressedRuns": 2,
+      "zeroRecipientRuns": 1
+    },
+    {
+      "name": "read_receipts_cross_recipient_denial_and_bounded_dedup",
+      "status": "passed",
+      "code": "none",
+      "assertions": 7,
+      "sameOccurrenceItems": 1
+    }
+  ],
+  "accounts": [
+    {
+      "label": "owner",
+      "creationStatus": "reused_verified"
+    },
+    {
+      "label": "member",
+      "creationStatus": "reused_verified"
+    }
+  ],
+  "budget": {
+    "reusedVerifiedSyntheticAccounts": 2,
+    "maxHttpRequests": 300,
+    "httpRequests": 101,
+    "maxSyntheticAccounts": 2,
+    "syntheticAccounts": 0,
+    "cleanupSessions": 2
+  },
+  "coverage": {
+    "layer": "authenticated_user_client_when_explicitly_executed",
+    "oneShotCausality": "not_observable_from_public_client",
+    "hourlyRecovery": "not_proven_by_five_minute_window",
+    "unverified": [
+      "worker_process_interruption",
+      "retry_backoff_exhaustion",
+      "provider_starvation",
+      "active_claimant_fanout",
+      "email_push_provider_device_UI"
+    ]
+  }
+}
