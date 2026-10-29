@@ -4,7 +4,9 @@ import {
   useRef,
   useSyncExternalStore,
   useCallback,
+  useImperativeHandle,
 } from "react";
+import type { Ref, ElementRef } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
 import type { FieldSpec, FormControl } from "../spec/types";
 import type {
@@ -184,7 +186,13 @@ export function RecordReminder({ record }: { record: RuntimeRecord }) {
     </Body>
   );
 }
+export interface FieldFocusHandle {
+  focus(): void;
+}
 interface FieldInputProps {
+  ref?: Ref<FieldFocusHandle>;
+  validationError?: string;
+  errorId?: string;
   field: FieldSpec;
   value: string | boolean | null;
   onChange: (value: string | boolean | null) => void;
@@ -203,12 +211,29 @@ export function FieldInput({
   members,
   onBusyChange,
   uploadContext,
+  ref,
+  validationError,
+  errorId,
 }: FieldInputProps) {
   const { controller, theme } = useRuntime(),
     [uploading, setUploading] = useState(false),
     [error, setError] = useState<string | null>(null),
     [trackWidth, setTrackWidth] = useState(1);
   const lifetime = useRef<{ active: boolean } | null>(null);
+  const inputTarget = useRef<FieldFocusHandle | null>(null);
+  const fallbackTarget = useRef<ElementRef<typeof View> | null>(null);
+  const setInputTarget = useCallback((target: FieldFocusHandle | null) => {
+    inputTarget.current = target;
+  }, []);
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus() {
+        (inputTarget.current ?? fallbackTarget.current)?.focus();
+      },
+    }),
+    [],
+  );
   useEffect(() => {
     const current = { active: true };
     lifetime.current = current;
@@ -283,6 +308,7 @@ export function FieldInput({
     input =
       kind === "checkbox" ? (
         <Pressable
+          ref={setInputTarget}
           accessibilityRole="checkbox"
           accessibilityLabel={field.label}
           accessibilityState={{ checked: value === true, disabled }}
@@ -298,6 +324,7 @@ export function FieldInput({
       ) : (
         <Row>
           <Switch
+            ref={setInputTarget}
             accessibilityLabel={field.label}
             value={value === true}
             disabled={disabled}
@@ -309,9 +336,11 @@ export function FieldInput({
   else if (field.type === "choice" || field.type === "member")
     input = (
       <Row>
-        {choices.map((choice) => (
+        {choices.map((choice, index) => (
           <Button
             key={choice.id}
+            ref={index === 0 ? setInputTarget : undefined}
+            label={`${field.label}: ${choice.label}`}
             subtle
             selected={value === choice.id}
             disabled={disabled}
@@ -333,6 +362,7 @@ export function FieldInput({
         ) : null}
         {controller.adapter.preview ? (
           <Button
+            ref={setInputTarget}
             disabled={disabled}
             onPress={() => onChange("preview_image_0")}
           >
@@ -340,6 +370,11 @@ export function FieldInput({
           </Button>
         ) : (
           <Button
+            ref={
+              controller.adapter.features.has("imageUpload")
+                ? setInputTarget
+                : undefined
+            }
             disabled={
               disabled ||
               uploading ||
@@ -380,6 +415,7 @@ export function FieldInput({
           {[1, 2, 3, 4, 5].map((rating) => (
             <Button
               key={rating}
+              ref={rating === 1 ? setInputTarget : undefined}
               label={`${field.label}: ${rating} of 5`}
               selected={number === rating}
               subtle
@@ -465,6 +501,10 @@ export function FieldInput({
           </Button>
           <View style={{ minWidth: 90, flex: 1 }}>
             <Input
+              ref={setInputTarget}
+              invalid={Boolean(validationError)}
+              errorId={errorId}
+              accessibilityHint={validationError ?? control?.hint}
               accessibilityLabel={field.label}
               value={typeof value === "string" ? value : ""}
               keyboardType="numbers-and-punctuation"
@@ -492,6 +532,10 @@ export function FieldInput({
   else
     input = (
       <Input
+        ref={setInputTarget}
+        invalid={Boolean(validationError)}
+        errorId={errorId}
+        accessibilityHint={validationError ?? control?.hint}
         accessibilityLabel={field.label}
         value={typeof value === "string" ? value : ""}
         onChangeText={onChange}
@@ -513,13 +557,45 @@ export function FieldInput({
         }
       />
     );
+  const fallbackNeeded =
+    (field.type === "member" && choices.length === 0) ||
+    (field.type === "image" &&
+      !controller.adapter.preview &&
+      !controller.adapter.features.has("imageUpload"));
   return (
-    <View style={{ gap: 6 }}>
-      <Text style={{ fontSize: 16, fontWeight: "600", color: theme.ink }}>
+    <View
+      ref={fallbackTarget}
+      focusable={fallbackNeeded}
+      tabIndex={fallbackNeeded ? -1 : undefined}
+      accessible={fallbackNeeded}
+      accessibilityLabel={
+        fallbackNeeded
+          ? `${field.label}. ${validationError ?? "No available input."}`
+          : undefined
+      }
+      style={{ gap: 6 }}
+    >
+      <Text
+        style={{
+          fontSize: 16,
+          fontWeight: "600",
+          color: validationError ? "#b42318" : theme.ink,
+        }}
+      >
         {field.label}
         {field.required ? " *" : " (optional)"}
       </Text>
       {input}
+      {validationError ? (
+        <Text
+          nativeID={errorId}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
+          style={{ color: "#b42318", fontSize: 15, lineHeight: 22 }}
+        >
+          {validationError}
+        </Text>
+      ) : null}
       {control?.hint ? <Body muted>{control.hint}</Body> : null}
       {field.type === "timestamp" ? (
         <Body muted>

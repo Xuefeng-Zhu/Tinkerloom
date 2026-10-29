@@ -1,5 +1,6 @@
 import { ownValue } from "../spec/ownValue";
 import { collectionForView, fieldsForView, getField } from "../spec/bindings";
+import { AppSpecError } from "../spec/errors";
 import { normalizeFieldValue } from "../spec/values";
 import type {
   AppSpec,
@@ -52,23 +53,74 @@ export function initialEditorValues(
     }),
   );
 }
-export function normalizedEditorData(
+export class FieldValidationError extends AppSpecError {
+  readonly name = "FieldValidationError";
+  constructor(
+    readonly fieldId: string,
+    readonly fieldLabel: string,
+    readonly detail: string,
+    cause?: unknown,
+  ) {
+    super(
+      cause instanceof AppSpecError ? cause.code : "invalid_appspec",
+      fieldId,
+      detail,
+    );
+    // Preserve the established error message/code/path for non-form consumers.
+    if (cause instanceof Error) this.message = cause.message;
+  }
+}
+function invalidFieldDetail(field: FieldSpec, candidate: unknown): string {
+  if (
+    field.required &&
+    (candidate === null ||
+      candidate === undefined ||
+      (typeof candidate === "string" && candidate.trim() === ""))
+  )
+    return "This field is required.";
+  switch (field.type) {
+    case "integer":
+      return "Enter a supported whole number.";
+    case "number":
+      return "Enter a finite number within the supported range.";
+    case "timestamp":
+      return "Enter a valid date and time with Z or an explicit offset.";
+    case "choice":
+      return "Choose one of the available options.";
+    case "member":
+      return "Choose an eligible member.";
+    case "image":
+      return "Choose an image.";
+    case "boolean":
+      return "Choose yes or no.";
+    default:
+      return "Enter text within 10,000 characters.";
+  }
+}
+/** Validate each visible field independently; no value is rewritten on failure. */
+export function editorValidation(
   fields: readonly FieldSpec[],
   values: EditorValues,
   controls: readonly FormControl[] = [],
   initial?: RuntimeRecord,
-): Record<string, JsonValue> {
-  return Object.fromEntries(
-    fields.map((field) => {
-      const raw = ownValue(values, field.id);
-      let candidate: unknown = raw;
+): { data: Record<string, JsonValue>; issues: FieldValidationError[] } {
+  const entries: [string, JsonValue][] = [],
+    issues: FieldValidationError[] = [];
+  for (const field of fields) {
+    const raw = ownValue(values, field.id);
+    let candidate: unknown = raw;
+    try {
       if (field.type === "integer" || field.type === "number") {
         const text = typeof raw === "string" ? raw.trim() : "";
-        // Number('') and parseFloat('12junk') must never create a silent value.
         if (text === "") candidate = null;
         else {
           if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(text))
-            throw new Error(`${field.label} needs a valid number.`);
+            throw new FieldValidationError(
+              field.id,
+              field.label,
+              "Enter a valid number.",
+              new Error(`${field.label} needs a valid number.`),
+            );
           candidate = Number(text);
         }
       } else if (raw === "") candidate = null;
@@ -83,11 +135,67 @@ export function normalizedEditorData(
         const min = control.control === "rating" ? 1 : control.min!,
           max = control.control === "rating" ? 5 : control.max!;
         if (normalized < min || normalized > max)
-          throw new Error(`${field.label} must be between ${min} and ${max}.`);
+          throw new FieldValidationError(
+            field.id,
+            field.label,
+            `Use a value between ${min} and ${max}.`,
+            new Error(`${field.label} must be between ${min} and ${max}.`),
+          );
       }
-      return [field.id, normalized];
-    }),
+      entries.push([field.id, normalized]);
+    } catch (failure) {
+      issues.push(
+        failure instanceof FieldValidationError
+          ? failure
+          : new FieldValidationError(
+              field.id,
+              field.label,
+              invalidFieldDetail(field, candidate),
+              failure,
+            ),
+      );
+    }
+  }
+  return { data: Object.fromEntries(entries), issues };
+}
+export function normalizedEditorData(
+  fields: readonly FieldSpec[],
+  values: EditorValues,
+  controls: readonly FormControl[] = [],
+  initial?: RuntimeRecord,
+): Record<string, JsonValue> {
+  const result = editorValidation(fields, values, controls, initial);
+  if (result.issues.length) throw result.issues[0];
+  return result.data;
+}
+/** Only a locally structured field issue can request a focus/step transition. */
+export function editorIssueTarget(
+  failure: unknown,
+  steps: readonly { fieldIds: readonly string[] }[],
+  fallbackStep = 0,
+) {
+  if (!(failure instanceof FieldValidationError)) return null;
+  const index = steps.findIndex((step) =>
+    step.fieldIds.includes(failure.fieldId),
   );
+  return {
+    fieldId: failure.fieldId,
+    label: failure.fieldLabel,
+    detail: failure.detail,
+    step: index >= 0 ? index : fallbackStep,
+  };
+}
+export function firstEditorIssueTarget(
+  issues: readonly FieldValidationError[],
+  steps: readonly { fieldIds: readonly string[] }[],
+  fallbackStep = 0,
+) {
+  let first: ReturnType<typeof editorIssueTarget> = null;
+  for (const issue of issues) {
+    const target = editorIssueTarget(issue, steps, fallbackStep);
+    if (target && (!first || target.step < first.step)) first = target;
+  }
+  return first;
 }
 export function recordTitle(
   spec: AppSpec,

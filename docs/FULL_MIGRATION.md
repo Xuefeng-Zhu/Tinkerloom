@@ -446,3 +446,14 @@ validation rejection. All 23 offline probe tests pass. The delayed worker body
 parser now distinguishes interval reconciliation from proof-bound scheduled
 dispatches; six new and 36 retained worker groups pass on Dart 3.11. A fresh
 deployed delivery/cleanup receipt is still required before reminder enablement.
+
+
+### Inline form validation and mounted browser proof
+
+The [React Native web form receipt](evidence/2026-10-28/rn-browser-form-check.json)
+records real account/workspace/template/record creation against the Free backend,
+fresh-reload record visibility, required-field focus and inline aria-invalid
+state, wizard value retention and rejected dirty-form navigation. The exact five
+form-source hashes passed498 local tests plus TypeScript, lint, format and all
+platform exports before subsequent feature integration. This1280×720 browser
+check is not native, narrow-layout or assistive-technology proof.

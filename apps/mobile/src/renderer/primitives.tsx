@@ -1,5 +1,12 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import type { ReactNode } from "react";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Platform,
+} from "react-native";
+import type { ReactNode, Ref, ElementRef } from "react";
 import type { TextInputProps, ViewStyle } from "react-native";
 import { useRuntime } from "./context";
 export function Body({
@@ -67,6 +74,7 @@ export function Button({
   selected = false,
   subtle = false,
   label,
+  ref,
 }: {
   children: ReactNode;
   onPress: () => void;
@@ -74,11 +82,13 @@ export function Button({
   selected?: boolean;
   subtle?: boolean;
   label?: string;
+  ref?: Ref<ElementRef<typeof Pressable>>;
 }) {
   const { theme } = useRuntime();
   const filled = selected || !subtle;
   return (
     <Pressable
+      ref={ref}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ disabled, selected }}
@@ -109,16 +119,36 @@ export function Button({
     </Pressable>
   );
 }
-export function Input(props: TextInputProps) {
+export function Input({
+  ref,
+  invalid = false,
+  errorId,
+  ...props
+}: TextInputProps & {
+  ref?: Ref<ElementRef<typeof TextInput>>;
+  invalid?: boolean;
+  errorId?: string;
+}) {
   const { theme } = useRuntime();
+  // These verified RNWeb props are not forwarded to unsupported native hosts.
+  const webValidation =
+    Platform.OS === "web"
+      ? {
+          "aria-invalid": invalid,
+          "aria-describedby": invalid ? errorId : undefined,
+          "aria-errormessage": invalid ? errorId : undefined,
+        }
+      : {};
   return (
     <TextInput
       {...props}
+      {...webValidation}
+      ref={ref}
       placeholderTextColor={theme.muted}
       style={[
         {
           borderWidth: 1,
-          borderColor: theme.outline,
+          borderColor: invalid ? "#b42318" : theme.outline,
           borderRadius: Math.min(theme.radius, 10),
           padding: 12,
           minHeight: 48,

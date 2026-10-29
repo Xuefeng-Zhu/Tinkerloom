@@ -1,0 +1,76 @@
+{
+  "format": "tinkerloom.rn-web-form-observations.v1",
+  "environment": "Exported React Native web app in Codex in-app browser; real Appwrite Free development backend",
+  "url": "http://localhost:8426/apps/ff62632b-5d0b-4fce-995b-eba928b3c0cf/full",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "documentScrollWidth": 1280
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/mobile/src/renderer/form.tsx",
+      "baseSha256": "3e5baeeda6c651e3981135ddbfeaece82883341182f27eb90a549b02aa895bc3",
+      "sha256": "7c04aac0fae3e29426866a5bab13a8b512aaad697cd4ba0166424489f6cb58ca",
+      "bytes": 10601
+    },
+    {
+      "path": "apps/mobile/src/renderer/fields.tsx",
+      "baseSha256": "5d227b6286b7fbc294e8291264fed85cd2937cf9c14339be8772dc6cbc53eab2",
+      "sha256": "6170a6b1f515246e85efc9bc1c6319b4b8be19f46e6da365bb63f4c3be6a7d8f",
+      "bytes": 18138
+    },
+    {
+      "path": "apps/mobile/src/renderer/model.ts",
+      "baseSha256": "7401f5978fa905679508bc03959d369d7b4ebe40c41b0b9025476202e537ebe5",
+      "sha256": "ee2fbeaa9ac5267defe5e436539946af4e729b6c2f04b5aaa5c187665d0b0308",
+      "bytes": 10572
+    },
+    {
+      "path": "apps/mobile/src/renderer/primitives.tsx",
+      "baseSha256": "673fb47310aae226262d2532f54d06c948733f84d1736942c9949eee991040b3",
+      "sha256": "6204d47c52d58f74941daa9e46a54ebb6839df1825f896067dcf5ad0d9584bf8",
+      "bytes": 4499
+    },
+    {
+      "path": "apps/mobile/src/renderer/formValidation.test.ts",
+      "baseSha256": null,
+      "sha256": "1a04375c35f5cc51b5d8d03706bae4d42951e1f10b597b93cc698970afba4188",
+      "bytes": 8286
+    }
+  ],
+  "observations": [
+    {
+      "action": "Reload the full live Photo Journal",
+      "result": "Previously saved synthetic record is visible; no false0/0 upload recovery or no-request device panel; live mode radio checked."
+    },
+    {
+      "action": "Add entry, then Next with empty Title",
+      "result": "Inline required error; actual document.activeElement aria-label Title and aria-invalid true."
+    },
+    {
+      "action": "Enter synthetic title, Next, Previous",
+      "result": "Step2 then Step1; exact entered title retained."
+    },
+    {
+      "action": "Back, Keep editing",
+      "result": "Leave prompt shown; exact unsaved title retained after rejecting navigation."
+    },
+    {
+      "action": "Back, Discard changes",
+      "result": "Returned to Journal without sending a create request for this unsaved test form."
+    }
+  ],
+  "localChecks": {
+    "tests": 498,
+    "typecheck": true,
+    "lint": true,
+    "format": true,
+    "webIosAndroidExports": true
+  },
+  "limits": [
+    "No physical device or simulator UI/install proof.",
+    "Only1280x720 CSS pixels observed here; narrow/large-text/assistive-technology interaction remains separate.",
+    "Prior stale-chunk errors caused by replacing a mutable local export were observed and fixed by reloading a completed consistent export; not claimed to be a production deployment test."
+  ]
+}
