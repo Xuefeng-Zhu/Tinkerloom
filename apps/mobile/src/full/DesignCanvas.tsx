@@ -8,16 +8,23 @@ import { SemanticView } from "../renderer/views";
 import { Button } from "../components/Button";
 import { PreviewSession } from "./PreviewSession";
 import { Choices, styles } from "./ui";
+import { canvasFieldTargets } from "./inspectorSelection";
 export function DesignCanvas({
   spec,
   staticImageAssets,
   onSelectView,
   onSelectPage,
+  onSelectApp,
+  onSelectField,
+  disabled = false,
 }: {
   spec: AppSpec;
   staticImageAssets?: PreviewStaticImageAssets;
   onSelectView: (id: string) => void;
   onSelectPage: (id: string) => void;
+  onSelectApp: () => void;
+  onSelectField: (collectionId: string, fieldId: string) => void;
+  disabled?: boolean;
 }) {
   const [preview] = useState(
     () => new PreviewSession(spec, "design", staticImageAssets),
@@ -65,9 +72,16 @@ export function DesignCanvas({
   };
   return (
     <View style={{ gap: 12 }}>
+      <Button
+        label={`Inspect app: ${spec.name}`}
+        variant="secondary"
+        disabled={disabled}
+        onPress={onSelectApp}
+      />
       {pages.length > 1 && (
         <Choices
           label="Canvas page"
+          disabled={disabled}
           values={pages.map((p) => p.id)}
           value={page.id}
           onChange={(pageId) => controller.navigate({ pageId }, true)}
@@ -75,6 +89,7 @@ export function DesignCanvas({
       )}
       <Button
         label={`Inspect page: ${page.title}`}
+        disabled={disabled}
         variant="secondary"
         onPress={() => onSelectPage(page.id)}
       />
@@ -97,11 +112,8 @@ export function DesignCanvas({
               }}
             >
               {row.map((view) => (
-                <Pressable
+                <View
                   key={view.id}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Inspect ${view.label}, ${view.type} view`}
-                  onPress={() => onSelectView(view.id)}
                   style={{
                     flex: 1,
                     minWidth: 0,
@@ -113,15 +125,40 @@ export function DesignCanvas({
                     minHeight: 44,
                   }}
                 >
-                  <Text style={styles.muted}>Inspect {view.label}</Text>
-                  <View
-                    pointerEvents="none"
-                    accessibilityElementsHidden
-                    importantForAccessibility="no-hide-descendants"
+                  <Pressable
+                    accessibilityRole="button"
+                    disabled={disabled}
+                    accessibilityState={{ disabled }}
+                    aria-disabled={disabled}
+                    accessibilityLabel={`Inspect ${view.label}, ${view.type} view`}
+                    onPress={() => onSelectView(view.id)}
+                    style={{ minHeight: 44 }}
                   >
-                    <SemanticView view={view} />
+                    <Text style={styles.muted}>Inspect {view.label}</Text>
+                    <View
+                      pointerEvents="none"
+                      accessibilityElementsHidden
+                      importantForAccessibility="no-hide-descendants"
+                    >
+                      <SemanticView view={view} />
+                    </View>
+                  </Pressable>
+                  <View
+                    style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}
+                  >
+                    {canvasFieldTargets(spec, view.id).map((field) => (
+                      <Button
+                        key={field.fieldId}
+                        label={`Inspect field ${field.label} in ${view.label}`}
+                        variant="quiet"
+                        disabled={disabled}
+                        onPress={() =>
+                          onSelectField(field.collectionId, field.fieldId)
+                        }
+                      />
+                    ))}
                   </View>
-                </Pressable>
+                </View>
               ))}
             </View>
           ))}

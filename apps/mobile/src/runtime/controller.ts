@@ -14,6 +14,8 @@ import {
 import { decodeRetainedCommand, MemoryRuntimeCommandStore } from "./commands";
 import type { RuntimeCommandStore } from "./commands";
 import { buildViewQuery, dateBuckets, monthBuckets } from "./query";
+import { locationHistory, resolveLocation, sameLocation } from "./location";
+import type { RuntimeLocationRequest, RuntimeNavigationKind } from "./location";
 import type { ViewSelection } from "./query";
 import type {
   CommandOutcome,
@@ -72,6 +74,7 @@ export class RuntimeController {
   private settings = new Map<string, ViewSettings>();
   private scrolls = new Map<string, number>();
   private request = 0;
+  private locationRequest = 0;
   private disposed = false;
   private unsubscribe = () => {};
   private recovered = false;
@@ -126,6 +129,7 @@ export class RuntimeController {
     if (this.disposed || this.state.accessDenied) return;
     ++this.request;
     this.deferredRefresh = false;
+    ++this.locationRequest;
     this.emit({
       accessDenied: true,
       views: {},
@@ -156,15 +160,21 @@ export class RuntimeController {
     if (!this.disposed && Number.isFinite(offset))
       this.scrolls.set(pageId, Math.max(0, offset));
   }
-  focusRecord(record: RuntimeRecord) {
+  focusRecord(record: RuntimeRecord, editing = false) {
     ensure(
       !this.state.dirty && !this.state.pending,
       "unsaved_changes",
       "Finish the current command first.",
     );
     ++this.request;
+    ++this.locationRequest;
     this.emit({
-      location: { ...this.state.location, recordId: record.id },
+      location: {
+        pageId: this.state.location.pageId,
+        recordId: record.id,
+        ...(editing ? { editing: true } : {}),
+      },
+      history: [...this.state.history, this.state.location],
       record,
       error: null,
     });
@@ -172,6 +182,7 @@ export class RuntimeController {
   dismissRecord() {
     if (this.state.pending) return;
     ++this.request;
+    ++this.locationRequest;
     this.emit({
       location: { pageId: this.state.location.pageId },
       record: null,
@@ -219,6 +230,7 @@ export class RuntimeController {
   }
   setDirty(dirty: boolean) {
     if (dirty) {
+      ++this.locationRequest;
       ++this.request;
       if (this.refreshTask || this.pageReads) this.deferredRefresh = true;
     }
@@ -226,9 +238,15 @@ export class RuntimeController {
     if (!dirty) void this.drainRefresh();
   }
   /** Dirty or unresolved commands require an explicit host decision before leaving. */
-  navigate(location: RuntimeLocation, discard = false): boolean {
-    if (this.state.pending) return false;
+  navigate(
+    location: RuntimeLocation,
+    discard = false,
+    kind: RuntimeNavigationKind = "push",
+  ): boolean {
+    if (this.disposed || this.state.accessDenied || this.state.pending)
+      return false;
     if (this.state.dirty && !discard) return false;
+    if (sameLocation(this.state.location, location)) return false;
     const nav = this.adapter.spec.navigation;
     ensure(
       nav
@@ -238,9 +256,16 @@ export class RuntimeController {
       "This page is not part of the app.",
     );
     ++this.request;
+    ++this.locationRequest;
     this.emit({
       location: { ...location },
-      history: [...this.state.history, this.state.location],
+      history: locationHistory(
+        this.state.history,
+        this.state.location,
+        location,
+        kind,
+        nav?.tabs.map((tab) => tab.pageId) ?? [],
+      ),
       views: {},
       record: null,
       dirty: false,
@@ -250,11 +275,60 @@ export class RuntimeController {
     void this.refresh();
     return true;
   }
+  /** Resolve external identities with current authority before changing the visible location. */
+  async applyLocation(
+    request: RuntimeLocationRequest,
+  ): Promise<"applied" | "blocked" | "stale"> {
+    await this.recover();
+    if (this.disposed || this.state.accessDenied) return "stale";
+    if (!this.canLeave) return "blocked";
+    const generation = ++this.locationRequest;
+    let location: RuntimeLocation;
+    try {
+      location = await resolveLocation(this.adapter, request);
+    } catch (error) {
+      if (this.disposed || generation !== this.locationRequest) return "stale";
+      const failure = runtimeError(error);
+      if (isRuntimeAccessFailure(failure)) this.invalidateAccess(failure);
+      throw failure;
+    }
+    if (
+      this.disposed ||
+      generation !== this.locationRequest ||
+      this.state.accessDenied
+    )
+      return "stale";
+    if (!this.canLeave) return "blocked";
+    if (sameLocation(location, this.state.location)) {
+      await this.refresh();
+      return this.disposed || generation !== this.locationRequest
+        ? "stale"
+        : "applied";
+    }
+    return this.navigate(location, false, "external") ? "applied" : "blocked";
+  }
+  get canGoBack() {
+    return (
+      this.state.history.length > 0 ||
+      !sameLocation(this.state.location, {
+        pageId: this.adapter.spec.navigation?.entryPageId ?? "__legacy__",
+      })
+    );
+  }
   back(discard = false): boolean {
-    if (this.state.pending || (this.state.dirty && !discard)) return false;
-    const previous = this.state.history.at(-1);
-    if (!previous) return false;
+    if (
+      this.disposed ||
+      this.state.accessDenied ||
+      this.state.pending ||
+      (this.state.dirty && !discard)
+    )
+      return false;
+    const previous = this.state.history.at(-1) ?? {
+      pageId: this.adapter.spec.navigation?.entryPageId ?? "__legacy__",
+    };
+    if (sameLocation(previous, this.state.location)) return false;
     ++this.request;
+    ++this.locationRequest;
     this.emit({
       location: previous,
       history: this.state.history.slice(0, -1),
@@ -622,6 +696,7 @@ export class RuntimeController {
     // revision stay in this command even if a newer version appears afterwards.
     ++this.request;
     this.deferredRefresh = true;
+    ++this.locationRequest;
     // Persistence precedes the first network call. A failed save is a definite
     // local failure and must never send an unretained command.
     this.emit({
@@ -711,6 +786,7 @@ export class RuntimeController {
   dispose() {
     if (this.disposed) return;
     this.disposed = true;
+    ++this.locationRequest;
     ++this.request;
     this.deferredRefresh = false;
     this.unsubscribe();

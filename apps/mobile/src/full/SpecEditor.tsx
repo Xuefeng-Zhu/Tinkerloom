@@ -1,5 +1,6 @@
 import type { PreviewStaticImageAssets } from "../runtime/previewImageAssets";
-import { useState } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
+import { InspectorFlushQueue } from "./inspectorSelection";
 import { Text, View } from "react-native";
 import { Button } from "../components/Button";
 import { Field } from "../components/Field";
@@ -31,6 +32,9 @@ type Section =
   | "appearance"
   | "reminders"
   | "JSON";
+const InspectorFlushContext = createContext<(() => Promise<boolean>) | null>(
+  null,
+);
 function LabelInput({
   label,
   value,
@@ -43,13 +47,17 @@ function LabelInput({
   disabled?: boolean;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
+  const flush = useContext(InspectorFlushContext);
   return (
     <Field
       label={label}
       value={draft ?? value}
       editable={!disabled}
       onFocus={() => setDraft(value)}
-      onBlur={() => setDraft(null)}
+      onBlur={() => {
+        setDraft(null);
+        void flush?.();
+      }}
       onChangeText={(text) => {
         setDraft(text);
         onChange(text);
@@ -184,19 +192,58 @@ export function SpecEditor({
   disabled,
   onEdit,
   onReplace,
+  onFlush,
 }: {
   spec: AppSpec;
   staticImageAssets?: PreviewStaticImageAssets;
   disabled: boolean;
   onEdit: (edit: SemanticEdit, debounce?: boolean) => void;
   onReplace: (value: unknown) => void;
+  onFlush?: () => Promise<boolean>;
 }) {
   const [section, setSection] = useState<Section>("design"),
     [error, setError] = useState<string | null>(null),
     [collectionId, setCollection] = useState(spec.collections[0]?.id ?? ""),
     [viewId, setView] = useState(spec.views[0]?.id ?? ""),
     [pageId, setPage] = useState(spec.navigation?.pages[0]?.id ?? ""),
-    [actionId, setAction] = useState(spec.actions[0]?.id ?? "");
+    [actionId, setAction] = useState(spec.actions[0]?.id ?? ""),
+    [fieldId, setField] = useState(spec.collections[0]?.fields[0]?.id ?? "");
+  const [inspector] = useState(
+    () =>
+      new InspectorFlushQueue({
+        flush: () => onFlush?.() ?? Promise.resolve(true),
+        spec: () => spec,
+        available: () => !disabled,
+        select: (target) => {
+          if (target.kind === "app") setSection("appearance");
+          if (target.kind === "view") {
+            setView(target.viewId);
+            setSection("views");
+          }
+          if (target.kind === "page") {
+            setPage(target.pageId);
+            setSection("pages");
+          }
+          if (target.kind === "field") {
+            setCollection(target.collectionId);
+            setField(target.fieldId);
+            setSection("fields");
+          }
+        },
+      }),
+  );
+  useLayoutEffect(() => {
+    inspector.activate();
+    return () => inspector.dispose();
+  }, [inspector]);
+  useLayoutEffect(() => {
+    inspector.configure({
+      flush: () => onFlush?.() ?? Promise.resolve(true),
+      spec: () => spec,
+      available: () => !disabled,
+    });
+  }, [inspector, spec, disabled, onFlush]);
+  const navigationDisabled = disabled && !inspector.flushing;
   const collection =
       spec.collections.find((c) => c.id === collectionId) ??
       spec.collections[0],
@@ -243,10 +290,11 @@ export function SpecEditor({
   const options = view?.options as Record<string, unknown> | undefined;
   const updateOptions = (changes: Record<string, unknown>) =>
     updateView({ options: { ...options, ...changes } });
-  return (
+  const content = (
     <View style={{ gap: 16 }}>
       <Choices
         label="Edit your declaration"
+        disabled={navigationDisabled}
         values={
           [
             "design",
@@ -260,7 +308,9 @@ export function SpecEditor({
           ] as const
         }
         value={section}
-        onChange={setSection}
+        onChange={(next) => {
+          void inspector.transition(() => setSection(next));
+        }}
       />
       {error && <Notice text={error} error />}
       {section === "design" && (
@@ -280,13 +330,22 @@ export function SpecEditor({
           <DesignCanvas
             staticImageAssets={staticImageAssets}
             spec={spec}
-            onSelectView={(id) => {
-              setView(id);
-              setSection("views");
+            disabled={navigationDisabled}
+            onSelectApp={() => {
+              void inspector.inspect({ kind: "app" });
             }}
-            onSelectPage={(id) => {
-              setPage(id);
-              setSection("pages");
+            onSelectField={(collectionId, fieldId) => {
+              void inspector.inspect({
+                kind: "field",
+                collectionId,
+                fieldId,
+              });
+            }}
+            onSelectView={(viewId) => {
+              void inspector.inspect({ kind: "view", viewId });
+            }}
+            onSelectPage={(pageId) => {
+              void inspector.inspect({ kind: "page", pageId });
             }}
           />
         </Card>
@@ -299,7 +358,10 @@ export function SpecEditor({
                 label="Collection"
                 values={spec.collections.map((c) => c.id)}
                 value={collection.id}
-                onChange={setCollection}
+                disabled={navigationDisabled}
+                onChange={(next) => {
+                  void inspector.transition(() => setCollection(next));
+                }}
               />
               <LabelInput
                 label="Collection label"
@@ -312,44 +374,65 @@ export function SpecEditor({
                   )
                 }
               />
-              {collection.fields.map((field) => (
-                <View key={field.id} style={styles.card}>
-                  <Text style={styles.muted}>
-                    {field.id} · {field.type} ·{" "}
-                    {field.required ? "Required" : "Optional"}
-                  </Text>
-                  <LabelInput
-                    label={`${field.id} label`}
-                    value={field.label}
-                    disabled={disabled}
-                    onChange={(label) =>
-                      apply(
-                        {
-                          type: "RenameField",
-                          collectionId: collection.id,
-                          fieldId: field.id,
-                          label,
-                        },
-                        true,
-                      )
-                    }
-                  />
-                  {field.type === "choice" && (
-                    <ChoiceAdder
-                      choices={field.choices ?? []}
+              <Choices
+                label="Inspect field"
+                disabled={navigationDisabled}
+                values={collection.fields.map((field) => field.id)}
+                value={
+                  collection.fields.some((field) => field.id === fieldId)
+                    ? fieldId
+                    : (collection.fields[0]?.id ?? "")
+                }
+                onChange={(next) => {
+                  void inspector.transition(() => setField(next));
+                }}
+              />
+              {collection.fields
+                .filter(
+                  (field) =>
+                    field.id ===
+                    (collection.fields.some((item) => item.id === fieldId)
+                      ? fieldId
+                      : collection.fields[0]?.id),
+                )
+                .map((field) => (
+                  <View key={field.id} style={styles.card}>
+                    <Text style={styles.muted}>
+                      {field.id} · {field.type} ·{" "}
+                      {field.required ? "Required" : "Optional"}
+                    </Text>
+                    <LabelInput
+                      label={`${field.id} label`}
+                      value={field.label}
                       disabled={disabled}
-                      onAdd={(choice) =>
-                        apply({
-                          type: "AddChoice",
-                          collectionId: collection.id,
-                          fieldId: field.id,
-                          choice,
-                        })
+                      onChange={(label) =>
+                        apply(
+                          {
+                            type: "RenameField",
+                            collectionId: collection.id,
+                            fieldId: field.id,
+                            label,
+                          },
+                          true,
+                        )
                       }
                     />
-                  )}
-                </View>
-              ))}
+                    {field.type === "choice" && (
+                      <ChoiceAdder
+                        choices={field.choices ?? []}
+                        disabled={disabled}
+                        onAdd={(choice) =>
+                          apply({
+                            type: "AddChoice",
+                            collectionId: collection.id,
+                            fieldId: field.id,
+                            choice,
+                          })
+                        }
+                      />
+                    )}
+                  </View>
+                ))}
               <Text style={styles.title}>Add an optional field</Text>
               <Field
                 label="Field label"
@@ -852,7 +935,9 @@ export function SpecEditor({
                   value={page.viewIds.includes(v.id)}
                   disabled={disabled}
                   onChange={(value) =>
-                    updatePage({ viewIds: toggled(page.viewIds, v.id, value) })
+                    updatePage({
+                      viewIds: toggled(page.viewIds, v.id, value),
+                    })
                   }
                 />
               ))}
@@ -931,6 +1016,14 @@ export function SpecEditor({
       )}
       {section === "appearance" && (
         <Card title="Appearance">
+          <LabelInput
+            label="App name"
+            value={spec.name}
+            disabled={disabled}
+            onChange={(label) =>
+              apply({ type: "RenameLabel", targetId: "app", label }, true)
+            }
+          />
           <Choices
             label="Theme"
             values={["teal", "amber", "blue", "rose", "sage"] as const}
@@ -1056,6 +1149,11 @@ export function SpecEditor({
         </Card>
       )}
     </View>
+  );
+  return (
+    <InspectorFlushContext.Provider value={() => inspector.flush()}>
+      {content}
+    </InspectorFlushContext.Provider>
   );
 }
 function ChoiceAdder({

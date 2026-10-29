@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Modal, ScrollView, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { RuntimeController } from "../runtime/controller";
@@ -14,6 +20,8 @@ import { pageRows, resolveAppearance } from "./appearance";
 import { Body, Button, Notice, Panel, Row } from "./primitives";
 import { DetailsView, SemanticView } from "./views";
 import { RecordForm } from "./form";
+import { recordEditorView, sameLocation } from "../runtime/location";
+import { editorRecordSnapshot } from "./editorSnapshot";
 
 interface EditorTarget {
   view: ViewSpecOf<"form">;
@@ -24,7 +32,10 @@ export interface RuntimeRendererProps {
   timers?: UtilityTimerController;
   device?: DeviceBridge;
   onExit?: () => void;
-  onLocationChange?: (location: RuntimeLocation) => void;
+  onLocationChange?: (
+    location: RuntimeLocation,
+    kind: "push" | "pop" | "replace",
+  ) => void;
 }
 /** A semantic host. Its controller/command lifetime is owned by the app scope. */
 export function RuntimeRenderer(props: RuntimeRendererProps) {
@@ -45,7 +56,25 @@ function RuntimeRendererScope({
     spec = controller.adapter.spec,
     theme = useMemo(() => resolveAppearance(spec), [spec]),
     dimensions = useWindowDimensions();
-  const [editor, setEditor] = useState<EditorTarget | null>(null),
+  const [editor, setEditor] = useState<EditorTarget | null>(() => {
+      const current = controller.getSnapshot();
+      if (
+        !current.location.editing ||
+        !current.record ||
+        controller.views.some(
+          (view) =>
+            view.type === "form" &&
+            view.collectionId === current.record?.collectionId,
+        )
+      )
+        return null;
+      const view = recordEditorView(
+        controller.adapter,
+        current.location,
+        current.record,
+      );
+      return view ? { view, record: current.record } : null;
+    }),
     [details, setDetails] = useState<{
       view: ViewSpec;
       record: RuntimeRecord;
@@ -77,12 +106,80 @@ function RuntimeRendererScope({
   useEffect(() => {
     void controller.refresh();
   }, [controller]);
-  useEffect(() => {
-    onLocationChange?.(state.location);
-  }, [state.location, onLocationChange]);
+  // External locations may arrive after the authorized record read finishes.
+  useLayoutEffect(() => {
+    let previousLocation = controller.getSnapshot().location;
+    return controller.subscribe(() => {
+      const snapshot = controller.getSnapshot();
+      const changedLocation = !sameLocation(
+        previousLocation,
+        snapshot.location,
+      );
+      previousLocation = snapshot.location;
+      if (snapshot.dirty || snapshot.pending) return;
+      const record = snapshot.record;
+      if (
+        snapshot.location.editing &&
+        record &&
+        record.id === snapshot.location.recordId
+      ) {
+        setDetails(null);
+        const view = recordEditorView(
+          controller.adapter,
+          snapshot.location,
+          record,
+        );
+        const pageForm = controller.views.some(
+          (item) =>
+            item.type === "form" && item.collectionId === record.collectionId,
+        );
+        setEditor((current) =>
+          view && !pageForm
+            ? !changedLocation &&
+              current?.record?.id === record.id &&
+              current.view.collectionId === record.collectionId
+              ? { ...current, record }
+              : { view, record }
+            : null,
+        );
+      } else if (record && record.id === snapshot.location.recordId) {
+        setEditor(null);
+        const pageDetails = controller.views.some(
+          (view) =>
+            view.type === "details" &&
+            view.collectionId === record.collectionId,
+        );
+        const view = controller.views.find(
+          (item) =>
+            item.collectionId === record.collectionId && item.type !== "form",
+        );
+        setDetails((current) =>
+          !pageDetails && view
+            ? !changedLocation && current?.record.id === record.id
+              ? { ...current, record }
+              : { view, record }
+            : null,
+        );
+      } else if (!snapshot.location.recordId) {
+        setDetails(null);
+        setEditor((current) =>
+          changedLocation || current?.record ? null : current,
+        );
+      }
+    });
+  }, [controller]);
+  const notifyLocation = (kind: "push" | "pop" | "replace") =>
+    onLocationChange?.(controller.getSnapshot().location, kind);
+  const editorRecord = editorRecordSnapshot(
+    editor?.record,
+    state.record,
+    state.dirty,
+    !!state.pending,
+  );
   const guard = (action: () => void) => {
-    if (state.pending) return;
-    if (state.dirty) setLeave(() => action);
+    const current = controller.getSnapshot();
+    if (current.pending) return;
+    if (current.dirty) setLeave(() => action);
     else action();
   };
   const navigate = (location: RuntimeLocation) =>
@@ -90,7 +187,7 @@ function RuntimeRendererScope({
       controller.setDirty(false);
       setEditor(null);
       setDetails(null);
-      controller.navigate(location, true);
+      if (controller.navigate(location, true)) notifyLocation("push");
     });
   const openRecord = (view: ViewSpec, record: RuntimeRecord) => {
     if (view.detailPageId)
@@ -100,6 +197,7 @@ function RuntimeRendererScope({
         setEditor(null);
         controller.focusRecord(record);
         setDetails({ view, record });
+        notifyLocation("push");
       });
   };
   const edit = (view: ViewSpec, record?: RuntimeRecord) => {
@@ -112,7 +210,7 @@ function RuntimeRendererScope({
     }
     guard(() => {
       setDetails(null);
-      if (record) controller.focusRecord(record);
+      if (record) controller.focusRecord(record, true);
       setEditor({
         view: {
           id: `editor_${view.id}`,
@@ -124,14 +222,17 @@ function RuntimeRendererScope({
         },
         record,
       });
+      if (record) notifyLocation("push");
     });
   };
   const closeOverlay = () =>
     guard(() => {
       controller.setDirty(false);
-      controller.dismissRecord();
+      const recordOverlay = !!controller.getSnapshot().location.recordId;
+      if (recordOverlay && !controller.back(true)) controller.dismissRecord();
       setEditor(null);
       setDetails(null);
+      if (recordOverlay) notifyLocation("pop");
     });
   const page = spec.navigation?.pages.find(
       (item) => item.id === state.location.pageId,
@@ -216,14 +317,14 @@ function RuntimeRendererScope({
                 Close app
               </Button>
             ) : null}
-            {state.history.length ? (
+            {controller.canGoBack ? (
               <Button
                 subtle
                 disabled={Boolean(state.pending)}
                 onPress={() =>
                   guard(() => {
                     controller.setDirty(false);
-                    controller.back(true);
+                    if (controller.back(true)) notifyLocation("pop");
                   })
                 }
               >
@@ -369,13 +470,19 @@ function RuntimeRendererScope({
             >
               <Panel title={editor?.view.label ?? "Record details"}>
                 {editor ? (
-                  <RecordForm
-                    key={`${editor.view.id}:${editor.record?.id ?? "new"}`}
-                    view={editor.view}
-                    record={editor.record}
-                    onSaved={() => setEditor(null)}
-                    onCancel={closeOverlay}
-                  />
+                  editorRecord === null ? (
+                    <Notice>
+                      This record is unavailable. Reopen it before editing.
+                    </Notice>
+                  ) : (
+                    <RecordForm
+                      key={`${editor.view.id}:${editorRecord?.id ?? "new"}:${editorRecord?.revision ?? 0}`}
+                      view={editor.view}
+                      record={editorRecord}
+                      onSaved={closeOverlay}
+                      onCancel={closeOverlay}
+                    />
+                  )
                 ) : details ? (
                   <DetailsView
                     view={details.view}
