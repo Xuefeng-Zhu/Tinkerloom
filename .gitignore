@@ -51,3 +51,4 @@ scripts/host-storage-probe/app.js
 **/macos/Flutter/Flutter-Debug.xcconfig
 **/macos/Flutter/Flutter-Release.xcconfig
 **/xcuserdata/
+**/ios/Flutter/Flutter.podspec
