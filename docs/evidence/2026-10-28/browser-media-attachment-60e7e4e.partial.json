@@ -1,0 +1,35 @@
+{
+  "capturedAt": "2026-10-29T07:33:47.361160+00:00",
+  "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+  "status": "partial",
+  "host": "React Native web export localhost:8426 with actual Appwrite Free development Core43 deployment6ae2c7c4c9c5bd7f2d7c",
+  "fixture": {
+    "path": "/private/tmp/tinkerloom-browser-image-fixtures/synthetic-red.png",
+    "bytes": 76,
+    "dimensions": [
+      16,
+      8
+    ],
+    "sha256": "f2769a5ed741400a59d8d1d986c80dc29d26b1750f9f59f17bfe9f3450de6886"
+  },
+  "observed": {
+    "newAssetsSelectedForUpload": 1,
+    "uploadedBytes": 76,
+    "processingStatus": "ready after one explicit read-only Check image status",
+    "newRecords": 1,
+    "firstRecordTitle": "Synthetic image read A",
+    "firstCreateClicks": 1,
+    "firstCreateAcknowledgment": "Saved",
+    "firstSavedGalleryImage": "No image",
+    "firstHarnessOrdering": "Root batched Attach ready image and Next without waiting for attachment validation; this alone is not evidence of a product defect.",
+    "secondAttempt": "Opened matching new-create form, filled Synthetic retained image read B, clicked only Attach ready image and waited for media busy to settle. Attachment button re-enabled, with no photo preview or attached feedback; title retained and record not saved.",
+    "secondVisibleHostWarning": "Resolve the retained operation before opening this app link."
+  },
+  "sourceInvestigation": "RecoveryPanel lifetime effect depends on onAttach, and FieldInput passes an inline callback; async media busy/status parent renders can cancel the pending attachment token. Mounted reproduction and narrow fix underway.",
+  "scopeLimits": [
+    "READY upload is not saved-attachment proof.",
+    "Exact Cloud request/error envelopes were not captured.",
+    "One76-byte synthetic asset; no two-distinct-asset Cloud, native picker, hardware, worst-case image-memory or production claim.",
+    "No upload writes repeated and no second record submitted; ready recovery remains available for corrected attachment test."
+  ]
+}

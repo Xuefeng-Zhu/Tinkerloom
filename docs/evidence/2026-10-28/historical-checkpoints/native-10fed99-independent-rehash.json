@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "checkpointSourceCommit": "10fed99f87d0b435ee91f55d60f54a6aef6a65a0",
+  "checkpointSha256": "900005709e5460f63761bd7599a9d38448e87902009edf7c513c664726f6f523",
+  "sourceFileCount": 292,
+  "inputSha256": "b6c42d96430a00e00f050e8ffab5bd9358f24d353bdf9f6fe45183a30cd4454b",
+  "compiledSourceSha256": "e68100e10e97e2c7db444411373b2f3de904e3c56d43756407878918004ea7d3",
+  "verifiedAt": "2026-10-29T04:12:15.215228+00:00",
+  "verification": {
+    "allCheckpointReceiptHashes": 19,
+    "allArtifactHashes": 3,
+    "allCompiledSourceHashes": 292,
+    "allPriorPreservedFiles": 592,
+    "all11NestedNativeModuleFilesUnchanged": true,
+    "realInstalledNodeModules": true,
+    "matchingPublicConfigHash": true
+  },
+  "artifacts": {
+    "android": {
+      "artifact": "/private/tmp/tinkerloom-native-final-k5dvctdw/incremental-ready-1ekmtsch/artifacts/Tinkerloom-android-debug-10fed99f-e68100e1.apk",
+      "bytes": 263603780,
+      "sha256": "ee3f23a822e17adb0a135857beed7a17bb972ba687e6908ba482981b8506869b",
+      "embeddedJavaScript": false,
+      "productionSigning": false
+    },
+    "ios": {
+      "artifact": "/private/tmp/tinkerloom-native-final-k5dvctdw/incremental-ready-1ekmtsch/artifacts/Tinkerloom-ios-simulator-release-10fed99f-e68100e1.zip",
+      "bytes": 23544706,
+      "sha256": "f94e76964fa0a3be1cf3ecf0d4f010751458478e89be7fc4ad08c666e3c530ed",
+      "embeddedJavaScript": true,
+      "productionSigning": false
+    },
+    "android-release": {
+      "artifact": "/private/tmp/tinkerloom-native-final-k5dvctdw/incremental-ready-1ekmtsch/artifacts/Tinkerloom-android-local-release-debug-signed-10fed99f-e68100e1.apk",
+      "bytes": 116515786,
+      "sha256": "af52f0b94d5089b53081f884eedc7f4e9b1ac6b68a7cbad70a7b59991e6b89ba",
+      "embeddedJavaScript": true,
+      "productionSigning": false
+    }
+  },
+  "freeGiB": 11.734,
+  "diskFloorGiB": 5,
+  "nextSourceCommit": null,
+  "sourceCacheChanged": false,
+  "nextBuildStarted": false,
+  "deviceBooted": false,
+  "installed": false,
+  "launched": false,
+  "uiOrHardwareVerified": false,
+  "overallMigrationComplete": false
+}

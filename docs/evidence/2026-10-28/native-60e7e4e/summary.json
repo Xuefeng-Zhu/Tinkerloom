@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+  "sourceFiles": 314,
+  "inputSha256": "dc7654dd34e46a7f2f47a819de529fb6baa3a59b5190b077540f934c3aba958b",
+  "compiledSourceSha256": "5d9c16e6516014dd82b42e03043fdb43598f683a9b67140ea30fc24ed97fa926",
+  "checkpoint": {
+    "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/checkpoint.json",
+    "sha256": "9e35891a44f13cc97e8b3583a0ed3fac44c2d6dad3c7ebf85ade4df7b6a815c7"
+  },
+  "nativeInputsUnchanged": true,
+  "compiledSourceDifference": "Recorded Expo CNG android/ios package-script transform only",
+  "realInstalledNodeModules": true,
+  "matchingPublicConfigHashVerifiedWithoutValues": true,
+  "historicalSandboxFailureFilesPreserved": 8,
+  "currentNativeBuildAttemptsRetried": false,
+  "checks": {
+    "typecheck": true,
+    "lint": true,
+    "allPlatformExports": true,
+    "all16MarkersAnd16RouteKeysInActualExportsAndBothEmbeddedReleases": true,
+    "sourceMarkerInclusionIsNotSemanticRuntimeProof": true
+  },
+  "builds": {
+    "android": {
+      "artifact": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/artifacts/Tinkerloom-android-debug-60e7e4e4-5d9c16e6.apk",
+      "bytes": 263603780,
+      "sha256": "ee3f23a822e17adb0a135857beed7a17bb972ba687e6908ba482981b8506869b",
+      "elapsedSeconds": 34.19,
+      "embeddedJavaScript": false,
+      "architectures": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "x86",
+        "x86_64"
+      ],
+      "requiresMetro": true,
+      "signing": "unchanged generated development debug signing"
+    },
+    "ios": {
+      "artifact": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/artifacts/Tinkerloom-ios-simulator-release-60e7e4e4-5d9c16e6.zip",
+      "bytes": 23554503,
+      "sha256": "a269c998d60d60a3ca3ee8609cf5992f7dfb5db97a50c47ae51c9cf17eba61a1",
+      "elapsedSeconds": 22.15,
+      "embeddedJavaScript": true,
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "requiresMetro": false,
+      "signing": "unsigned simulator build",
+      "embeddedJavaScriptSha256": "00d54902044f7fafca15d21921ebdb058acf3b6c06bf5d4b1a43aa319d187277"
+    },
+    "android-release": {
+      "artifact": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/artifacts/Tinkerloom-android-local-release-debug-signed-60e7e4e4-5d9c16e6.apk",
+      "bytes": 116536234,
+      "sha256": "4a1249c2748966348e1a3c8fbf902f9a92650ff6d6a0c6b62cd44c0bf3340070",
+      "elapsedSeconds": 42.25,
+      "embeddedJavaScript": true,
+      "architectures": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "x86",
+        "x86_64"
+      ],
+      "requiresMetro": false,
+      "signing": "unchanged generated development debug signing",
+      "embeddedJavaScriptSha256": "4311af5a4e84ca5d2e2d9950abadea6e3e0b0ba3b974fb7ba8406d5b1c1de65d"
+    }
+  },
+  "unchangedDevelopmentCertificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "preservedPriorFileCount": 2873,
+  "allPrior0acf9eadAndEarlierArtifactsPreserved": true,
+  "deviceBooted": false,
+  "installed": false,
+  "launched": false,
+  "uiOrHardwareVerified": false,
+  "appwriteNativeSignInVerified": false,
+  "productionSigning": false,
+  "overallMigrationComplete": false,
+  "freeGiB": 8.08,
+  "finishedAt": "2026-10-29T06:55:46.797649+00:00",
+  "selectedSourceInputs": {
+    "src/full/FullAppController.ts": {
+      "sha256": "a934f5629d97f7f842280642fc10d693cc8e37484b33d7bbc09fc5b19b4ced5b",
+      "gitBlob": "af63d5035c4b00c044c7178e4da93e19c479142a",
+      "unchangedFrom0acf9ead": true
+    },
+    "src/full/FullAppScreen.tsx": {
+      "sha256": "840843e4720ad52ed8b704cacc79e5c8a88cc820db47641745338b474cbaf92b",
+      "gitBlob": "de23c777fc171a436b8c1c477424452f8e40e4e1",
+      "unchangedFrom0acf9ead": true
+    },
+    "src/full/FullRegistry.ts": {
+      "sha256": "3ea2bfe4d3b52e885ca053c6f5d59f37c3ec31e29b14da50501aee77afc2d934",
+      "gitBlob": "d491b998c2d32a7696feb29a4e0833034e7c2fc0",
+      "unchangedFrom0acf9ead": false
+    },
+    "src/full/FullWorkspaceController.ts": {
+      "sha256": "afc5666f09c02f823e7bbd616a47d2a843b40404054f20dcd2a3c17396cc5753",
+      "gitBlob": "77bc27f7037a0de7f70c15d440a4744708923db4",
+      "unchangedFrom0acf9ead": true
+    },
+    "src/media/controller.ts": {
+      "sha256": "9e58d64ac52995b10568ffec63d460637db1d4b6294711b4392fea8db06b2380",
+      "gitBlob": "c170931ea4c20a223b1d5838329c2b8c085b96da",
+      "unchangedFrom0acf9ead": false
+    },
+    "src/notifications/withReminders.ts": {
+      "sha256": "cc8243d1d8550b162fe8f1407a6092b3c2f97954152297fbf0072c53ca46cece",
+      "gitBlob": "ed125d42df35776957a491783c190a08a95ed6b5",
+      "unchangedFrom0acf9ead": false
+    },
+    "src/runtime/guardedReads.ts": {
+      "sha256": "5f51bc6003494a5d74572d710f773d4eebea77f88a2914c8c32311aa6bd4adf8",
+      "gitBlob": "5e7d9d687e3401fa32fa3d0be51e46d4f59a12ed",
+      "unchangedFrom0acf9ead": false
+    },
+    "src/state/controller.ts": {
+      "sha256": "d72151cd54ece57b0b1811f91cb60d6f1202fba40a067a2168725f1235ca43b7",
+      "gitBlob": "cd356ab492c181dcc579be107e183be9a87e641a",
+      "unchangedFrom0acf9ead": false
+    }
+  },
+  "guardedReadCoordinatorSemanticProof": "Exact source inclusion here; deterministic SDK/service tests and fresh Cloud/browser verification are separate evidence."
+}

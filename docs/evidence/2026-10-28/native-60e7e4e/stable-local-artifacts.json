@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+  "copies": [
+    {
+      "kind": "android-release",
+      "path": "/Users/frank/mygit/Tinkerloom/output/native/2026-10-28/Tinkerloom-android-local-release-60e7e4e.apk",
+      "bytes": 116536234,
+      "sha256": "4a1249c2748966348e1a3c8fbf902f9a92650ff6d6a0c6b62cd44c0bf3340070",
+      "ignored": true
+    },
+    {
+      "kind": "ios",
+      "path": "/Users/frank/mygit/Tinkerloom/output/native/2026-10-28/Tinkerloom-ios-simulator-release-60e7e4e.zip",
+      "bytes": 23554503,
+      "sha256": "a269c998d60d60a3ca3ee8609cf5992f7dfb5db97a50c47ae51c9cf17eba61a1",
+      "ignored": true
+    }
+  ],
+  "installed": false,
+  "launched": false
+}

@@ -1,0 +1,611 @@
+{
+  "audit": "independent exact-source complete guarded-read native package and platform-export audit",
+  "createdAt": "2026-10-29T06:56:07.172832+00:00",
+  "status": "pass",
+  "failures": [],
+  "source": {
+    "commit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+    "manifest": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/source-manifest.json",
+    "trackedGitBlobsVerified": 314,
+    "snapshotFilesVerified": 314,
+    "compiledCacheFilesVerified": 314,
+    "inputSha256": "dc7654dd34e46a7f2f47a819de529fb6baa3a59b5190b077540f934c3aba958b",
+    "compiledSourceSha256": "5d9c16e6516014dd82b42e03043fdb43598f683a9b67140ea30fc24ed97fa926",
+    "onlyCngSourceTransform": [
+      "package.json"
+    ],
+    "nativeProtectedPathsUnchangedFromPrior": 26,
+    "all11NestedNativeModuleFilesUnchanged": [
+      "modules/tinkerloom-device/LICENSE",
+      "modules/tinkerloom-device/README.md",
+      "modules/tinkerloom-device/android/build.gradle",
+      "modules/tinkerloom-device/android/src/main/AndroidManifest.xml",
+      "modules/tinkerloom-device/android/src/main/java/expo/modules/tinkerloomdevice/TinkerloomDeviceModule.kt",
+      "modules/tinkerloom-device/expo-module.config.json",
+      "modules/tinkerloom-device/index.ts",
+      "modules/tinkerloom-device/ios/TinkerloomDevice.podspec",
+      "modules/tinkerloom-device/ios/TinkerloomDeviceModule.swift",
+      "modules/tinkerloom-device/src/TinkerloomDeviceModule.ts",
+      "modules/tinkerloom-device/src/TinkerloomDeviceModule.web.ts"
+    ],
+    "installedLockedDependencyVersionsVerified": {
+      "expo": "58.0.20",
+      "react-native": "0.88.0",
+      "expo-image-picker": "58.0.10",
+      "expo-image-loader": "58.0.3",
+      "hermes-compiler": "260318099.0.4"
+    },
+    "realNodeModules": true,
+    "ignoredConfigHashMatchedWithoutValues": true
+  },
+  "finalSourceRecheck": {
+    "snapshotMismatches": [],
+    "compiledCacheMismatches": []
+  },
+  "checksAndBuilds": [
+    {
+      "phase": "checks",
+      "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+      "recordedExitCode": 0,
+      "logs": [
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/logs/checks-0.log",
+          "sha256": "55b6ee7f1291ad29c1e978c9790a6b5f37e9ed41df6b6f37f0580db0bebdf990",
+          "successMarkerFound": true,
+          "recordedExitCode": 0,
+          "command": [
+            "npm",
+            "run",
+            "typecheck"
+          ]
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/logs/checks-1.log",
+          "sha256": "d473278ee1b2698cc1938b4f8c8113ee197462819573122106b56d26b60adeac",
+          "successMarkerFound": true,
+          "recordedExitCode": 0,
+          "command": [
+            "npm",
+            "run",
+            "lint"
+          ]
+        }
+      ],
+      "sourceChangesRecorded": []
+    },
+    {
+      "phase": "bundle",
+      "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+      "recordedExitCode": 0,
+      "logs": [
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/logs/bundle-0.log",
+          "sha256": "ba3bac6cd6cfc2639bdee8c6422b420f87bd58ed9237bc1250a4666ee7effd41",
+          "successMarkerFound": true,
+          "recordedExitCode": 0,
+          "command": [
+            "node",
+            "node_modules/expo/bin/cli",
+            "export",
+            "--platform",
+            "all",
+            "--output-dir",
+            "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export"
+          ]
+        }
+      ],
+      "sourceChangesRecorded": []
+    },
+    {
+      "phase": "android",
+      "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+      "recordedExitCode": 0,
+      "logs": [
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/logs/android-0.log",
+          "sha256": "5a568458cc2107d2bac484704f5fdbe32e130861b195ce8e10efb0f1321ee85a",
+          "successMarkerFound": true,
+          "recordedExitCode": 0,
+          "command": [
+            "./gradlew",
+            ":app:assembleDebug",
+            "--offline",
+            "--no-daemon",
+            "--console=plain",
+            "--max-workers=2"
+          ]
+        }
+      ],
+      "sourceChangesRecorded": []
+    },
+    {
+      "phase": "ios",
+      "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+      "recordedExitCode": 0,
+      "logs": [
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/logs/ios-0.log",
+          "sha256": "fe7864f087487a783c87eef2cccd787b912a3a16b7ca228f012bfd74b9e0d2ba",
+          "successMarkerFound": true,
+          "recordedExitCode": 0,
+          "command": [
+            "xcodebuild",
+            "-workspace",
+            "ios/Tinkerloom.xcworkspace",
+            "-scheme",
+            "Tinkerloom",
+            "-configuration",
+            "Release",
+            "-sdk",
+            "iphonesimulator",
+            "-destination",
+            "generic/platform=iOS Simulator",
+            "-derivedDataPath",
+            "/private/tmp/tinkerloom-native-module-4g365zp6/ios-derived-data",
+            "-jobs",
+            "3",
+            "CODE_SIGNING_ALLOWED=NO",
+            "build"
+          ]
+        }
+      ],
+      "sourceChangesRecorded": []
+    },
+    {
+      "phase": "android-release",
+      "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+      "recordedExitCode": 0,
+      "logs": [
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/logs/android-release-0.log",
+          "sha256": "7e53d45107e2235d39b803b8b3cbbbe3c11d106719dd0a44474156cbc8e3e408",
+          "successMarkerFound": true,
+          "recordedExitCode": 0,
+          "command": [
+            "./gradlew",
+            ":app:assembleRelease",
+            "--offline",
+            "--no-daemon",
+            "--console=plain",
+            "--max-workers=2"
+          ]
+        }
+      ],
+      "sourceChangesRecorded": []
+    }
+  ],
+  "exports": [
+    {
+      "platform": "android",
+      "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/android/entry-eaa35d200e891e0a47b9c1210b5e2b77.hbc",
+      "sha256": "89cdc3f6f364b7462f2ab0f7482bd3b1b73bc409a1d2b22d1b6c995c7bb75c93",
+      "bytes": 5101074,
+      "hermesBytecodeVersion": 99,
+      "sourceMarkers": {
+        "formBusy": true,
+        "beginFormInteraction": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Finish choosing or uploading the image": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true,
+        "Too many app reads are waiting. Try refreshing again.": true,
+        "This reminder read has been superseded.": true
+      },
+      "routeKeysFound": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      }
+    },
+    {
+      "platform": "ios",
+      "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/ios/entry-754517ad12e696dd04fb312469b9a5bc.hbc",
+      "sha256": "a412727888fd565abb3c101200d9999d0039e7c2185d2b408dd9f979fbe0922d",
+      "bytes": 5116613,
+      "hermesBytecodeVersion": 99,
+      "sourceMarkers": {
+        "formBusy": true,
+        "beginFormInteraction": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Finish choosing or uploading the image": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true,
+        "Too many app reads are waiting. Try refreshing again.": true,
+        "This reminder read has been superseded.": true
+      },
+      "routeKeysFound": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      }
+    },
+    {
+      "platform": "web",
+      "bundleCount": 21,
+      "bundleHashesVerified": [
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/[templateId]-66c905e2bfc98d61753eb8f304cf8599.js",
+          "sha256": "37e32b0b18b4b722f07d380851c40ba0d2db1d7e7b284ae456cfb37981f0c6af",
+          "bytes": 10206
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/[templateId]-ba8c0f0a06eb26c4d7ff2800d9bd61e7.js",
+          "sha256": "f3e26d56de1a3563b0d13b2634751806469cdc4a5c42724c87611705fd76fd58",
+          "bytes": 1101
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/[token]-0ab642330864745dc4ed7c191deb24c3.js",
+          "sha256": "b00a8aed37637ea2bfd4302e5aaa7d27799c6f94e087f851b451b076e29b982a",
+          "bytes": 2331
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/__common-2e0020ad4749ce4d98a786c5ca112997.js",
+          "sha256": "25db75cf46dbe3076567f2443d4a8b065aa1da137728b856b521ff424e413e57",
+          "bytes": 816915
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js",
+          "sha256": "80e3ab02b3bac22608cdf29a2e3cc1270616a695bbe479f7f500941e8d2bbe41",
+          "bytes": 3751
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/_layout-fb433ba89598680a54b2c7e617d721fb.js",
+          "sha256": "c5b978b48610467b790492bf5a6d84c2f14019df18b9ae1cea6ceb1b01a789f6",
+          "bytes": 679
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/activity-c4fcc612a2e45554fdd2773415ea64ee.js",
+          "sha256": "5d7ef82d415d7ba35c32fe08008710f488bc8482a61ed5726b32339db5b456a8",
+          "bytes": 9412
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/edit-6bc194700a22aca2fe6d881b5fc69476.js",
+          "sha256": "4b48315dbaac751f625cd568eee220518cf910a31ad833b19273bba6b7dfb47e",
+          "bytes": 7734
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/entry-843322ccad2220a55d9d732361d9f5be.js",
+          "sha256": "a4e6a201f97b897bf425a18d4a1260e076a484787f822a3f44a07858835547ee",
+          "bytes": 1115540
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/full-0456b20c5215d7eb94efb89c5bca5086.js",
+          "sha256": "b8c68eec0c26e4a440d68cfce03278ee0c9601e269e082fb5f394ff5ca1832b1",
+          "bytes": 68294
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/inbox-5a8178f2fea56a3a194431f6d385e18f.js",
+          "sha256": "f5f460ce909fadca19a36c1c74fdb84a98c1dbf3fdd9077b88dcf96ac2459a44",
+          "bytes": 4282
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/index-01b2655bade484ba23af77f8ebafda5a.js",
+          "sha256": "bb4386f5e159a34a7377c8a219bea8f838bbb948863d6150cecfb2afdc2949b9",
+          "bytes": 3522
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/index-1ee6166b7169076ec5778daaf67d67a6.js",
+          "sha256": "2ee8357f3b6c3df52b6d5ce03d8aa806e5f09a08f0d192f9c50eff447f772045",
+          "bytes": 202
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/index-52b87f7dec429a7f77809f2b18d02e7a.js",
+          "sha256": "f6a73ef1f98b08207e429dfb6ea268a9407a0dbe17f24c91808cb0361e781f9d",
+          "bytes": 5005
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/index-7573f73afd4d227138c3fd95f664548e.js",
+          "sha256": "3fdbdfc5f6b29285a0c28245da5b92e895603e66b38f06b19504cabb96be7e17",
+          "bytes": 1386
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/index-a861326a4888fe07a5f9710c6fa2da58.js",
+          "sha256": "d5071b6fb74f532caf5452cf94d061027f35e33c859c70ed692ef9236ef70a89",
+          "bytes": 1043
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/index-d41eecfb97ea7fecaffdb1ccb79c006f.js",
+          "sha256": "83794ff2e9a2a48d3d19cb289ef49645b3e853338710d4cc225113b310637158",
+          "bytes": 27760
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/mqtt-3ad28a4a91aa5f55cf1d6d65d2cee7ca.js",
+          "sha256": "86a58c7d4ce66e62698a7a761b8e489d96bd011937614c8d1f58e905f8bfc01f",
+          "bytes": 368250
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/runs-64e2ce67a3b1b9b3856453f5ee27e1f5.js",
+          "sha256": "d8e9ade398dc688349f505b6c3a1ef8948e7ad1fdac339308b3cdea655cc6a5f",
+          "bytes": 3873
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/sharing-bda7a9bcfa2f8a827edddf39378f74bb.js",
+          "sha256": "b667584607f7b3c52613c30a19a9b2c09d67076be864775c200e016076bdb3c7",
+          "bytes": 7668
+        },
+        {
+          "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/javascript-export/_expo/static/js/web/workbench-a0011c5b25d94424811efc84648f0fc3.js",
+          "sha256": "888071c777e8c2e5851ec1ffbdc9b1ecbb3134a257cce361a44ce1c3785a03f1",
+          "bytes": 11526
+        }
+      ],
+      "concatenatedBytes": 2470480,
+      "sourceMarkers": {
+        "formBusy": true,
+        "beginFormInteraction": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Finish choosing or uploading the image": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true,
+        "Too many app reads are waiting. Try refreshing again.": true,
+        "This reminder read has been superseded.": true
+      },
+      "routeKeysFound": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "phase": "android",
+      "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/artifacts/Tinkerloom-android-debug-60e7e4e4-5d9c16e6.apk",
+      "bytes": 263603780,
+      "sha256": "ee3f23a822e17adb0a135857beed7a17bb972ba687e6908ba482981b8506869b",
+      "receiptHashMatches": true,
+      "packagedPermissions": [
+        "android.permission.ACCESS_LOCAL_NETWORK",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.tinkerloom.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "publicSignatureVerified": true,
+      "publicCertificateSha256": [
+        "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
+      ],
+      "packagedDebuggable": true,
+      "productionSigning": false,
+      "nativeClassesInActualDexDefinitions": {
+        "TinkerloomDeviceModule": true,
+        "ImagePickerModule": true
+      },
+      "embeddedJavaScript": false,
+      "requiresMetro": true
+    },
+    {
+      "phase": "ios",
+      "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/artifacts/Tinkerloom-ios-simulator-release-60e7e4e4-5d9c16e6.zip",
+      "bytes": 23554503,
+      "sha256": "a269c998d60d60a3ca3ee8609cf5992f7dfb5db97a50c47ae51c9cf17eba61a1",
+      "receiptHashMatches": true,
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "nativeModuleLinkedSymbols": {
+        "TinkerloomDeviceModule": true,
+        "ImagePickerModule": true
+      },
+      "packagedUsageDescriptions": {
+        "camera": "Allow Tinkerloom to use the camera permission only when you turn on a mini-app flashlight. No photos or video are captured.",
+        "photoLibrary": "Select an image to upload privately to the mini-app you are using.",
+        "microphoneAbsent": true
+      },
+      "unsignedSimulatorBuild": true,
+      "embeddedJavaScript": true,
+      "bundleEntry": "Tinkerloom.app/main.jsbundle",
+      "embeddedJavaScriptSha256": "00d54902044f7fafca15d21921ebdb058acf3b6c06bf5d4b1a43aa319d187277",
+      "embeddedJavaScriptBytes": 5115993,
+      "hermesBytecodeVersion": 99,
+      "sourceMarkers": {
+        "formBusy": true,
+        "beginFormInteraction": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Finish choosing or uploading the image": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true,
+        "Too many app reads are waiting. Try refreshing again.": true,
+        "This reminder read has been superseded.": true
+      },
+      "routeKeysFound": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      },
+      "changedSince0acf9ead": true,
+      "requiresMetro": false
+    },
+    {
+      "phase": "android-release",
+      "path": "/private/tmp/tinkerloom-native-read-complete-_9xhi6ms/artifacts/Tinkerloom-android-local-release-debug-signed-60e7e4e4-5d9c16e6.apk",
+      "bytes": 116536234,
+      "sha256": "4a1249c2748966348e1a3c8fbf902f9a92650ff6d6a0c6b62cd44c0bf3340070",
+      "receiptHashMatches": true,
+      "packagedPermissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.tinkerloom.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ],
+      "publicSignatureVerified": true,
+      "publicCertificateSha256": [
+        "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
+      ],
+      "packagedDebuggable": false,
+      "productionSigning": false,
+      "nativeClassesInActualDexDefinitions": {
+        "TinkerloomDeviceModule": true,
+        "ImagePickerModule": true
+      },
+      "embeddedJavaScript": true,
+      "bundleEntry": "assets/index.android.bundle",
+      "embeddedJavaScriptSha256": "4311af5a4e84ca5d2e2d9950abadea6e3e0b0ba3b974fb7ba8406d5b1c1de65d",
+      "embeddedJavaScriptBytes": 4142508,
+      "hermesBytecodeVersion": 99,
+      "sourceMarkers": {
+        "formBusy": true,
+        "beginFormInteraction": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Finish choosing or uploading the image": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true,
+        "Too many app reads are waiting. Try refreshing again.": true,
+        "This reminder read has been superseded.": true
+      },
+      "routeKeysFound": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      },
+      "changedSince0acf9ead": true,
+      "requiresMetro": false
+    }
+  ],
+  "preservedInitialSandboxAttempts": {
+    "manifest": "/private/tmp/tinkerloom-native-guarded-fsrbzngh/sandbox-attempt-preservation.json",
+    "manifestSha256": "46811c955c54ceccd73b27f793d466dc7f17c7aadab54fd24f8f403857c63fb8",
+    "filesIndependentlyRehashed": 8,
+    "nativeFailureResultsRetained": true,
+    "authoredSourceUnchanged": true,
+    "scope": "Historical0acf non-escalated native commands failed before compilation on local tool/cache access; later same0acf source succeeded with approved access. All eight historical files are retained through cumulative preservation. Current60e7 builds use approved cache access from first attempt."
+  },
+  "priorEvidencePreservation": {
+    "filesIndependentlyRehashed": 2873,
+    "previousPreservationSetIncluded": true,
+    "allPreviousStageFilesIncluded": true
+  },
+  "limits": [
+    "Verified recorded build exits and hashed success logs; did not rerun builds.",
+    "Marker and route presence proves source inclusion only, not semantic runtime behavior.",
+    "No UI, simulator/device boot, install, launch, hardware, Cloud, production signing or runtime behavior verified.",
+    "No environment values emitted or private keystores read; signing verification used public APK certificates."
+  ],
+  "auditWrites": "Only this newly allocated tmp audit JSON and disposable extracted iOS binary; all older audits preserved."
+}

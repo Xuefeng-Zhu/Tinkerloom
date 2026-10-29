@@ -1,0 +1,44 @@
+{
+  "capturedAt": "2026-10-29T07:33:47.361160+00:00",
+  "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+  "status": "passed",
+  "host": "React Native web export localhost:8426 with actual Appwrite Free development Core43 deployment6ae2c7c4c9c5bd7f2d7c",
+  "method": "CUA visible accessibility states after actions and settled read follow-ups",
+  "cases": [
+    {
+      "id": "reminder_cards",
+      "status": "passed",
+      "observation": "Fresh export reload of existing Daily Planner Tasks shows both previously failing synthetic cards with taskReminder: No reminder timestamp, enabled Refresh and no status-failure message."
+    },
+    {
+      "id": "run_history",
+      "status": "passed",
+      "observation": "Normal Reminder runs navigation loads No runs yet and enabled Refresh runs; no reminder timestamps or schedules were selected."
+    },
+    {
+      "id": "activity_registry_transport",
+      "status": "passed",
+      "observation": "Actual activity route loads four committed metadata entries, including the two synthetic record creates, private candidate save and starter create; Refresh activity enabled."
+    },
+    {
+      "id": "basic_workbench_return",
+      "status": "passed",
+      "observation": "Normal full-app return to basic home settles with selected workspace and four existing apps, without manual recovery Refresh or the earlier app-changed warning."
+    }
+  ],
+  "totals": {
+    "passed": 4,
+    "failed": 0,
+    "blocked": 0
+  },
+  "selectedBusinessWritesDuringTheseFourCases": 0,
+  "relatedPreservedFailures": [
+    "browser-reminder-status-0acf9ead.failed.json",
+    "browser-basic-workbench-0acf9ead.failed.json"
+  ],
+  "limits": [
+    "One synthetic browser account; no exact HTTP conflict/retry count or background poll count observed.",
+    "Separate image-upload/attachment attempt is outside these four read cases and is preserved as partial.",
+    "No native UI, device, hardware, provider, production or broad concurrency acceptance."
+  ]
+}

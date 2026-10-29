@@ -1,0 +1,19 @@
+{
+  "capturedAt": "2026-10-29T06:52:32.420449+00:00",
+  "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+  "exitCode": 0,
+  "rootCommand": "npm run verify",
+  "tests": 730,
+  "failures": 0,
+  "skips": 0,
+  "typecheck": "pass",
+  "lint": "pass",
+  "format": "pass",
+  "exports": [
+    "web",
+    "ios",
+    "android"
+  ],
+  "logSha256": "13a99fa498e847654dc4f39ea10a502d2c7f4d852e82dc614495c2fe503c65fd",
+  "exportProof": "docs/evidence/2026-10-28/mobile-730-persistent-export.json"
+}

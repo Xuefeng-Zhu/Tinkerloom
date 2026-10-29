@@ -1,0 +1,125 @@
+{
+  "status": "frozen",
+  "files": [
+    {
+      "name": "read-completeness/verification.json",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/verification.json",
+      "bytes": 10977,
+      "sha256": "5010e881d5cc8492e67416394c3004babe8e20c12a21a4e7eea33360dbd0f085"
+    },
+    {
+      "name": "read-completeness/peer-review.json",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/peer-review.json",
+      "bytes": 997,
+      "sha256": "6daf148ad6796bc139b521db682863e8a7335fd7180e701108c4b0d66d20b7c0"
+    },
+    {
+      "name": "read-completeness/read-completeness.patch",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/read-completeness.patch",
+      "bytes": 49829,
+      "sha256": "0c12e765a50a32736ca87f81d2a9340e10df8455ccc77d9784799eee627d08cc"
+    },
+    {
+      "name": "read-completeness/change-manifest.json",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/change-manifest.json",
+      "bytes": 7666,
+      "sha256": "045442d21a20fe4fec1a8304e79bdf00609fb4eda11b9c073874e1283606319c"
+    },
+    {
+      "name": "read-completeness/baseline-source.json",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/baseline-source.json",
+      "bytes": 30787,
+      "sha256": "7ff997df167e54c17f015858d3e2ab7659c7e053ce6c6a5ae16049462847fd42"
+    },
+    {
+      "name": "read-completeness/client-test.log",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/client-test.log",
+      "bytes": 74341,
+      "sha256": "3f39a42a1eda42e5d709a7e082a89ae485339719ff185d47a9b5cb0de5de8c20"
+    },
+    {
+      "name": "read-completeness/client-typecheck.log",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/client-typecheck.log",
+      "bytes": 126,
+      "sha256": "ae6da71b215a3f31fcf494d48bd3f61d7283c965e3691f7d3b91c29f1afc5eed"
+    },
+    {
+      "name": "read-completeness/client-lint.log",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/client-lint.log",
+      "bytes": 125,
+      "sha256": "e344a4cdac58077630450b3fbf3345490a6a52c0c421807e4c11499c82f4338e"
+    },
+    {
+      "name": "read-completeness/client-format.log",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/client-format.log",
+      "bytes": 243,
+      "sha256": "34ebb1a0bbedb89db700b79843ac08f424497186eddaf2b6a180ef0b110bdbbd"
+    },
+    {
+      "name": "read-completeness/client-test.failed-mirror-fixture.log",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/client-test.failed-mirror-fixture.log",
+      "bytes": 73026,
+      "sha256": "afcf3a4aeeb802ebed4704dcaafd1230da733f37e308355dda191aa90bc93bd1"
+    },
+    {
+      "name": "read-completeness/sdk-service-proof.json",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/sdk-service-proof.json",
+      "bytes": 2637,
+      "sha256": "526786776a33167a73a698d25a5d72018147b278477fc2362ca57a1b4eb6cfe4"
+    },
+    {
+      "name": "read-completeness/sdk-service-proof.log",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/sdk-service-proof.log",
+      "bytes": 2637,
+      "sha256": "526786776a33167a73a698d25a5d72018147b278477fc2362ca57a1b4eb6cfe4"
+    },
+    {
+      "name": "read-completeness/sdk-service-proof.failed-initial.log",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/sdk-service-proof.failed-initial.log",
+      "bytes": 1772,
+      "sha256": "012f9cbfa7fbeb2d5d934960646f77722bf70d0e1d2640829051a43c1741e4ca"
+    },
+    {
+      "name": "read-completeness/sdk-proof.ts",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/sdk-proof.ts",
+      "bytes": 7432,
+      "sha256": "0ab7520918bb11db7381b7fbdc6c71dab726c65da36e4716a71543b2aa8f6bae"
+    },
+    {
+      "name": "read-completeness/service_bridge.dart",
+      "source": "/private/tmp/tinkerloom-guarded-read-completeness/service_bridge.dart",
+      "bytes": 4593,
+      "sha256": "151cb0b8ff91f70326c14370cfe63170bba4527bcf5f074692fb514b238217bc"
+    },
+    {
+      "name": "media-sdk/files.json",
+      "source": "/private/tmp/tinkerloom-media-sdk-hmsx112y/files.json",
+      "bytes": 1678,
+      "sha256": "0ac4d89c0e8e789381ca1f2a8a452fc465deeee95a79912bc6f5c3317e4ced06"
+    },
+    {
+      "name": "media-sdk/result.json",
+      "source": "/private/tmp/tinkerloom-media-sdk-hmsx112y/result.json",
+      "bytes": 1787,
+      "sha256": "b1dba969860875855e3e782e7789b123ca9d57b4eba6cedfc14dcac6cd546e1f"
+    },
+    {
+      "name": "media-sdk/sdk-proof.ts",
+      "source": "/private/tmp/tinkerloom-media-sdk-hmsx112y/sdk-proof.ts",
+      "bytes": 11239,
+      "sha256": "3a104cd0fdc3c53933596611e10dd0146bbff6a52d82466ce84f317e067538d4"
+    },
+    {
+      "name": "media-sdk/service_bridge.dart",
+      "source": "/private/tmp/tinkerloom-media-sdk-hmsx112y/service_bridge.dart",
+      "bytes": 5387,
+      "sha256": "3c0d83622c050a4d261323a1eb376f3013d265affe1ad534c2e7adc8cba2ad28"
+    },
+    {
+      "name": "media-sdk/initial-harness-interface-assertion.json",
+      "source": "/private/tmp/tinkerloom-media-sdk-hmsx112y/initial-harness-interface-assertion.json",
+      "bytes": 399,
+      "sha256": "6db62c92d8ac24876cb8531e234e57dc5ddd760b58fc72814e8c98c7b0d25f9c"
+    }
+  ]
+}

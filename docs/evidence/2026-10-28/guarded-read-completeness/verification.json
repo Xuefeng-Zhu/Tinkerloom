@@ -1,0 +1,300 @@
+{
+  "status": "passed",
+  "sourceBaseline": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "scope": "TMP-only; root/Git/Cloud/native/dependencies unchanged by this agent",
+  "changedFiles": 20,
+  "productionFiles": 16,
+  "newTestFiles": 3,
+  "newTestCases": 18,
+  "originalTests": {
+    "cases": 712,
+    "preservedCaseCount": 712,
+    "originalTestFiles": 54,
+    "byteIdenticalFiles": 53,
+    "authorizedContractCorrection": "runtime/guardedReads.test.ts obsolete media.read bypass assertion becomes queued-read/cancellation assertion; same128 waiting capacity and original case count, all other assertions preserved. Root explicitly authorized after actual-service media read contention proof. Exact delta is in change-manifest.json."
+  },
+  "checks": {
+    "clientFull": {
+      "exit": 0,
+      "passed": 730,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheck": {
+      "exit": 0
+    },
+    "lint": {
+      "exit": 0
+    },
+    "format": {
+      "exit": 0
+    },
+    "exports": "Not run in this symlink-based TMP stage, as instructed; root owns final export/native rebuild."
+  },
+  "review": {
+    "agent": "/root/runtime_reads/completeness_review",
+    "status": "accepted_no_remaining_blocker",
+    "independentFocusedPassed": 27,
+    "independentFocusedSkipped": 0,
+    "all20AfterHashesVerified": true
+  },
+  "knownReads": {
+    "coordinatedAllowlistCount": 21,
+    "noNewRetriesInCoordinator": true,
+    "homeListAppsRetry": {
+      "maximumTotalAttempts": 3,
+      "delaysMs": [
+        100,
+        200
+      ],
+      "classifier": "BackendError kind=service status=409 code=definition_conflict uncertain=false",
+      "fences": [
+        "captured_workspace",
+        "session",
+        "request",
+        "authBusy"
+      ]
+    },
+    "mutationsProviderUnknownBypass": true,
+    "mediaPureReadsOnly": [
+      "spec.media.status",
+      "spec.media.read",
+      "spec.media.usage"
+    ],
+    "mediaQueuedTimeoutFence": true,
+    "mediaInflightSDKHeldUntilSettlement": true
+  },
+  "actualSDKService": {
+    "proof": "actual_appwrite_web_sdk_backend_account_transport_coordinator_service_loopback_rest_optimistic_memory_only",
+    "actorAuthentication": "synthetic_injected_alice_not_Cloud_auth",
+    "rawOverlaps": [
+      {
+        "first": "spec.reminderState",
+        "second": "spec.query",
+        "confirmedConflict": 1
+      },
+      {
+        "first": "spec.reminderState",
+        "second": "spec.reminderState",
+        "confirmedConflict": 1
+      }
+    ],
+    "coordinated": [
+      {
+        "first": "spec.query",
+        "second": "spec.inbox",
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessRowCountsUnchanged": true
+      },
+      {
+        "first": "spec.query",
+        "second": "listMembers",
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessRowCountsUnchanged": true
+      },
+      {
+        "first": "spec.reminderState",
+        "second": "spec.query",
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessRowCountsUnchanged": true
+      },
+      {
+        "first": "spec.reminderState",
+        "second": "spec.reminderState",
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessRowCountsUnchanged": true
+      },
+      {
+        "first": "spec.runs",
+        "second": "spec.query",
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessRowCountsUnchanged": true
+      },
+      {
+        "first": "spec.listActivity",
+        "second": "spec.query",
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessRowCountsUnchanged": true
+      },
+      {
+        "first": "spec.reminderState",
+        "second": "spec.watch",
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessRowCountsUnchanged": true
+      },
+      {
+        "first": "spec.listActivity",
+        "second": "spec.runs",
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessRowCountsUnchanged": true
+      }
+    ],
+    "homeCatalog": {
+      "rawReadConflict": "definition_conflict409",
+      "boundedHomeReadStatuses": [
+        409,
+        200
+      ],
+      "identicalWorkspaceRequests": true,
+      "appsLoaded": 2,
+      "businessRowCountsUnchanged": true
+    },
+    "sdkVersion": "29.1.0",
+    "business": {
+      "receipts": 6,
+      "audit": 6,
+      "outbox": 6,
+      "spec_records": 2,
+      "spec_cells": 0,
+      "spec_versions": 3
+    }
+  },
+  "mediaSDKService": {
+    "proof": "actual_Appwrite_SDK_backend_accountTransport_21op_FIFO_PrivateMediaController_Functions_loopback_actual_PlatformService_AppwriteRest_optimistic_MemoryStore_fakeStorage",
+    "authority": "synthetic_injected_alice_not_Cloud_authenticated",
+    "sdkVersion": "29.1.0",
+    "rawOverlapPairs": [
+      {
+        "first": "spec.media.status",
+        "second": "spec.media.status",
+        "confirmedConflict": 1
+      },
+      {
+        "first": "spec.media.read",
+        "second": "spec.media.read",
+        "confirmedConflict": 1
+      },
+      {
+        "first": "spec.media.read",
+        "second": "spec.query",
+        "confirmedConflict": 1
+      }
+    ],
+    "coordinatedPipeline": {
+      "completePrivateMediaControllerReads": 2,
+      "actualQuery": 1,
+      "assetStatusCalls": 2,
+      "assetChunkReadCalls": 2,
+      "totalSDKCalls": 5,
+      "sdkDispatchWhileFirstHeld": 1,
+      "maximumConcurrentSDK": 1,
+      "newFailedTransactions": 0,
+      "businessRowCountsUnchanged": true,
+      "businessRowContentsUnchanged": true,
+      "StorageByteContentsUnchanged": true,
+      "wholeTransportByteHashesVerifiedByController": 2,
+      "newWriteIDs": 0,
+      "pickerCalls": 0
+    },
+    "cachedRead": {
+      "reauthorizedStatusCalls": 1,
+      "additionalChunkReads": 0
+    },
+    "disposal": {
+      "ownedImageResources": 0,
+      "localRecoveryEntries": 0
+    },
+    "limitations": [
+      "Functions gateway envelope and actor are synthetic; no actual Cloud sign-in, Cloud timing, native/UI/provider proof",
+      "Storage file port and image-resource URI port are fake; actual service PNG sanitizer and client byte/hash validation execute",
+      "Optimistic store commit failure is locally modeled; actual Appwrite REST adapter communicates only with loopback test server"
+    ],
+    "sourceStage": "/private/tmp/tinkerloom-guarded-read-completeness"
+  },
+  "initialHarnessFailures": [
+    {
+      "artifact": "client-test.failed-mirror-fixture.log",
+      "cause": "Two unchanged original test modules could not open backend/test/fixtures/rich_contract.json in TMP mirror. Added read-only symlink to existing backend/test fixture tree; no product/test relaxation; final730 passed."
+    },
+    {
+      "artifact": "sdk-service-proof.failed-initial.log",
+      "cause": "TMP race-control paused RPC arrived before catalog completer was initialized. Initialized completers before enabling request-specific race arm. Production unchanged; final actualSDK/service proof passed."
+    }
+  ],
+  "artifacts": {
+    "read-completeness.patch": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/read-completeness.patch",
+      "sha256": "0c12e765a50a32736ca87f81d2a9340e10df8455ccc77d9784799eee627d08cc"
+    },
+    "change-manifest.json": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/change-manifest.json",
+      "sha256": "045442d21a20fe4fec1a8304e79bdf00609fb4eda11b9c073874e1283606319c"
+    },
+    "baseline-source.json": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/baseline-source.json",
+      "sha256": "7ff997df167e54c17f015858d3e2ab7659c7e053ce6c6a5ae16049462847fd42"
+    },
+    "client-test.log": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/client-test.log",
+      "sha256": "3f39a42a1eda42e5d709a7e082a89ae485339719ff185d47a9b5cb0de5de8c20"
+    },
+    "client-typecheck.log": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/client-typecheck.log",
+      "sha256": "ae6da71b215a3f31fcf494d48bd3f61d7283c965e3691f7d3b91c29f1afc5eed"
+    },
+    "client-lint.log": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/client-lint.log",
+      "sha256": "e344a4cdac58077630450b3fbf3345490a6a52c0c421807e4c11499c82f4338e"
+    },
+    "client-format.log": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/client-format.log",
+      "sha256": "34ebb1a0bbedb89db700b79843ac08f424497186eddaf2b6a180ef0b110bdbbd"
+    },
+    "client-test.failed-mirror-fixture.log": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/client-test.failed-mirror-fixture.log",
+      "sha256": "afcf3a4aeeb802ebed4704dcaafd1230da733f37e308355dda191aa90bc93bd1"
+    },
+    "sdk-service-proof.json": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/sdk-service-proof.json",
+      "sha256": "526786776a33167a73a698d25a5d72018147b278477fc2362ca57a1b4eb6cfe4"
+    },
+    "sdk-service-proof.log": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/sdk-service-proof.log",
+      "sha256": "526786776a33167a73a698d25a5d72018147b278477fc2362ca57a1b4eb6cfe4"
+    },
+    "sdk-service-proof.failed-initial.log": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/sdk-service-proof.failed-initial.log",
+      "sha256": "012f9cbfa7fbeb2d5d934960646f77722bf70d0e1d2640829051a43c1741e4ca"
+    },
+    "sdk-proof.ts": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/sdk-proof.ts",
+      "sha256": "0ab7520918bb11db7381b7fbdc6c71dab726c65da36e4716a71543b2aa8f6bae"
+    },
+    "service_bridge.dart": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/service_bridge.dart",
+      "sha256": "151cb0b8ff91f70326c14370cfe63170bba4527bcf5f074692fb514b238217bc"
+    },
+    "media-sdk-service-proof": {
+      "path": "/private/tmp/tinkerloom-media-sdk-hmsx112y/result.json",
+      "sha256": "b1dba969860875855e3e782e7789b123ca9d57b4eba6cedfc14dcac6cd546e1f"
+    },
+    "peer-review": {
+      "path": "/private/tmp/tinkerloom-guarded-read-completeness/peer-review.json",
+      "sha256": "6daf148ad6796bc139b521db682863e8a7335fd7180e701108c4b0d66d20b7c0"
+    },
+    "media-sdk-source-manifest": {
+      "path": "/private/tmp/tinkerloom-media-sdk-hmsx112y/files.json",
+      "sha256": "0ac4d89c0e8e789381ca1f2a8a452fc465deeee95a79912bc6f5c3317e4ced06"
+    }
+  },
+  "rootAdoption": {
+    "rootDriftAtFreeze": [],
+    "afterRootAuthorizedAdoption": "All20 root source after-hashes now intentionally match the frozen candidate. Root owns subsequent verification/native/browser/Git actions."
+  }
+}

@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T06:52:32.420449+00:00",
+  "sourceCommit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+  "trackedMobileFilesAllMatchGitBlobs": 314,
+  "origin": "Persistent mobile checkout with real node_modules; actual exported bytes checked",
+  "verification": {
+    "rootCommand": "npm run verify",
+    "tests": 730,
+    "failures": 0,
+    "skips": 0,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "exports": [
+      "web",
+      "ios",
+      "android"
+    ],
+    "logSha256": "13a99fa498e847654dc4f39ea10a502d2c7f4d852e82dc614495c2fe503c65fd"
+  },
+  "routeCount": 16,
+  "platforms": [
+    {
+      "platform": "web",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true,
+        "Too many app reads are waiting. Try refreshing again.": true,
+        "This reminder read has been superseded.": true
+      },
+      "routeKeys": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/web/[templateId]-3c996cb766fac541eadf7ca6406f26f2.js",
+          "bytes": 1111,
+          "sha256": "8f29fd699006638588d676c76275a0e832a9aef969e9d9a633e4e0930904ddfb"
+        },
+        {
+          "path": "_expo/static/js/web/[templateId]-92ee877dba8212f8adb10279446281f0.js",
+          "bytes": 10255,
+          "sha256": "fd4e6d1b3a119c06e3082ed28a766d19f1e50c5ad1561be9a49fce0d2c9c1d15"
+        },
+        {
+          "path": "_expo/static/js/web/[token]-2e23e7c8febcede6ae7a58bbb40a2920.js",
+          "bytes": 2342,
+          "sha256": "ed2afa78ae081634290aaba26ed4c196b5eadc9b72f97bc7d7f4e673099a873c"
+        },
+        {
+          "path": "_expo/static/js/web/__common-eab56d7302a878bfdf4a9200769b2814.js",
+          "bytes": 817729,
+          "sha256": "143bd316043f65f82a05f18a4154f436cad66e957e4c65f2b65224b753033e4f"
+        },
+        {
+          "path": "_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js",
+          "bytes": 3751,
+          "sha256": "80e3ab02b3bac22608cdf29a2e3cc1270616a695bbe479f7f500941e8d2bbe41"
+        },
+        {
+          "path": "_expo/static/js/web/_layout-3c1faf992620d13bcf7685868c0ec9b8.js",
+          "bytes": 686,
+          "sha256": "601a142c77f190a1c98cc63dba90a531f459a7d3327e1888d2393b4785f50320"
+        },
+        {
+          "path": "_expo/static/js/web/activity-a71d2879d670e3cd89681d4102607d70.js",
+          "bytes": 9445,
+          "sha256": "13f9a17ba1cfb5b82ca552be20bbb14906a04ffa4bccb2b0f098cd59dfbc2455"
+        },
+        {
+          "path": "_expo/static/js/web/edit-7203eea8083d8bfcc599dbd146cf7f94.js",
+          "bytes": 7756,
+          "sha256": "3051c4ff5bc033372830f9f980c28050fa701a7a095cd039e9708fc69da1aaab"
+        },
+        {
+          "path": "_expo/static/js/web/entry-e16d72fa4c15855564dade3f76e667e4.js",
+          "bytes": 1117542,
+          "sha256": "87ceab66853db2c9461f9d552bbf5fd5e572cde99e4168d52e124e37036cb0a8"
+        },
+        {
+          "path": "_expo/static/js/web/full-c7b43b31aa7931041d61c273419a64e7.js",
+          "bytes": 68439,
+          "sha256": "95bfe13e9ee957710d23a1b78651aa66568af6e62dfa0f843e03500aa23773a4"
+        },
+        {
+          "path": "_expo/static/js/web/inbox-0547a49133a985738747405a4bb41366.js",
+          "bytes": 4300,
+          "sha256": "f88c5782cdeaa0a514504a2a21d7aedab67d13f6c6046b5299be73942c752c64"
+        },
+        {
+          "path": "_expo/static/js/web/index-07baaecdfecbc5e5bce591e0fb89f67c.js",
+          "bytes": 204,
+          "sha256": "0d45f5ebb039e62cf2cd7cd8bf62e2ef96f5610f915099b438b63b5c2d783b5e"
+        },
+        {
+          "path": "_expo/static/js/web/index-08b2ab2d3a64ee996b829a75ed632e9e.js",
+          "bytes": 1052,
+          "sha256": "e34f68b869b029759c828c5b85220a4d95f63c27817276527332b4a02e0538ce"
+        },
+        {
+          "path": "_expo/static/js/web/index-47c0ff7be5723f35239e43198c8a9d31.js",
+          "bytes": 3543,
+          "sha256": "504a4ed595748062355754229a55002f04d1ce86a8ef155a531b8b587f516366"
+        },
+        {
+          "path": "_expo/static/js/web/index-4bfb30be21dbe6fdc3d930f6a6dbc456.js",
+          "bytes": 1396,
+          "sha256": "da296f1b29d27cf63dba1191730f16a97698c59f683845f98232d2aa7fbc8098"
+        },
+        {
+          "path": "_expo/static/js/web/index-deaef5854bed2dbc5bc0f2e1862fc224.js",
+          "bytes": 27763,
+          "sha256": "46e353c32f3c81177d5e11ef972091225ec9cdacb4a5ed55d1e5af0df8e67bd8"
+        },
+        {
+          "path": "_expo/static/js/web/index-fc12e946a3ed92bed627a08d4c1300bb.js",
+          "bytes": 5023,
+          "sha256": "91d0d58d437ac84fa6e6415f6b5c419946a24cdd5651238167f090f7eb012bc9"
+        },
+        {
+          "path": "_expo/static/js/web/mqtt-a23cc8cbe596a24855eff7a8f72d812b.js",
+          "bytes": 368255,
+          "sha256": "a40fba85073f7b3bb05665c8c4156e549c2931a0ac3f97c8e0dc4935a5d305a4"
+        },
+        {
+          "path": "_expo/static/js/web/runs-5505a3d65ff5ad61a2e55f99c5c6ac9b.js",
+          "bytes": 3891,
+          "sha256": "05c489c04fbcd4de58106d4f6e40c1858dda7a69cc2d1910d390a7e2b64d92d2"
+        },
+        {
+          "path": "_expo/static/js/web/sharing-d840d7e58c30767aa113ee44b2cf0820.js",
+          "bytes": 7686,
+          "sha256": "5aa7d01ee67dc325f2d27705ec7777cf18149b78152b5e060790c85ca7f9e490"
+        },
+        {
+          "path": "_expo/static/js/web/workbench-8f14a84b1c15c1d77a45c6370fca8eda.js",
+          "bytes": 11552,
+          "sha256": "fd8e5b4704d169f9203be0cf25fd909fc2f5cc46d5bdedccc50a4f8a0d955a93"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true,
+        "Too many app reads are waiting. Try refreshing again.": true,
+        "This reminder read has been superseded.": true
+      },
+      "routeKeys": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/ios/entry-0551cfd1eab7d170d8776cc1a1f4761d.hbc",
+          "bytes": 5115989,
+          "sha256": "6419ec608e205fd71d8df4467cde371da0ab4ba60ea57be5d4fc9865a4e0a7f2"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true,
+        "Too many app reads are waiting. Try refreshing again.": true,
+        "This reminder read has been superseded.": true
+      },
+      "routeKeys": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/android/entry-1bc0ae44829952d47e404717cb0cb40e.hbc",
+          "bytes": 5100340,
+          "sha256": "c3f04fbc6b42e899b34baadde95e9cec011e16b143545e21efeea52f5d6ffee3"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Markers and route keys establish included code, not semantic runtime or device proof",
+    "No provider request, native install/hardware or production acceptance"
+  ]
+}

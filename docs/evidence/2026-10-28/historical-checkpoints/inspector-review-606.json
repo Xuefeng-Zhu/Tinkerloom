@@ -1,0 +1,70 @@
+{
+  "stage": "/private/tmp/tinkerloom-inspector-review-tayocxa0",
+  "status": "frozen",
+  "files": [
+    {
+      "path": "apps/mobile/src/full/FullAppController.ts",
+      "baseSha256": "06dd90f1d790edb2b6498f492bc0ff8bcfa7f9e1bf3439fa63d6b62a6f86a4ce",
+      "sha256": "2dbaefe951e8d31a871c3e9889d4ee9860fba2d021c9bdf1c64b8d40befd3a9d",
+      "bytes": 42600
+    },
+    {
+      "path": "apps/mobile/src/full/PublicationPanel.tsx",
+      "baseSha256": "a293dbf23d1b3f7cc5478d79acc06265c64af993ae164d375b61c82982cfda78",
+      "sha256": "62f460a53bee7832dcf8b11db2aa6165a1cddc7e7801bedb0369adba91ee82ed",
+      "bytes": 6156
+    },
+    {
+      "path": "apps/mobile/src/full/inspectorReview.test.ts",
+      "baseSha256": null,
+      "sha256": "71f42a25374691b24dbb9afcdf2bea0c9392cd340b248ade90d81ebd9299226b",
+      "bytes": 7840
+    },
+    {
+      "path": "apps/mobile/docs/INSPECTOR_REVIEW_FOLLOWUP.md",
+      "baseSha256": null,
+      "sha256": "77679cbb5454aa7f3c7a9bc14cd2e8c0e84c789f00bce1b204145f5fc7007b63",
+      "bytes": 2267
+    }
+  ],
+  "patch": "/private/tmp/tinkerloom-inspector-review-tayocxa0/inspector-review.patch",
+  "checks": {
+    "newGroupsPassed": 4,
+    "unmodifiedBaselineGroupsFailedAsExpected": 4,
+    "allIsolatedClientPassed": 606,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "typecheck": "passed",
+    "expoLint": "passed --max-warnings=0",
+    "prettier": "4 owned paths passed"
+  },
+  "findingsFixed": [
+    {
+      "id": "publication_raw_guard",
+      "behavior": "publish checks editorError and mounted raw guard before operationID/transport; publication panel locks same signals",
+      "proof": "2 actual controller injected-wire tests show zero publish calls and zero operationIDs, plus actual RNWeb preparation control disabled"
+    },
+    {
+      "id": "background_reset_masked_raw",
+      "behavior": "Clean authoritative reset also requires no rejected mounted input; a valid no-op cannot cause background refresh to erase invalid text",
+      "proof": "Invalid label, valid same-theme no-op, changed remote definition, epoch/text retained; Discard explicitly resets"
+    }
+  ],
+  "reviewOtherPaths": "Epoch/guard registration, boolean subscription notifications, canLeave, host/external URL conditions, Discard enabling and save controller barrier consistent. Root owns Save-button disabled UX; other agent owns runtime navigation audit.",
+  "baselineFailureLog": "/private/tmp/tinkerloom-inspector-review-tayocxa0/baseline-regressions.log",
+  "proofPending": [
+    "Root merge and final verification",
+    "Actual browser invalid label/approved publication/Back Forward",
+    "Native assistive-technology/device interaction"
+  ],
+  "bounds": {
+    "persistentWrites": false,
+    "git": false,
+    "cloud": false,
+    "provider": false,
+    "native": false,
+    "dependencies": false,
+    "FullScreenNavigationRuntime": "untouched"
+  }
+}
