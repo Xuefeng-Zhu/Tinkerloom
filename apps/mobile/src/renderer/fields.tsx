@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useLayoutEffect,
   useState,
   useRef,
   useSyncExternalStore,
@@ -11,7 +12,6 @@ import { Image, Pressable, Switch, Text, View } from "react-native";
 import type { FieldSpec, FormControl } from "../spec/types";
 import type {
   ImageAsset,
-  PickedImage,
   RuntimeAdapter,
   RuntimeMember,
   RuntimeRecord,
@@ -23,6 +23,12 @@ import { displayField } from "./model";
 import { PrivateMediaRecoveryPanel } from "../media/RecoveryPanel";
 import type { MediaRuntimeAdapter } from "../media/adapter";
 import { RuntimeError } from "../runtime/errors";
+import {
+  createFieldImageLifetime,
+  disposeFieldImageLifetime,
+  selectFieldImage,
+} from "./imageInteraction";
+import type { FieldImageLifetime } from "./imageInteraction";
 
 export function PrivateImage({
   assetId,
@@ -200,6 +206,7 @@ interface FieldInputProps {
   disabled?: boolean;
   members: readonly RuntimeMember[];
   onBusyChange?: (busy: boolean) => void;
+  onBusyStart?: () => (() => void) | null;
   uploadContext?: import("../runtime/types").RuntimeImageUploadContext;
 }
 export function FieldInput({
@@ -210,6 +217,7 @@ export function FieldInput({
   disabled = false,
   members,
   onBusyChange,
+  onBusyStart,
   uploadContext,
   ref,
   validationError,
@@ -219,7 +227,7 @@ export function FieldInput({
     [uploading, setUploading] = useState(false),
     [error, setError] = useState<string | null>(null),
     [trackWidth, setTrackWidth] = useState(1);
-  const lifetime = useRef<{ active: boolean } | null>(null);
+  const lifetime = useRef<FieldImageLifetime | null>(null);
   const inputTarget = useRef<FieldFocusHandle | null>(null);
   const fallbackTarget = useRef<ElementRef<typeof View> | null>(null);
   const setInputTarget = useCallback((target: FieldFocusHandle | null) => {
@@ -234,12 +242,10 @@ export function FieldInput({
     }),
     [],
   );
-  useEffect(() => {
-    const current = { active: true };
+  useLayoutEffect(() => {
+    const current = createFieldImageLifetime();
     lifetime.current = current;
-    return () => {
-      current.active = false;
-    };
+    return () => disposeFieldImageLifetime(current);
   }, [
     controller.adapter,
     field.id,
@@ -275,33 +281,18 @@ export function FieldInput({
     );
   const chooseImage = async () => {
     const active = lifetime.current;
-    if (!active?.active) return;
-    setError(null);
-    setUploading(true);
-    onBusyChange?.(true);
-    let picked: PickedImage | null = null;
-    try {
-      picked = await controller.adapter.pickImage();
-      if (!active.active) return;
-      if (picked) {
-        const assetId = await controller.adapter.uploadImage(
-          picked,
-          uploadContext,
-        );
-        if (active.active) onChange(assetId);
-      }
-    } catch {
-      if (active.active)
-        setError(
-          "The image could not be uploaded. Your other values are retained.",
-        );
-    } finally {
-      picked?.bytes.fill(0);
-      if (active.active) {
-        setUploading(false);
-        onBusyChange?.(false);
-      }
-    }
+    if (!active) return;
+    await selectFieldImage(active, {
+      beginInteraction: onBusyStart,
+      pick: () => controller.adapter.pickImage(),
+      upload: (image) => controller.adapter.uploadImage(image, uploadContext),
+      commit: (assetId) => onChange(assetId),
+      busy: (busy) => {
+        setUploading(busy);
+        onBusyChange?.(busy);
+      },
+      error: setError,
+    });
   };
   let input;
   if (field.type === "boolean")

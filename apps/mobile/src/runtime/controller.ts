@@ -49,6 +49,7 @@ export interface RuntimeSnapshot {
   record: RuntimeRecord | null;
   loading: boolean;
   dirty: boolean;
+  formBusy: boolean;
   pending: PendingCommand | null;
   error: RuntimeError | null;
   outcome: CommandOutcome | null;
@@ -77,6 +78,7 @@ export class RuntimeController {
   private locationRequest = 0;
   // Local typing cancels values, but only newer navigation supersedes an access denial.
   private authorityRequest = 0;
+  private formInteractions = new Set<symbol>();
   private disposed = false;
   private unsubscribe = () => {};
   private recovered = false;
@@ -103,6 +105,7 @@ export class RuntimeController {
       record: null,
       loading: false,
       dirty: false,
+      formBusy: false,
       pending: null,
       error: null,
       outcome: null,
@@ -133,7 +136,9 @@ export class RuntimeController {
     this.deferredRefresh = false;
     ++this.locationRequest;
     ++this.authorityRequest;
+    this.formInteractions.clear();
     this.emit({
+      formBusy: false,
       accessDenied: true,
       views: {},
       record: null,
@@ -171,7 +176,7 @@ export class RuntimeController {
       "Reopen this app to confirm your current access.",
     );
     ensure(
-      !this.state.dirty && !this.state.pending,
+      !this.state.dirty && !this.state.pending && !this.state.formBusy,
       "unsaved_changes",
       "Finish the current command first.",
     );
@@ -197,7 +202,7 @@ export class RuntimeController {
     return true;
   }
   dismissRecord() {
-    if (this.state.pending) return;
+    if (this.state.pending || this.state.formBusy) return;
     ++this.request;
     ++this.locationRequest;
     ++this.authorityRequest;
@@ -207,7 +212,29 @@ export class RuntimeController {
     });
   }
   get canLeave() {
-    return !this.state.dirty && !this.state.pending;
+    return !this.state.dirty && !this.state.pending && !this.state.formBusy;
+  }
+  /** A memory-only lease freezes a form snapshot while its image picker/upload is active. */
+  beginFormInteraction(): (() => void) | null {
+    if (
+      this.disposed ||
+      !this.recovered ||
+      this.state.accessDenied ||
+      this.state.pending ||
+      this.state.formBusy
+    )
+      return null;
+    const token = Symbol("form-interaction");
+    this.formInteractions.add(token);
+    ++this.request;
+    ++this.locationRequest;
+    this.deferredRefresh = true;
+    this.emit({ formBusy: true, loading: false });
+    return () => {
+      if (!this.formInteractions.delete(token) || this.disposed) return;
+      this.emit({ formBusy: this.formInteractions.size > 0 });
+      if (!this.state.formBusy) void this.drainRefresh();
+    };
   }
   get writeAvailable() {
     return (
@@ -261,7 +288,12 @@ export class RuntimeController {
     discard = false,
     kind: RuntimeNavigationKind = "push",
   ): boolean {
-    if (this.disposed || this.state.accessDenied || this.state.pending)
+    if (
+      this.disposed ||
+      this.state.accessDenied ||
+      this.state.pending ||
+      this.state.formBusy
+    )
       return false;
     if (this.state.dirty && !discard) return false;
     if (sameLocation(this.state.location, location)) return false;
@@ -344,6 +376,7 @@ export class RuntimeController {
       this.disposed ||
       this.state.accessDenied ||
       this.state.pending ||
+      this.state.formBusy ||
       (this.state.dirty && !discard)
     )
       return false;
@@ -368,7 +401,7 @@ export class RuntimeController {
   }
   async select(viewId: string, selection: Partial<ViewSettings>) {
     ensure(
-      !this.state.dirty && !this.state.pending,
+      !this.state.dirty && !this.state.pending && !this.state.formBusy,
       "unsaved_changes",
       "Finish or discard the current edit before changing the view.",
     );
@@ -492,6 +525,7 @@ export class RuntimeController {
       this.state.accessDenied ||
       this.state.dirty ||
       this.state.pending ||
+      this.state.formBusy ||
       this.pageReads
     )
       return Promise.resolve();
@@ -527,7 +561,8 @@ export class RuntimeController {
       this.disposed ||
       this.state.accessDenied ||
       this.state.dirty ||
-      this.state.pending
+      this.state.pending ||
+      this.state.formBusy
     )
       return;
     const generation = ++this.request,
@@ -596,7 +631,8 @@ export class RuntimeController {
       !current?.nextCursor ||
       current.loading ||
       this.state.dirty ||
-      this.state.pending
+      this.state.pending ||
+      this.state.formBusy
     )
       return;
     const generation = this.request,
@@ -691,6 +727,11 @@ export class RuntimeController {
       !this.state.pending,
       "pending_command",
       "Resolve the retained command before sending another write.",
+    );
+    ensure(
+      !this.state.formBusy,
+      "form_busy",
+      "Finish choosing or uploading the image before saving a record.",
     );
     const action = getAction(this.adapter.spec, actionId);
     ensure(
@@ -815,6 +856,7 @@ export class RuntimeController {
   dispose() {
     if (this.disposed) return;
     this.disposed = true;
+    this.formInteractions.clear();
     ++this.authorityRequest;
     ++this.locationRequest;
     ++this.request;
@@ -826,6 +868,7 @@ export class RuntimeController {
       record: null,
       pending: null,
       dirty: false,
+      formBusy: false,
       loading: false,
       outcome: null,
       error: null,

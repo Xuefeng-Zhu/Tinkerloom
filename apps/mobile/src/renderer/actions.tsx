@@ -24,7 +24,11 @@ export function ActionControl({
     [members, setMembers] = useState<RuntimeMember[]>([]),
     [error, setError] = useState<string | null>(null),
     allowed = adapter.permits(action, record),
-    disabled = !allowed || !controller.writeAvailable || Boolean(state.pending);
+    disabled =
+      !allowed ||
+      !controller.writeAvailable ||
+      Boolean(state.pending) ||
+      state.formBusy;
   useEffect(() => {
     let active = true;
     if (expanded && action.capability === "assignment.assign.v1")

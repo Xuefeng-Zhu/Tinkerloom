@@ -156,7 +156,9 @@ export interface NavigationSource {
     dirty: boolean;
     editorError: unknown;
   };
-  runtime: { getSnapshot(): { pending: unknown; dirty: boolean } } | null;
+  runtime: {
+    getSnapshot(): { pending: unknown; dirty: boolean; formBusy?: boolean };
+  } | null;
   host: { lifetime: { active: boolean } };
   readonly hasRejectedEditorInput?: boolean;
   flush(): Promise<boolean>;
@@ -180,7 +182,8 @@ export async function guardHostNavigation(options: {
     return (
       !!current.pending ||
       current.busy ||
-      !!source.runtime?.getSnapshot().pending
+      !!source.runtime?.getSnapshot().pending ||
+      !!source.runtime?.getSnapshot().formBusy
     );
   };
   if (!active()) return;

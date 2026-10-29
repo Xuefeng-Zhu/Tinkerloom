@@ -13,6 +13,7 @@ import type { ViewSpec, ViewSpecOf } from "../spec/types";
 import type { RuntimeRecord } from "../runtime/types";
 import { localDayKey } from "../runtime/query";
 import { useRuntime } from "./context";
+import { compactRecordTable, useContainerWidth } from "./containerWidth";
 import { Body, Button, Input, Notice, Panel, Row } from "./primitives";
 import { FieldValue, PrivateImage, RecordReminder } from "./fields";
 import { RecordForm } from "./form";
@@ -49,7 +50,14 @@ function ViewFilters({ view }: { view: ViewSpec }) {
       view.type !== "summary",
     );
   useEffect(() => {
-    if (!enabled || search === (settings.search ?? "")) return;
+    if (
+      !enabled ||
+      state.dirty ||
+      state.pending ||
+      state.formBusy ||
+      search === (settings.search ?? "")
+    )
+      return;
     const timer = setTimeout(() => {
       void controller
         .select(view.id, { search })
@@ -58,7 +66,16 @@ function ViewFilters({ view }: { view: ViewSpec }) {
         );
     }, 250);
     return () => clearTimeout(timer);
-  }, [controller, enabled, search, settings.search, view.id]);
+  }, [
+    controller,
+    enabled,
+    search,
+    settings.search,
+    view.id,
+    state.dirty,
+    state.pending,
+    state.formBusy,
+  ]);
   const fields =
     collection?.fields.filter(
       (field) =>
@@ -72,7 +89,7 @@ function ViewFilters({ view }: { view: ViewSpec }) {
           placeholder={`Search ${title!.label.toLowerCase()}`}
           value={search}
           onChangeText={setSearch}
-          editable={!state.dirty && !state.pending}
+          editable={!state.dirty && !state.pending && !state.formBusy}
         />
       ) : null}
       {fields.map((field) => (
@@ -82,7 +99,7 @@ function ViewFilters({ view }: { view: ViewSpec }) {
             <Button
               subtle
               selected={!settings.choices?.[field.id]}
-              disabled={state.dirty || Boolean(state.pending)}
+              disabled={state.dirty || Boolean(state.pending) || state.formBusy}
               onPress={() =>
                 void controller
                   .select(view.id, {
@@ -98,7 +115,9 @@ function ViewFilters({ view }: { view: ViewSpec }) {
                 key={choice}
                 subtle
                 selected={settings.choices?.[field.id] === choice}
-                disabled={state.dirty || Boolean(state.pending)}
+                disabled={
+                  state.dirty || Boolean(state.pending) || state.formBusy
+                }
                 onPress={() =>
                   void controller
                     .select(view.id, {
@@ -193,122 +212,136 @@ function RecordList({
 }
 function RecordTable({ view }: { view: ViewSpecOf<"table"> }) {
   const dimensions = useWindowDimensions();
+  const [width, measureTable] = useContainerWidth();
   const { controller, state, openRecord, theme } = useRuntime(),
     data = state.views[view.id],
     fields = fieldsForView(controller.adapter.spec, view),
     sort = controller.settingsFor(view.id).sort;
-  if (dimensions.width < 640 || dimensions.fontScale >= 1.5)
-    return (
-      <View style={{ gap: 12 }}>
-        <Body muted>Sort the complete matching collection</Body>
-        <Row>
-          {fields
-            .filter((field) => field.type !== "image")
-            .map((field) => (
-              <Button
-                key={field.id}
-                subtle
-                selected={sort?.fieldId === field.id}
-                disabled={state.dirty || Boolean(state.pending)}
-                onPress={() =>
-                  void controller
-                    .select(view.id, {
-                      sort: {
-                        fieldId: field.id,
-                        descending:
-                          sort?.fieldId === field.id ? !sort.descending : false,
-                      },
-                    })
-                    .catch(() => {})
-                }
-              >
-                {field.label}
-                {sort?.fieldId === field.id
-                  ? sort.descending
-                    ? " ↓"
-                    : " ↑"
-                  : ""}
-              </Button>
-            ))}
-        </Row>
-        <RecordList view={view} records={data?.records ?? []} />
-        <Body muted>
-          {data?.records.length ?? 0} of {data?.total ?? 0} loaded.
-        </Body>
-      </View>
-    );
   return (
-    <ScrollView horizontal contentContainerStyle={{ flexGrow: 1 }}>
-      <View style={{ minWidth: Math.max(400, fields.length * 160) }}>
-        <View style={{ flexDirection: "row", backgroundColor: theme.canvas }}>
-          {fields.map((field) => (
-            <Pressable
-              key={field.id}
-              accessibilityRole="button"
-              accessibilityLabel={`Sort by ${field.label}${sort?.fieldId === field.id && sort.descending ? ", currently descending" : ""}`}
-              disabled={
-                field.type === "image" || state.dirty || Boolean(state.pending)
-              }
-              onPress={() =>
-                void controller
-                  .select(view.id, {
-                    sort: {
-                      fieldId: field.id,
-                      descending:
-                        sort?.fieldId === field.id ? !sort.descending : false,
-                    },
-                  })
-                  .catch(() => {})
-              }
-              style={{ width: 160, padding: 12, minHeight: 48 }}
-            >
-              <Body>
-                {field.label}
-                {sort?.fieldId === field.id
-                  ? sort.descending
-                    ? " ↓"
-                    : " ↑"
-                  : ""}
-              </Body>
-            </Pressable>
-          ))}
+    <View onLayout={measureTable} style={{ minWidth: 0 }}>
+      {compactRecordTable(width, dimensions.fontScale) ? (
+        <View style={{ gap: 12 }}>
+          <Body muted>Sort the complete matching collection</Body>
+          <Row>
+            {fields
+              .filter((field) => field.type !== "image")
+              .map((field) => (
+                <Button
+                  key={field.id}
+                  subtle
+                  selected={sort?.fieldId === field.id}
+                  disabled={
+                    state.dirty || Boolean(state.pending) || state.formBusy
+                  }
+                  onPress={() =>
+                    void controller
+                      .select(view.id, {
+                        sort: {
+                          fieldId: field.id,
+                          descending:
+                            sort?.fieldId === field.id
+                              ? !sort.descending
+                              : false,
+                        },
+                      })
+                      .catch(() => {})
+                  }
+                >
+                  {field.label}
+                  {sort?.fieldId === field.id
+                    ? sort.descending
+                      ? " ↓"
+                      : " ↑"
+                    : ""}
+                </Button>
+              ))}
+          </Row>
+          <RecordList view={view} records={data?.records ?? []} />
+          <Body muted>
+            {data?.records.length ?? 0} of {data?.total ?? 0} loaded.
+          </Body>
         </View>
-        {data?.records.map((record) => (
-          <Pressable
-            key={record.id}
-            accessibilityRole="button"
-            accessibilityLabel={`Open ${recordTitle(controller.adapter.spec, view, record)}`}
-            onPress={() => openRecord(view, record)}
-            style={{
-              flexDirection: "row",
-              borderBottomWidth: 1,
-              borderColor: theme.outline,
-              minHeight: 48,
-            }}
-          >
-            {fields.map((field) => (
-              <View key={field.id} style={{ width: 160, padding: 12 }}>
-                {field.type === "image" &&
-                typeof ownValue(record.data, field.id) === "string" ? (
-                  <PrivateImage
-                    assetId={String(ownValue(record.data, field.id))}
-                    alt={field.label}
-                  />
-                ) : (
+      ) : (
+        <ScrollView horizontal contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={{ minWidth: Math.max(400, fields.length * 160) }}>
+            <View
+              style={{ flexDirection: "row", backgroundColor: theme.canvas }}
+            >
+              {fields.map((field) => (
+                <Pressable
+                  key={field.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Sort by ${field.label}${sort?.fieldId === field.id && sort.descending ? ", currently descending" : ""}`}
+                  disabled={
+                    field.type === "image" ||
+                    state.dirty ||
+                    Boolean(state.pending) ||
+                    state.formBusy
+                  }
+                  onPress={() =>
+                    void controller
+                      .select(view.id, {
+                        sort: {
+                          fieldId: field.id,
+                          descending:
+                            sort?.fieldId === field.id
+                              ? !sort.descending
+                              : false,
+                        },
+                      })
+                      .catch(() => {})
+                  }
+                  style={{ width: 160, padding: 12, minHeight: 48 }}
+                >
                   <Body>
-                    {displayField(field, ownValue(record.data, field.id))}
+                    {field.label}
+                    {sort?.fieldId === field.id
+                      ? sort.descending
+                        ? " ↓"
+                        : " ↑"
+                      : ""}
                   </Body>
-                )}
-              </View>
+                </Pressable>
+              ))}
+            </View>
+            {data?.records.map((record) => (
+              <Pressable
+                key={record.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Open ${recordTitle(controller.adapter.spec, view, record)}`}
+                onPress={() => openRecord(view, record)}
+                style={{
+                  flexDirection: "row",
+                  borderBottomWidth: 1,
+                  borderColor: theme.outline,
+                  minHeight: 48,
+                }}
+              >
+                {fields.map((field) => (
+                  <View key={field.id} style={{ width: 160, padding: 12 }}>
+                    {field.type === "image" &&
+                    typeof ownValue(record.data, field.id) === "string" ? (
+                      <PrivateImage
+                        assetId={String(ownValue(record.data, field.id))}
+                        alt={field.label}
+                      />
+                    ) : (
+                      <Body>
+                        {displayField(field, ownValue(record.data, field.id))}
+                      </Body>
+                    )}
+                  </View>
+                ))}
+              </Pressable>
             ))}
-          </Pressable>
-        ))}
-        <Body muted>
-          Sort applies to the complete matching collection.{" "}
-          {data?.records.length ?? 0} of {data?.total ?? 0} loaded.
-        </Body>
-      </View>
-    </ScrollView>
+            <Body muted>
+              Sort applies to the complete matching collection.{" "}
+              {data?.records.length ?? 0} of {data?.total ?? 0} loaded.
+            </Body>
+          </View>
+        </ScrollView>
+      )}
+    </View>
   );
 }
 function BoardView({ view }: { view: ViewSpecOf<"board"> }) {
@@ -417,7 +450,7 @@ function CalendarView({ view }: { view: ViewSpecOf<"calendar"> }) {
     counts = new Map(
       data?.aggregate?.groups.map((group) => [group.key, group.count]) ?? [],
     ),
-    busy = state.dirty || Boolean(state.pending);
+    busy = state.dirty || Boolean(state.pending) || state.formBusy;
   const move = (direction: number) => {
     const date = new Date(month.getFullYear(), month.getMonth() + direction, 1);
     void controller
@@ -545,7 +578,7 @@ function TimelineView({ view }: { view: ViewSpecOf<"timeline"> }) {
         <Button
           subtle
           selected={!undated}
-          disabled={state.dirty || Boolean(state.pending)}
+          disabled={state.dirty || Boolean(state.pending) || state.formBusy}
           onPress={() =>
             void controller.select(view.id, { undated: false }).catch(() => {})
           }
@@ -555,7 +588,7 @@ function TimelineView({ view }: { view: ViewSpecOf<"timeline"> }) {
         <Button
           subtle
           selected={Boolean(undated)}
-          disabled={state.dirty || Boolean(state.pending)}
+          disabled={state.dirty || Boolean(state.pending) || state.formBusy}
           onPress={() =>
             void controller.select(view.id, { undated: true }).catch(() => {})
           }
@@ -612,6 +645,7 @@ function ChecklistView({ view }: { view: ViewSpecOf<"checklist"> }) {
               checked: checklistChecked(view, record),
               disabled:
                 Boolean(state.pending) ||
+                state.formBusy ||
                 !controller.writeAvailable ||
                 !controller.adapter.permits(action, record),
             }}
@@ -622,6 +656,7 @@ function ChecklistView({ view }: { view: ViewSpecOf<"checklist"> }) {
             )}
             disabled={
               Boolean(state.pending) ||
+              state.formBusy ||
               !controller.writeAvailable ||
               !controller.adapter.permits(action, record)
             }
@@ -1027,7 +1062,12 @@ export function SemanticView({ view }: { view: ViewSpec }) {
       {data?.nextCursor ? (
         <Button
           subtle
-          disabled={data.loading || state.dirty || Boolean(state.pending)}
+          disabled={
+            data.loading ||
+            state.dirty ||
+            Boolean(state.pending) ||
+            state.formBusy
+          }
           onPress={() => void controller.loadMore(view.id)}
         >
           Load more ({data.records.length} of {data.total})

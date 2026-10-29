@@ -32,6 +32,7 @@ export function DraggableBoardRecord({
       controller.writeAvailable &&
       !state.pending &&
       !state.dirty &&
+      !state.formBusy &&
       controller.adapter.permits(action, record),
     );
   const stop = () => {
@@ -56,7 +57,11 @@ export function DraggableBoardRecord({
         try {
           const location = controller.getSnapshot().location;
           const target = await dropTarget(gesture.moveX, gesture.moveY);
-          if (controller.getSnapshot().location !== location) return;
+          if (
+            controller.getSnapshot().location !== location ||
+            !controller.canLeave
+          )
+            return;
           if (!target || !action) return;
           const original = base;
           if (

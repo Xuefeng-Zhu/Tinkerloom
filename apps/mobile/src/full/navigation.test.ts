@@ -24,7 +24,11 @@ function source() {
     dirty: false,
     editorError: null as unknown,
   };
-  const runtimeState = { pending: null as unknown, dirty: false };
+  const runtimeState = {
+    pending: null as unknown,
+    dirty: false,
+    formBusy: false,
+  };
   const lifetime = { active: true };
   let flushes = 0;
   const value: NavigationSource = {
@@ -320,4 +324,52 @@ test("clean live-only readers can navigate without invoking builder-only flush",
     blocked: () => assert.fail("no unresolved write"),
   });
   assert.equal(actions, 1);
+});
+
+test("image selection or upload prevents host navigation without flushing or prompting away local input", async () => {
+  const s = source();
+  s.runtimeState.formBusy = true;
+  s.runtimeState.dirty = true;
+  let blocked = 0;
+  await guardHostNavigation({
+    source: s.value,
+    epoch: new NavigationEpoch(),
+    focused: () => true,
+    action: () => assert.fail("image interaction still owns the form"),
+    prompt: () => assert.fail("do not offer discard during image work"),
+    blocked: () => {
+      blocked++;
+    },
+  });
+  assert.equal(blocked, 1);
+  assert.equal(s.flushes(), 0);
+  assert.equal(s.runtimeState.dirty, true);
+});
+test("an image interaction starting after a leave prompt fences its old acceptance callback", async () => {
+  const s = source();
+  s.runtimeState.dirty = true;
+  let accept!: () => void,
+    actions = 0,
+    releases = 0;
+  await guardHostNavigation({
+    source: s.value,
+    epoch: new NavigationEpoch(),
+    focused: () => true,
+    action: () => {
+      actions++;
+    },
+    beforeNavigate: () => {
+      releases++;
+    },
+    prompt: (callback) => {
+      accept = callback;
+    },
+    blocked: () => assert.fail("not initially busy"),
+  });
+  assert.ok(accept);
+  s.runtimeState.formBusy = true;
+  accept();
+  assert.equal(actions, 0);
+  assert.equal(releases, 0);
+  assert.equal(s.runtimeState.dirty, true);
 });

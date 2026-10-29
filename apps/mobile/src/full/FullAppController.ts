@@ -1,4 +1,9 @@
 import {
+  AcceptedConversation,
+  acceptedRequest,
+  type ConversationSnapshot,
+} from "./conversation";
+import {
   assessClarification,
   builtInClarification,
   clarificationAccessFailure,
@@ -41,6 +46,8 @@ import { freezeValidated } from "../runtime/immutable";
 import { FullCommandJournal, type RetainedFullCommand } from "./commandJournal";
 import {
   manifest,
+  generation as decodeGeneration,
+  type Generation,
   platformCapabilities,
   publicationReview,
   row,
@@ -96,6 +103,7 @@ export interface FullAppState {
   guidanceLoading: boolean;
   preparedRequest: string | null;
   generationRequest: string;
+  conversation: ConversationSnapshot;
   previewStaticImageAssets: PreviewStaticImageAssets | undefined;
   previewImagesLoading: boolean;
   previewUnavailableAssetCount: number;
@@ -123,6 +131,7 @@ export class FullAppController {
     guidanceLoading: false,
     preparedRequest: null,
     generationRequest: "",
+    conversation: { entries: [], omitted: 0 },
     previewStaticImageAssets: undefined,
     previewImagesLoading: false,
     previewUnavailableAssetCount: 0,
@@ -135,6 +144,8 @@ export class FullAppController {
   private guidanceSequence = 0;
   private preparedIdea: string | null = null;
   private composerRequest: string | null = null;
+  private conversation = new AcceptedConversation();
+  private acceptedGenerationReceipts = new Map<string, Generation>();
   private autosave: ReturnType<typeof setTimeout> | null = null;
   private saveTask: Promise<void> | null = null;
   readonly host: HostStorage;
@@ -553,6 +564,8 @@ export class FullAppController {
       this.stopAutosave();
       this.preparedIdea = null;
       this.composerRequest = null;
+      this.conversation.clear();
+      this.acceptedGenerationReceipts.clear();
       this.editorInputGuards.clear();
       this.disposeRuntime();
       this.journal.dispose();
@@ -562,6 +575,7 @@ export class FullAppController {
         editorResetEpoch: this.state.editorResetEpoch + 1,
         preparedRequest: null,
         generationRequest: "",
+        conversation: this.conversation.getSnapshot(),
         candidate: null,
         review: null,
         reviewSpec: null,
@@ -609,7 +623,9 @@ export class FullAppController {
       this.editorInputGuards.clear();
       this.preparedIdea = null;
       this.composerRequest = null;
-    }
+      this.conversation.clear();
+      this.acceptedGenerationReceipts.clear();
+    } else this.conversation.observe(app.generation);
     if (!this.canRecover(app)) {
       this.stopAutosave();
       this.guidanceSequence++;
@@ -686,6 +702,7 @@ export class FullAppController {
     this.emit({
       app,
       candidate,
+      conversation: this.conversation.getSnapshot(),
       editorResetEpoch: this.state.editorResetEpoch + (resetEditor ? 1 : 0),
       preparedRequest: build ? this.preparedIdea : null,
       generationRequest: build
@@ -746,10 +763,38 @@ export class FullAppController {
           pendingStatus: this.journal.status,
         });
       }
-      this.emit({ loading: false });
+      this.emit({ ...this.reconcileConversation(), loading: false });
     } catch (error) {
       if (sequence === this.sequence) this.fail(error, false, true);
     }
+  }
+  /** Server job metadata proves only the latest restored request, never an invented full conversation. */
+  private reconcileConversation(): Partial<FullAppState> {
+    const app = this.state.app;
+    if (!app || !this.canBuild)
+      return { conversation: this.conversation.getSnapshot() };
+    const retained = this.journal.pending?.request;
+    if (retained?.op === "spec.generate") {
+      if (this.composerRequest === null && typeof retained.request === "string")
+        this.composerRequest = retained.request;
+    } else {
+      for (const job of this.acceptedGenerationReceipts.values()) {
+        this.conversation.accept(job, "accepted");
+        if (this.composerRequest === job.requestText) this.composerRequest = "";
+        if (this.preparedIdea === job.requestText) this.preparedIdea = null;
+      }
+      this.acceptedGenerationReceipts.clear();
+      if (app.generation) {
+        this.conversation.accept(app.generation, "restored");
+        if (this.composerRequest === null) this.composerRequest = "";
+      }
+    }
+    this.conversation.observe(app.generation);
+    return {
+      conversation: this.conversation.getSnapshot(),
+      generationRequest: this.composerRequest ?? this.preparedIdea ?? "",
+      preparedRequest: this.preparedIdea,
+    };
   }
   /** Explicitly abandons only unsent local edits. Unknown commands remain locked. */
   discardLocalEdits() {
@@ -851,6 +896,19 @@ export class FullAppController {
         "invalid_response",
         "The publish response did not confirm the reviewed candidate.",
       );
+    if (request.op === "spec.generate") {
+      const job = decodeGeneration(result.generation);
+      ensure(
+        job &&
+          app.generation &&
+          same(job, app.generation) &&
+          job.requestText === request.request &&
+          job.mutation === Number(request.expectedRevision) + 1,
+        "invalid_response",
+        "The generation reply did not confirm the original request.",
+      );
+      acceptedRequest(job, "accepted");
+    }
     if (request.op === "spec.generate" || request.op === "spec.keepPrevious")
       ensure(
         result.generation !== undefined,
@@ -860,6 +918,7 @@ export class FullAppController {
     return app;
   }
   private async transmit() {
+    const command = this.journal.pending;
     this.emit({
       busy: true,
       pending: this.journal.pending,
@@ -867,10 +926,16 @@ export class FullAppController {
       error: null,
     });
     try {
-      await this.journal.send(this.options.transport, (value, command) =>
-        this.decodeMutation(value, command),
+      const acknowledged = await this.journal.send(
+        this.options.transport,
+        (value, command) => this.decodeMutation(value, command),
       );
       this.active();
+      if (command?.request.op === "spec.generate" && acknowledged.generation)
+        this.acceptedGenerationReceipts.set(
+          acknowledged.generation.id,
+          acknowledged.generation,
+        );
       this.sequence++;
       this.disposeRuntime();
       this.emit({
@@ -1132,7 +1197,9 @@ export class FullAppController {
           expectedRevision: this.state.app!.draft?.revision ?? 0,
           expectedVersionId: this.state.app!.version?.id ?? null,
           request,
-          startFromScratch,
+          startFromScratch:
+            startFromScratch ||
+            (!this.state.candidate && !this.state.app!.version),
         },
         { kind: "generate" },
       );
@@ -1147,6 +1214,8 @@ export class FullAppController {
       this.state.busy ||
       this.state.pending ||
       this.state.dirty ||
+      this.state.editorError ||
+      this.hasRejectedEditorInput ||
       this.closed
     )
       return;
@@ -1166,7 +1235,9 @@ export class FullAppController {
         "invalid_response",
         "Generation job identity changed.",
       );
-      this.install(app, true);
+      // A poll can finish after a local edit. Current authority still applies,
+      // while unsent semantic/raw input keeps its candidate and conflict state.
+      this.install(app);
     } catch (error) {
       if (sequence === this.sequence) this.fail(error);
     }
@@ -1343,6 +1414,8 @@ export class FullAppController {
     this.closed = true;
     this.preparedIdea = null;
     this.composerRequest = null;
+    this.conversation.clear();
+    this.acceptedGenerationReceipts.clear();
     this.editorInputGuards.clear();
     this.liveLeases.clear();
     this.sequence++;
@@ -1358,6 +1431,7 @@ export class FullAppController {
       app: null,
       preparedRequest: null,
       generationRequest: "",
+      conversation: this.conversation.getSnapshot(),
       candidate: null,
       editorError: null,
       review: null,

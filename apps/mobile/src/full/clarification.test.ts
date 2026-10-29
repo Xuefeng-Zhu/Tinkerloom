@@ -599,7 +599,16 @@ test("prepared request requires an explicit generation command and the retained 
   assert.equal(writes[0].op, "spec.generate");
   assert.equal(writes[0].request, requestText);
   assert.equal(id, 1);
-  assert.equal(controller.getSnapshot().generationRequest, requestText);
+  assert.equal(writes[0].startFromScratch, true);
+  assert.equal(controller.getSnapshot().generationRequest, "");
+  assert.equal(
+    controller.getSnapshot().conversation.entries[0].requestText,
+    requestText,
+  );
+  assert.equal(
+    controller.getSnapshot().conversation.entries[0].origin,
+    "accepted",
+  );
   controller.dispose();
 });
 

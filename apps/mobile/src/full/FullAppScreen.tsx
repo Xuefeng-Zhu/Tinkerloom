@@ -23,6 +23,7 @@ import { requestedDeviceCapabilities } from "../spec/bindings";
 import { fullTemplates } from "./catalog";
 import { DeviceAccessPanel } from "./DeviceAccessPanel";
 import { GenerationPanel } from "./GenerationPanel";
+import { BuilderWorkspace } from "./BuilderWorkspace";
 import { IsolatedPreview } from "./IsolatedPreview";
 import { PublicationPanel } from "./PublicationPanel";
 import { SpecEditor } from "./SpecEditor";
@@ -155,6 +156,7 @@ export function FullAppScreen({
       protectedLocationOwned &&
       (!controller.canLeave ||
         !!runtimeState?.pending ||
+        !!runtimeState?.formBusy ||
         !!runtimeState?.dirty),
     ({ repeat }) => {
       removalHandler.current?.(repeat);
@@ -172,7 +174,9 @@ export function FullAppScreen({
         prompt: (accept) => setLeave(() => accept),
         blocked: () =>
           setLocalError(
-            "Resolve the retained operation before leaving this location.",
+            controller.runtime?.getSnapshot().formBusy
+              ? "Finish choosing or uploading the image before leaving this screen."
+              : "Resolve the retained operation before leaving this location.",
           ),
         beforeNavigate: disablePrevention,
       });
@@ -310,10 +314,13 @@ export function FullAppScreen({
           if (
             authorized.pending ||
             authorized.busy ||
-            runtimeController.getSnapshot().pending
+            runtimeController.getSnapshot().pending ||
+            runtimeController.getSnapshot().formBusy
           ) {
             setLocalError(
-              "Resolve the retained operation before opening this app link.",
+              runtimeController.getSnapshot().formBusy
+                ? "Finish choosing or uploading the image before opening this app link."
+                : "Resolve the retained operation before opening this app link.",
             );
             restore();
             return;
@@ -326,7 +333,9 @@ export function FullAppScreen({
             restore();
             if (result === "blocked")
               setLocalError(
-                "Resolve the retained operation before opening this app link.",
+                runtimeController.getSnapshot().formBusy
+                  ? "Finish choosing or uploading the image before opening this app link."
+                  : "Resolve the retained operation before opening this app link.",
               );
             return;
           }
@@ -363,9 +372,16 @@ export function FullAppScreen({
       };
       const current = controller.getSnapshot();
       const snapshot = runtimeController.getSnapshot();
-      if (current.pending || current.busy || snapshot.pending) {
+      if (
+        current.pending ||
+        current.busy ||
+        snapshot.pending ||
+        snapshot.formBusy
+      ) {
         setLocalError(
-          "Resolve the retained operation before opening this app link.",
+          runtimeController.getSnapshot().formBusy
+            ? "Finish choosing or uploading the image before opening this app link."
+            : "Resolve the retained operation before opening this app link.",
         );
         restore();
       } else if (
@@ -387,7 +403,8 @@ export function FullAppScreen({
         if (
           controller.getSnapshot().pending ||
           controller.getSnapshot().busy ||
-          runtimeController.getSnapshot().pending
+          runtimeController.getSnapshot().pending ||
+          runtimeController.getSnapshot().formBusy
         )
           return;
         if (runtimeController.getSnapshot().dirty)
@@ -432,7 +449,11 @@ export function FullAppScreen({
     ["owner", "builder"].includes(state.app.role) &&
     state.app.capabilities.editDefinition === true;
   const locked =
-    state.busy || !!state.pending || state.conflict || !controller.canBuild;
+    state.busy ||
+    !!state.pending ||
+    !!runtimeState?.formBusy ||
+    state.conflict ||
+    !controller.canBuild;
   return (
     <KeyboardAvoidingView
       style={styles.screen}
@@ -475,7 +496,7 @@ export function FullAppScreen({
         <Button
           label="Refresh access"
           variant="quiet"
-          disabled={state.loading || state.busy}
+          disabled={state.loading || state.busy || !!runtimeState?.formBusy}
           onPress={() => {
             void controller.load();
           }}
@@ -499,6 +520,12 @@ export function FullAppScreen({
             />
             <Button
               label="Discard unsaved form edits"
+              disabled={
+                state.busy ||
+                !!state.pending ||
+                !!runtimeState?.pending ||
+                !!runtimeState?.formBusy
+              }
               variant="secondary"
               onPress={() => {
                 if (
@@ -506,7 +533,8 @@ export function FullAppScreen({
                   !controller.host.lifetime.active ||
                   controller.getSnapshot().pending ||
                   controller.getSnapshot().busy ||
-                  controller.runtime?.getSnapshot().pending
+                  controller.runtime?.getSnapshot().pending ||
+                  controller.runtime?.getSnapshot().formBusy
                 )
                   return;
                 controller.runtime?.setDirty(false);
@@ -689,153 +717,170 @@ export function FullAppScreen({
               </ScrollView>
             )}
         </View>
-      ) : mode === "preview" ? (
-        !state.candidate && (
-          <Notice text="Create a private candidate in Build to try an isolated preview." />
-        )
-      ) : (
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={styles.content}
-        >
-          <Text accessibilityRole="header" style={styles.heading}>
-            Your private workbench
-          </Text>
-          <Text style={styles.body}>
-            Only your current author draft appears here. Saved candidates stay
-            private until you publish a reviewed version.
-          </Text>
-          <GenerationPanel controller={controller} state={state} />
-          {!state.candidate && (
-            <Card title="Or choose a starter">
-              <Text style={styles.muted}>
-                Choosing a starter creates a private candidate. It does not copy
-                preview records or publish.
+      ) : null}
+      {protectedLocationOwned && editorVisible && (
+        <BuilderWorkspace
+          mode={mode}
+          disabled={state.busy}
+          onSelect={(next) => {
+            void navigate(() => {
+              setLocalError(null);
+              setMode(next);
+              if (controller.runtime)
+                onLocationChange?.(
+                  controller.runtime.getSnapshot().location,
+                  "push",
+                  next,
+                );
+            });
+          }}
+          chat={
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.content}
+            >
+              <Text accessibilityRole="header" style={styles.heading}>
+                Your private workbench
               </Text>
-              {fullTemplates.map((template) => (
-                <Button
-                  key={template.id}
-                  label={`${template.spec.name} · ${template.caption}`}
-                  variant="secondary"
-                  disabled={locked}
-                  onPress={() => {
-                    try {
-                      controller.setCandidate(template.spec);
-                      void controller.save();
-                    } catch (error) {
-                      setLocalError(
-                        error instanceof Error
-                          ? error.message
-                          : "Could not choose the starter.",
-                      );
-                    }
-                  }}
-                />
-              ))}
-            </Card>
-          )}
-          {state.candidate && (
-            <>
-              <View style={styles.row}>
-                <Button
-                  label={
-                    state.dirty ? "Save private candidate" : "Candidate saved"
-                  }
-                  disabled={
-                    locked ||
-                    !state.dirty ||
-                    !!state.editorError ||
-                    controller.hasRejectedEditorInput
-                  }
-                  onPress={() => {
-                    void controller.save();
-                  }}
-                />
-                <Button
-                  label="Discard unsaved local edits"
-                  variant="secondary"
-                  disabled={
-                    state.busy ||
-                    !!state.pending ||
-                    (!state.dirty &&
-                      !state.conflict &&
-                      !state.editorError &&
-                      !controller.hasRejectedEditorInput)
-                  }
-                  onPress={() => controller.discardLocalEdits()}
-                />
-                <Text accessibilityLiveRegion="polite" style={styles.muted}>
-                  {state.busy
-                    ? "Saving…"
-                    : state.editorError || controller.hasRejectedEditorInput
-                      ? "Fix the invalid local edit"
-                      : state.conflict
-                        ? "The server draft changed; reload before continuing."
-                        : state.dirty
-                          ? "Unsaved local changes"
-                          : "Private candidate is saved"}
-                </Text>
-              </View>
-              <DraftBannerImages controller={controller} state={state} />
-              {state.previewImagesLoading ? (
-                <Notice text="Loading approved private banner images for the isolated preview…" />
-              ) : null}
-              {state.previewUnavailableAssetCount ? (
-                <Notice text="Some private banner images are unavailable. The isolated preview keeps placeholders; no image upload or record write runs there." />
-              ) : null}
-              <SpecEditor
-                staticImageAssets={state.previewStaticImageAssets}
-                spec={state.candidate}
-                editorResetEpoch={state.editorResetEpoch}
-                registerInputGuard={controller.registerEditorInputGuard}
-                disabled={locked}
-                onFlush={async () =>
-                  controller.canBuild &&
-                  (await controller.flush()) &&
-                  controller.canBuild
-                }
-                onEdit={(edit, debounce) => {
-                  controller.edit(edit, debounce);
-                  if (!debounce) void controller.save();
-                }}
-                onReplace={(input) => {
-                  controller.setCandidate(input);
-                  void controller.save();
-                }}
-              />
-              <PublicationPanel
-                key={state.app?.draft?.candidateHash ?? "local"}
+              <Text style={styles.body}>
+                Only your current author draft appears here. Saved candidates
+                stay private until you publish a reviewed version.
+              </Text>
+              <GenerationPanel
                 controller={controller}
                 state={state}
+                active={focused && mode !== "live"}
               />
-            </>
-          )}
-        </ScrollView>
-      )}
-      {protectedLocationOwned && editorVisible && state.candidate && (
-        <View
-          style={{ flex: 1, display: mode === "preview" ? "flex" : "none" }}
-          accessibilityElementsHidden={mode !== "preview"}
-          importantForAccessibility={
-            mode === "preview" ? "auto" : "no-hide-descendants"
+              {!state.candidate && (
+                <Card title="Or choose a starter">
+                  <Text style={styles.muted}>
+                    Choosing a starter creates a private candidate. It does not
+                    copy preview records or publish.
+                  </Text>
+                  {fullTemplates.map((template) => (
+                    <Button
+                      key={template.id}
+                      label={`${template.spec.name} · ${template.caption}`}
+                      variant="secondary"
+                      disabled={locked}
+                      onPress={() => {
+                        try {
+                          controller.setCandidate(template.spec);
+                          void controller.save();
+                        } catch (error) {
+                          setLocalError(
+                            error instanceof Error
+                              ? error.message
+                              : "Could not choose the starter.",
+                          );
+                        }
+                      }}
+                    />
+                  ))}
+                </Card>
+              )}
+              {state.candidate && (
+                <>
+                  <View style={styles.row}>
+                    <Button
+                      label={
+                        state.dirty
+                          ? "Save private candidate"
+                          : "Candidate saved"
+                      }
+                      disabled={
+                        locked ||
+                        !state.dirty ||
+                        !!state.editorError ||
+                        controller.hasRejectedEditorInput
+                      }
+                      onPress={() => {
+                        void controller.save();
+                      }}
+                    />
+                    <Button
+                      label="Discard unsaved local edits"
+                      variant="secondary"
+                      disabled={
+                        state.busy ||
+                        !!state.pending ||
+                        (!state.dirty &&
+                          !state.conflict &&
+                          !state.editorError &&
+                          !controller.hasRejectedEditorInput)
+                      }
+                      onPress={() => controller.discardLocalEdits()}
+                    />
+                    <Text accessibilityLiveRegion="polite" style={styles.muted}>
+                      {state.busy
+                        ? "Saving…"
+                        : state.editorError || controller.hasRejectedEditorInput
+                          ? "Fix the invalid local edit"
+                          : state.conflict
+                            ? "The server draft changed; reload before continuing."
+                            : state.dirty
+                              ? "Unsaved local changes"
+                              : "Private candidate is saved"}
+                    </Text>
+                  </View>
+                  <DraftBannerImages controller={controller} state={state} />
+                  {state.previewImagesLoading ? (
+                    <Notice text="Loading approved private banner images for the isolated preview…" />
+                  ) : null}
+                  {state.previewUnavailableAssetCount ? (
+                    <Notice text="Some private banner images are unavailable. The isolated preview keeps placeholders; no image upload or record write runs there." />
+                  ) : null}
+                  <SpecEditor
+                    staticImageAssets={state.previewStaticImageAssets}
+                    spec={state.candidate}
+                    editorResetEpoch={state.editorResetEpoch}
+                    registerInputGuard={controller.registerEditorInputGuard}
+                    disabled={locked}
+                    onFlush={async () =>
+                      controller.canBuild &&
+                      (await controller.flush()) &&
+                      controller.canBuild
+                    }
+                    onEdit={(edit, debounce) => {
+                      controller.edit(edit, debounce);
+                      if (!debounce) void controller.save();
+                    }}
+                    onReplace={(input) => {
+                      controller.setCandidate(input);
+                      void controller.save();
+                    }}
+                  />
+                  <PublicationPanel
+                    key={state.app?.draft?.candidateHash ?? "local"}
+                    controller={controller}
+                    state={state}
+                  />
+                </>
+              )}
+            </ScrollView>
           }
-        >
-          <IsolatedPreview
-            staticImageAssets={state.previewStaticImageAssets}
-            spec={state.candidate}
-            onExit={() => {
-              void navigate(() => {
-                setMode("build");
-                if (controller.runtime)
-                  onLocationChange?.(
-                    controller.runtime.getSnapshot().location,
-                    "push",
-                    "build",
-                  );
-              });
-            }}
-          />
-        </View>
+          preview={
+            state.candidate ? (
+              <IsolatedPreview
+                staticImageAssets={state.previewStaticImageAssets}
+                spec={state.candidate}
+                onExit={() => {
+                  void navigate(() => {
+                    setMode("build");
+                    if (controller.runtime)
+                      onLocationChange?.(
+                        controller.runtime.getSnapshot().location,
+                        "push",
+                        "build",
+                      );
+                  });
+                }}
+              />
+            ) : (
+              <Notice text="Describe your app or choose a starter in Chat to try an isolated preview." />
+            )
+          }
+        />
       )}
     </KeyboardAvoidingView>
   );

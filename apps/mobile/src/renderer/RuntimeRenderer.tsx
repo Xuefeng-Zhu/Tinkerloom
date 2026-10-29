@@ -16,6 +16,7 @@ import type {
 import type { UtilityTimerController } from "../runtime/timer";
 import type { ViewSpec, ViewSpecOf } from "../spec/types";
 import { RendererContext } from "./context";
+import { useContainerWidth } from "./containerWidth";
 import { pageRows, resolveAppearance } from "./appearance";
 import { Body, Button, Notice, Panel, Row } from "./primitives";
 import { DetailsView, SemanticView } from "./views";
@@ -56,6 +57,7 @@ function RuntimeRendererScope({
     spec = controller.adapter.spec,
     theme = useMemo(() => resolveAppearance(spec), [spec]),
     dimensions = useWindowDimensions();
+  const [contentWidth, measureContent] = useContainerWidth();
   const [editor, setEditor] = useState<EditorTarget | null>(() => {
       const current = controller.getSnapshot();
       if (
@@ -116,7 +118,7 @@ function RuntimeRendererScope({
         snapshot.location,
       );
       previousLocation = snapshot.location;
-      if (snapshot.dirty || snapshot.pending) return;
+      if (snapshot.dirty || snapshot.pending || snapshot.formBusy) return;
       const record = snapshot.record;
       if (
         snapshot.location.editing &&
@@ -173,12 +175,12 @@ function RuntimeRendererScope({
   const editorRecord = editorRecordSnapshot(
     editor?.record,
     state.record,
-    state.dirty,
+    state.dirty || state.formBusy,
     !!state.pending,
   );
   const guard = (action: () => void) => {
     const current = controller.getSnapshot();
-    if (current.pending || current.accessDenied) return;
+    if (current.pending || current.accessDenied || current.formBusy) return;
     if (current.dirty) setLeave(() => action);
     else action();
   };
@@ -237,12 +239,7 @@ function RuntimeRendererScope({
   const page = spec.navigation?.pages.find(
       (item) => item.id === state.location.pageId,
     ),
-    rows = pageRows(
-      page,
-      controller.views,
-      Math.min(dimensions.width, 1200) - 32,
-      dimensions.fontScale,
-    ),
+    rows = pageRows(page, controller.views, contentWidth, dimensions.fontScale),
     primary = spec.actions.find(
       (action) => action.id === page?.primaryActionId,
     ),
@@ -311,7 +308,7 @@ function RuntimeRendererScope({
             {onExit ? (
               <Button
                 subtle
-                disabled={Boolean(state.pending)}
+                disabled={Boolean(state.pending) || state.formBusy}
                 onPress={() => guard(onExit)}
               >
                 Close app
@@ -320,7 +317,7 @@ function RuntimeRendererScope({
             {controller.canGoBack ? (
               <Button
                 subtle
-                disabled={Boolean(state.pending)}
+                disabled={Boolean(state.pending) || state.formBusy}
                 onPress={() =>
                   guard(() => {
                     controller.setDirty(false);
@@ -337,7 +334,12 @@ function RuntimeRendererScope({
             </View>
             <Button
               subtle
-              disabled={state.dirty || Boolean(state.pending) || state.loading}
+              disabled={
+                state.dirty ||
+                Boolean(state.pending) ||
+                state.formBusy ||
+                state.loading
+              }
               onPress={() => void controller.refresh()}
             >
               Refresh
@@ -375,7 +377,7 @@ function RuntimeRendererScope({
                   key={tab.pageId}
                   subtle
                   selected={state.location.pageId === tab.pageId}
-                  disabled={Boolean(state.pending)}
+                  disabled={Boolean(state.pending) || state.formBusy}
                   onPress={() => navigate({ pageId: tab.pageId })}
                 >
                   {tab.label}
@@ -387,6 +389,7 @@ function RuntimeRendererScope({
             <Button
               disabled={
                 Boolean(state.pending) ||
+                state.formBusy ||
                 !controller.writeAvailable ||
                 !controller.adapter.permits(primary)
               }
@@ -394,6 +397,12 @@ function RuntimeRendererScope({
             >
               {primary.label}
             </Button>
+          ) : null}
+          {state.formBusy ? (
+            <Notice>
+              Finish choosing or uploading the image before changing this form
+              or page. Your values and record revision stay together.
+            </Notice>
           ) : null}
           {state.pending ? (
             <Panel
@@ -429,22 +438,24 @@ function RuntimeRendererScope({
             <Notice error>{state.error.message}</Notice>
           ) : null}
           {state.outcome ? <Notice>{state.outcome.message}</Notice> : null}
-          {rows.map((row, index) => (
-            <View
-              key={row.map((view) => view.id).join(":")}
-              style={{
-                flexDirection: row.length > 1 ? "row" : "column",
-                alignItems: "stretch",
-                gap: 16,
-              }}
-            >
-              {row.map((view) => (
-                <View key={view.id} style={{ flex: 1, minWidth: 0 }}>
-                  <SemanticView view={view} />
-                </View>
-              ))}
-            </View>
-          ))}
+          <View onLayout={measureContent} style={{ gap: 16, minWidth: 0 }}>
+            {rows.map((row, index) => (
+              <View
+                key={row.map((view) => view.id).join(":")}
+                style={{
+                  flexDirection: row.length > 1 ? "row" : "column",
+                  alignItems: "stretch",
+                  gap: 16,
+                }}
+              >
+                {row.map((view) => (
+                  <View key={view.id} style={{ flex: 1, minWidth: 0 }}>
+                    <SemanticView view={view} />
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
         </ScrollView>
         <Modal
           visible={Boolean(editor || details)}
@@ -496,7 +507,7 @@ function RuntimeRendererScope({
                 {details ? (
                   <Button
                     subtle
-                    disabled={Boolean(state.pending)}
+                    disabled={Boolean(state.pending) || state.formBusy}
                     onPress={closeOverlay}
                   >
                     Close details

@@ -35,7 +35,6 @@ export function RecordForm({
     [capacity, setCapacity] = useState(String(record?.capacity ?? 1)),
     [step, setStep] = useState(0),
     [members, setMembers] = useState<RuntimeMember[]>([]),
-    [uploads, setUploads] = useState<Record<string, boolean>>({}),
     [error, setError] = useState<string | null>(null),
     [fieldErrors, setFieldErrors] = useState<ReadonlyMap<string, string>>(
       () => new Map(),
@@ -66,7 +65,7 @@ export function RecordForm({
   );
   const disabled =
     Boolean(state.pending) ||
-    Object.values(uploads).some(Boolean) ||
+    state.formBusy ||
     !controller.writeAvailable ||
     !action ||
     !adapter.permits(action, record);
@@ -247,9 +246,7 @@ export function RecordForm({
                 }
               : undefined
           }
-          onBusyChange={(busy) =>
-            setUploads((previous) => ({ ...previous, [field.id]: busy }))
-          }
+          onBusyStart={() => controller.beginFormInteraction()}
           disabled={disabled}
         />
       ))}
@@ -302,7 +299,7 @@ export function RecordForm({
         {step > 0 ? (
           <Button
             subtle
-            disabled={Boolean(state.pending)}
+            disabled={Boolean(state.pending) || state.formBusy}
             onPress={() => {
               setFocusRequest(null);
               setStep((index) => index - 1);
@@ -325,7 +322,11 @@ export function RecordForm({
           </Button>
         )}
         {onCancel ? (
-          <Button subtle disabled={Boolean(state.pending)} onPress={onCancel}>
+          <Button
+            subtle
+            disabled={Boolean(state.pending) || state.formBusy}
+            onPress={onCancel}
+          >
             Cancel
           </Button>
         ) : null}

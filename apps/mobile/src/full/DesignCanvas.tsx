@@ -3,6 +3,7 @@ import { Pressable, Text, View, useWindowDimensions } from "react-native";
 import type { PreviewStaticImageAssets } from "../runtime/previewImageAssets";
 import type { AppSpec } from "../spec/types";
 import { RendererContext } from "../renderer/context";
+import { useContainerWidth } from "../renderer/containerWidth";
 import { pageRows, resolveAppearance } from "../renderer/appearance";
 import { SemanticView } from "../renderer/views";
 import { Button } from "../components/Button";
@@ -26,6 +27,7 @@ export function DesignCanvas({
   onSelectField: (collectionId: string, fieldId: string) => void;
   disabled?: boolean;
 }) {
+  const [contentWidth, measureContent] = useContainerWidth();
   const [preview] = useState(
     () => new PreviewSession(spec, "design", staticImageAssets),
   );
@@ -60,7 +62,7 @@ export function DesignCanvas({
   const views = page.viewIds.flatMap((id) =>
       spec.views.filter((v) => v.id === id),
     ),
-    rows = pageRows(page, views, dimensions.width, dimensions.fontScale);
+    rows = pageRows(page, views, contentWidth, dimensions.fontScale);
   const context = {
     controller,
     state,
@@ -102,66 +104,71 @@ export function DesignCanvas({
             borderRadius: theme.radius,
           }}
         >
-          {rows.map((row, index) => (
-            <View
-              key={index}
-              style={{
-                flexDirection: "row",
-                gap: theme.spacing,
-                alignItems: "flex-start",
-              }}
-            >
-              {row.map((view) => (
-                <View
-                  key={view.id}
-                  style={{
-                    flex: 1,
-                    minWidth: 0,
-                    borderWidth: 1,
-                    borderStyle: "dashed",
-                    borderColor: theme.accent,
-                    borderRadius: theme.radius,
-                    padding: 6,
-                    minHeight: 44,
-                  }}
-                >
-                  <Pressable
-                    accessibilityRole="button"
-                    disabled={disabled}
-                    accessibilityState={{ disabled }}
-                    aria-disabled={disabled}
-                    accessibilityLabel={`Inspect ${view.label}, ${view.type} view`}
-                    onPress={() => onSelectView(view.id)}
-                    style={{ minHeight: 44 }}
-                  >
-                    <Text style={styles.muted}>Inspect {view.label}</Text>
-                    <View
-                      pointerEvents="none"
-                      accessibilityElementsHidden
-                      importantForAccessibility="no-hide-descendants"
-                    >
-                      <SemanticView view={view} />
-                    </View>
-                  </Pressable>
+          <View
+            onLayout={measureContent}
+            style={{ gap: theme.spacing, minWidth: 0 }}
+          >
+            {rows.map((row, index) => (
+              <View
+                key={index}
+                style={{
+                  flexDirection: "row",
+                  gap: theme.spacing,
+                  alignItems: "flex-start",
+                }}
+              >
+                {row.map((view) => (
                   <View
-                    style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}
+                    key={view.id}
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      borderWidth: 1,
+                      borderStyle: "dashed",
+                      borderColor: theme.accent,
+                      borderRadius: theme.radius,
+                      padding: 6,
+                      minHeight: 44,
+                    }}
                   >
-                    {canvasFieldTargets(spec, view.id).map((field) => (
-                      <Button
-                        key={field.fieldId}
-                        label={`Inspect field ${field.label} in ${view.label}`}
-                        variant="quiet"
-                        disabled={disabled}
-                        onPress={() =>
-                          onSelectField(field.collectionId, field.fieldId)
-                        }
-                      />
-                    ))}
+                    <Pressable
+                      accessibilityRole="button"
+                      disabled={disabled}
+                      accessibilityState={{ disabled }}
+                      aria-disabled={disabled}
+                      accessibilityLabel={`Inspect ${view.label}, ${view.type} view`}
+                      onPress={() => onSelectView(view.id)}
+                      style={{ minHeight: 44 }}
+                    >
+                      <Text style={styles.muted}>Inspect {view.label}</Text>
+                      <View
+                        pointerEvents="none"
+                        accessibilityElementsHidden
+                        importantForAccessibility="no-hide-descendants"
+                      >
+                        <SemanticView view={view} />
+                      </View>
+                    </Pressable>
+                    <View
+                      style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}
+                    >
+                      {canvasFieldTargets(spec, view.id).map((field) => (
+                        <Button
+                          key={field.fieldId}
+                          label={`Inspect field ${field.label} in ${view.label}`}
+                          variant="quiet"
+                          disabled={disabled}
+                          onPress={() =>
+                            onSelectField(field.collectionId, field.fieldId)
+                          }
+                        />
+                      ))}
+                    </View>
                   </View>
-                </View>
-              ))}
-            </View>
-          ))}
+                ))}
+              </View>
+            ))}
+          </View>
         </View>
       </RendererContext.Provider>
     </View>
