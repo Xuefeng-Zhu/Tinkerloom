@@ -1,0 +1,22 @@
+name: tinkerloom_client
+description: Authenticated Appwrite transport for the original Tinkerloom Flutter UI.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+environment:
+  sdk: '>=3.13.0 <3.14.0'
+  flutter: '>=3.47.0 <3.48.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  appwrite: ^28.1.0
+  appnest_spec:
+    path: ../appnest_spec
+  crypto: ^3.0.6
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  image: 4.10.1
+  http: ^1.2.2
+  path_provider_platform_interface: ^2.1.2

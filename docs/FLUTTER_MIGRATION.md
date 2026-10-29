@@ -30,6 +30,15 @@ Only one final Cloud smoke is authorized for this restoration. It reuses an exis
 
 Count all Function requests, including reads used for startup/reload, against the same budget. The result must report actual counts and whether the optional creation occurred. A Function execution can issue multiple underlying database operations; do not label its request count as the number of database operations. If the quota is already exhausted, retain the blocked result rather than extending the budget or repeating broad probes.
 
+The explicit runner is outside the normal `test/` directory at `packages/tinkerloom_client/live_smoke/final_smoke.dart`. It reads `TINKERLOOM_SMOKE_ENDPOINT`, `TINKERLOOM_SMOKE_PROJECT`, `TINKERLOOM_SMOKE_FUNCTION`, `TINKERLOOM_SMOKE_APP_ID`, `TINKERLOOM_SMOKE_EMAIL` and `TINKERLOOM_SMOKE_PASSWORD` only from the ephemeral process environment. `TINKERLOOM_SMOKE_REPORT` optionally names a sanitized result file. Never pass credentials as Dart defines or save them in checked-in configuration.
+
+```sh
+TINKERLOOM_LIVE_SMOKE=1 flutter test --no-pub \
+  packages/tinkerloom_client/live_smoke/final_smoke.dart
+```
+
+Without the explicit enable flag this test is skipped. Its server-state reload is an SDK/service persistence check, separate from rendered Flutter UI, browser cold reopen and native device acceptance. Do not automatically rerun it after a failure or exhausted quota.
+
 ## Current verification record
 
 Restoration work is in progress. Final receipts must identify the exact accepted Flutter source, commands, test totals, build hashes and the bounded Cloud result. Record failures and unavailable native tooling separately; do not overwrite older receipts or infer current acceptance from historical React Native or Serverpod reports.

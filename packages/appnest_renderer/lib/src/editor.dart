@@ -48,6 +48,21 @@ class _RecordEditorState extends State<_RecordEditor> {
   final _capacity = TextEditingController();
   List<String> _members = [];
   bool _saving = false, _uploading = false, _retryingSave = false;
+  final _pendingImages = <String, PendingImageUpload>{};
+  final _imageMessages = <String, String>{};
+  int _imageGeneration = 0;
+  Object? _lastImageContext;
+  Object get _imageContext => (
+    widget.adapter,
+    widget.adapter?.spec.hash,
+    widget.collection.id,
+    widget.record?.id,
+    widget.record?.revision,
+    widget.adapter?.readOnly,
+    widget.adapter?.archived,
+    widget.fieldIds.join(','),
+    widget.action.id,
+  );
   int _stepIndex = 0;
   List<Map<String, dynamic>> get steps => [
     for (final step in widget.options['steps'] as List? ?? [])
@@ -86,6 +101,7 @@ class _RecordEditorState extends State<_RecordEditor> {
   @override
   void initState() {
     super.initState();
+    _lastImageContext = _imageContext;
     _pendingCommand = widget.pendingCommand;
     _baseRecord = widget.record;
     if (_pendingCommand != null) {
@@ -137,6 +153,13 @@ class _RecordEditorState extends State<_RecordEditor> {
   @override
   void didUpdateWidget(covariant _RecordEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (_lastImageContext != _imageContext) {
+      _lastImageContext = _imageContext;
+      _imageGeneration++;
+      _pendingImages.clear();
+      _imageMessages.clear();
+      _uploading = false;
+    }
     // Values and their revision are one editing snapshot. A pristine form may
     // adopt a refresh, but an edited or receipt-bound form keeps its base.
     if (!_edited &&
@@ -251,7 +274,7 @@ class _RecordEditorState extends State<_RecordEditor> {
   }
 
   Future<void> _save() async {
-    if (_saving || _uploading) return;
+    if (_saving || _uploading || _pendingImages.isNotEmpty) return;
     final retrying = _pendingCommand != null;
     _retryingSave = retrying;
     final hasCapacity =
@@ -395,7 +418,11 @@ class _RecordEditorState extends State<_RecordEditor> {
                   children: [
                     if (_stepIndex > 0)
                       OutlinedButton(
-                        onPressed: _saving || _pendingCommand != null
+                        onPressed:
+                            _saving ||
+                                _uploading ||
+                                _pendingImages.isNotEmpty ||
+                                _pendingCommand != null
                             ? null
                             : () => setState(() {
                                 _stepIndex--;
@@ -405,14 +432,21 @@ class _RecordEditorState extends State<_RecordEditor> {
                       ),
                     if (steps.isNotEmpty && _stepIndex < steps.length - 1)
                       FilledButton(
-                        onPressed: _saving || _pendingCommand != null
+                        onPressed:
+                            _saving ||
+                                _uploading ||
+                                _pendingImages.isNotEmpty ||
+                                _pendingCommand != null
                             ? null
                             : _nextStep,
                         child: const Text('Next step'),
                       )
                     else
                       FilledButton.icon(
-                        onPressed: _saving ? null : _save,
+                        onPressed:
+                            _saving || _uploading || _pendingImages.isNotEmpty
+                            ? null
+                            : _save,
                         icon: const Icon(Icons.check),
                         label: Text(
                           _saving
@@ -619,6 +653,7 @@ class _RecordEditorState extends State<_RecordEditor> {
   }
 
   void _nextStep() {
+    if (_saving || _uploading || _pendingImages.isNotEmpty) return;
     if (_validate(visibleFields) == null) return;
     setState(() {
       _stepIndex++;
@@ -846,7 +881,12 @@ class _RecordEditorState extends State<_RecordEditor> {
         spacing: 8,
         children: [
           OutlinedButton.icon(
-            onPressed: widget.adapter == null || _uploading
+            onPressed:
+                widget.adapter == null ||
+                    widget.adapter!.readOnly ||
+                    widget.adapter!.archived ||
+                    _uploading ||
+                    _pendingImages.containsKey(field.id)
                 ? null
                 : () => _chooseImage(field),
             icon: const Icon(Icons.add_photo_alternate_outlined),
@@ -856,14 +896,28 @@ class _RecordEditorState extends State<_RecordEditor> {
           ),
           if (!field.required && _values[field.id] != null)
             TextButton(
-              onPressed: () {
-                setState(() => _values[field.id] = null);
-                _dirty();
-              },
+              onPressed: _uploading || _pendingImages.containsKey(field.id)
+                  ? null
+                  : () {
+                      setState(() {
+                        _values[field.id] = null;
+                        _imageMessages.remove(field.id);
+                      });
+                      _dirty();
+                    },
               child: const Text('Remove image'),
             ),
         ],
       ),
+      if (_pendingImages[field.id] case final pending?)
+        PendingImageUploadControls(
+          pending: pending,
+          busy: _uploading,
+          onCheck: () => _checkImage(field),
+          onDiscard: () => _discardImage(field),
+        ),
+      if (_imageMessages[field.id] case final message?)
+        Semantics(liveRegion: true, child: Text(message)),
       Text(
         'JPEG, PNG or WebP · up to 5 MiB',
         style: Theme.of(context).textTheme.bodySmall,
@@ -871,32 +925,121 @@ class _RecordEditorState extends State<_RecordEditor> {
     ],
   );
 
-  Future<void> _chooseImage(FieldSpec field) async {
+  bool _imageActive(int generation, Object context) =>
+      mounted &&
+      generation == _imageGeneration &&
+      context == _imageContext &&
+      widget.adapter?.readOnly == false &&
+      widget.adapter?.archived == false;
+
+  void _finishImage(int generation, Object context) {
+    if (!mounted || generation != _imageGeneration) return;
+    setState(() {
+      _uploading = false;
+      if (context != _imageContext) {
+        _pendingImages.clear();
+        _imageMessages.clear();
+      }
+    });
+  }
+
+  void _discardImage(FieldSpec field) {
+    _imageGeneration++;
+    setState(() {
+      _pendingImages.remove(field.id);
+      _imageMessages.remove(field.id);
+      _uploading = false;
+      _error = null;
+    });
+  }
+
+  Future<void> _checkImage(FieldSpec field) async {
+    final pending = _pendingImages[field.id];
+    if (pending == null || _uploading) return;
+    final generation = ++_imageGeneration, context = _imageContext;
+    setState(() {
+      _uploading = true;
+      _error = null;
+    });
     try {
-      final bytes = await widget.adapter!.pickImage();
-      if (bytes == null || !mounted) return;
+      final id = await pending.checkReady();
+      if (!_imageActive(generation, context)) return;
+      if (id != pending.assetId) {
+        throw const SpecException(
+          'The image response belongs to another upload.',
+        );
+      }
       setState(() {
-        _uploading = true;
+        _values[field.id] = id;
+        _pendingImages.remove(field.id);
+        _imageMessages[field.id] = 'Image attached. Save the form to keep it.';
         _error = null;
       });
+      _dirty();
+    } on PendingImageUpload catch (next) {
+      if (_imageActive(generation, context)) {
+        setState(() {
+          if (next.assetId == pending.assetId) _pendingImages[field.id] = next;
+        });
+      }
+    } catch (issue) {
+      if (_imageActive(generation, context)) {
+        setState(
+          () => _error = widget.adapter!.errorMessage(
+            issue,
+            fallback:
+                'Could not check the image. Your other values are retained.',
+          ),
+        );
+      }
+    } finally {
+      _finishImage(generation, context);
+    }
+  }
+
+  Future<void> _chooseImage(FieldSpec field) async {
+    if (_uploading || _pendingImages.containsKey(field.id)) return;
+    final generation = ++_imageGeneration, context = _imageContext;
+    setState(() {
+      _uploading = true;
+      _error = null;
+      _imageMessages.remove(field.id);
+    });
+    try {
+      final bytes = await widget.adapter!.pickImage();
+      if (bytes == null || !_imageActive(generation, context)) return;
       final id = await widget.adapter!.uploadImage(
         bytes,
         collectionId: widget.collection.id,
         fieldId: field.id,
-        record: widget.record,
+        record: _baseRecord,
       );
-      if (!mounted) return;
+      if (!_imageActive(generation, context)) return;
       setState(() {
         _values[field.id] = id;
-        _uploading = false;
+        _imageMessages[field.id] = 'Image attached. Save the form to keep it.';
+        _error = null;
       });
       _dirty();
-    } catch (error) {
-      if (mounted)
+    } on PendingImageUpload catch (pending) {
+      if (_imageActive(generation, context)) {
         setState(() {
-          _uploading = false;
-          _error = 'Could not upload image. ${_message(error, 'Try again.')}';
+          _pendingImages[field.id] = pending;
+          _error = null;
         });
+        _dirty();
+      }
+    } catch (issue) {
+      if (_imageActive(generation, context)) {
+        setState(
+          () => _error = widget.adapter!.errorMessage(
+            issue,
+            fallback: 'Could not upload image. Your other values are retained.',
+          ),
+        );
+      }
+    } finally {
+      _finishImage(generation, context);
     }
   }
 }

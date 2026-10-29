@@ -4512,5 +4512,8 @@
     "nativeCompiledSourceSha256": "5d9c16e6516014dd82b42e03043fdb43598f683a9b67140ea30fc24ed97fa926",
     "preservedPriorNativeFiles": 2873,
     "pendingSourceScope": "Narrow image READY attachment callback lifetime correction plus mounted regression; no new featurefamily/backend change"
-  }
+  },
+  "checkpointStatus": "Historical React Native checkpoint; retained unchanged apart from this archival metadata",
+  "historicalSourceBranch": "codex/react-native-backup-20261029",
+  "activeFrontendStatus": "docs/FLUTTER_MIGRATION.md"
 }

@@ -1,3 +1,5 @@
+> This document records the initial backend foundation. The current full engine contract is in [SPEC_ENGINE.md](SPEC_ENGINE.md); the active Flutter client is documented in [the repository README](../README.md).
+
 # Appwrite backend checkpoint
 
 The isolated full-AppSpec engine foundation is described in [SPEC_ENGINE.md](SPEC_ENGINE.md). It adds versioned APIs and separate storage while retaining the bounded/collaboration runtime below. Its local tests do not replace deployment and live acceptance.

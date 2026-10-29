@@ -1,3 +1,5 @@
+> **Historical React Native checkpoint.** The active frontend is now the Flutter restoration described in [FLUTTER_MIGRATION.md](FLUTTER_MIGRATION.md). Source links in this checkpoint refer to [the preserved React Native branch](https://github.com/Xuefeng-Zhu/Tinkerloom/tree/codex/react-native-backup-20261029). Its test counts and pending gates are not Flutter verification results.
+
 # Current Tinkerloom migration status and evidence index
 
 Checkpoint captured: 2026-10-29T07:35:44.596001+00:00 (UTC).

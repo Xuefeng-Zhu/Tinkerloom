@@ -1,0 +1,15 @@
+{
+  "layer": "Rendered Flutter web offline preview; not Cloud or native proof",
+  "entrypoint": "apps/flutter/lib/preview.dart",
+  "template": "Project Hub",
+  "observations": [
+    "Original Flutter theme and template navigation rendered",
+    "Original form accepted a synthetic task",
+    "Saved task appeared on the board; count changed from 6 to 7",
+    "Preview explicitly labelled sample data and simulated actions"
+  ],
+  "cloudRequests": 0,
+  "businessDatabaseWrites": 0,
+  "screenshot": "offline-project-hub.jpg",
+  "screenshotSha256": "d0ec0d32239e7a79021286cc43c90606017512bbed03098fb5dbc696d5294f0b"
+}

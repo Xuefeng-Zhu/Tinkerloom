@@ -46,6 +46,56 @@ class RuntimePage {
   RuntimePage(this.items, this.total, this.cursor);
 }
 
+/// A completed byte upload whose trusted processing has not reached READY.
+/// The callback belongs to the original form/field context; it never uploads
+/// another image and is invoked only by an explicit status check.
+class PendingImageUpload implements Exception {
+  const PendingImageUpload({
+    required this.assetId,
+    required this.checkReady,
+    this.message =
+        'The image is processing. Check its status before attaching it.',
+  });
+  final String assetId;
+  final Future<String> Function() checkReady;
+  final String message;
+  @override
+  String toString() => message;
+}
+
+class PendingImageUploadControls extends StatelessWidget {
+  const PendingImageUploadControls({
+    super.key,
+    required this.pending,
+    required this.onCheck,
+    required this.onDiscard,
+    this.busy = false,
+  });
+  final PendingImageUpload pending;
+  final VoidCallback? onCheck, onDiscard;
+  final bool busy;
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Semantics(liveRegion: true, child: Text(pending.message)),
+      Wrap(
+        spacing: 8,
+        children: [
+          OutlinedButton(
+            onPressed: busy ? null : onCheck,
+            child: Text(busy ? 'Checking image…' : 'Check image status'),
+          ),
+          TextButton(
+            onPressed: busy ? null : onDiscard,
+            child: const Text('Discard pending image'),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
 abstract class RuntimeAdapter {
   late final DeviceCapabilitiesAdapter _deviceCapabilities =
       DeviceCapabilitiesAdapter();

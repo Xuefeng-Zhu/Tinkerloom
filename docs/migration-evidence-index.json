@@ -6980,5 +6980,8 @@
     "launched": false,
     "nativeUIOrHardwareVerified": false
   },
-  "historicalReceiptsPortable": true
+  "historicalReceiptsPortable": true,
+  "checkpointStatus": "Historical React Native checkpoint; retained unchanged apart from this archival metadata",
+  "historicalSourceBranch": "codex/react-native-backup-20261029",
+  "activeFrontendStatus": "docs/FLUTTER_MIGRATION.md"
 }
