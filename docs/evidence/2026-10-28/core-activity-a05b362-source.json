@@ -1,0 +1,244 @@
+{
+  "sourceCommit": "a05b3623154b997e7b40525a22bad10d52c73a8d",
+  "archive": "/private/tmp/tinkerloom-combined-a05b362.tar.gz",
+  "bytes": 154534,
+  "sha256": "75780c6e736ddf7710d9cf359ef9cd2d8dd8aabc292128e060adbd305d2509ef",
+  "files": [
+    {
+      "path": "lib/activity.dart",
+      "bytes": 4413,
+      "sha256": "ec62eb704d69ddc23939d05a49cce2c7d7e578bfe3904506466d3bad664ad343"
+    },
+    {
+      "path": "lib/collaboration.dart",
+      "bytes": 18856,
+      "sha256": "168489924a45c31246b992d3ca2876386a96ac7f7d23605fd5f691f0ba355623"
+    },
+    {
+      "path": "lib/definition.dart",
+      "bytes": 8171,
+      "sha256": "bead4250be7d347db9e3b25eb4e0e331d1e0627be1857bac46ce92530b3ee2c0"
+    },
+    {
+      "path": "lib/drafts.dart",
+      "bytes": 8370,
+      "sha256": "f9e087119e5c1cf13684ce48ab9563427d652121cb28975b5c9e8ae6de826493"
+    },
+    {
+      "path": "lib/errors.dart",
+      "bytes": 295,
+      "sha256": "b054e923f80b996284a797067ba111034a4baa79e6b7c8f2727cdf411c71650f"
+    },
+    {
+      "path": "lib/generation.dart",
+      "bytes": 27995,
+      "sha256": "caebaff85b43c00af41cc91acdfa0ee51fda0f5303be56230f69a65ace1437a6"
+    },
+    {
+      "path": "lib/image_preflight.dart",
+      "bytes": 16528,
+      "sha256": "f6ef70c3bc1a3b628d06f7f5a27acf8b1185866765667efe5d6f325fb8519549"
+    },
+    {
+      "path": "lib/image_sanitizer.dart",
+      "bytes": 3922,
+      "sha256": "064ea6473ae2a2227e4776a0cf254d772c6fa5a0bd52594fc9634394c0b3359e"
+    },
+    {
+      "path": "lib/image_worker.dart",
+      "bytes": 1663,
+      "sha256": "6c32ccee8baae0a411e9e3faf5748e0275308978f514403c16fb096892255c9d"
+    },
+    {
+      "path": "lib/inbox.dart",
+      "bytes": 6783,
+      "sha256": "a27d2b0807fdeb0413b56644c69730ca7db94873c9b65762ef6af4e774cf8479"
+    },
+    {
+      "path": "lib/main.dart",
+      "bytes": 4433,
+      "sha256": "0b952b8f0307851ac4f536ad53f1656c37a257c5aa2a2975309eaac66018fab6"
+    },
+    {
+      "path": "lib/media_rest.dart",
+      "bytes": 6197,
+      "sha256": "a97f0757714e37c90e1c2411dcbba53cf2e05cb75808fe903df15fbc28cd2118"
+    },
+    {
+      "path": "lib/media_store.dart",
+      "bytes": 1626,
+      "sha256": "cdf9963e76d5d1ea69b846299440eab618ea374d283fa9ea6a9f89f96a1ca90a"
+    },
+    {
+      "path": "lib/private_media.dart",
+      "bytes": 42633,
+      "sha256": "80198fa9aa053e81e91e2b9f961ce0d8a56a024c7ec312084d441d82d31eecdf"
+    },
+    {
+      "path": "lib/providers/creation_compiler.dart",
+      "bytes": 2931,
+      "sha256": "29d35f37bc296117e992264e481bfeff107fa890c93a095d3f063ac621abded1"
+    },
+    {
+      "path": "lib/providers/generation_quality.dart",
+      "bytes": 10968,
+      "sha256": "942b7ed19da1bcbd1b93db852c49be2814470f76532ddc59d545c7ef28cb8c7b"
+    },
+    {
+      "path": "lib/providers/generation_requirements.dart",
+      "bytes": 37892,
+      "sha256": "87dbc4fe0087577ab335c224f5051720baedb86cdd79af3d669cac8c6047bbed"
+    },
+    {
+      "path": "lib/providers/nemotron_prompt.dart",
+      "bytes": 3567,
+      "sha256": "f738da464fb1ae8227a3ed93cb6a0e45facd61f07246456648bbf8497dd07398"
+    },
+    {
+      "path": "lib/providers/nvidia_model_profiles.dart",
+      "bytes": 20626,
+      "sha256": "26b6121682eaa3ea13ad6acf8971078fd033562f918ec47dc0cb7b6b632c2cf7"
+    },
+    {
+      "path": "lib/providers/provider.dart",
+      "bytes": 116307,
+      "sha256": "52c7b5b9d00ca3fa903700ea9f757c066467143d35a9344f80ba848fc4be4f21"
+    },
+    {
+      "path": "lib/providers/repair_bindings.dart",
+      "bytes": 34311,
+      "sha256": "2ee9caa0e41bb99598451dfeaae40a59b1b29e071006bffa56bbe29e54bd7b88"
+    },
+    {
+      "path": "lib/reminders.dart",
+      "bytes": 23586,
+      "sha256": "6d3a42c18f5321b837bec3b7d0fd0db79b7ce5415e5fbe5afabf62a076065f34"
+    },
+    {
+      "path": "lib/rest.dart",
+      "bytes": 5240,
+      "sha256": "c9e16ec470ca76eb9a49533607c4ca59a8d43c3bc0150ec9c71d33481921becb"
+    },
+    {
+      "path": "lib/service.dart",
+      "bytes": 25901,
+      "sha256": "0fdb7b1314519ae3fe42e258d974e1a1627cf32bb794cc34747def466922d028"
+    },
+    {
+      "path": "lib/spec_actions.dart",
+      "bytes": 17006,
+      "sha256": "d0047577d2f0632aae48efbb350ae8266442eb6d1c4769618827e3272095c538"
+    },
+    {
+      "path": "lib/spec_lifecycle.dart",
+      "bytes": 29001,
+      "sha256": "d05aca5d3ea81196a93d93c96f65fbdf741e0c68f0c4d231b666e3ae024e4e09"
+    },
+    {
+      "path": "lib/spec_queries.dart",
+      "bytes": 12983,
+      "sha256": "3cf97f631baa7f8367f9785cc0066ce4731cf0d36dee7de2859b47245b42c94a"
+    },
+    {
+      "path": "lib/spec_runtime.dart",
+      "bytes": 23981,
+      "sha256": "815b458a70f581278cd9fb7939cf1f0fa4a6f4974067326e9a5db28c9c5322b8"
+    },
+    {
+      "path": "lib/spec_watch.dart",
+      "bytes": 720,
+      "sha256": "f94bf597f54f30f36a17f47f4803b21ea04f3156e9c7d7c5a791e5bd04524aa0"
+    },
+    {
+      "path": "lib/store.dart",
+      "bytes": 765,
+      "sha256": "fa2f1da9873209735a99ff0fceba683e991c1e79be3938ec5b4a70d5d0956676"
+    },
+    {
+      "path": "lib/worker_dispatch.dart",
+      "bytes": 14903,
+      "sha256": "60458f1c61350b7385ce1b4b8fedc65d081de032d60996ae3286f9bdd2a2e59f"
+    },
+    {
+      "path": "lib/worker_http.dart",
+      "bytes": 4640,
+      "sha256": "a3ddf55122ae0ba4d10abd845aa50aa8f24e0b73eec634d8d77fdffa5e31542e"
+    },
+    {
+      "path": "lib/worker_main.dart",
+      "bytes": 2967,
+      "sha256": "9e4040e0364ee2f62a17040ced87a7614953c8580b7d101c82acdc7afeecb8ed"
+    },
+    {
+      "path": "lib/worker_support.dart",
+      "bytes": 6519,
+      "sha256": "d21ea02df2ccdf6aaa556fce8dba1e531f8af6d4a5c63a09ce825213ed96f999"
+    },
+    {
+      "path": "packages/appnest_spec/lib/appnest_spec.dart",
+      "bytes": 2738,
+      "sha256": "6241387f384c28682c7befdd550e987374d067369574af13becee687d745fe6e"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/appearance.dart",
+      "bytes": 2135,
+      "sha256": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/device_spec.dart",
+      "bytes": 3550,
+      "sha256": "2c48ad81de94bc8cda1fc63601b80bd157875ef3a59a1ad7d4325407696b2ea2"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/rich_spec.dart",
+      "bytes": 22068,
+      "sha256": "f001a7e653e266bd6e8f86d691ed7809db00fae22a2601b3268a6e0716818b42"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/rich_templates.dart",
+      "bytes": 12196,
+      "sha256": "9114fa32cb4c7095bfff342d3894140d6962586d0324f253b4852c95fb200c13"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/schema.dart",
+      "bytes": 7261,
+      "sha256": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/spec.dart",
+      "bytes": 60153,
+      "sha256": "b8e82aa6613bef2451b5221946df408ddb09153ecbf2c28909eda6f990dad6e3"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/templates.dart",
+      "bytes": 16508,
+      "sha256": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/utility_spec.dart",
+      "bytes": 1796,
+      "sha256": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/utility_templates.dart",
+      "bytes": 3972,
+      "sha256": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18"
+    },
+    {
+      "path": "packages/appnest_spec/pubspec.yaml",
+      "bytes": 235,
+      "sha256": "9461937d9e2ab71915d34c2ddf15dcb803561cc7530ab08a9bc5f9425d8b1585"
+    },
+    {
+      "path": "pubspec.lock",
+      "bytes": 12460,
+      "sha256": "88d537166ba84399f488b10bf70a24d56ef6ae38fbfde46d880ada3e4650b70a"
+    },
+    {
+      "path": "pubspec.yaml",
+      "bytes": 222,
+      "sha256": "cd116fe34445541a51b749a9c8dccf93cd08a77a281d4fe2dfda45a9e1026a8e"
+    }
+  ],
+  "source": "Committed runtime/package Git blobs only; no tests, environment, config, cache, or native artifacts"
+}

@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T01:48:57.170141+00:00",
+  "sourceCommit": "a05b3623154b997e7b40525a22bad10d52c73a8d",
+  "environment": "React Native web export in existing IAB at localhost:8426; real Appwrite development account and backend; no native runtime",
+  "viewport": {
+    "innerWidth": 1280,
+    "innerHeight": 720,
+    "measurement": "previous direct DOM observation; not remeasured during this flow"
+  },
+  "checks": [
+    {
+      "name": "provider_off_local_guidance",
+      "status": "passed",
+      "observation": "Help produced Built-in questions and explicit Provider clarification is not configured notice."
+    },
+    {
+      "name": "selection_change_and_continue_original",
+      "status": "passed",
+      "observation": "Selected Just me then People in my community; Continue with original request retained exact original synthetic book-swap request."
+    },
+    {
+      "name": "explicit_use_selections",
+      "status": "passed",
+      "observation": "Applied only two selected answers; unselected track-of question omitted; editable request retained original prefix."
+    },
+    {
+      "name": "shell_creation_and_private_prefill",
+      "status": "passed",
+      "observation": "Explicit Create private builder shell returned App created. Open created builder showed exact clarified request in editable generation textbox and in-memory handoff notice."
+    },
+    {
+      "name": "generation_disabled",
+      "status": "passed",
+      "observation": "Generate private preview disabled; UI reports AI generation not configured. No generation button invoked."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/mobile/src/full/GenerationPanel.tsx",
+      "sha256": "3bc779f1b79fd9226da3307bd44a625876852855d0b4d251e0fba484a2c16d81"
+    },
+    {
+      "path": "apps/mobile/src/full/FullAppController.ts",
+      "sha256": "48883a418afa5462571093210bbf7d2ec0168a59ccf67bfc21c6f26f54c6a358"
+    },
+    {
+      "path": "apps/mobile/src/full/FullWorkspaceController.ts",
+      "sha256": "e82bf27e9dc0b478afd64251e0ef28aa09bf56dafec47479a5cef9f4c16ca51d"
+    },
+    {
+      "path": "apps/mobile/src/full/FullLauncher.tsx",
+      "sha256": "de3e1b4e787b1adec113bacad792dacaf1725d8f22bdd785c6a36a11edd93b4b"
+    },
+    {
+      "path": "apps/mobile/src/full/FullRegistry.ts",
+      "sha256": "edc2ec8d0abcebe5bdd65a487d4201a2c07cadafe7fd94bd4fb08af3fa3104a1"
+    },
+    {
+      "path": "apps/mobile/src/full/clarification.ts",
+      "sha256": "5e594b620dfe14dcb5d6a7af7308c732720ee504fd242f06f46696161e81437f"
+    },
+    {
+      "path": "apps/mobile/src/full/ClarificationPanel.tsx",
+      "sha256": "1364c1f6240f5f141cd3d35a913d5f056d29023182caccf028b836b0930e69b6"
+    },
+    {
+      "path": "apps/mobile/src/full/clarification.test.ts",
+      "sha256": "3439c3bd13c8d80b4149deb1a4b0f444b8e6ae166798d952e75d88830cd4b818"
+    },
+    {
+      "path": "apps/mobile/docs/CLARIFICATION.md",
+      "sha256": "75214d024c190ca57bf8564291f467accf2525d2587d5dcfc3ba02b1ae974084"
+    }
+  ],
+  "limits": [
+    "No provider call or billing proof; no generation invoked.",
+    "No physical device, assistive technology, narrow viewport or account-switch interaction proof.",
+    "UI observations do not independently count server jobs or HTTP requests."
+  ],
+  "preservedFailure": "Old lazy chunk failed after mutable export directory changed; intentional reload of completed export restored workbench before this flow."
+}
