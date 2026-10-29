@@ -95,3 +95,24 @@ standalone account creation and each probe's HTTP cap remain unchanged. The
 twenty-distinct-actor mode cannot use this five-account helper. `forget()` drops
 references; it does not claim cryptographic erasure of immutable JS strings.
 Offline auth stubs verify this plumbing and do not prove Cloud authentication.
+
+
+## Corrected full Cloud pass
+
+The [fresh passing receipt](evidence/2026-10-28/full-cloud-fc71-pooled.passed.json)
+records48 passed checks, zero failures/blocked checks and1,948 assertions against
+core deployment6ae289f866af0d0d2ba7. It used382 probe HTTP requests plus five
+separately recorded normal client account creations (387 observed total). Five
+provided synthetic identities were freshly authenticated and verified, and all
+probe sessions were signed out. Original failed reports remain unchanged.
+
+The capacity trial sent twenty distinct operation IDs at peak HTTP concurrency
+twenty using three eligible authenticated actors. Exactly one committed claimant
+and one allocation were observed. This is not a twenty-distinct-actor or server
+execution-barrier proof. Provider, media, reminders, native/device and actual
+data import retain separate acceptance gates.
+
+A prior [network-isolated harness attempt](evidence/2026-10-28/full-probe-network-isolated.failed.json)
+made zero probe HTTP requests and confirmed no backend accounts. Its runtime DNS
+check returned ENOTFOUND. It was preserved and its in-memory pool closed; the
+actual passing run used the approved local Node runtime and ordinary endpoints.

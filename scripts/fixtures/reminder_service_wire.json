@@ -1,0 +1,650 @@
+{
+  "proof": "Actual PlatformService and trusted WorkerEngine with synthetic MemoryStore/clock; no Cloud, HTTP, provider, credentials or real recipients",
+  "templates": {
+    "reminders": {
+      "formatVersion": 1,
+      "name": "My Reminders",
+      "theme": "blue",
+      "icon": "check",
+      "requires": [
+        "collections.v1",
+        "workflow.v1",
+        "records.create.v1",
+        "records.patch.v1",
+        "workflow.transition.v1",
+        "views.list.v1",
+        "views.summary.v1",
+        "views.details.v1",
+        "views.form.v1",
+        "navigation.v1",
+        "views.configured.v1",
+        "notifications.inApp.v1",
+        "notifications.owner.v1",
+        "automations.conditions.v1"
+      ],
+      "collections": [
+        {
+          "id": "tasks",
+          "label": "Tasks",
+          "fields": [
+            {
+              "id": "title",
+              "label": "Task",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "status",
+              "label": "Status",
+              "type": "choice",
+              "required": true,
+              "choices": ["Open", "Done"]
+            },
+            {
+              "id": "priority",
+              "label": "Priority",
+              "type": "choice",
+              "required": false,
+              "choices": ["Low", "Normal", "High"]
+            },
+            {
+              "id": "notes",
+              "label": "Notes",
+              "type": "text",
+              "required": false
+            },
+            {
+              "id": "dueAt",
+              "label": "Due",
+              "type": "timestamp",
+              "required": false
+            },
+            {
+              "id": "reminderAt",
+              "label": "Remind me",
+              "type": "timestamp",
+              "required": false
+            }
+          ],
+          "behaviors": [
+            {
+              "id": "taskProgress",
+              "type": "workflow.v1",
+              "fieldId": "status",
+              "transitions": {
+                "Open": ["Done"],
+                "Done": ["Open"]
+              }
+            }
+          ]
+        }
+      ],
+      "views": [
+        {
+          "id": "todaySummary",
+          "type": "summary",
+          "collectionId": "tasks",
+          "label": "Today at a glance",
+          "groupByFieldId": "status",
+          "actionIds": [],
+          "dateFilter": {
+            "fieldId": "dueAt",
+            "period": "today"
+          }
+        },
+        {
+          "id": "todayTasks",
+          "type": "list",
+          "collectionId": "tasks",
+          "label": "Scheduled today",
+          "titleFieldId": "title",
+          "actionIds": ["addTask", "editTask", "moveTask"],
+          "presentation": "compact",
+          "fieldIds": ["status", "priority", "dueAt"],
+          "query": {
+            "sort": [
+              {
+                "fieldId": "dueAt",
+                "descending": false
+              }
+            ],
+            "limit": 25
+          },
+          "dateFilter": {
+            "fieldId": "dueAt",
+            "period": "today"
+          },
+          "detailPageId": "taskDetailPage",
+          "formPageId": "taskEditorPage"
+        },
+        {
+          "id": "overdueTasks",
+          "type": "list",
+          "collectionId": "tasks",
+          "label": "Overdue",
+          "titleFieldId": "title",
+          "actionIds": ["editTask", "moveTask"],
+          "presentation": "compact",
+          "fieldIds": ["priority", "dueAt"],
+          "query": {
+            "filters": [
+              {
+                "fieldId": "status",
+                "operator": "eq",
+                "value": "Open"
+              }
+            ],
+            "sort": [
+              {
+                "fieldId": "dueAt",
+                "descending": false
+              }
+            ],
+            "limit": 25
+          },
+          "dateFilter": {
+            "fieldId": "dueAt",
+            "period": "overdue"
+          },
+          "detailPageId": "taskDetailPage",
+          "formPageId": "taskEditorPage"
+        },
+        {
+          "id": "allTasks",
+          "type": "list",
+          "collectionId": "tasks",
+          "label": "All tasks",
+          "titleFieldId": "title",
+          "actionIds": ["addTask", "editTask", "moveTask"],
+          "presentation": "cards",
+          "fieldIds": ["status", "priority", "dueAt"],
+          "filterFieldIds": ["status", "priority"],
+          "query": {
+            "sort": [
+              {
+                "fieldId": "dueAt",
+                "descending": false
+              }
+            ],
+            "limit": 25
+          },
+          "detailPageId": "taskDetailPage",
+          "formPageId": "taskEditorPage"
+        },
+        {
+          "id": "todayProgress",
+          "type": "summary",
+          "collectionId": "tasks",
+          "label": "Today’s scheduled tasks",
+          "groupByFieldId": "status",
+          "actionIds": [],
+          "dateFilter": {
+            "fieldId": "dueAt",
+            "period": "today"
+          }
+        },
+        {
+          "id": "allProgress",
+          "type": "summary",
+          "collectionId": "tasks",
+          "label": "All tasks",
+          "groupByFieldId": "status",
+          "actionIds": []
+        },
+        {
+          "id": "taskDetails",
+          "type": "details",
+          "collectionId": "tasks",
+          "label": "Task details",
+          "titleFieldId": "title",
+          "actionIds": ["editTask", "moveTask"],
+          "fieldIds": ["status", "priority", "notes", "dueAt", "reminderAt"],
+          "formPageId": "taskEditorPage"
+        },
+        {
+          "id": "taskEditor",
+          "type": "form",
+          "collectionId": "tasks",
+          "label": "Task editor",
+          "titleFieldId": "title",
+          "actionIds": ["addTask", "editTask"],
+          "fieldIds": ["title", "priority", "notes", "dueAt", "reminderAt"]
+        }
+      ],
+      "actions": [
+        {
+          "id": "addTask",
+          "label": "Add task",
+          "capability": "records.create.v1",
+          "collectionId": "tasks"
+        },
+        {
+          "id": "editTask",
+          "label": "Edit task",
+          "capability": "records.patch.v1",
+          "collectionId": "tasks"
+        },
+        {
+          "id": "moveTask",
+          "label": "Complete or reopen",
+          "capability": "workflow.transition.v1",
+          "collectionId": "tasks",
+          "behaviorId": "taskProgress"
+        }
+      ],
+      "policyPresetRequest": "personalTracker.v1",
+      "automationRequests": [
+        {
+          "id": "taskReminder",
+          "trigger": {
+            "type": "beforeTimestamp",
+            "collectionId": "tasks",
+            "fieldId": "reminderAt",
+            "offsetSeconds": 0
+          },
+          "effect": {
+            "type": "notifyOwner",
+            "channel": "inApp"
+          },
+          "condition": {
+            "fieldId": "status",
+            "value": "Open"
+          }
+        }
+      ],
+      "navigation": {
+        "entryPageId": "tasksPage",
+        "pages": [
+          {
+            "id": "todayPage",
+            "title": "Today",
+            "viewIds": ["todaySummary", "todayTasks", "overdueTasks"],
+            "showDate": true,
+            "primaryActionId": "addTask"
+          },
+          {
+            "id": "tasksPage",
+            "title": "Reminders",
+            "viewIds": ["allTasks"],
+            "primaryActionId": "addTask"
+          },
+          {
+            "id": "progressPage",
+            "title": "Progress",
+            "viewIds": ["todayProgress", "allProgress"]
+          },
+          {
+            "id": "taskDetailPage",
+            "title": "Task details",
+            "viewIds": ["taskDetails"]
+          },
+          {
+            "id": "taskEditorPage",
+            "title": "Task editor",
+            "viewIds": ["taskEditor"]
+          }
+        ],
+        "tabs": [
+          {
+            "pageId": "tasksPage",
+            "label": "Reminders",
+            "icon": "list"
+          },
+          {
+            "pageId": "progressPage",
+            "label": "Progress",
+            "icon": "chart"
+          }
+        ]
+      }
+    },
+    "chores": {
+      "formatVersion": 1,
+      "name": "Chore Board",
+      "theme": "sage",
+      "icon": "board",
+      "requires": [
+        "collections.v1",
+        "workflow.v1",
+        "assignment.v1",
+        "records.create.v1",
+        "records.patch.v1",
+        "assignment.assign.v1",
+        "workflow.transition.v1",
+        "views.board.v1",
+        "views.list.v1",
+        "notifications.inApp.v1"
+      ],
+      "collections": [
+        {
+          "id": "chores",
+          "label": "Chores",
+          "fields": [
+            {
+              "id": "title",
+              "label": "Chore",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "assignee",
+              "label": "Assigned to",
+              "type": "member",
+              "required": false
+            },
+            {
+              "id": "dueAt",
+              "label": "Due date",
+              "type": "timestamp",
+              "required": false
+            },
+            {
+              "id": "status",
+              "label": "Status",
+              "type": "choice",
+              "required": true,
+              "choices": ["Open", "Doing", "Done"]
+            },
+            {
+              "id": "notes",
+              "label": "Notes",
+              "type": "text",
+              "required": false
+            }
+          ],
+          "behaviors": [
+            {
+              "id": "progress",
+              "type": "workflow.v1",
+              "fieldId": "status",
+              "transitions": {
+                "Open": ["Doing"],
+                "Doing": ["Open", "Done"],
+                "Done": ["Open"]
+              }
+            },
+            {
+              "id": "assignment",
+              "type": "assignment.v1",
+              "fieldId": "assignee"
+            }
+          ]
+        }
+      ],
+      "views": [
+        {
+          "id": "board",
+          "type": "board",
+          "collectionId": "chores",
+          "label": "Board",
+          "titleFieldId": "title",
+          "groupByFieldId": "status",
+          "actionIds": ["addChore", "editChore", "assignChore", "moveChore"]
+        },
+        {
+          "id": "allChores",
+          "type": "list",
+          "collectionId": "chores",
+          "label": "All chores",
+          "titleFieldId": "title",
+          "actionIds": ["addChore", "editChore", "assignChore", "moveChore"]
+        }
+      ],
+      "actions": [
+        {
+          "id": "addChore",
+          "label": "Add chore",
+          "capability": "records.create.v1",
+          "collectionId": "chores"
+        },
+        {
+          "id": "editChore",
+          "label": "Edit notes",
+          "capability": "records.patch.v1",
+          "collectionId": "chores"
+        },
+        {
+          "id": "assignChore",
+          "label": "Assign",
+          "capability": "assignment.assign.v1",
+          "collectionId": "chores",
+          "behaviorId": "assignment"
+        },
+        {
+          "id": "moveChore",
+          "label": "Change status",
+          "capability": "workflow.transition.v1",
+          "collectionId": "chores",
+          "behaviorId": "progress"
+        }
+      ],
+      "policyPresetRequest": "groupWorkflow.v1",
+      "automationRequests": [
+        {
+          "id": "dueReminder",
+          "trigger": {
+            "type": "beforeTimestamp",
+            "collectionId": "chores",
+            "fieldId": "dueAt",
+            "offsetSeconds": 3600
+          },
+          "effect": {
+            "type": "notifyAssignee",
+            "channel": "inApp"
+          }
+        }
+      ]
+    }
+  },
+  "ownerVersionId": "vcf839ba49936bfda1b7c80ca38b49e69",
+  "memberVersionId": "vc30ecaccf1cd3607ea97e1df3b75e098",
+  "states": {
+    "disabled": {
+      "states": [
+        {
+          "ruleId": "taskReminder",
+          "state": "disabled",
+          "scheduledAt": "2030-01-01T10:03:00.000Z",
+          "eligible": false,
+          "recipientCount": 0
+        }
+      ],
+      "versionId": "vc30ecaccf1cd3607ea97e1df3b75e098"
+    },
+    "unenrolled": {
+      "states": [
+        {
+          "ruleId": "taskReminder",
+          "state": "unenrolled",
+          "scheduledAt": "2030-01-01T10:03:00.000Z",
+          "eligible": true,
+          "recipientCount": 0
+        }
+      ],
+      "versionId": "vcf839ba49936bfda1b7c80ca38b49e69"
+    },
+    "unset": {
+      "states": [
+        {
+          "ruleId": "taskReminder",
+          "state": "unset",
+          "scheduledAt": null,
+          "eligible": false,
+          "recipientCount": 0
+        }
+      ],
+      "versionId": "vcf839ba49936bfda1b7c80ca38b49e69"
+    },
+    "pending": {
+      "states": [
+        {
+          "ruleId": "taskReminder",
+          "state": "pending",
+          "scheduledAt": "2030-01-01T10:03:00.000Z",
+          "eligible": true,
+          "recipientCount": 0
+        }
+      ],
+      "versionId": "vcf839ba49936bfda1b7c80ca38b49e69"
+    },
+    "delivered": {
+      "states": [
+        {
+          "ruleId": "taskReminder",
+          "state": "delivered",
+          "scheduledAt": "2030-01-01T10:03:00.000Z",
+          "eligible": true,
+          "recipientCount": 1
+        }
+      ],
+      "versionId": "vcf839ba49936bfda1b7c80ca38b49e69"
+    },
+    "suppressed": {
+      "states": [
+        {
+          "ruleId": "taskReminder",
+          "state": "suppressed",
+          "scheduledAt": "2030-01-01T10:03:00.000Z",
+          "eligible": false,
+          "recipientCount": 0
+        }
+      ],
+      "versionId": "vcf839ba49936bfda1b7c80ca38b49e69"
+    }
+  },
+  "pendingRuns": {
+    "runs": [
+      {
+        "id": "u6240198c64a6a55c3b722017e0c339ce",
+        "ruleId": "taskReminder",
+        "recordId": "64685f5b16055f855ea86b4ae94dd27b",
+        "status": "pending",
+        "dueAt": "2030-01-01T10:03:00.000Z",
+        "nextAttemptAt": "2030-01-01T10:03:00.000Z",
+        "attempts": 0,
+        "errorCategory": null,
+        "recipientCount": 0
+      },
+      {
+        "id": "uba3e10cdd432904e85cd409877f2edc0",
+        "ruleId": "taskReminder",
+        "recordId": "16b609db2f0c6112dc7e608c044e638b",
+        "status": "pending",
+        "dueAt": "2030-01-01T10:03:00.000Z",
+        "nextAttemptAt": "2030-01-01T10:03:00.000Z",
+        "attempts": 0,
+        "errorCategory": null,
+        "recipientCount": 0
+      },
+      {
+        "id": "ud1091bc363de3e615a89a99500ae5993",
+        "ruleId": "taskReminder",
+        "recordId": "d8b39f0d0673e1c6e4d9c1ece1f9a7f9",
+        "status": "pending",
+        "dueAt": "2030-01-01T10:03:00.000Z",
+        "nextAttemptAt": "2030-01-01T10:03:00.000Z",
+        "attempts": 0,
+        "errorCategory": null,
+        "recipientCount": 0
+      }
+    ],
+    "nextCursor": null
+  },
+  "ownerRuns": {
+    "runs": [
+      {
+        "id": "u6240198c64a6a55c3b722017e0c339ce",
+        "ruleId": "taskReminder",
+        "recordId": "64685f5b16055f855ea86b4ae94dd27b",
+        "status": "succeeded",
+        "dueAt": "2030-01-01T10:03:00.000Z",
+        "nextAttemptAt": "2030-01-01T10:03:00.000Z",
+        "attempts": 1,
+        "errorCategory": null,
+        "recipientCount": 1
+      },
+      {
+        "id": "uba3e10cdd432904e85cd409877f2edc0",
+        "ruleId": "taskReminder",
+        "recordId": "16b609db2f0c6112dc7e608c044e638b",
+        "status": "suppressed",
+        "dueAt": "2030-01-01T10:03:00.000Z",
+        "nextAttemptAt": "2030-01-01T10:03:00.000Z",
+        "attempts": 1,
+        "errorCategory": null,
+        "recipientCount": 0
+      },
+      {
+        "id": "ud1091bc363de3e615a89a99500ae5993",
+        "ruleId": "taskReminder",
+        "recordId": "d8b39f0d0673e1c6e4d9c1ece1f9a7f9",
+        "status": "suppressed",
+        "dueAt": "2030-01-01T10:03:00.000Z",
+        "nextAttemptAt": "2030-01-01T10:03:00.000Z",
+        "attempts": 1,
+        "errorCategory": null,
+        "recipientCount": 0
+      }
+    ],
+    "nextCursor": null
+  },
+  "ownerInbox": {
+    "items": [
+      {
+        "id": "nb5c1191cf7e2910a5f947fdd408fa73f",
+        "appId": "app",
+        "runId": "u6240198c64a6a55c3b722017e0c339ce",
+        "recordId": "64685f5b16055f855ea86b4ae94dd27b",
+        "collectionId": "tasks",
+        "title": "A reminder from My Reminders",
+        "body": "An upcoming item needs your attention. Open the app for current details.",
+        "createdAt": "2030-01-01T10:03:00.000Z",
+        "isRead": false
+      }
+    ],
+    "nextCursor": null
+  },
+  "readAcknowledgement": {
+    "notificationId": "nb5c1191cf7e2910a5f947fdd408fa73f",
+    "isRead": true
+  },
+  "memberInbox": {
+    "items": [
+      {
+        "id": "n29ffc75caaa54a2f542eb517a502b9a3",
+        "appId": "app",
+        "runId": "u91a26ec0e6591b00d6ff3bbcd0d3b1d7",
+        "recordId": "2c7bcafd7f72d27e72dfead7980e2fc0",
+        "collectionId": "chores",
+        "title": "A reminder from Chore Board",
+        "body": "An upcoming item needs your attention. Open the app for current details.",
+        "createdAt": "2030-01-01T10:03:00.000Z",
+        "isRead": false
+      }
+    ],
+    "nextCursor": null
+  },
+  "ownerCannotSeeMemberInbox": {
+    "items": [],
+    "nextCursor": null
+  },
+  "crossRecipientReadDenied": {
+    "error": "not_found",
+    "status": 404
+  },
+  "revokedRecipientRun": {
+    "id": "u4c0254965ecbc644e5522d5e5665bb23",
+    "ruleId": "dueReminder",
+    "recordId": "dc0f4a84daf956a015dfa3fd182cc8ef",
+    "status": "succeeded",
+    "dueAt": "2030-01-01T10:06:00.000Z",
+    "nextAttemptAt": "2030-01-01T10:06:00.000Z",
+    "attempts": 1,
+    "errorCategory": null,
+    "recipientCount": 0
+  },
+  "afterRevocationInbox": {
+    "items": [],
+    "nextCursor": null
+  }
+}

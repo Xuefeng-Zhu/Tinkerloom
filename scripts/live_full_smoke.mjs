@@ -2281,6 +2281,7 @@ export async function main() {
   process.exitCode = report.status === "passed" ? 0 : 1;
 }
 if (
+  typeof process !== "undefined" &&
   process.argv[1] &&
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 )

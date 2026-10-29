@@ -457,3 +457,17 @@ state, wizard value retention and rejected dirty-form navigation. The exact five
 form-source hashes passed498 local tests plus TypeScript, lint, format and all
 platform exports before subsequent feature integration. This1280×720 browser
 check is not native, narrow-layout or assistive-technology proof.
+
+
+### Full engine Cloud pass and reminder probe preparation
+
+The corrected [full Cloud receipt](evidence/2026-10-28/full-cloud-fc71-pooled.passed.json)
+passes48 checks and1,948 assertions with five authenticated actors, covering
+current role/tenant boundaries, private drafts, exact publication/history/remix
+receipts,115-record paging and aggregates, typed numeric boundaries, personal/
+team/assignment/workflow/capacity behavior, private-table denials and persistence.
+Twenty concurrent operations used three eligible capacity actors; twenty
+distinct actors remain separate. The gated [reminder/inbox probe](LIVE_REMINDER_SMOKE.md)
+has16 local contract/orchestration groups and actual-service fixtures; it has
+not yet established Cloud delivery. Live AI remains unconfigured and no spend
+or actual-data cutover has been performed.
