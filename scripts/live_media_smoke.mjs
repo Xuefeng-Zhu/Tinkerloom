@@ -1155,7 +1155,10 @@ export async function runMediaSmoke(
         const table = `/tablesdb/${encodeURIComponent(configuration.databaseId)}/tables/media_assets/rows/${maximumAsset}`;
         const bucket = `/storage/buckets/${encodeURIComponent(configuration.bucketId)}`;
         const file = `${bucket}/files/${identity("i", [maximumAsset, "display"])}`;
-        let rowDenials = 0;
+        let rowDenials = 0,
+          storageReadDenials = 0,
+          storageWriteDenials = 0,
+          emptyFileListConcealments = 0;
         for (const actor of [actors.owner, actors.outsider]) {
           for (const [method, body] of [
             ["GET", undefined],
@@ -1164,7 +1167,9 @@ export async function runMediaSmoke(
             const result = await actor.client.request(method, table, body);
             verify(
               safeErrorEnvelope(result.data) &&
-                isFullPrivateRowDenied(result, { knownExistingRow: true }),
+                isFullPrivateRowDenied(result, {
+                  knownExistingRow: method === "GET",
+                }),
               {
                 httpStatus: result.status,
                 code: result.data?.type,
@@ -1174,17 +1179,24 @@ export async function runMediaSmoke(
           }
           for (const [method, path, body, kind] of [
             ["GET", bucket, undefined, "bucket"],
-            ["GET", `${bucket}/files`, undefined, "bucket"],
+            ["GET", `${bucket}/files`, undefined, "fileList"],
             ["GET", file, undefined, "file"],
             ["GET", `${file}/view`, undefined, "file"],
             ["PUT", file, { name: "private.bin" }, "file"],
             ["PUT", bucket, { name: configuration.bucketId }, "bucket"],
           ]) {
             const result = await actor.client.request(method, path, body);
-            verify(storageDenied(result, { kind, knownExisting: true }), {
-              httpStatus: result.status,
-              code: result.data?.type,
-            });
+            verify(
+              storageDenied(result, { kind, method, knownExisting: true }),
+              {
+                httpStatus: result.status,
+                code: result.data?.type,
+              },
+            );
+            if (method !== "GET") storageWriteDenials++;
+            else if (kind === "fileList" && result.status === 200)
+              emptyFileListConcealments++;
+            else storageReadDenials++;
           }
         }
         // A private resource's existence is established by ready broker reads,
@@ -1198,7 +1210,12 @@ export async function runMediaSmoke(
           validAsset(response.asset, maximumAsset) &&
             response.asset.status === "ready",
         );
-        return { rowDenials };
+        return {
+          rowDenials,
+          storageReadDenials,
+          storageWriteDenials,
+          emptyFileListConcealments,
+        };
       },
     );
     await check(

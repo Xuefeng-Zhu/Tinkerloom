@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "originalFailedReceipt": {
+    "source": "/private/tmp/tinkerloom-media-cloud-cli-pooled-e42.json",
+    "copy": "reports/third-failed.json",
+    "sha256": "38463fb9063f41e6c1f1a59b23f91a295b86877e4bcb02b9b0633336d57742f5"
+  },
+  "originalPreservedVerbatim": true,
+  "originalOutcome": {
+    "passed": 21,
+    "failed": 1,
+    "blocked": 0,
+    "optionalPending": 1,
+    "assertions": 222
+  },
+  "failure": {
+    "check": "direct_private_storage_table_read_write_denials",
+    "assertionIndex": 4,
+    "method": "GET",
+    "route": "/storage/buckets/<known-bucket>/files",
+    "status": 200
+  },
+  "operatorReconfirmation": {
+    "provenance": "Parent observed actual normal-user session; not a request performed by this author",
+    "freshNormalSession": true,
+    "getAccountIdentityVerified": true,
+    "status": 200,
+    "exactKeys": [
+      "total",
+      "files"
+    ],
+    "total": 0,
+    "filesLength": 0,
+    "newAccounts": 0,
+    "adminKeys": 0,
+    "fileBodyReads": 0,
+    "ownSessionSignedOut": true
+  },
+  "cause": "The probe required an error for a permission-filtered list route; exact empty collection is documented concealment, not leaked file metadata. The original phase aborted there, so later direct-access assertions remain unproven by that receipt.",
+  "correction": "Allow HTTP200 only for explicit fileList+GET+knownExisting with exact total0 emptyfiles and no unknown keys. Keep file/bucket/body reads strict. Require401/403 for all PUT/PATCH. Record empty collection concealment separately from error denials.",
+  "officialSources": [
+    "https://appwrite.io/docs/products/storage/folders#permissions",
+    "https://appwrite.io/docs/products/storage/permissions",
+    "https://appwrite.io/docs/references/cloud/models/fileList"
+  ],
+  "cloudRequestsByAuthor": 0,
+  "backendOrPermissionChanges": false,
+  "liveRerunRequired": true
+}

@@ -30,6 +30,7 @@ import {
   PNG_METADATA_MARKER,
 } from "./live_media_fixture.mjs";
 import { AppwriteUserClient, HttpBudget } from "./live_full_transport.mjs";
+import { isFullPrivateRowDenied } from "./live_full_contract.mjs";
 const wire = JSON.parse(
   readFileSync(
     new URL("./fixtures/live_media/serviceWire.json", import.meta.url),
@@ -294,6 +295,109 @@ test("direct private storage denial permits only known-resource concealment and 
         { kind: "file", knownExisting: true },
       ),
       false,
+    );
+});
+test("known bucket ListFiles accepts only the exact empty GET collection and reports concealment separately", () => {
+  const options = { kind: "fileList", method: "GET", knownExisting: true };
+  const empty = { status: 200, data: { total: 0, files: [] } };
+  assert.equal(storageDenied(empty, options), true);
+  for (const kind of ["file", "bucket", "function", undefined])
+    assert.equal(storageDenied(empty, { ...options, kind }), false);
+  for (const method of ["PUT", "PATCH", "POST", "DELETE"])
+    assert.equal(storageDenied(empty, { ...options, method }), false);
+  assert.equal(
+    storageDenied(empty, { ...options, knownExisting: false }),
+    false,
+  );
+  assert.equal(storageDenied({ ...empty, status: 201 }, options), false);
+  for (const data of [
+    { total: 0, files: [{ $id: "private-file", name: "private.png" }] },
+    { total: 1, files: [] },
+    { total: -1, files: [] },
+    { total: "0", files: [] },
+    { total: 0, files: [], $id: "private-bucket" },
+    { total: 0, files: [], name: "private-bucket-name" },
+    { total: 0, files: [], $permissions: [] },
+    { total: 0, files: [], nextCursor: null },
+    { total: 0, files: "" },
+    { total: 0, files: {} },
+    { total: 0, files: null },
+    { total: 0, files: [null] },
+    { total: 0, files: Array(1) },
+    { total: 0 },
+    { files: [] },
+    [],
+    null,
+  ])
+    assert.equal(storageDenied({ status: 200, data }, options), false);
+  const decorated = [];
+  decorated.name = "private-metadata";
+  assert.equal(
+    storageDenied(
+      { status: 200, data: { total: 0, files: decorated } },
+      options,
+    ),
+    false,
+  );
+  const hidden = { total: 0, files: [] };
+  hidden[Symbol("private-metadata")] = "private";
+  assert.equal(storageDenied({ status: 200, data: hidden }, options), false);
+  assert.deepEqual(
+    safeObservation({
+      rowDenials: 4,
+      storageReadDenials: 6,
+      storageWriteDenials: 4,
+      emptyFileListConcealments: 2,
+      files: [{ name: "PRIVATE" }],
+      total: 7,
+    }),
+    {
+      rowDenials: 4,
+      storageReadDenials: 6,
+      storageWriteDenials: 4,
+      emptyFileListConcealments: 2,
+    },
+  );
+});
+test("direct file/bucket writes require401/403 and cannot pass through GET-only concealment", () => {
+  for (const method of ["PUT", "PATCH"])
+    for (const kind of ["file", "bucket", "fileList"]) {
+      for (const status of [401, 403])
+        assert.equal(
+          storageDenied(
+            { status, data: { type: "general_access_forbidden" } },
+            { method, kind, knownExisting: true },
+          ),
+          true,
+        );
+      assert.equal(
+        storageDenied(
+          {
+            status: 404,
+            data: {
+              type:
+                kind === "file"
+                  ? "storage_file_not_found"
+                  : "storage_bucket_not_found",
+            },
+          },
+          { method, kind, knownExisting: true },
+        ),
+        false,
+      );
+      assert.equal(
+        storageDenied(
+          { status: 200, data: { total: 0, files: [] } },
+          { method, kind, knownExisting: true },
+        ),
+        false,
+      );
+    }
+  const hiddenRow = { status: 404, data: { type: "row_not_found" } };
+  for (const method of ["GET", "PATCH"])
+    assert.equal(
+      isFullPrivateRowDenied(hiddenRow, { knownExistingRow: method === "GET" }),
+      method === "GET",
     );
 });
 test("configuration requires exact core/worker/source provenance no paid/provider flags or API keys", () => {

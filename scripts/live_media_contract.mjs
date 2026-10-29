@@ -246,6 +246,10 @@ export function safeObservation(value = {}) {
     "publicWorkerDenials",
     "forgedWorkerHeaderRejections",
     "forgedWorkerPermissionDenials",
+    "rowDenials",
+    "storageReadDenials",
+    "storageWriteDenials",
+    "emptyFileListConcealments",
   ])
     if (integer(value[key], 1e9)) output[key] = value[key];
   // A check's code is a probe failure category, not a backend response code.
@@ -319,7 +323,25 @@ export function safeErrorEnvelope(value) {
     )
   );
 }
-export function storageDenied(result, { kind, knownExisting = false } = {}) {
+export function storageDenied(
+  result,
+  { kind, knownExisting = false, method = "GET" } = {},
+) {
+  // ListFiles filters by readable files. Only this exact empty JSON response
+  // is acceptable concealment; a file/bucket metadata read or any write is not.
+  if (
+    method === "GET" &&
+    kind === "fileList" &&
+    knownExisting &&
+    result.status === 200 &&
+    exactKeys(result.data, ["total", "files"]) &&
+    Reflect.ownKeys(result.data).length === 2 &&
+    result.data.total === 0 &&
+    Array.isArray(result.data.files) &&
+    result.data.files.length === 0 &&
+    Reflect.ownKeys(result.data.files).length === 1
+  )
+    return true;
   if (!safeErrorEnvelope(result.data)) return false;
   if (
     [
@@ -332,7 +354,8 @@ export function storageDenied(result, { kind, knownExisting = false } = {}) {
     return false;
   return (
     [401, 403].includes(result.status) ||
-    (knownExisting &&
+    (method === "GET" &&
+      knownExisting &&
       result.status === 404 &&
       result.data.type ===
         (kind === "file"
