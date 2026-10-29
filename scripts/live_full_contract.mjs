@@ -578,8 +578,11 @@ export function safeFinalReport(report, privateValues) {
       .map((value) => ({
         label: value.label,
         id: id(value.id) ? value.id : null,
-        creationStatus:
-          value.creationStatus === "created" ? "created" : "unconfirmed",
+        creationStatus: ["created", "reused_verified"].includes(
+          value.creationStatus,
+        )
+          ? value.creationStatus
+          : "unconfirmed",
       })),
     resources,
     checks,
@@ -591,6 +594,8 @@ export function safeFinalReport(report, privateValues) {
         "httpRequests",
         "peakConcurrentHttp",
         "syntheticAccountsAttempted",
+        "syntheticAccountsCreated",
+        "reusedVerifiedSyntheticAccounts",
         "invitationsIssued",
       ].map((key) => [key, safeCount(report.budget?.[key])]),
     ),

@@ -76,3 +76,22 @@ real INTEGER/NUMBER boundary checks, and explicitly establishes the owner's pin.
 Thirteen Node contract groups and four actual-service/MemoryStore groups with
 36 assertions pass. No backend behavior changed. A new live report is required
 to establish the corrected Cloud outcome; offline checks do not replace it.
+
+
+## In-memory synthetic account reuse
+
+The programmatic `runFullSmoke` and `runMediaSmoke` options accept an optional
+`actorCredentials(label, {runId})` callback. It is restricted to bounded synthetic
+identities under `example.test`. Every probe still creates its own normal user
+session, checks GET/account against the expected identity, and signs out only
+that session. Reused identities are reported as `reused_verified`; new and
+reused counts remain separate. No CLI/file/environment credential option exists.
+
+`EphemeralSyntheticAccounts` creates at most five synthetic users through the
+normal client account endpoint. Concurrent requests for one label coalesce, and
+unknown or rate-limited creates are never retried under a replacement identity.
+Only in-memory callbacks share credentials between sequential probes. Default
+standalone account creation and each probe's HTTP cap remain unchanged. The
+twenty-distinct-actor mode cannot use this five-account helper. `forget()` drops
+references; it does not claim cryptographic erasure of immutable JS strings.
+Offline auth stubs verify this plumbing and do not prove Cloud authentication.

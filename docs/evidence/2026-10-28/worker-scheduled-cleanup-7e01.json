@@ -1,0 +1,40 @@
+{
+  "format": "tinkerloom.scheduled-media-cleanup-observation.v1",
+  "source": "Appwrite Console Executions table and selected asset/quota rows",
+  "observedAt": "2026-10-29T00:49:00Z",
+  "workerSourceCommit": "7e01ce897a2416dc7afbbdcdd6c220273089b3b9",
+  "workerArchiveSha256": "5fc1a75927983f8c522b1e80f3c2a341bf40ddf8df46e59dce7d5026d24d9b73",
+  "activeWorkerDeploymentId": "6ae2934255696814d2bb",
+  "execution": {
+    "id": "6ae2905c1e3c9809f68d",
+    "deploymentIdAtExecution": "6ae2934255696814d2bb",
+    "trigger": "schedule",
+    "status": "completed",
+    "responseStatusCode": 200,
+    "durationSeconds": 3.88
+  },
+  "asset": {
+    "id": "i957d8cdefe3a0d50a986dc96e9420410",
+    "status": "ready",
+    "readyAt": "2026-10-29T00:16:22.239123Z",
+    "databaseUpdatedAt": "2026-10-29T00:33:04.203+00:00",
+    "inputBytes": 5242880,
+    "storedBytesBefore": 5243112,
+    "storedBytesAfter": 232,
+    "originalRemoved": true,
+    "displayBytes": 116,
+    "thumbnailBytes": 116
+  },
+  "applicationQuota": {
+    "id": "qf837df755f5b83d7e164fd3b8964220a",
+    "bytes": 232,
+    "assets": 1,
+    "databaseUpdatedAt": "2026-10-29T00:33:04.199+00:00"
+  },
+  "limits": [
+    "One real scheduled private cleanup completed after the legitimate16minute quiet period and released original-byte quota.",
+    "The earlier failed media probes remain failed. Full broker download, private access and worst-case resource tests are separate.",
+    "The scheduled execution was originally observed under the prior deployment, then the Console reported the corrected active deployment at delivery. This receipt records that specific observed transition only.",
+    "No credentials, proof tokens, user image bytes or clocks were modified for this observation."
+  ]
+}

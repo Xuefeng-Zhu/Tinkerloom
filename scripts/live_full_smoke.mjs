@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** Real REST probe: import-safe. No Cloud operation occurs until CLI main runs. */
 import { randomBytes } from "node:crypto";
+import { readSyntheticCredentials } from "./live_ephemeral_accounts.mjs";
 import { existsSync, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -168,8 +169,13 @@ export function readFullConfiguration(
 }
 export async function runFullSmoke(
   configuration,
-  { fetchImpl = globalThis.fetch, sleep } = {},
+  { fetchImpl = globalThis.fetch, sleep, actorCredentials } = {},
 ) {
+  if (actorCredentials !== undefined && typeof actorCredentials !== "function")
+    throw new FullProbeError("configuration_invalid");
+  if (actorCredentials && configuration.twentyDistinct)
+    throw new FullProbeError("configuration_invalid");
+
   const runId =
       "qa-full-" +
       Date.now().toString(36) +
@@ -386,14 +392,22 @@ export async function runFullSmoke(
     verify(report.accounts.length < maxAccounts);
     const actor = {
       client: client(),
-      credentials: {
-        id: randomId("usr"),
-        email: `tinkerloom-${runId}-${label}@example.test`,
-        password: "T!" + randomBytes(24).toString("hex") + "a9",
-      },
+      credentials: actorCredentials
+        ? await readSyntheticCredentials(
+            actorCredentials,
+            label,
+            runId,
+            privateValues,
+          )
+        : {
+            id: randomId("usr"),
+            email: `tinkerloom-${runId}-${label}@example.test`,
+            password: "T!" + randomBytes(24).toString("hex") + "a9",
+          },
     };
     privateValues.add(actor.credentials.email);
     privateValues.add(actor.credentials.password);
+    verify(!report.accounts.some((value) => value.id === actor.credentials.id));
     actors[label] = actor;
     const accountReport = {
       label,
@@ -401,30 +415,36 @@ export async function runFullSmoke(
       creationStatus: "unconfirmed",
     };
     report.accounts.push(accountReport);
-    const result = await authRequest(
-      actor.client,
-      "POST",
-      "/account",
-      {
-        userId: actor.credentials.id,
-        email: actor.credentials.email,
-        password: actor.credentials.password,
-        name: "Tinkerloom full QA " + label,
-      },
-      {
-        allowCooldown: configuration.twentyDistinct,
-        ...(sleep ? { sleep } : {}),
-      },
-    );
-    accountReport.creationStatus =
-      result.status === 201 && result.data?.$id === actor.credentials.id
-        ? "created"
-        : "unconfirmed";
-    verify(result.status === 201 && result.data?.$id === actor.credentials.id, {
-      httpStatus: result.status,
-      code: result.data?.type,
-    });
+    if (!actorCredentials) {
+      const result = await authRequest(
+        actor.client,
+        "POST",
+        "/account",
+        {
+          userId: actor.credentials.id,
+          email: actor.credentials.email,
+          password: actor.credentials.password,
+          name: "Tinkerloom full QA " + label,
+        },
+        {
+          allowCooldown: configuration.twentyDistinct,
+          ...(sleep ? { sleep } : {}),
+        },
+      );
+      accountReport.creationStatus =
+        result.status === 201 && result.data?.$id === actor.credentials.id
+          ? "created"
+          : "unconfirmed";
+      verify(
+        result.status === 201 && result.data?.$id === actor.credentials.id,
+        {
+          httpStatus: result.status,
+          code: result.data?.type,
+        },
+      );
+    }
     await signIn(actor);
+    if (actorCredentials) accountReport.creationStatus = "reused_verified";
     return actor;
   }
   async function invite(actor, appId, role, { inspect = true } = {}) {
@@ -2190,6 +2210,12 @@ export async function runFullSmoke(
   report.budget.httpRequests = budget.used;
   report.budget.peakConcurrentHttp = budget.peak;
   report.budget.syntheticAccountsAttempted = report.accounts.length;
+  report.budget.syntheticAccountsCreated = report.accounts.filter(
+    (value) => value.creationStatus === "created",
+  ).length;
+  report.budget.reusedVerifiedSyntheticAccounts = report.accounts.filter(
+    (value) => value.creationStatus === "reused_verified",
+  ).length;
   report.budget.invitationsIssued = invitationCount;
   report.target.coreDeploymentMatchedExecutions = createdClients.reduce(
     (sum, value) => sum + value.deploymentMatches,

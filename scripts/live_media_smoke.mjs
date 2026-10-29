@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** Import-safe. Remote operations begin only in explicitly invoked main/runMediaSmoke. */
 import { randomBytes } from "node:crypto";
+import { readSyntheticCredentials } from "./live_ephemeral_accounts.mjs";
 import { readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -217,8 +218,16 @@ export function readMediaConfiguration(
 }
 export async function runMediaSmoke(
   configuration,
-  { fetchImpl = globalThis.fetch, sleep = pause, now = Date.now } = {},
+  {
+    fetchImpl = globalThis.fetch,
+    sleep = pause,
+    now = Date.now,
+    actorCredentials,
+  } = {},
 ) {
+  if (actorCredentials !== undefined && typeof actorCredentials !== "function")
+    throw new MediaProbeError("configuration_invalid");
+
   const started = now(),
     runId = `qa-media-${started.toString(36)}-${randomBytes(4).toString("hex")}`;
   const budget = new HttpBudget(configuration.maxHttp, 6),
@@ -348,28 +357,38 @@ export async function runMediaSmoke(
   };
   async function createActor(label) {
     verify(report.accounts.length < 2);
-    const account = {
-      id: randomId("usr"),
-      email: `tinkerloom-${runId}-${label}@example.test`,
-      password: "T!" + randomBytes(24).toString("hex") + "a9",
-    };
+    const account = actorCredentials
+      ? await readSyntheticCredentials(
+          actorCredentials,
+          label,
+          runId,
+          privateValues,
+        )
+      : {
+          id: randomId("usr"),
+          email: `tinkerloom-${runId}-${label}@example.test`,
+          password: "T!" + randomBytes(24).toString("hex") + "a9",
+        };
+    verify(!report.accounts.some((value) => value.id === account.id));
     privateValues.add(account.email);
     privateValues.add(account.password);
     const actor = { account, client: client() };
     actors[label] = actor;
     const observed = { label, id: account.id, creationStatus: "unconfirmed" };
     report.accounts.push(observed);
-    const made = await actor.client.request("POST", "/account", {
-      userId: account.id,
-      email: account.email,
-      password: account.password,
-      name: "Tinkerloom media QA " + label,
-    });
-    verify(made.status === 201 && made.data?.$id === account.id, {
-      httpStatus: made.status,
-      code: made.data?.type,
-    });
-    observed.creationStatus = "created";
+    if (!actorCredentials) {
+      const made = await actor.client.request("POST", "/account", {
+        userId: account.id,
+        email: account.email,
+        password: account.password,
+        name: "Tinkerloom media QA " + label,
+      });
+      verify(made.status === 201 && made.data?.$id === account.id, {
+        httpStatus: made.status,
+        code: made.data?.type,
+      });
+      observed.creationStatus = "created";
+    }
     const session = await actor.client.request(
       "POST",
       "/account/sessions/email",
@@ -383,6 +402,7 @@ export async function runMediaSmoke(
     verify(actual.status === 200 && actual.data?.$id === account.id, {
       httpStatus: actual.status,
     });
+    if (actorCredentials) observed.creationStatus = "reused_verified";
   }
   async function readVariant(assetId, variant, expected) {
     let offset = 0,
@@ -1406,6 +1426,12 @@ export async function runMediaSmoke(
   report.budget.httpRequests = budget.used;
   report.budget.peakConcurrentHttp = budget.peak;
   report.budget.syntheticAccountsAttempted = report.accounts.length;
+  report.budget.syntheticAccountsCreated = report.accounts.filter(
+    (value) => value.creationStatus === "created",
+  ).length;
+  report.budget.reusedVerifiedSyntheticAccounts = report.accounts.filter(
+    (value) => value.creationStatus === "reused_verified",
+  ).length;
   report.target.coreDeploymentMatchedExecutions = clients.reduce(
     (n, c) => n + c.deploymentMatches,
     0,

@@ -223,28 +223,33 @@ test("EXIF-6 fixture includes original metadata and actual sanitizer outcome has
   assert.notEqual(v.inputSha256, v.displaySha256);
   assert.equal(v.contentType, "image/jpeg");
 });
-test("function response cache header comes from actual execution responseHeaders", () => {
+test("official Execution Headers array preserves one private cache directive", () => {
+  const read = (headers) =>
+    cacheHeader({ outer: { data: { responseHeaders: headers } } });
   assert.equal(
-    cacheHeader({
-      outer: {
-        data: { responseHeaders: { "Cache-Control": "private, no-store" } },
-      },
-    }),
+    read([{ name: "Cache-Control", value: "private, no-store" }]),
     "private, no-store",
   );
   assert.equal(
-    cacheHeader({
-      outer: {
-        data: {
-          responseHeaders: {
-            "Cache-Control": "private, no-store",
-            "cache-control": "public",
-          },
-        },
-      },
-    }),
-    null,
+    read([
+      { name: "content-type", value: "application/json" },
+      { name: "cache-control", value: "private, no-store" },
+    ]),
+    "private, no-store",
   );
+  for (const headers of [
+    { "Cache-Control": "private, no-store" },
+    [
+      { name: "Cache-Control", value: "private, no-store" },
+      { name: "cache-control", value: "public" },
+    ],
+    [{ name: "Cache-Control", value: 42 }],
+    [{ name: "Cache-Control", value: "private, no-store", extra: true }],
+    [],
+    null,
+    undefined,
+  ])
+    assert.equal(read(headers), null);
   assert.equal(cacheHeader({}), null);
 });
 test("direct private storage denial permits only known-resource concealment and no payload leakage", () => {

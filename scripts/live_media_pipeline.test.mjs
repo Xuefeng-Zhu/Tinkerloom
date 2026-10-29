@@ -122,7 +122,9 @@ test(
         status: "completed",
         responseStatusCode: result.status,
         responseBody: JSON.stringify(result.data),
-        responseHeaders: { "cache-control": "private, no-store" },
+        responseHeaders: [
+          { name: "cache-control", value: "private, no-store" },
+        ],
       });
     };
     const report = await runMediaSmoke(readMediaConfiguration(args, {}), {

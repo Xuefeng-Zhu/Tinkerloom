@@ -91,3 +91,21 @@ Reports now preserve an allowlisted `backendCode` independently of a check's pro
 For header classification, the official [Create execution API](https://appwrite.io/docs/references/cloud/client-web/functions#createExecution) returns an execution object on successful creation. The current official [Create route implementation](https://github.com/appwrite/appwrite/blob/main/src/Appwrite/Platform/Modules/Functions/Http/Executions/Create.php) validates `headers` and throws `GENERAL_ARGUMENT_INVALID` before checking function execution permission and before allocating/enqueueing an execution. The [Headers validator](https://github.com/appwrite/appwrite/blob/main/src/Appwrite/Functions/Validator/Headers.php) reserves `x-appwrite-`; [Appwrite PR 14185](https://github.com/appwrite/appwrite/pull/14185) includes outer 400 regression coverage and explicitly describes rejection before enqueueing. This supports classifying a matching future error-only 400 as rejection before execution, not proof that execution permission was tested or that a forged proof reached the private worker. It does not independently attest which Appwrite source revision Cloud deployed. The initial report's erased 400 type is not retroactively assumed to match this classifier.
 
 The correction's offline suite retains all prior checks and adds idempotent diagnostic preservation, exact reserved-header/error-envelope classification, a complete injected auth/header-boundary run, conflict→queued→ready polling, malformed/other-code/wrong-deployment/uncertain-transport failures and exact 24-read exhaustion. No Cloud call, permission adjustment, backend change, mutation retry or report rewriting occurs while preparing these corrections.
+
+
+### Second preserved Cloud run: execution-header wire correction
+
+The [second failed report](evidence/2026-10-28/media-cloud-worker7e01.failed.json)
+records twelve passed checks, one failure and nine blocked checks. Actual worker
+readiness and private anonymous/user execution denial passed; one definite
+read-only transaction conflict was counted and handled within the existing bound.
+The next failure was the third assertion of the first variant read: cache header
+extraction expected a dictionary. The official [Execution model](https://appwrite.io/docs/references/cloud/models/execution)
+uses an array of [Headers objects](https://appwrite.io/docs/references/cloud/models/headers),
+each with name/value. The HTTP stub had incorrectly modeled that field too.
+
+The parser and offline orchestration now use the official array shape and reject
+dictionaries, malformed entries, and duplicate case-insensitive cache directives.
+The required `private, no-store` value is unchanged. This fixes the test wire, not
+the deployed media header policy. The failed report remains unchanged; a later
+Cloud read is still required to confirm the actual header value and all pixels.

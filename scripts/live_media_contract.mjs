@@ -206,12 +206,24 @@ export function decodeReadChunk(
 }
 export function cacheHeader(result) {
   const headers = result?.outer?.data?.responseHeaders;
-  if (!object(headers)) return null;
-  const values = Object.entries(headers).filter(
-    ([k]) => k.toLowerCase() === "cache-control",
+  // Appwrite Execution.responseHeaders is Headers[]; each item has name/value.
+  // A dictionary was an inaccurate HTTP stub and cannot stand in for this wire.
+  if (!Array.isArray(headers) || headers.length > 100) return null;
+  if (
+    headers.some(
+      (header) =>
+        !exactKeys(header, ["name", "value"]) ||
+        typeof header.name !== "string" ||
+        typeof header.value !== "string",
+    )
+  )
+    return null;
+  const values = headers.filter(
+    (header) => header.name.toLowerCase() === "cache-control",
   );
-  return values.length === 1 ? values[0][1] : null;
+  return values.length === 1 ? values[0].value : null;
 }
+
 export function safeObservation(value = {}) {
   const output = safeFullObservation({
     ...value,
@@ -433,8 +445,9 @@ export function sanitizedReport(report, privateValues = new Set()) {
     .map((a) => ({
       label: a.label,
       id: id(a.id) ? a.id : null,
-      creationStatus:
-        a.creationStatus === "created" ? "created" : "unconfirmed",
+      creationStatus: ["created", "reused_verified"].includes(a.creationStatus)
+        ? a.creationStatus
+        : "unconfirmed",
     }));
   for (const key of [
     "workspaceId",
@@ -463,6 +476,8 @@ export function sanitizedReport(report, privateValues = new Set()) {
     "httpRequests",
     "peakConcurrentHttp",
     "syntheticAccountsAttempted",
+    "syntheticAccountsCreated",
+    "reusedVerifiedSyntheticAccounts",
     "maxSyntheticAccounts",
     "readyPollLimit",
     "readConflicts",

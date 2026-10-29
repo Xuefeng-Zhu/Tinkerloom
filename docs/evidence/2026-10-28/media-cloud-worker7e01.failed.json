@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "mode": "live_media_worker_probe",
+  "runId": "qa-media-mvst4gwb-43900483",
+  "startedAt": "2026-10-29T00:30:32.843Z",
+  "completedAt": "2026-10-29T00:33:15.448Z",
+  "status": "failed",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "origin": "http://localhost:8426",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "databaseId": "tinkerloom",
+    "bucketId": "tinkerloom-media",
+    "workerFunctionId": "tinkerloom-worker",
+    "coreDeploymentId": "6ae289f866af0d0d2ba7",
+    "workerDeploymentId": "6ae2934255696814d2bb",
+    "sourceCommit": "fc71fe41078c6cd78b3f1987cac5c12dcf04d02c",
+    "workerSourceCommit": "7e01ce897a2416dc7afbbdcdd6c220273089b3b9",
+    "sourceSha256": "b0578adff72de82426b2c7ddb0a484b46d7029af2a7bcf034008e680a3cb7957",
+    "workerSourceSha256": "5fc1a75927983f8c522b1e80f3c2a341bf40ddf8df46e59dce7d5026d24d9b73",
+    "coreDeploymentMatchedExecutions": 50
+  },
+  "accounts": [
+    {
+      "label": "owner",
+      "id": "usr-e6fb96c9e816649c97b3d9a25220",
+      "creationStatus": "created"
+    },
+    {
+      "label": "outsider",
+      "id": "usr-849c991ba5cb2071006ae0a3334a",
+      "creationStatus": "created"
+    }
+  ],
+  "resources": {
+    "workspaceId": "wor-b65bb010994dcd9e8c5d831df81f",
+    "appId": "app-93bbd2509fa13df1919ff7da03ee",
+    "foreignAppId": "for-fc787caeacc379ca2a7e5d829018",
+    "maximumAssetId": "i295c751c1c4c54eceab7d744ca4fa4d9"
+  },
+  "checks": [
+    {
+      "name": "fixture_maximum_png",
+      "status": "passed",
+      "assertions": 2,
+      "byteLength": 5242880,
+      "chunks": 20,
+      "width": 16,
+      "height": 8,
+      "sha256": "58062ab01b2915dadd0ce35d4fd8b9f76e01da93ceba50ecc391a10e04b84580"
+    },
+    {
+      "name": "authenticate_owner",
+      "status": "passed",
+      "assertions": 4
+    },
+    {
+      "name": "authenticate_outsider",
+      "status": "passed",
+      "assertions": 4
+    },
+    {
+      "name": "zero_provider_reminder_capabilities",
+      "status": "passed",
+      "assertions": 6
+    },
+    {
+      "name": "create_private_draft_and_foreign_app",
+      "status": "passed",
+      "assertions": 10
+    },
+    {
+      "name": "maximum_begin_exact_receipt_and_conflict",
+      "status": "passed",
+      "assertions": 8,
+      "reservedBytes": 11010048,
+      "assetCount": 1
+    },
+    {
+      "name": "pending_asset_privacy",
+      "status": "passed",
+      "assertions": 3
+    },
+    {
+      "name": "twenty_chunks_exact_retry_conflict_and_complete",
+      "status": "passed",
+      "assertions": 51,
+      "uploadedBytes": 5242880,
+      "chunks": 20
+    },
+    {
+      "name": "private_worker_ready",
+      "status": "passed",
+      "assertions": 21,
+      "byteLength": 116,
+      "polls": 8,
+      "readConflicts": 1,
+      "sha256": "fc8ebfdd5efed238b73c5cd43d10d7dfc6290be8d5b1d82932087592ff57eed7"
+    },
+    {
+      "name": "maximum_variants_full_bytes_headers_pixels",
+      "status": "failed",
+      "assertions": 3,
+      "code": "assertion_failed",
+      "assertionIndex": 3
+    },
+    {
+      "name": "draft_reference_review_publication_and_record",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "published_action_upload_orientation",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "orientation_private_worker_ready_and_full_variants",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "unshared_cross_actor_and_cross_app_denials",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "grant_viewer_read_and_upload_denial",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "builder_own_upload_receipt_current_authority",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "direct_private_storage_table_read_write_denials",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "revoke_current_access_and_receipt_denial",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "private_worker_public_execution_and_forged_proof_denial",
+      "status": "passed",
+      "assertions": 4,
+      "publicWorkerDenials": 2,
+      "forgedWorkerHeaderRejections": 1,
+      "forgedWorkerPermissionDenials": 0
+    },
+    {
+      "name": "usage_staging_reservation_retained",
+      "status": "blocked",
+      "assertions": 0,
+      "code": "prerequisite_failed"
+    },
+    {
+      "name": "optional_quiet_period_release",
+      "status": "pending",
+      "assertions": 0,
+      "code": "quiet_period_not_elapsed"
+    },
+    {
+      "name": "temporary_session_signout_owner",
+      "status": "passed",
+      "assertions": 1
+    },
+    {
+      "name": "temporary_session_signout_outsider",
+      "status": "passed",
+      "assertions": 1
+    }
+  ],
+  "budget": {
+    "maxHttpRequests": 300,
+    "reservedCleanupRequests": 6,
+    "httpRequests": 61,
+    "peakConcurrentHttp": 1,
+    "syntheticAccountsAttempted": 2,
+    "maxSyntheticAccounts": 2,
+    "readyPollLimit": 24,
+    "readConflicts": 1
+  },
+  "coverage": {
+    "layer": "Authenticated REST only when explicitly executed against Cloud.",
+    "workerDeploymentObserved": false,
+    "sourceAttestation": "operator_supplied_not_server_attested",
+    "workerReadiness": "ready_state_indirect_evidence_only",
+    "providerCallsIntended": 0,
+    "remindersEnabledIntended": false,
+    "resourceDeletionIntended": false,
+    "unverified": [
+      "Exact private-worker deployment/source/configuration is operator-attested; readiness alone does not attest its deployment ID.",
+      "No provider calls, reminder scheduling/delivery, native/browser UI, server clocks or resource deletion are exercised.",
+      "5 MiB valid padded PNG proves byte transport; it is a small image and does not prove worst-case 16MP memory/decode acceptance.",
+      "Storage hydration reads the whole variant per response chunk; this is not a Cloud bandwidth/performance pass.",
+      "16-minute quiet-period release is pending unless the explicit bounded optional phase observes it; unreferenced ready assets remain through normal retention."
+    ]
+  },
+  "summary": {
+    "passed": 12,
+    "failed": 1,
+    "blocked": 9,
+    "pending": 1,
+    "assertions": 118
+  }
+}
