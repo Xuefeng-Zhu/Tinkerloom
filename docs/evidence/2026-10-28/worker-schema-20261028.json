@@ -1,0 +1,4501 @@
+{
+  "capturedAt": "2026-10-28T22:40:19.995Z",
+  "sourceCommit": "60abc92",
+  "projectId": "6ae1928a003a65851e95",
+  "databaseId": "tinkerloom",
+  "proof": "Authenticated Appwrite Console CLI raw schema metadata copied through its Output actions UI; no business rows or credentials.",
+  "initialLiteralTypeDifferences": [
+    "workspaces.ownerId:column",
+    "workspaces.name:column"
+  ],
+  "acceptedLegacyAliases": [
+    {
+      "tableId": "workspaces",
+      "key": "ownerId",
+      "expectedType": "varchar",
+      "preservedType": "string",
+      "size": 36,
+      "reason": "Preserved original equivalent legacy string storage; no destructive replacement."
+    },
+    {
+      "tableId": "workspaces",
+      "key": "name",
+      "expectedType": "varchar",
+      "preservedType": "string",
+      "size": 128,
+      "reason": "Preserved original equivalent legacy string storage; no destructive replacement."
+    }
+  ],
+  "unexpectedProblems": [],
+  "total": 27,
+  "tables": [
+    {
+      "$id": "workspaces",
+      "$createdAt": "2026-10-28T15:34:58.851+00:00",
+      "$updatedAt": "2026-10-28T15:34:58.851+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "Workspaces",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "ownerId",
+          "description": "",
+          "type": "string",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:34:58.995+00:00",
+          "$updatedAt": "2026-10-28T15:34:58.995+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "name",
+          "description": "",
+          "type": "string",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:34:58.995+00:00",
+          "$updatedAt": "2026-10-28T15:34:58.995+00:00",
+          "size": 128,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "guard",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T19:10:22.834+00:00",
+          "$updatedAt": "2026-10-28T19:10:22.938+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_1_owner",
+          "$createdAt": "2026-10-28T15:34:59.016+00:00",
+          "$updatedAt": "2026-10-28T15:34:59.016+00:00",
+          "key": "owner",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "ownerId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1870
+    },
+    {
+      "$id": "apps",
+      "$createdAt": "2026-10-28T15:35:55.697+00:00",
+      "$updatedAt": "2026-10-28T15:35:55.697+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "Apps",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "ownerId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:35:55.827+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.827+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:35:55.827+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.827+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "name",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:35:55.827+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.827+00:00",
+          "size": 128,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "draftRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T15:35:55.827+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.827+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": 0
+        },
+        {
+          "key": "publishedRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T15:35:55.827+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.827+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": 0
+        },
+        {
+          "key": "guard",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T15:35:55.827+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.827+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "draftJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T15:35:55.827+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.827+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "publishedJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T15:35:55.827+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.827+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "headRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T19:11:26.065+00:00",
+          "$updatedAt": "2026-10-28T19:11:26.164+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "archived",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T19:17:31.307+00:00",
+          "$updatedAt": "2026-10-28T19:17:31.405+00:00",
+          "default": null
+        },
+        {
+          "key": "engine",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:14:00.303+00:00",
+          "$updatedAt": "2026-10-28T21:14:00.390+00:00",
+          "size": 16,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "specVersionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:15:07.647+00:00",
+          "$updatedAt": "2026-10-28T21:15:07.738+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "specVersionNumber",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:16:58.819+00:00",
+          "$updatedAt": "2026-10-28T21:16:58.911+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "controlRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:19:02.250+00:00",
+          "$updatedAt": "2026-10-28T21:19:02.339+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_2_owner_workspace",
+          "$createdAt": "2026-10-28T15:35:55.848+00:00",
+          "$updatedAt": "2026-10-28T15:35:55.848+00:00",
+          "key": "owner_workspace",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "ownerId",
+            "workspaceId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_2_workspace",
+          "$createdAt": "2026-10-28T19:18:17.767+00:00",
+          "$updatedAt": "2026-10-28T19:18:17.864+00:00",
+          "key": "workspace",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "workspaceId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2286
+    },
+    {
+      "$id": "records",
+      "$createdAt": "2026-10-28T15:36:38.862+00:00",
+      "$updatedAt": "2026-10-28T15:36:38.862+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "Records",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "ownerId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:36:39.004+00:00",
+          "$updatedAt": "2026-10-28T15:36:39.004+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:36:39.004+00:00",
+          "$updatedAt": "2026-10-28T15:36:39.004+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "revision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:36:39.004+00:00",
+          "$updatedAt": "2026-10-28T15:36:39.004+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "definitionRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:36:39.004+00:00",
+          "$updatedAt": "2026-10-28T15:36:39.004+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "valuesJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:36:39.004+00:00",
+          "$updatedAt": "2026-10-28T15:36:39.004+00:00",
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_3_app",
+          "$createdAt": "2026-10-28T15:36:39.022+00:00",
+          "$updatedAt": "2026-10-28T15:36:39.022+00:00",
+          "key": "app",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_3_owner_app",
+          "$createdAt": "2026-10-28T15:36:39.022+00:00",
+          "$updatedAt": "2026-10-28T15:36:39.022+00:00",
+          "key": "owner_app",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "ownerId",
+            "appId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1385
+    },
+    {
+      "$id": "receipts",
+      "$createdAt": "2026-10-28T15:37:11.647+00:00",
+      "$updatedAt": "2026-10-28T15:37:11.647+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "Receipts",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:37:11.762+00:00",
+          "$updatedAt": "2026-10-28T15:37:11.762+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:37:11.762+00:00",
+          "$updatedAt": "2026-10-28T15:37:11.762+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "requestJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:37:11.762+00:00",
+          "$updatedAt": "2026-10-28T15:37:11.762+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "responseJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T15:37:11.762+00:00",
+          "$updatedAt": "2026-10-28T15:37:11.762+00:00",
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [],
+      "bytesMax": 65535,
+      "bytesUsed": 1397
+    },
+    {
+      "$id": "memberships",
+      "$createdAt": "2026-10-28T19:18:33.263+00:00",
+      "$updatedAt": "2026-10-28T19:18:33.263+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "memberships",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:18:33.389+00:00",
+          "$updatedAt": "2026-10-28T19:18:33.389+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:18:33.389+00:00",
+          "$updatedAt": "2026-10-28T19:18:33.389+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "role",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:18:33.389+00:00",
+          "$updatedAt": "2026-10-28T19:18:33.389+00:00",
+          "size": 16,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "revision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:18:33.389+00:00",
+          "$updatedAt": "2026-10-28T19:18:33.389+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "active",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:18:33.389+00:00",
+          "$updatedAt": "2026-10-28T19:18:33.389+00:00",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_5_workspace_actor",
+          "$createdAt": "2026-10-28T19:18:33.404+00:00",
+          "$updatedAt": "2026-10-28T19:18:33.404+00:00",
+          "key": "workspace_actor",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "workspaceId",
+            "actorId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_5_actor",
+          "$createdAt": "2026-10-28T19:18:33.404+00:00",
+          "$updatedAt": "2026-10-28T19:18:33.404+00:00",
+          "key": "actor",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "actorId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1427
+    },
+    {
+      "$id": "grants",
+      "$createdAt": "2026-10-28T19:19:44.421+00:00",
+      "$updatedAt": "2026-10-28T19:19:44.421+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "grants",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:19:44.546+00:00",
+          "$updatedAt": "2026-10-28T19:19:44.546+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:19:44.546+00:00",
+          "$updatedAt": "2026-10-28T19:19:44.546+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:19:44.546+00:00",
+          "$updatedAt": "2026-10-28T19:19:44.546+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "role",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:19:44.546+00:00",
+          "$updatedAt": "2026-10-28T19:19:44.546+00:00",
+          "size": 16,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "revision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:19:44.546+00:00",
+          "$updatedAt": "2026-10-28T19:19:44.546+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "revoked",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:19:44.546+00:00",
+          "$updatedAt": "2026-10-28T19:19:44.546+00:00",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_6_app_actor",
+          "$createdAt": "2026-10-28T19:19:44.564+00:00",
+          "$updatedAt": "2026-10-28T19:19:44.564+00:00",
+          "key": "app_actor",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "actorId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_6_app",
+          "$createdAt": "2026-10-28T19:19:44.564+00:00",
+          "$updatedAt": "2026-10-28T19:19:44.564+00:00",
+          "key": "app",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_6_actor_workspace",
+          "$createdAt": "2026-10-28T22:29:52.732+00:00",
+          "$updatedAt": "2026-10-28T22:29:52.835+00:00",
+          "key": "actor_workspace",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "actorId",
+            "workspaceId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1572
+    },
+    {
+      "$id": "drafts",
+      "$createdAt": "2026-10-28T19:20:05.019+00:00",
+      "$updatedAt": "2026-10-28T19:20:05.019+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "drafts",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:05.146+00:00",
+          "$updatedAt": "2026-10-28T19:20:05.146+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:05.146+00:00",
+          "$updatedAt": "2026-10-28T19:20:05.146+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:05.146+00:00",
+          "$updatedAt": "2026-10-28T19:20:05.146+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "revision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:05.146+00:00",
+          "$updatedAt": "2026-10-28T19:20:05.146+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "candidateRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:05.146+00:00",
+          "$updatedAt": "2026-10-28T19:20:05.146+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "basePublishedRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:05.146+00:00",
+          "$updatedAt": "2026-10-28T19:20:05.146+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "definitionJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:05.146+00:00",
+          "$updatedAt": "2026-10-28T19:20:05.146+00:00",
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_7_app_actor",
+          "$createdAt": "2026-10-28T19:20:05.164+00:00",
+          "$updatedAt": "2026-10-28T19:20:05.164+00:00",
+          "key": "app_actor",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "actorId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_7_author_workspace",
+          "$createdAt": "2026-10-28T22:29:58.442+00:00",
+          "$updatedAt": "2026-10-28T22:29:58.528+00:00",
+          "key": "author_workspace",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "actorId",
+            "workspaceId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1534
+    },
+    {
+      "$id": "invitations",
+      "$createdAt": "2026-10-28T19:20:45.565+00:00",
+      "$updatedAt": "2026-10-28T19:20:45.565+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "invitations",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "issuerId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "issuerGrantRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "tokenHash",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "role",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "size": 16,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "recipientId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "expiresAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "revoked",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "default": null
+        },
+        {
+          "key": "acceptedBy",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "acceptedAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T19:20:45.711+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.711+00:00",
+          "format": "",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_8_token",
+          "$createdAt": "2026-10-28T19:20:45.732+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.732+00:00",
+          "key": "token",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "tokenHash"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_8_app",
+          "$createdAt": "2026-10-28T19:20:45.732+00:00",
+          "$updatedAt": "2026-10-28T19:20:45.732+00:00",
+          "key": "app",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2140
+    },
+    {
+      "$id": "actor_limits",
+      "$createdAt": "2026-10-28T19:21:13.280+00:00",
+      "$updatedAt": "2026-10-28T19:21:13.280+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "actor_limits",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:21:13.411+00:00",
+          "$updatedAt": "2026-10-28T19:21:13.411+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "guard",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:21:13.411+00:00",
+          "$updatedAt": "2026-10-28T19:21:13.411+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "invitationTimesJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T19:21:13.411+00:00",
+          "$updatedAt": "2026-10-28T19:21:13.411+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "generationTimesJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:36:58.244+00:00",
+          "$updatedAt": "2026-10-28T22:36:58.330+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "guidanceTimesJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:37:03.701+00:00",
+          "$updatedAt": "2026-10-28T22:37:03.785+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "activeGenerationJobId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:37:08.614+00:00",
+          "$updatedAt": "2026-10-28T22:37:08.697+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_9_actor",
+          "$createdAt": "2026-10-28T19:21:13.427+00:00",
+          "$updatedAt": "2026-10-28T19:21:13.427+00:00",
+          "key": "actor",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "actorId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1562
+    },
+    {
+      "$id": "spec_drafts",
+      "$createdAt": "2026-10-28T21:22:05.150+00:00",
+      "$updatedAt": "2026-10-28T21:22:05.150+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "spec_drafts",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:05.287+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.287+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:05.287+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.287+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:05.287+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.287+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "revision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:05.287+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.287+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "baseVersionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:05.287+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.287+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "candidateHash",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:05.287+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.287+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "specJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:05.287+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.287+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "publishedVersionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:05.287+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.287+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "updatedAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:15:30.226+00:00",
+          "$updatedAt": "2026-10-28T22:15:30.360+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_10_app_actor",
+          "$createdAt": "2026-10-28T21:22:05.308+00:00",
+          "$updatedAt": "2026-10-28T21:22:05.308+00:00",
+          "key": "app_actor",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "actorId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_10_author_workspace",
+          "$createdAt": "2026-10-28T22:30:04.158+00:00",
+          "$updatedAt": "2026-10-28T22:30:04.246+00:00",
+          "key": "author_workspace",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "actorId",
+            "workspaceId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2330
+    },
+    {
+      "$id": "spec_versions",
+      "$createdAt": "2026-10-28T21:22:18.098+00:00",
+      "$updatedAt": "2026-10-28T21:22:18.098+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "spec_versions",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:18.246+00:00",
+          "$updatedAt": "2026-10-28T21:22:18.246+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:18.246+00:00",
+          "$updatedAt": "2026-10-28T21:22:18.246+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "number",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:18.246+00:00",
+          "$updatedAt": "2026-10-28T21:22:18.246+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "hash",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:18.246+00:00",
+          "$updatedAt": "2026-10-28T21:22:18.246+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "specJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:18.246+00:00",
+          "$updatedAt": "2026-10-28T21:22:18.246+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "publisherId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:18.246+00:00",
+          "$updatedAt": "2026-10-28T21:22:18.246+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:22:18.246+00:00",
+          "$updatedAt": "2026-10-28T21:22:18.246+00:00",
+          "format": "",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_11_app_number",
+          "$createdAt": "2026-10-28T21:22:18.264+00:00",
+          "$updatedAt": "2026-10-28T21:22:18.264+00:00",
+          "key": "app_number",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "number"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1790
+    },
+    {
+      "$id": "spec_records",
+      "$createdAt": "2026-10-28T21:24:14.840+00:00",
+      "$updatedAt": "2026-10-28T21:24:14.840+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "spec_records",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "collectionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "dataJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "creatorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "revision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "writtenUnderVersionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "deleted",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "default": null
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "updatedAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:24:14.973+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.973+00:00",
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "createdControlRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:37:13.527+00:00",
+          "$updatedAt": "2026-10-28T22:37:13.677+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_12_app_collection",
+          "$createdAt": "2026-10-28T21:24:14.989+00:00",
+          "$updatedAt": "2026-10-28T21:24:14.989+00:00",
+          "key": "app_collection",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "collectionId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1947
+    },
+    {
+      "$id": "spec_values",
+      "$createdAt": "2026-10-28T21:28:36.124+00:00",
+      "$updatedAt": "2026-10-28T21:28:36.124+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "spec_values",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "recordId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "collectionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "fieldId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "present",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "default": null
+        },
+        {
+          "key": "textValue",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "numberValue",
+          "description": "",
+          "type": "double",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "min": -1.7976931348623157e+308,
+          "max": 1.7976931348623157e+308,
+          "default": null
+        },
+        {
+          "key": "boolValue",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "default": null
+        },
+        {
+          "key": "timestampValue",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:28:36.263+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.263+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_14_record_field",
+          "$createdAt": "2026-10-28T21:28:36.280+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.280+00:00",
+          "key": "record_field",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "recordId",
+            "fieldId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_14_app_collection_field",
+          "$createdAt": "2026-10-28T21:28:36.280+00:00",
+          "$updatedAt": "2026-10-28T21:28:36.280+00:00",
+          "key": "app_collection_field",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "collectionId",
+            "fieldId"
+          ],
+          "lengths": [
+            0,
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2303
+    },
+    {
+      "$id": "spec_pools",
+      "$createdAt": "2026-10-28T21:29:20.793+00:00",
+      "$updatedAt": "2026-10-28T21:29:20.793+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "spec_pools",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:29:20.916+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.916+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:29:20.916+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.916+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "recordId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:29:20.916+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.916+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "collectionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:29:20.916+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.916+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "behaviorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:29:20.916+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.916+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "capacity",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:29:20.916+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.916+00:00",
+          "min": 0,
+          "max": 10000,
+          "default": null
+        },
+        {
+          "key": "allocated",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:29:20.916+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.916+00:00",
+          "min": 0,
+          "max": 10000,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_15_record_behavior",
+          "$createdAt": "2026-10-28T21:29:20.932+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.932+00:00",
+          "key": "record_behavior",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "recordId",
+            "behaviorId"
+          ],
+          "lengths": [
+            0,
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_15_app_record",
+          "$createdAt": "2026-10-28T21:29:20.932+00:00",
+          "$updatedAt": "2026-10-28T21:29:20.932+00:00",
+          "key": "app_record",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "recordId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2024
+    },
+    {
+      "$id": "spec_claims",
+      "$createdAt": "2026-10-28T21:31:12.247+00:00",
+      "$updatedAt": "2026-10-28T21:31:12.247+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "spec_claims",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:31:12.368+00:00",
+          "$updatedAt": "2026-10-28T21:31:12.368+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:31:12.368+00:00",
+          "$updatedAt": "2026-10-28T21:31:12.368+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "poolId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:31:12.368+00:00",
+          "$updatedAt": "2026-10-28T21:31:12.368+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:31:12.368+00:00",
+          "$updatedAt": "2026-10-28T21:31:12.368+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "active",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:31:12.368+00:00",
+          "$updatedAt": "2026-10-28T21:31:12.368+00:00",
+          "default": null
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:31:12.368+00:00",
+          "$updatedAt": "2026-10-28T21:31:12.368+00:00",
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "updatedAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:31:12.368+00:00",
+          "$updatedAt": "2026-10-28T21:31:12.368+00:00",
+          "format": "",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_16_pool_actor",
+          "$createdAt": "2026-10-28T21:31:12.383+00:00",
+          "$updatedAt": "2026-10-28T21:31:12.383+00:00",
+          "key": "pool_actor",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "poolId",
+            "actorId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1662
+    },
+    {
+      "$id": "audit",
+      "$createdAt": "2026-10-28T21:34:14.538+00:00",
+      "$updatedAt": "2026-10-28T21:34:14.538+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "audit",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:34:14.671+00:00",
+          "$updatedAt": "2026-10-28T21:34:14.671+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:34:14.671+00:00",
+          "$updatedAt": "2026-10-28T21:34:14.671+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:34:14.671+00:00",
+          "$updatedAt": "2026-10-28T21:34:14.671+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "action",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:34:14.671+00:00",
+          "$updatedAt": "2026-10-28T21:34:14.671+00:00",
+          "size": 128,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "recordId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:34:14.671+00:00",
+          "$updatedAt": "2026-10-28T21:34:14.671+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "requestId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:34:14.671+00:00",
+          "$updatedAt": "2026-10-28T21:34:14.671+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:34:14.671+00:00",
+          "$updatedAt": "2026-10-28T21:34:14.671+00:00",
+          "format": "",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_17_app",
+          "$createdAt": "2026-10-28T21:34:14.687+00:00",
+          "$updatedAt": "2026-10-28T21:34:14.687+00:00",
+          "key": "app",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2312
+    },
+    {
+      "$id": "outbox",
+      "$createdAt": "2026-10-28T21:37:11.987+00:00",
+      "$updatedAt": "2026-10-28T21:37:11.987+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "outbox",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "recordId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "kind",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "size": 128,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "payloadJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "planningDone",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "default": null
+        },
+        {
+          "key": "invalidationDone",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "default": null
+        },
+        {
+          "key": "nextAttemptAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "datetime",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:37:12.131+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.131+00:00",
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "planningOffset",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:37:17.997+00:00",
+          "$updatedAt": "2026-10-28T22:37:18.165+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "attempts",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:37:25.753+00:00",
+          "$updatedAt": "2026-10-28T22:37:25.901+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "lastError",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:37:33.336+00:00",
+          "$updatedAt": "2026-10-28T22:37:33.477+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_18_app",
+          "$createdAt": "2026-10-28T21:37:12.171+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.171+00:00",
+          "key": "app",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_18_next_attempt",
+          "$createdAt": "2026-10-28T21:37:12.171+00:00",
+          "$updatedAt": "2026-10-28T21:37:12.171+00:00",
+          "key": "next_attempt",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "nextAttemptAt"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2316
+    },
+    {
+      "$id": "shortcuts",
+      "$createdAt": "2026-10-28T21:54:10.859+00:00",
+      "$updatedAt": "2026-10-28T21:54:10.859+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "shortcuts",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:54:10.985+00:00",
+          "$updatedAt": "2026-10-28T21:54:10.985+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:54:10.985+00:00",
+          "$updatedAt": "2026-10-28T21:54:10.985+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:54:10.985+00:00",
+          "$updatedAt": "2026-10-28T21:54:10.985+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "pinned",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:54:10.985+00:00",
+          "$updatedAt": "2026-10-28T21:54:10.985+00:00",
+          "default": null
+        },
+        {
+          "key": "revision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:54:10.985+00:00",
+          "$updatedAt": "2026-10-28T21:54:10.985+00:00",
+          "min": 1,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "updatedAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T21:54:10.985+00:00",
+          "$updatedAt": "2026-10-28T21:54:10.985+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_19_app_actor",
+          "$createdAt": "2026-10-28T21:54:11.002+00:00",
+          "$updatedAt": "2026-10-28T21:54:11.002+00:00",
+          "key": "app_actor",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "actorId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_19_actor_workspace",
+          "$createdAt": "2026-10-28T21:54:11.002+00:00",
+          "$updatedAt": "2026-10-28T21:54:11.002+00:00",
+          "key": "actor_workspace",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "actorId",
+            "workspaceId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1764
+    },
+    {
+      "$id": "generation_jobs",
+      "$createdAt": "2026-10-28T22:31:30.776+00:00",
+      "$updatedAt": "2026-10-28T22:31:30.776+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "generation_jobs",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "draftId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "mutation",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "draftAbsent",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "default": null
+        },
+        {
+          "key": "baseVersionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "baseCandidateHash",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "baseSpecJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 32,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "mode",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 16,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "requestText",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "promptVersion",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 128,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "attempts",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "leaseGeneration",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "leaseUntil",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nextAttemptAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "diagnostics",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "usageJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "repairJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "compilationJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "failureCategory",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "provider",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 128,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "model",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 256,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "updatedAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:30.912+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.912+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_20_status",
+          "$createdAt": "2026-10-28T22:31:30.933+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.933+00:00",
+          "key": "status",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "status"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_20_app_actor",
+          "$createdAt": "2026-10-28T22:31:30.933+00:00",
+          "$updatedAt": "2026-10-28T22:31:30.933+00:00",
+          "key": "app_actor",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "actorId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 5713
+    },
+    {
+      "$id": "generation_sessions",
+      "$createdAt": "2026-10-28T22:31:46.149+00:00",
+      "$updatedAt": "2026-10-28T22:31:46.149+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "generation_sessions",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:46.283+00:00",
+          "$updatedAt": "2026-10-28T22:31:46.283+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:46.283+00:00",
+          "$updatedAt": "2026-10-28T22:31:46.283+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:46.283+00:00",
+          "$updatedAt": "2026-10-28T22:31:46.283+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "latestJobId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:46.283+00:00",
+          "$updatedAt": "2026-10-28T22:31:46.283+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "generationEstablished",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:46.283+00:00",
+          "$updatedAt": "2026-10-28T22:31:46.283+00:00",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_21_app_actor",
+          "$createdAt": "2026-10-28T22:31:46.300+00:00",
+          "$updatedAt": "2026-10-28T22:31:46.300+00:00",
+          "key": "app_actor",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "actorId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1648
+    },
+    {
+      "$id": "worker_leases",
+      "$createdAt": "2026-10-28T22:31:54.688+00:00",
+      "$updatedAt": "2026-10-28T22:31:54.688+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "worker_leases",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "holderJobId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:54.838+00:00",
+          "$updatedAt": "2026-10-28T22:31:54.838+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "generation",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:54.838+00:00",
+          "$updatedAt": "2026-10-28T22:31:54.838+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "leaseUntil",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:54.838+00:00",
+          "$updatedAt": "2026-10-28T22:31:54.838+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "guard",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:54.838+00:00",
+          "$updatedAt": "2026-10-28T22:31:54.838+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [],
+      "bytesMax": 65535,
+      "bytesUsed": 1618
+    },
+    {
+      "$id": "worker_dispatches",
+      "$createdAt": "2026-10-28T22:31:59.458+00:00",
+      "$updatedAt": "2026-10-28T22:31:59.458+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "worker_dispatches",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "mode",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 16,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "targetId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "runAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 16,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "attempts",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "generation",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "proofHash",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "leaseUntil",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "executionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nextAttemptAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "errorCategory",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "completedAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:31:59.608+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.608+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_23_status",
+          "$createdAt": "2026-10-28T22:31:59.629+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.629+00:00",
+          "key": "status",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "status"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_23_target",
+          "$createdAt": "2026-10-28T22:31:59.629+00:00",
+          "$updatedAt": "2026-10-28T22:31:59.629+00:00",
+          "key": "target",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "mode",
+            "targetId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 3439
+    },
+    {
+      "$id": "automations",
+      "$createdAt": "2026-10-28T22:32:04.644+00:00",
+      "$updatedAt": "2026-10-28T22:32:04.644+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "automations",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ruleId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ruleVersion",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "ruleJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "enabled",
+          "description": "",
+          "type": "boolean",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "default": null
+        },
+        {
+          "key": "executionActorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "activatedAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "activationControlRevision",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "activationVersionId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:04.802+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.802+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_24_app",
+          "$createdAt": "2026-10-28T22:32:04.824+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.824+00:00",
+          "key": "app",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_24_app_rule",
+          "$createdAt": "2026-10-28T22:32:04.824+00:00",
+          "$updatedAt": "2026-10-28T22:32:04.824+00:00",
+          "key": "app_rule",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId",
+            "ruleId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2190
+    },
+    {
+      "$id": "enrollments",
+      "$createdAt": "2026-10-28T22:32:09.380+00:00",
+      "$updatedAt": "2026-10-28T22:32:09.380+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "enrollments",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:09.527+00:00",
+          "$updatedAt": "2026-10-28T22:32:09.527+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:09.527+00:00",
+          "$updatedAt": "2026-10-28T22:32:09.527+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "automationId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:09.527+00:00",
+          "$updatedAt": "2026-10-28T22:32:09.527+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ruleVersion",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:09.527+00:00",
+          "$updatedAt": "2026-10-28T22:32:09.527+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "recordIdsJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:09.527+00:00",
+          "$updatedAt": "2026-10-28T22:32:09.527+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:32:09.527+00:00",
+          "$updatedAt": "2026-10-28T22:32:09.527+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_25_automation",
+          "$createdAt": "2026-10-28T22:32:09.543+00:00",
+          "$updatedAt": "2026-10-28T22:32:09.543+00:00",
+          "key": "automation",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "automationId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 1783
+    },
+    {
+      "$id": "automation_runs",
+      "$createdAt": "2026-10-28T22:33:01.381+00:00",
+      "$updatedAt": "2026-10-28T22:33:01.381+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "automation_runs",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "automationId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ruleVersion",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "recordId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "occurrenceKey",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "scheduleSignature",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "dueAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nextAttemptAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 16,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "attempts",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "leaseGeneration",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "leaseUntil",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "errorCategory",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "recipientCount",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "completedAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": false,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:01.648+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.648+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_26_app",
+          "$createdAt": "2026-10-28T22:33:01.717+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.717+00:00",
+          "key": "app",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "appId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_26_status",
+          "$createdAt": "2026-10-28T22:33:01.717+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.717+00:00",
+          "key": "status",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "status"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_26_rule_record",
+          "$createdAt": "2026-10-28T22:33:01.717+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.717+00:00",
+          "key": "rule_record",
+          "description": "",
+          "type": "key",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "automationId",
+            "recordId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        },
+        {
+          "$id": "7154_26_occurrence",
+          "$createdAt": "2026-10-28T22:33:01.717+00:00",
+          "$updatedAt": "2026-10-28T22:33:01.717+00:00",
+          "key": "occurrence",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "occurrenceKey"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 3784
+    },
+    {
+      "$id": "notification_batches",
+      "$createdAt": "2026-10-28T22:33:06.755+00:00",
+      "$updatedAt": "2026-10-28T22:33:06.755+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "notification_batches",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "runId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "recordId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "recipientIdsJson",
+          "description": "",
+          "type": "mediumtext",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "leaseGeneration",
+          "description": "",
+          "type": "integer",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "min": 0,
+          "max": 2147483647,
+          "default": null
+        },
+        {
+          "key": "title",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "size": 256,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "body",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "size": 512,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "createdAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:06.886+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.886+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_27_run",
+          "$createdAt": "2026-10-28T22:33:06.903+00:00",
+          "$updatedAt": "2026-10-28T22:33:06.903+00:00",
+          "key": "run",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "runId"
+          ],
+          "lengths": [
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 5004
+    },
+    {
+      "$id": "notification_reads",
+      "$createdAt": "2026-10-28T22:33:12.399+00:00",
+      "$updatedAt": "2026-10-28T22:33:12.399+00:00",
+      "$permissions": [],
+      "databaseId": "tinkerloom",
+      "name": "notification_reads",
+      "description": "",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "workspaceId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:12.538+00:00",
+          "$updatedAt": "2026-10-28T22:33:12.538+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "appId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:12.538+00:00",
+          "$updatedAt": "2026-10-28T22:33:12.538+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:12.538+00:00",
+          "$updatedAt": "2026-10-28T22:33:12.538+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "notificationId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:12.538+00:00",
+          "$updatedAt": "2026-10-28T22:33:12.538+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "runId",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:12.538+00:00",
+          "$updatedAt": "2026-10-28T22:33:12.538+00:00",
+          "size": 36,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "readAt",
+          "description": "",
+          "type": "varchar",
+          "status": "available",
+          "error": "",
+          "required": true,
+          "array": false,
+          "$createdAt": "2026-10-28T22:33:12.538+00:00",
+          "$updatedAt": "2026-10-28T22:33:12.538+00:00",
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "$id": "7154_28_actor_notification",
+          "$createdAt": "2026-10-28T22:33:12.558+00:00",
+          "$updatedAt": "2026-10-28T22:33:12.558+00:00",
+          "key": "actor_notification",
+          "description": "",
+          "type": "unique",
+          "status": "available",
+          "error": "",
+          "columns": [
+            "actorId",
+            "notificationId"
+          ],
+          "lengths": [
+            0,
+            0
+          ],
+          "orders": []
+        }
+      ],
+      "bytesMax": 65535,
+      "bytesUsed": 2049
+    }
+  ]
+}

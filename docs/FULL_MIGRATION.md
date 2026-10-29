@@ -373,3 +373,22 @@ coverage. The backend retained118 service groups,307 combined tests and87 AppSpe
 tests, adds11 watch tests, and compiles both AOT entry points on Dart3.11. These
 are local transport/store/lifecycle proofs; actual Cloud watch timing and native
 foreground behavior remain separate gates.
+
+### Offline import and hosted provisioning checkpoints
+
+[Import preflight](IMPORT_DRY_RUN.md) is a strict offline planner and simulated
+resume ledger. It validates real AppSpec/record semantics, explicit identity
+mappings, source/target hashes, dependencies and capacity plans. Thirty-two
+checks and a7→36-operation synthetic restart passed. It has no network/apply
+adapter and accepts no credentials. Real export, account recovery, media/history
+strategy and approved cutover remain unverified; quarantine is not import success.
+
+The Free project now has30 tables with private permissions/row security, all
+expected columns/bounds/indexes available, and one private media bucket. The
+[bounded schema receipt](evidence/2026-10-28/full-schema-20261028.json) preserves
+two equivalent original workspace string columns and the initial incomplete
+console-scrollback audit. No table or data was replaced. The private worker
+built fromb542d9f is active with execute[] and no domains, a60-minute recovery
+interval and120-second timeout. Its [configuration receipt](evidence/2026-10-28/private-worker-20261028.json)
+is provisioning/build evidence, not worker/media delivery acceptance. The core
+built fromfc71fe4 is now active; full REST acceptance is running separately.

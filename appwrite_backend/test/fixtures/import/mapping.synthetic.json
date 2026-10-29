@@ -1,0 +1,28 @@
+{
+  "format": "tinkerloom.identity-map.v1",
+  "sourceInstanceId": "synthetic-legacy",
+  "sourceSha256": "9541a7beb018955283bd7269d4ef1892fb237699030cf2cb659a35c7f773cd63",
+  "target": {
+    "endpoint": "https://appwrite.invalid/v1",
+    "projectId": "synthetic-project",
+    "databaseId": "tinkerloom",
+    "operatorAccountId": "qa-owner"
+  },
+  "accounts": [
+    {
+      "sourceActorId": "legacy|alice",
+      "targetAccountId": "qa-owner"
+    },
+    {
+      "sourceActorId": "legacy|bob",
+      "targetAccountId": "qa-member"
+    }
+  ],
+  "workspaces": [
+    {
+      "sourceWorkspaceId": "9007199254740993",
+      "targetWorkspaceId": "qa-workspace",
+      "disposition": "create"
+    }
+  ]
+}

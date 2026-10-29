@@ -1,0 +1,283 @@
+{
+  "format": "appnest.offline-export.v1",
+  "sourceInstanceId": "synthetic-legacy",
+  "snapshotId": "synthetic-2026-10-28",
+  "exportedAt": "2026-10-28T12:00:00.000Z",
+  "consistentSnapshot": true,
+  "dataEncoding": "serverpod-unwrapped-json.v1",
+  "sourceArchive": {
+    "sha256": "6c39ee9d0287e72d15dceadfafba94dfea29b651e7a0eaabad33d76b40805235",
+    "byteLength": 22
+  },
+  "counts": {
+    "workspaces": 1,
+    "memberships": 2,
+    "apps": 3,
+    "grants": 2,
+    "shortcuts": 1,
+    "versions": 4,
+    "drafts": 1,
+    "records": 3,
+    "pools": 1,
+    "claims": 1,
+    "receipts": 1,
+    "pendingCommands": 0,
+    "media": 0,
+    "mediaReferences": 0,
+    "automations": 1,
+    "jobs": 0,
+    "history": 1
+  },
+  "tables": {
+    "workspaces": [
+      {
+        "id": "9007199254740993",
+        "name": "Synthetic QA",
+        "ownerId": "legacy|alice",
+        "personal": true,
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      }
+    ],
+    "memberships": [
+      {
+        "id": "1",
+        "workspaceId": "9007199254740993",
+        "actorId": "legacy|alice",
+        "role": "owner"
+      },
+      {
+        "id": "2",
+        "workspaceId": "9007199254740993",
+        "actorId": "legacy|bob",
+        "role": "member"
+      }
+    ],
+    "apps": [
+      {
+        "id": "10",
+        "workspaceId": "9007199254740993",
+        "ownerId": "legacy|alice",
+        "name": "Reading Journal",
+        "activeVersionId": "103",
+        "archived": false,
+        "controlRevision": 9,
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      },
+      {
+        "id": "20",
+        "workspaceId": "9007199254740993",
+        "ownerId": "legacy|alice",
+        "name": "Chore Board",
+        "activeVersionId": "101",
+        "archived": false,
+        "controlRevision": 9,
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      },
+      {
+        "id": "30",
+        "workspaceId": "9007199254740993",
+        "ownerId": "legacy|alice",
+        "name": "Volunteer Shifts",
+        "activeVersionId": "102",
+        "archived": false,
+        "controlRevision": 9,
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      }
+    ],
+    "grants": [
+      {
+        "id": "1",
+        "appId": "20",
+        "workspaceId": "9007199254740993",
+        "actorId": "legacy|bob",
+        "role": "member",
+        "revoked": true
+      },
+      {
+        "id": "2",
+        "appId": "30",
+        "workspaceId": "9007199254740993",
+        "actorId": "legacy|bob",
+        "role": "member",
+        "revoked": false
+      }
+    ],
+    "shortcuts": [
+      {
+        "id": "1",
+        "appId": "10",
+        "actorId": "legacy|alice"
+      }
+    ],
+    "versions": [
+      {
+        "id": "100",
+        "appId": "10",
+        "workspaceId": "9007199254740993",
+        "number": 1,
+        "specJson": "{\"actions\":[{\"capability\":\"records.create.v1\",\"collectionId\":\"books\",\"id\":\"addBook\",\"label\":\"Add book\"},{\"capability\":\"records.patch.v1\",\"collectionId\":\"books\",\"id\":\"editBook\",\"label\":\"Edit book\"}],\"automationRequests\":[],\"collections\":[{\"behaviors\":[],\"fields\":[{\"id\":\"title\",\"label\":\"Title\",\"required\":true,\"type\":\"text\"},{\"id\":\"author\",\"label\":\"Author\",\"required\":false,\"type\":\"text\"},{\"choices\":[\"Want to read\",\"Reading\",\"Finished\"],\"id\":\"status\",\"label\":\"Status\",\"required\":true,\"type\":\"choice\"},{\"id\":\"rating\",\"label\":\"Rating\",\"required\":false,\"type\":\"integer\"},{\"id\":\"notes\",\"label\":\"Notes\",\"required\":false,\"type\":\"text\"}],\"id\":\"books\",\"label\":\"Books\"}],\"formatVersion\":1,\"icon\":\"book\",\"name\":\"Reading Journal\",\"policyPresetRequest\":\"personalTracker.v1\",\"requires\":[\"collections.v1\",\"records.create.v1\",\"records.patch.v1\",\"views.list.v1\",\"views.summary.v1\"],\"theme\":\"amber\",\"views\":[{\"actionIds\":[\"addBook\",\"editBook\"],\"collectionId\":\"books\",\"id\":\"library\",\"label\":\"Library\",\"titleFieldId\":\"title\",\"type\":\"list\"},{\"actionIds\":[],\"collectionId\":\"books\",\"groupByFieldId\":\"status\",\"id\":\"readingSummary\",\"label\":\"Overview\",\"type\":\"summary\"}]}",
+        "candidateHash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
+        "publisherId": "legacy|alice",
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      },
+      {
+        "id": "101",
+        "appId": "20",
+        "workspaceId": "9007199254740993",
+        "number": 1,
+        "specJson": "{\"actions\":[{\"capability\":\"records.create.v1\",\"collectionId\":\"chores\",\"id\":\"addChore\",\"label\":\"Add chore\"},{\"capability\":\"records.patch.v1\",\"collectionId\":\"chores\",\"id\":\"editChore\",\"label\":\"Edit notes\"},{\"behaviorId\":\"assignment\",\"capability\":\"assignment.assign.v1\",\"collectionId\":\"chores\",\"id\":\"assignChore\",\"label\":\"Assign\"},{\"behaviorId\":\"progress\",\"capability\":\"workflow.transition.v1\",\"collectionId\":\"chores\",\"id\":\"moveChore\",\"label\":\"Change status\"}],\"automationRequests\":[{\"effect\":{\"channel\":\"inApp\",\"type\":\"notifyAssignee\"},\"id\":\"dueReminder\",\"trigger\":{\"collectionId\":\"chores\",\"fieldId\":\"dueAt\",\"offsetSeconds\":3600,\"type\":\"beforeTimestamp\"}}],\"collections\":[{\"behaviors\":[{\"fieldId\":\"status\",\"id\":\"progress\",\"transitions\":{\"Doing\":[\"Open\",\"Done\"],\"Done\":[\"Open\"],\"Open\":[\"Doing\"]},\"type\":\"workflow.v1\"},{\"fieldId\":\"assignee\",\"id\":\"assignment\",\"type\":\"assignment.v1\"}],\"fields\":[{\"id\":\"title\",\"label\":\"Chore\",\"required\":true,\"type\":\"text\"},{\"id\":\"assignee\",\"label\":\"Assigned to\",\"required\":false,\"type\":\"member\"},{\"id\":\"dueAt\",\"label\":\"Due date\",\"required\":false,\"type\":\"timestamp\"},{\"choices\":[\"Open\",\"Doing\",\"Done\"],\"id\":\"status\",\"label\":\"Status\",\"required\":true,\"type\":\"choice\"},{\"id\":\"notes\",\"label\":\"Notes\",\"required\":false,\"type\":\"text\"}],\"id\":\"chores\",\"label\":\"Chores\"}],\"formatVersion\":1,\"icon\":\"board\",\"name\":\"Chore Board\",\"policyPresetRequest\":\"groupWorkflow.v1\",\"requires\":[\"collections.v1\",\"workflow.v1\",\"assignment.v1\",\"records.create.v1\",\"records.patch.v1\",\"assignment.assign.v1\",\"workflow.transition.v1\",\"views.board.v1\",\"views.list.v1\",\"notifications.inApp.v1\"],\"theme\":\"sage\",\"views\":[{\"actionIds\":[\"addChore\",\"editChore\",\"assignChore\",\"moveChore\"],\"collectionId\":\"chores\",\"groupByFieldId\":\"status\",\"id\":\"board\",\"label\":\"Board\",\"titleFieldId\":\"title\",\"type\":\"board\"},{\"actionIds\":[\"addChore\",\"editChore\",\"assignChore\",\"moveChore\"],\"collectionId\":\"chores\",\"id\":\"allChores\",\"label\":\"All chores\",\"titleFieldId\":\"title\",\"type\":\"list\"}]}",
+        "candidateHash": "2992181af41ad84ff7ccdb6a3335a0d738743f88ae956d0f72a980fb36252d70",
+        "publisherId": "legacy|alice",
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      },
+      {
+        "id": "102",
+        "appId": "30",
+        "workspaceId": "9007199254740993",
+        "number": 1,
+        "specJson": "{\"actions\":[{\"capability\":\"records.create.v1\",\"collectionId\":\"shifts\",\"id\":\"addShift\",\"label\":\"Create shift\"},{\"capability\":\"records.patch.v1\",\"collectionId\":\"shifts\",\"id\":\"editShift\",\"label\":\"Edit shift\"},{\"behaviorId\":\"places\",\"capability\":\"capacity.configure.v1\",\"collectionId\":\"shifts\",\"id\":\"configure\",\"label\":\"Set capacity\"},{\"behaviorId\":\"places\",\"capability\":\"capacity.claim.v1\",\"collectionId\":\"shifts\",\"id\":\"join\",\"label\":\"Join shift\"},{\"behaviorId\":\"places\",\"capability\":\"capacity.release.v1\",\"collectionId\":\"shifts\",\"id\":\"leave\",\"label\":\"Cancel sign-up\"}],\"automationRequests\":[{\"effect\":{\"channel\":\"inApp\",\"type\":\"notifyActiveClaimants\"},\"id\":\"shiftReminder\",\"trigger\":{\"collectionId\":\"shifts\",\"fieldId\":\"startsAt\",\"offsetSeconds\":3600,\"type\":\"beforeTimestamp\"}}],\"collections\":[{\"behaviors\":[{\"id\":\"places\",\"type\":\"capacity.v1\"}],\"fields\":[{\"id\":\"title\",\"label\":\"Shift\",\"required\":true,\"type\":\"text\"},{\"id\":\"startsAt\",\"label\":\"Starts\",\"required\":true,\"type\":\"timestamp\"},{\"id\":\"notes\",\"label\":\"Preparation notes\",\"required\":false,\"type\":\"text\"}],\"id\":\"shifts\",\"label\":\"Shifts\"}],\"formatVersion\":1,\"icon\":\"people\",\"name\":\"Volunteer Shifts\",\"policyPresetRequest\":\"groupCapacitySignup.v1\",\"requires\":[\"collections.v1\",\"capacity.v1\",\"records.create.v1\",\"records.patch.v1\",\"capacity.configure.v1\",\"capacity.claim.v1\",\"capacity.release.v1\",\"views.list.v1\",\"views.capacity.v1\",\"notifications.inApp.v1\"],\"theme\":\"teal\",\"views\":[{\"actionIds\":[\"addShift\",\"editShift\",\"join\",\"leave\",\"configure\"],\"collectionId\":\"shifts\",\"id\":\"allShifts\",\"label\":\"Shifts\",\"titleFieldId\":\"title\",\"type\":\"list\"},{\"actionIds\":[\"join\",\"leave\"],\"collectionId\":\"shifts\",\"id\":\"placesSummary\",\"label\":\"Places\",\"titleFieldId\":\"title\",\"type\":\"capacity\"}]}",
+        "candidateHash": "1955dfd39f12d4c307e67a31cc3fe2bd4c18c619203e69878e72b00ecb737599",
+        "publisherId": "legacy|alice",
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      },
+      {
+        "id": "103",
+        "appId": "10",
+        "workspaceId": "9007199254740993",
+        "number": 2,
+        "specJson": "{\"actions\":[{\"capability\":\"records.create.v1\",\"collectionId\":\"books\",\"id\":\"addBook\",\"label\":\"Add book\"},{\"capability\":\"records.patch.v1\",\"collectionId\":\"books\",\"id\":\"editBook\",\"label\":\"Edit book\"}],\"automationRequests\":[],\"collections\":[{\"behaviors\":[],\"fields\":[{\"id\":\"title\",\"label\":\"Title\",\"required\":true,\"type\":\"text\"},{\"id\":\"author\",\"label\":\"Author\",\"required\":false,\"type\":\"text\"},{\"choices\":[\"Want to read\",\"Reading\",\"Finished\"],\"id\":\"status\",\"label\":\"Status\",\"required\":true,\"type\":\"choice\"},{\"id\":\"rating\",\"label\":\"Rating\",\"required\":false,\"type\":\"integer\"},{\"id\":\"notes\",\"label\":\"Notes\",\"required\":false,\"type\":\"text\"},{\"id\":\"importNote\",\"label\":\"Import note\",\"required\":false,\"type\":\"text\"}],\"id\":\"books\",\"label\":\"Books\"}],\"formatVersion\":1,\"icon\":\"book\",\"name\":\"Reading Journal\",\"policyPresetRequest\":\"personalTracker.v1\",\"requires\":[\"collections.v1\",\"records.create.v1\",\"records.patch.v1\",\"views.list.v1\",\"views.summary.v1\"],\"theme\":\"amber\",\"views\":[{\"actionIds\":[\"addBook\",\"editBook\"],\"collectionId\":\"books\",\"id\":\"library\",\"label\":\"Library\",\"titleFieldId\":\"title\",\"type\":\"list\"},{\"actionIds\":[],\"collectionId\":\"books\",\"groupByFieldId\":\"status\",\"id\":\"readingSummary\",\"label\":\"Overview\",\"type\":\"summary\"}]}",
+        "candidateHash": "115ea5e518ec1501ab0154560d12186dabf593d3c100da8671857dddad0f1bc9",
+        "publisherId": "legacy|alice",
+        "createdAt": "2026-10-28T12:00:00.000Z"
+      }
+    ],
+    "drafts": [
+      {
+        "id": "1",
+        "appId": "10",
+        "workspaceId": "9007199254740993",
+        "actorId": "legacy|alice",
+        "baseVersionId": "103",
+        "candidateJson": "{\"actions\":[{\"capability\":\"records.create.v1\",\"collectionId\":\"books\",\"id\":\"addBook\",\"label\":\"Add book\"},{\"capability\":\"records.patch.v1\",\"collectionId\":\"books\",\"id\":\"editBook\",\"label\":\"Edit book\"}],\"automationRequests\":[],\"collections\":[{\"behaviors\":[],\"fields\":[{\"id\":\"title\",\"label\":\"Title\",\"required\":true,\"type\":\"text\"},{\"id\":\"author\",\"label\":\"Author\",\"required\":false,\"type\":\"text\"},{\"choices\":[\"Want to read\",\"Reading\",\"Finished\"],\"id\":\"status\",\"label\":\"Status\",\"required\":true,\"type\":\"choice\"},{\"id\":\"rating\",\"label\":\"Rating\",\"required\":false,\"type\":\"integer\"},{\"id\":\"notes\",\"label\":\"Notes\",\"required\":false,\"type\":\"text\"},{\"id\":\"importNote\",\"label\":\"Import note\",\"required\":false,\"type\":\"text\"}],\"id\":\"books\",\"label\":\"Books\"}],\"formatVersion\":1,\"icon\":\"book\",\"name\":\"Reading Journal\",\"policyPresetRequest\":\"personalTracker.v1\",\"requires\":[\"collections.v1\",\"records.create.v1\",\"records.patch.v1\",\"views.list.v1\",\"views.summary.v1\"],\"theme\":\"amber\",\"views\":[{\"actionIds\":[\"addBook\",\"editBook\"],\"collectionId\":\"books\",\"id\":\"library\",\"label\":\"Library\",\"titleFieldId\":\"title\",\"type\":\"list\"},{\"actionIds\":[],\"collectionId\":\"books\",\"groupByFieldId\":\"status\",\"id\":\"readingSummary\",\"label\":\"Overview\",\"type\":\"summary\"}]}",
+        "candidateHash": "115ea5e518ec1501ab0154560d12186dabf593d3c100da8671857dddad0f1bc9",
+        "mutation": 7,
+        "activeJobId": null,
+        "publishedVersionId": null,
+        "updatedAt": "2026-10-28T12:00:00.000Z"
+      }
+    ],
+    "records": [
+      {
+        "id": "1000",
+        "appId": "10",
+        "workspaceId": "9007199254740993",
+        "collectionId": "books",
+        "data": {
+          "title": "Synthetic book",
+          "status": "Reading",
+          "rating": 4
+        },
+        "creatorId": "legacy|alice",
+        "revision": 3,
+        "writtenUnderVersionId": "100",
+        "createdAt": "2026-10-28T12:00:00.000Z",
+        "updatedAt": "2026-10-28T12:00:00.000Z",
+        "deleted": false
+      },
+      {
+        "id": "2000",
+        "appId": "20",
+        "workspaceId": "9007199254740993",
+        "collectionId": "chores",
+        "data": {
+          "title": "Synthetic chore",
+          "status": "Doing",
+          "assignee": "legacy|bob",
+          "dueAt": "2026-10-28T12:00:00.123456Z"
+        },
+        "creatorId": "legacy|alice",
+        "revision": 2,
+        "writtenUnderVersionId": "101",
+        "createdAt": "2026-10-28T12:00:00.000Z",
+        "updatedAt": "2026-10-28T12:00:00.000Z",
+        "deleted": false
+      },
+      {
+        "id": "3000",
+        "appId": "30",
+        "workspaceId": "9007199254740993",
+        "collectionId": "shifts",
+        "data": {
+          "title": "Synthetic shift",
+          "startsAt": "2026-11-01T10:00:00.000Z"
+        },
+        "creatorId": "legacy|alice",
+        "revision": 1,
+        "writtenUnderVersionId": "102",
+        "createdAt": "2026-10-28T12:00:00.000Z",
+        "updatedAt": "2026-10-28T12:00:00.000Z",
+        "deleted": false
+      }
+    ],
+    "pools": [
+      {
+        "id": "1",
+        "appId": "30",
+        "workspaceId": "9007199254740993",
+        "recordId": "3000",
+        "behaviorId": "places",
+        "capacity": 3,
+        "allocated": 1
+      }
+    ],
+    "claims": [
+      {
+        "id": "1",
+        "appId": "30",
+        "workspaceId": "9007199254740993",
+        "poolId": "1",
+        "actorId": "legacy|bob",
+        "active": true,
+        "createdAt": "2026-10-28T12:00:00.000Z",
+        "updatedAt": "2026-10-28T12:00:00.000Z"
+      }
+    ],
+    "receipts": [
+      {
+        "id": "1",
+        "appId": "10",
+        "actorId": "legacy|alice",
+        "idempotencyKeySha256": "bd01bc079a93352265c011e0e3d03835d50201bbeb21021957598c3278b28f62",
+        "requestHash": "315603e2c5113ca867538f5e3ba2639f0128c89aa776fa470b15b216547f5c19",
+        "outcomeSha256": "c7b93739beed7aeac62aabd8cd70755c61ef76d7a603a230e6c87b9e2a5e9ef9",
+        "recordId": "1000",
+        "revision": 3,
+        "state": "confirmed"
+      }
+    ],
+    "pendingCommands": [],
+    "media": [],
+    "mediaReferences": [],
+    "automations": [
+      {
+        "id": "1",
+        "appId": "20",
+        "workspaceId": "9007199254740993",
+        "ruleId": "dueReminder",
+        "enabled": true,
+        "executionActorId": "legacy|alice",
+        "ruleSha256": "5afcbfa5a247e26207ca4a6136cccfbe4b792770868a1dcd52ffc6132132de3e"
+      }
+    ],
+    "jobs": [],
+    "history": [
+      {
+        "id": "1",
+        "appId": "10",
+        "kind": "audit",
+        "state": "terminal",
+        "contentSha256": "0ca096fc9c647c17fe14970cd41ee581caf2a4b699cc687c63eb3f334c2c77cd"
+      }
+    ]
+  }
+}

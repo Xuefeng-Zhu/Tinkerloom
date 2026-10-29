@@ -62,8 +62,11 @@ jobs:
         run: |
           node --check scripts/live_smoke.mjs
           node --check scripts/live_collaboration_smoke.mjs
-      - name: Test private-row denial classification offline
-        run: node --test scripts/live_smoke_denial.test.mjs scripts/live_collaboration_contract.test.mjs
+          node --check scripts/live_full_smoke.mjs
+          node --check scripts/live_full_contract.mjs
+          node --check scripts/live_full_transport.mjs
+      - name: Test live probe contracts without network
+        run: node --test scripts/live_smoke_denial.test.mjs scripts/live_collaboration_contract.test.mjs scripts/live_full_contract.test.mjs
       - name: Analyze, test, and export client bundles
         run: npm run verify
 
@@ -86,13 +89,13 @@ jobs:
       - name: Resolve dependencies
         run: dart pub get
       - name: Analyze authored function source and checks
-        run: dart analyze lib test
+        run: dart analyze lib test tool
       - name: Check authored-source formatting
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: dart format --output=none --set-exit-if-changed lib test tool
       - name: Run backend service and HTTP transport checks
         run: dart run test/service_check.dart
       - name: Test generation providers and durable worker contracts
-        run: dart test test/providers test/workers_test.dart test/fanout_test.dart test/app_access_test.dart test/watch_test.dart
+        run: dart test test/providers test/workers_test.dart test/fanout_test.dart test/app_access_test.dart test/watch_test.dart test/import_dry_run_test.dart
       - name: Test private media codecs and worker integration
         run: dart test test/image_resource_test.dart test/image_sanitizer_test.dart test/media_worker_test.dart
       - name: Verify React Native fixtures against the current Dart wire contract

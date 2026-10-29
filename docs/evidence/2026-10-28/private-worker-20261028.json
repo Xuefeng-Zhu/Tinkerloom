@@ -1,0 +1,34 @@
+{
+  "capturedAt": "2026-10-28T23:16:17.122Z",
+  "projectId": "6ae1928a003a65851e95",
+  "sourceCommit": "b542d9fea645853455605b2dc2d6c59ad64909dd",
+  "archiveSha256": "0ffa02a7b366e7e6b5e400e93218e8c09ce64d43eca2b7e6e98119e16ff407b4",
+  "proof": "Appwrite Console raw Function metadata and separately inspected Security and Domains UI. No credentials, execution proofs or user rows.",
+  "observedDomains": [],
+  "function": {
+    "id": "tinkerloom-worker",
+    "runtime": "dart-3.11",
+    "execute": [],
+    "scopes": [
+      "rows.read",
+      "rows.write",
+      "executions.write",
+      "files.read",
+      "files.write"
+    ],
+    "deploymentId": "6ae2814bef35c817e99c",
+    "latestDeploymentStatus": "ready",
+    "interval": 60,
+    "schedule": "",
+    "timeout": 120,
+    "entrypoint": "lib/worker_main.dart",
+    "runtimeSpecification": "s-0.5vcpu-512mb",
+    "events": [],
+    "emailEnabled": false
+  },
+  "deployment": {
+    "status": "Active",
+    "buildSeconds": 15,
+    "totalSizeMegabytes": 5.19
+  }
+}

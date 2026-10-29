@@ -1,0 +1,25 @@
+{
+  "capturedAt": "2026-10-28T22:59:50.442Z",
+  "projectId": "6ae1928a003a65851e95",
+  "proof": "Appwrite Console CLI raw create response copied through Output actions; no file content or credential.",
+  "bucket": {
+    "$id": "tinkerloom-media",
+    "$createdAt": "2026-10-28T22:54:59.690+00:00",
+    "$updatedAt": "2026-10-28T22:54:59.690+00:00",
+    "$permissions": [],
+    "fileSecurity": true,
+    "name": "Private Tinkerloom images",
+    "description": "",
+    "enabled": true,
+    "maximumFileSize": 5242880,
+    "allowedFileExtensions": [
+      "bin"
+    ],
+    "compression": "none",
+    "encryption": true,
+    "antivirus": true,
+    "transformations": false,
+    "stripMetadata": false,
+    "totalSize": 0
+  }
+}

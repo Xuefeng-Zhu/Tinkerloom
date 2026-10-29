@@ -1,0 +1,101 @@
+{
+  "format": "tinkerloom.offline-import-receipt.v1",
+  "stage": "/private/tmp/tinkerloom-import-vvi4pbbc",
+  "files": [
+    {
+      "path": "appwrite_backend/tool/import/engine.dart",
+      "sha256": "e6deae8f41d564b400bf04de29e58baca1354b1269fcf4728a8845b0863f943f",
+      "bytes": 52712,
+      "new": true
+    },
+    {
+      "path": "appwrite_backend/tool/import/format.dart",
+      "sha256": "064642edbc236f2611570d097f56db10ae911806d953371206593df5906dff13",
+      "bytes": 6140,
+      "new": true
+    },
+    {
+      "path": "appwrite_backend/tool/import/main.dart",
+      "sha256": "d3dcaad7b76e23c5eacb781a6fcc487bf286aebee69fc563177e8bb39ca42047",
+      "bytes": 5034,
+      "new": true
+    },
+    {
+      "path": "appwrite_backend/tool/import/make_synthetic_fixture.dart",
+      "sha256": "b8708823abf8f3d9e29bac3f248ed49a2712b8e16b962731636f25ff0e32bee7",
+      "bytes": 7203,
+      "new": true
+    },
+    {
+      "path": "appwrite_backend/tool/import/replay.dart",
+      "sha256": "64100ce5bbce95b743b6b967957f0ad0785a65f113a80fa2eda79a6db4d63b0e",
+      "bytes": 5953,
+      "new": true
+    },
+    {
+      "path": "appwrite_backend/test/import_dry_run_test.dart",
+      "sha256": "09694c41b67a3fae488c809edf714c1f21242f716d59e75755ca5c76575b408b",
+      "bytes": 36904,
+      "new": true
+    },
+    {
+      "path": "appwrite_backend/test/fixtures/import/source.synthetic.json",
+      "sha256": "9541a7beb018955283bd7269d4ef1892fb237699030cf2cb659a35c7f773cd63",
+      "bytes": 16171,
+      "new": true
+    },
+    {
+      "path": "appwrite_backend/test/fixtures/import/mapping.synthetic.json",
+      "sha256": "7ffc005e57060c9cc6d841b4bdae0122e828dd6c7b032074728b4bab15ee63ea",
+      "bytes": 695,
+      "new": true
+    },
+    {
+      "path": "docs/IMPORT_DRY_RUN.md",
+      "sha256": "e86aa850d018cc2b58898c97de84a48be4fa72920c49ae18e42f6ba0eb6d3ca1",
+      "bytes": 21620,
+      "new": true
+    }
+  ],
+  "sdk": "Dart 3.11.0 macos_arm64",
+  "checks": {
+    "analyze": true,
+    "formatSixFilesUnchanged": true,
+    "focusedTestsPassed": 32,
+    "canonicalFixturesCovered": 12,
+    "prettier": true,
+    "aotCli": true,
+    "independentReview": "three concrete findings fixed; no additional cross-tenant/resume bypass found"
+  },
+  "simulation": {
+    "advanced": 29,
+    "confirmed": 36,
+    "complete": true,
+    "rowCount": 33,
+    "rowSha256": "36016c80ba42c85b12229107b53e39abee5299136177b30e8844235cab0ab6f4",
+    "liveWrites": 0
+  },
+  "sourceSha256": "9541a7beb018955283bd7269d4ef1892fb237699030cf2cb659a35c7f773cd63",
+  "mappingSha256": "7ffc005e57060c9cc6d841b4bdae0122e828dd6c7b032074728b4bab15ee63ea",
+  "planSha256": "0af2b7d37f271a5f7c88db882db2d432859db0778c5668c872e0b8a03568f284",
+  "liveWrites": 0,
+  "networkCalls": 0,
+  "originalAppNestWrites": 0,
+  "existingBackendSourceEdits": 0,
+  "remainingGates": [
+    "real consistent export/archive",
+    "account ownership/recovery",
+    "metadata precision/order/personal workspace preservation",
+    "media transfer and references",
+    "old receipts and outstanding commands",
+    "history/candidate retention",
+    "bounded-engine preservation",
+    "actual approved write/rollback/cutover runner"
+  ],
+  "evidence": {
+    "testLog": "/private/tmp/tinkerloom-import-vvi4pbbc/import-tests-final.log",
+    "firstLedger": "/private/tmp/tinkerloom-import-vvi4pbbc/simulation-ledger-1.json",
+    "resumedLedger": "/private/tmp/tinkerloom-import-vvi4pbbc/simulation-ledger-2.json",
+    "resumedReport": "/private/tmp/tinkerloom-import-vvi4pbbc/simulation-report-2.json"
+  }
+}
