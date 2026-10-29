@@ -1,0 +1,33 @@
+{
+  "capturedAt": "2026-10-29T05:29:00.900848+00:00",
+  "probeSourceCommit": "a124bc23bd5f98636be51a82417bf4fb0e3c5784",
+  "backendSourceCommit": "43d4334a8f1dbe59ac6d5afa657f9128bef678a8",
+  "backendArchiveSha256": "ddb4fef635c0cc66b8bc994b29c95c2e89cefce786c1601e2ba481fc14f52cd7",
+  "coreDeploymentId": "6ae2c7c4c9c5bd7f2d7c",
+  "workerDeploymentId": "6ae2a775681ced8b8bab",
+  "reportSha256": "57bbaa8f04a3dc84149e3a2d92840f6fb540c775d38fd27533448091b2a68327",
+  "summary": {
+    "passed": 48,
+    "failed": 0,
+    "blocked": 0,
+    "assertions": 1956
+  },
+  "httpRequests": 387,
+  "readConflicts": 5,
+  "readRetries": 5,
+  "syntheticAccountsCreated": 0,
+  "reusedAccounts": 5,
+  "logicalVerifyAndCheckCallsitesUnchanged": true,
+  "assertionCountVariation": "Capacity outcome branches have different assertion populations; no logical verification/check call sites were added or removed by read recovery",
+  "priorFailedRun": "full-cloud-43d4334.failed.json",
+  "sourceAttestation": "operator-supplied archive mapping; not public server attestation",
+  "capacityLimits": [
+    "20HTTP attempts/20uniquecommands use3authenticatedactors",
+    "No20-distinct-actor or server execution-barrier proof"
+  ],
+  "notProof": [
+    "provider/model execution",
+    "native/browser all-feature acceptance",
+    "production/cutover or maximum resource scale"
+  ]
+}

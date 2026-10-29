@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "48afbd65b3db577442aa8c7fc82a69cfd21dc747",
+  "sourceFiles": 308,
+  "inputSha256": "2855a0c9af00784792510de4de195e361760c945ac74bc8de4b169f7895254f4",
+  "compiledSourceSha256": "3ddf2baa013e4962805c492152d0abcba66b65048202042ad7491cb2c4f68259",
+  "checkpoint": {
+    "path": "/private/tmp/tinkerloom-native-workspace-q0yymkmn/checkpoint.json",
+    "sha256": "96ebc0722cce505304e89db245d8e25b0c66706492123bd0f0b6329c3fe3f93a"
+  },
+  "nativeInputsUnchanged": true,
+  "compiledSourceDifference": "Recorded Expo CNG android/ios package-script transform only",
+  "realInstalledNodeModules": true,
+  "matchingPublicConfigHashVerifiedWithoutValues": true,
+  "checks": {
+    "typecheck": true,
+    "lint": true,
+    "allPlatformExports": true,
+    "all14MarkersAnd16RouteKeysInActualExportsAndBothEmbeddedReleases": true,
+    "sourceMarkerInclusionIsNotSemanticRuntimeProof": true
+  },
+  "builds": {
+    "android": {
+      "artifact": "/private/tmp/tinkerloom-native-workspace-q0yymkmn/artifacts/Tinkerloom-android-debug-48afbd65-3ddf2baa.apk",
+      "bytes": 263603780,
+      "sha256": "ee3f23a822e17adb0a135857beed7a17bb972ba687e6908ba482981b8506869b",
+      "elapsedSeconds": 36.17,
+      "embeddedJavaScript": false,
+      "architectures": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "x86",
+        "x86_64"
+      ],
+      "requiresMetro": true,
+      "signing": "unchanged generated development debug signing"
+    },
+    "ios": {
+      "artifact": "/private/tmp/tinkerloom-native-workspace-q0yymkmn/artifacts/Tinkerloom-ios-simulator-release-48afbd65-3ddf2baa.zip",
+      "bytes": 23550799,
+      "sha256": "8f1dcb64e43f3c557dc0958a8e9d1709826b9bda3492f337d25ac38b6b082cc7",
+      "elapsedSeconds": 22.16,
+      "embeddedJavaScript": true,
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "requiresMetro": false,
+      "signing": "unsigned simulator build",
+      "embeddedJavaScriptSha256": "47f531c7b25ce819c15e5ccbcbd829686825cf0b996f77fa37e92d4f66409799"
+    },
+    "android-release": {
+      "artifact": "/private/tmp/tinkerloom-native-workspace-q0yymkmn/artifacts/Tinkerloom-android-local-release-debug-signed-48afbd65-3ddf2baa.apk",
+      "bytes": 116529370,
+      "sha256": "7101a9ec78a35c05f0feb790852578f133256d28f4b597d96a26b1082e0dedae",
+      "elapsedSeconds": 42.21,
+      "embeddedJavaScript": true,
+      "architectures": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "x86",
+        "x86_64"
+      ],
+      "requiresMetro": false,
+      "signing": "unchanged generated development debug signing",
+      "embeddedJavaScriptSha256": "ba2de879e1ef458d80362971271441473b26938bff81b4b359f2246d4744cf53"
+    }
+  },
+  "unchangedDevelopmentCertificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "preservedPriorFileCount": 1946,
+  "allPrior916b8773A1e34c7fAnd10fed99ArtifactsPreserved": true,
+  "deviceBooted": false,
+  "installed": false,
+  "launched": false,
+  "uiOrHardwareVerified": false,
+  "appwriteNativeSignInVerified": false,
+  "productionSigning": false,
+  "overallMigrationComplete": false,
+  "freeGiB": 10.314,
+  "finishedAt": "2026-10-29T05:39:15.509602+00:00",
+  "selectedSourceInputs": {
+    "src/full/FullAppController.ts": {
+      "sha256": "d425de94b5da7932acf3dce02eb0e40c7284fc7c6f48422dd79590dbc5205f1f",
+      "gitBlob": "99aeaf70389fb9fb2d53de388db8ee4f29e87665",
+      "unchangedFrom916b8773": true
+    },
+    "src/full/FullAppScreen.tsx": {
+      "sha256": "840843e4720ad52ed8b704cacc79e5c8a88cc820db47641745338b474cbaf92b",
+      "gitBlob": "de23c777fc171a436b8c1c477424452f8e40e4e1",
+      "unchangedFrom916b8773": false
+    },
+    "src/full/FullWorkspaceController.ts": {
+      "sha256": "916b5bb8ccbadef1491c505378bbdea1a6042544fc7f06520a6d6ab9e04ccb0c",
+      "gitBlob": "deacc551a5d8d3c3ca8c173c27c61a022f3394e1",
+      "unchangedFrom916b8773": false
+    }
+  },
+  "publishedRuntimeGuardSemanticProof": "Exact source inclusion here; peer checks and fresh browser verification are separate evidence."
+}

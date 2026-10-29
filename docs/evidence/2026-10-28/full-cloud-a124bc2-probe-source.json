@@ -1,0 +1,129 @@
+{
+  "sourceCommit": "a124bc23bd5f98636be51a82417bf4fb0e3c5784",
+  "files": [
+    {
+      "path": "scripts/fixtures/live_media/serviceWire.json",
+      "sha256": "e7feabd3a57977ff660383af321f927b1cc64e96e0d88cabad3feeb5f0d0f77b"
+    },
+    {
+      "path": "scripts/fixtures/reminder_service_wire.json",
+      "sha256": "958ac104cd84089888eb092f30d01570b271c9a5cf0ed0d93c99b599a1a57773"
+    },
+    {
+      "path": "scripts/host-storage-probe/README.md",
+      "sha256": "816f4872e046097ebbbe4e58d4fa3eacca4135a423a0b314cddeddc766b029f1"
+    },
+    {
+      "path": "scripts/host-storage-probe/entry.ts",
+      "sha256": "92afe7e3d6b2f8b0bd291c5d6467260e9324e77ea1663b667fb37328c8de9d05"
+    },
+    {
+      "path": "scripts/host-storage-probe/index.html",
+      "sha256": "3794960181d55cb5c0a4e379551fe43a68be00d92cfbc7578cbcbae53d4815f6"
+    },
+    {
+      "path": "scripts/live_activity_smoke.mjs",
+      "sha256": "e2ef8205d286eb9ceaf19ea5140e96fbdeb885350772e94ec8562b38a1e8ecdb"
+    },
+    {
+      "path": "scripts/live_activity_smoke.test.mjs",
+      "sha256": "c7bcbc4db6eb3606477a2ff7eba0a0adab054815380ba5deafcacc2dc0f76217"
+    },
+    {
+      "path": "scripts/live_collaboration_contract.mjs",
+      "sha256": "8cd7a6dde28246f7346ddd2b8f42470daa96e11ed13798cb5ed0a9916f6c9b2f"
+    },
+    {
+      "path": "scripts/live_collaboration_contract.test.mjs",
+      "sha256": "5a10253c550bb8c6e4bcfc7642af8680d3a8caada3c8d22966dec40b4758df96"
+    },
+    {
+      "path": "scripts/live_collaboration_smoke.mjs",
+      "sha256": "8441e61594dd865c93953d1156506cd29675094fb19ecec0741452d5295257ae"
+    },
+    {
+      "path": "scripts/live_ephemeral_accounts.mjs",
+      "sha256": "31f7144599a2f1732c7b83cb12ce809a361ce88c890565908533113c82f5ab97"
+    },
+    {
+      "path": "scripts/live_ephemeral_accounts.test.mjs",
+      "sha256": "05b5a8f2485c9e7890d45bd5856d5be341b031ff8fca473b080ae46c364da6f0"
+    },
+    {
+      "path": "scripts/live_full_contract.mjs",
+      "sha256": "25989f098661dd982c65dcdc899e8a332cdb6a079ed5aabb639c56ce290b4096"
+    },
+    {
+      "path": "scripts/live_full_contract.test.mjs",
+      "sha256": "47e2bae689dddfa86d63111e1d37bc982cf91c6303a1b4276608fbdef174f2cc"
+    },
+    {
+      "path": "scripts/live_full_read_retry_service.test.mjs",
+      "sha256": "75df44fe0fefd8ffb9a763c13b5d1b04971c31b5be90652581ae734b7ab836ae"
+    },
+    {
+      "path": "scripts/live_full_smoke.mjs",
+      "sha256": "8bef876496c730076def8e5cf81166fdc58530ea9a6c644069fb2eda82ef6da3"
+    },
+    {
+      "path": "scripts/live_full_transport.mjs",
+      "sha256": "e341a6bae6b9379d25ff10fe89e8441178e08f3e3d6ad173127d7a92a00f468f"
+    },
+    {
+      "path": "scripts/live_media_contract.mjs",
+      "sha256": "d9db81cfc9c08f45bb80771da4a22d94fab9f81e56eeba477f993ecc2d92d7ef"
+    },
+    {
+      "path": "scripts/live_media_fixture.mjs",
+      "sha256": "0ef54dfdd38dd4602ed1e64184eeb0564b813836d8cf39f45866dbadf981dfae"
+    },
+    {
+      "path": "scripts/live_media_pipeline.test.mjs",
+      "sha256": "4837a15cae2d72d4083f8f84c3e8bde8470bf4654d730cae859c3ba9e1695ea1"
+    },
+    {
+      "path": "scripts/live_media_smoke.mjs",
+      "sha256": "86b179cef9038f57e56ebfd3d6a046d7421d96b78a37facfdcb694a9d646e605"
+    },
+    {
+      "path": "scripts/live_media_smoke.test.mjs",
+      "sha256": "3529a1d9292359bc4e419a0e23c3fde5cbf7273d972ae9e7a3278efabe19d451"
+    },
+    {
+      "path": "scripts/live_reminder_contract.mjs",
+      "sha256": "a994a2a2a8f3540dc306c011905ffb5bb28d41b5f377fbf7e93d05e092e2a237"
+    },
+    {
+      "path": "scripts/live_reminder_contract.test.mjs",
+      "sha256": "549b515d56c1b83de3825aaf25d026f5eb1f46450fc3f26d695b8769d1aaa282"
+    },
+    {
+      "path": "scripts/live_reminder_service.test.mjs",
+      "sha256": "acf6afa6341a996ae2c19d9a35ea7ee8dc24e0c1c9096e63bb546b0e92971e69"
+    },
+    {
+      "path": "scripts/live_reminder_smoke.mjs",
+      "sha256": "6a9444f1a48f939949674d3e1d8f9898e6bd429d2cc5f3797f1782d03a46e5fb"
+    },
+    {
+      "path": "scripts/live_smoke.mjs",
+      "sha256": "61a9c8bab85e243fb2a99b23d7872e76c4bc08499eec850251eba8dccf0e9150"
+    },
+    {
+      "path": "scripts/live_smoke_denial.mjs",
+      "sha256": "0b606e468e200170abb9aa235e5a9174afd858264c2f4765fecff5248a9a2bb9"
+    },
+    {
+      "path": "scripts/live_smoke_denial.test.mjs",
+      "sha256": "3e8ba899c5c9a46fd003f3183b64cf50d1d08dd419e928c4fd9b74c3b0c0e983"
+    },
+    {
+      "path": "scripts/transaction_observer.mjs",
+      "sha256": "e7d43e6a24b2e8eb54c779444a154ffeb87df5cf2ebe56833f642075c8b57d5b"
+    },
+    {
+      "path": "scripts/transaction_observer.test.mjs",
+      "sha256": "443fc23f502120c25df8e568e886bda3270797b0995ed3b827af4ea44825ff3f"
+    }
+  ]
+}

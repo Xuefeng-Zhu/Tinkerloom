@@ -1,0 +1,27 @@
+{
+  "capturedAt": "2026-10-29T05:11:56.219695+00:00",
+  "sourceCommit": "916b877314e5e06300c6ac0811f2622d58561328",
+  "layer": "Actual mounted RNWeb with synthetic RPC/memory atomic storage; Expo focus/removal inert; CSP connect-src none",
+  "priorBroaderInteractionReceipt": "../record-recovery-browser-a1e34c7f/interaction-receipt.json",
+  "unchangedProductModulesFromPrior": 98,
+  "changedProductModule": "FullAppController read-only availability helper",
+  "checks": [
+    {
+      "name": "restored_build",
+      "status": "passed",
+      "observed": "0executions/0commits/0IDs until explicit retry; then1execution/1commit/0IDs, matching exact saved envelope and recovery cleared."
+    },
+    {
+      "name": "actual_live_form_modal_unknown",
+      "status": "passed",
+      "observed": "Original Title replaced Synthetic revised title; Save yielded1execution/1simulatedcommit/1ID, uncertain retained command, one retry control, Cancel disabled, same exact input/envelope."
+    }
+  ],
+  "notProven": [
+    "Real Appwrite interruption/receipt in this harness",
+    "Native Modal/device",
+    "Browser persistent storage or process recovery",
+    "Real Expo navigation hooks in harness"
+  ],
+  "overallAcceptanceComplete": false
+}

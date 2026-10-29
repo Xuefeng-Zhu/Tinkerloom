@@ -1,0 +1,222 @@
+{
+  "proof": "actual_service_loopback_rest_optimistic_memory_only",
+  "cases": [
+    {
+      "paused": "spec.getApp",
+      "concurrent": "spec.query",
+      "crossAppSameWorkspace": false,
+      "overlap": [
+        {
+          "status": 409,
+          "code": "transaction_conflict"
+        },
+        {
+          "status": 200,
+          "keys": [
+            "records",
+            "total",
+            "versionId",
+            "nextCursor"
+          ]
+        }
+      ],
+      "sequenced": [
+        {
+          "status": 200,
+          "keys": [
+            "app"
+          ]
+        },
+        {
+          "status": 200,
+          "keys": [
+            "records",
+            "total",
+            "versionId",
+            "nextCursor"
+          ]
+        }
+      ],
+      "newConfirmedFailedTransactions": 1,
+      "businessRowsBefore": {
+        "receipts": 4,
+        "audit": 4,
+        "outbox": 4,
+        "spec_records": 0,
+        "spec_cells": 0,
+        "spec_versions": 3
+      },
+      "businessRowsAfter": {
+        "receipts": 4,
+        "audit": 4,
+        "outbox": 4,
+        "spec_records": 0,
+        "spec_cells": 0,
+        "spec_versions": 3
+      }
+    },
+    {
+      "paused": "spec.watch",
+      "concurrent": "spec.query",
+      "crossAppSameWorkspace": false,
+      "overlap": [
+        {
+          "status": 409,
+          "code": "transaction_conflict"
+        },
+        {
+          "status": 200,
+          "keys": [
+            "records",
+            "total",
+            "versionId",
+            "nextCursor"
+          ]
+        }
+      ],
+      "sequenced": [
+        {
+          "status": 200,
+          "keys": [
+            "appId",
+            "versionId",
+            "controlRevision",
+            "role",
+            "archived"
+          ]
+        },
+        {
+          "status": 200,
+          "keys": [
+            "records",
+            "total",
+            "versionId",
+            "nextCursor"
+          ]
+        }
+      ],
+      "newConfirmedFailedTransactions": 1,
+      "businessRowsBefore": {
+        "receipts": 4,
+        "audit": 4,
+        "outbox": 4,
+        "spec_records": 0,
+        "spec_cells": 0,
+        "spec_versions": 3
+      },
+      "businessRowsAfter": {
+        "receipts": 4,
+        "audit": 4,
+        "outbox": 4,
+        "spec_records": 0,
+        "spec_cells": 0,
+        "spec_versions": 3
+      }
+    },
+    {
+      "paused": "spec.query",
+      "concurrent": "spec.query",
+      "crossAppSameWorkspace": false,
+      "overlap": [
+        {
+          "status": 409,
+          "code": "transaction_conflict"
+        },
+        {
+          "status": 200,
+          "keys": [
+            "records",
+            "total",
+            "versionId",
+            "nextCursor"
+          ]
+        }
+      ],
+      "sequenced": [
+        {
+          "status": 200,
+          "keys": [
+            "records",
+            "total",
+            "versionId",
+            "nextCursor"
+          ]
+        },
+        {
+          "status": 200,
+          "keys": [
+            "records",
+            "total",
+            "versionId",
+            "nextCursor"
+          ]
+        }
+      ],
+      "newConfirmedFailedTransactions": 1,
+      "businessRowsBefore": {
+        "receipts": 4,
+        "audit": 4,
+        "outbox": 4,
+        "spec_records": 0,
+        "spec_cells": 0,
+        "spec_versions": 3
+      },
+      "businessRowsAfter": {
+        "receipts": 4,
+        "audit": 4,
+        "outbox": 4,
+        "spec_records": 0,
+        "spec_cells": 0,
+        "spec_versions": 3
+      }
+    },
+    {
+      "paused": "spec.getApp",
+      "concurrent": "spec.getApp",
+      "crossAppSameWorkspace": true,
+      "overlap": [
+        {
+          "status": 409,
+          "code": "transaction_conflict"
+        },
+        {
+          "status": 200,
+          "keys": [
+            "app"
+          ]
+        }
+      ],
+      "sequenced": [
+        {
+          "status": 200,
+          "keys": [
+            "app"
+          ]
+        },
+        {
+          "status": 200,
+          "keys": [
+            "app"
+          ]
+        }
+      ],
+      "newConfirmedFailedTransactions": 1,
+      "businessRowsBefore": {
+        "receipts": 4,
+        "audit": 4,
+        "outbox": 4,
+        "spec_records": 0,
+        "spec_cells": 0,
+        "spec_versions": 3
+      },
+      "businessRowsAfter": {
+        "receipts": 4,
+        "audit": 4,
+        "outbox": 4,
+        "spec_records": 0,
+        "spec_cells": 0,
+        "spec_versions": 3
+      }
+    }
+  ]
+}

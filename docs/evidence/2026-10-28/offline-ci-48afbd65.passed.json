@@ -1,0 +1,29 @@
+{
+  "capturedAt": "2026-10-29T05:44:34.574285+00:00",
+  "sourceCommit": "48afbd65b3db577442aa8c7fc82a69cfd21dc747",
+  "runId": 40824475477,
+  "url": "https://github.com/Xuefeng-Zhu/Tinkerloom/actions/runs/40824475477",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "Full AppSpec contract",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xuefeng-Zhu/Tinkerloom/actions/runs/40824475477/job/123284227555"
+    },
+    {
+      "name": "React Native client",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xuefeng-Zhu/Tinkerloom/actions/runs/40824475477/job/123284227822"
+    },
+    {
+      "name": "Appwrite Dart function",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Xuefeng-Zhu/Tinkerloom/actions/runs/40824475477/job/123284228012"
+    }
+  ],
+  "scope": "Current offline client/spec/backend/probe contracts and all-platform exports; no live/native device proof"
+}

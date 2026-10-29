@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T05:37:28.547382+00:00",
+  "sourceCommit": "48afbd65b3db577442aa8c7fc82a69cfd21dc747",
+  "trackedMobileFilesAllMatchGitBlobs": 308,
+  "origin": "Persistent mobile checkout with real node_modules; actual exported bytes checked",
+  "verification": {
+    "rootCommand": "npm run verify",
+    "tests": 699,
+    "failures": 0,
+    "skips": 0,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "exports": [
+      "web",
+      "ios",
+      "android"
+    ],
+    "logSha256": "781a8f7c2e58372c0bf69d8fa08b978c4e99f120c7799ae4d801caefa834e861"
+  },
+  "routeCount": 16,
+  "platforms": [
+    {
+      "platform": "web",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true
+      },
+      "routeKeys": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/web/[templateId]-0cbe56ab591d44c1f8f8e557e42ee028.js",
+          "bytes": 1111,
+          "sha256": "4fc8b3129a47e73d9fdb5dcfd5ddce751bf18df8ef8c602d0fe598d843eefebe"
+        },
+        {
+          "path": "_expo/static/js/web/[templateId]-5d91953cc9f6d887048c576b690cdffc.js",
+          "bytes": 10255,
+          "sha256": "7e6bcbc308554374093a4513c90a05caacd502e624faffa8ad4163de7755fb0d"
+        },
+        {
+          "path": "_expo/static/js/web/[token]-772732ed67de21e6dfcecaec4c0bc1f4.js",
+          "bytes": 2342,
+          "sha256": "67ee884a96ba3993e15aa8ab435e7115736f7de34d3b597a764fbc00b6bc314b"
+        },
+        {
+          "path": "_expo/static/js/web/__common-7eff7e71d1e0c7d946bd82927fd852cc.js",
+          "bytes": 813917,
+          "sha256": "dfc4d2b178c04b8285149697639abe578b055463bd8785e7831cf3777cacdc3c"
+        },
+        {
+          "path": "_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js",
+          "bytes": 3751,
+          "sha256": "80e3ab02b3bac22608cdf29a2e3cc1270616a695bbe479f7f500941e8d2bbe41"
+        },
+        {
+          "path": "_expo/static/js/web/_layout-c82cbf1bba461cb06b26967bc6297763.js",
+          "bytes": 686,
+          "sha256": "fe06011e44f03d46dde1ca84fb93c4a52fc4788689ad112015fd9395f33c4f95"
+        },
+        {
+          "path": "_expo/static/js/web/activity-1008d60469d1c389d81cc088068b8da1.js",
+          "bytes": 9415,
+          "sha256": "0e5574d13030bc853f823bc12235c66866e058e38d6c90d2bd0b798c0bd654c3"
+        },
+        {
+          "path": "_expo/static/js/web/edit-9a7d7a7e7e8555f42e145dc8781db92d.js",
+          "bytes": 7756,
+          "sha256": "790545d920b67052f71e43f2794c93ab5a3c0cc8e981ee00cff3bc713720db1a"
+        },
+        {
+          "path": "_expo/static/js/web/entry-6ce233aefc7d739468ddf6442db98ef6.js",
+          "bytes": 1117542,
+          "sha256": "bc693437dc157503a62adf2b12fa7f70c773084c6f1bcb9ae269a4452eb82830"
+        },
+        {
+          "path": "_expo/static/js/web/full-00fb0dac4e6a26d43ce695d08e68b8fc.js",
+          "bytes": 68439,
+          "sha256": "0fdb15891ccdcf1ffa245d138d9789f7cbe96a10946c15b2aae42c54e9e8aa64"
+        },
+        {
+          "path": "_expo/static/js/web/inbox-d6dfc8db47541f2906122514604cc36a.js",
+          "bytes": 4300,
+          "sha256": "ce4d328572bd3ecb85e1db41da0570427f26c6d08b3dede0a217886304a14aca"
+        },
+        {
+          "path": "_expo/static/js/web/index-1d243f058870b093339eb8905b5337d0.js",
+          "bytes": 5023,
+          "sha256": "96085b84da399eb371823fca2c0e8f738c4b2199ae16f0d0ab685048bff9a872"
+        },
+        {
+          "path": "_expo/static/js/web/index-2b9062535d2d8f99a231b92615ef21d9.js",
+          "bytes": 1396,
+          "sha256": "bedaf6d92a948c63256d8ce137c6f9e4ed60fe8ea182ae2596d41a648e8fdb55"
+        },
+        {
+          "path": "_expo/static/js/web/index-893ecaeb559dbcbcbc7cec66ce23b8c3.js",
+          "bytes": 204,
+          "sha256": "f910a5caa85e2e7abe23a6c173e322432d9350bfb4f7bf2425d01d8c5e99247f"
+        },
+        {
+          "path": "_expo/static/js/web/index-b261f89622e2553587f033f3619991ac.js",
+          "bytes": 3543,
+          "sha256": "f4b26434d7211596e5fd1165f26386b422d164966028a2df3bd3b2ff475d239d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bbef08a0bc8e3d2b0d5733ea7e74ccbe.js",
+          "bytes": 1052,
+          "sha256": "3389c39e61e3bf7b20cfb8ce1b728d4ed527413a2ed714cd5dc81d06ef8dd6bd"
+        },
+        {
+          "path": "_expo/static/js/web/index-deaef5854bed2dbc5bc0f2e1862fc224.js",
+          "bytes": 27763,
+          "sha256": "46e353c32f3c81177d5e11ef972091225ec9cdacb4a5ed55d1e5af0df8e67bd8"
+        },
+        {
+          "path": "_expo/static/js/web/mqtt-34d98ab41559dd872084ede1a16204e2.js",
+          "bytes": 368255,
+          "sha256": "0d432d4cd86ed6c3030520904a1c28231d804fd299c496deb9ffc9a0a6903e91"
+        },
+        {
+          "path": "_expo/static/js/web/runs-2dc7e5211b07934209e41a8470cf9db6.js",
+          "bytes": 3891,
+          "sha256": "7ab052950f361758b493d35b319e5c693cac2f66ced9983409a85b0fdfc49cfa"
+        },
+        {
+          "path": "_expo/static/js/web/sharing-a5d6213f19dfcb1aca0887eff2716aec.js",
+          "bytes": 7686,
+          "sha256": "cfa62a38d2a09e7d578a8ad66c7685610228e69d2c7198eb7329574fb57d02e2"
+        },
+        {
+          "path": "_expo/static/js/web/workbench-03368ce49b3afc9f4ac573ebd0b9e544.js",
+          "bytes": 11552,
+          "sha256": "49a7e11120c36f221b9f867d55a8fff3fa91da1313779ab159739ff8408861b4"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true
+      },
+      "routeKeys": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/ios/entry-4f6e6c3a8bce6d2d5410f01c510ce417.hbc",
+          "bytes": 5107967,
+          "sha256": "efb8d2c1370a643acd16f83eef869a6666e664e8b4341dacc8f960cb6de5aba4"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true,
+        "Customize your published app": true,
+        "Edit published version": true,
+        "Retry original record request": true,
+        "Record outcome is unconfirmed": true,
+        "superseded-full-read": true,
+        "superseded-workspace-read": true
+      },
+      "routeKeys": {
+        "./_layout.tsx": true,
+        "./apps/[appId]/activity.tsx": true,
+        "./apps/[appId]/edit.tsx": true,
+        "./apps/[appId]/full.tsx": true,
+        "./apps/[appId]/index.tsx": true,
+        "./apps/[appId]/runs.tsx": true,
+        "./apps/[appId]/sharing.tsx": true,
+        "./inbox.tsx": true,
+        "./index.tsx": true,
+        "./invite/[token].tsx": true,
+        "./invite/index.tsx": true,
+        "./miniapps/[templateId].tsx": true,
+        "./miniapps/index.tsx": true,
+        "./preview/[templateId].tsx": true,
+        "./preview/index.tsx": true,
+        "./workbench.tsx": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/android/entry-c6417ba6b331190c7035557be1d4c18f.hbc",
+          "bytes": 5092234,
+          "sha256": "1e1f3174aa86143f20d952e14f132992fb82c5a31f9640bf65b4c8788b841b97"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Markers and route keys establish included code, not semantic runtime or device proof",
+    "No provider request, native install/hardware or production acceptance"
+  ]
+}

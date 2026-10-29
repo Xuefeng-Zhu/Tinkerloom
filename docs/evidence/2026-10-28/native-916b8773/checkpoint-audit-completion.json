@@ -1,0 +1,22 @@
+{
+  "sourceCommit": "916b877314e5e06300c6ac0811f2622d58561328",
+  "checkpointSha256": "45d5c10775d3779cd4d31447889d54be187bd0d40856e2a3ed6efce2a3c54983",
+  "independentAudit": {
+    "path": "/private/tmp/tinkerloom-native-final-read-29eht1c_/independent-native-audit.json",
+    "sha256": "10c1c6bdd6f93d45f603081a1d8862ddc2f786ca521a51cd8e1e807cde69b0ee"
+  },
+  "status": "completed_source_specific_checkpoint_with_independent_audit",
+  "signingEvidenceScope": {
+    "publicCertificateInspectionUsesApkOnly": true,
+    "agentDirectPrivateKeystoreRead": false,
+    "privateKeystoreModified": false,
+    "authorizedBuildUsesExistingGeneratedDevelopmentSigning": true,
+    "productionSigning": false
+  },
+  "allAuthoredInputsStillMatch": true,
+  "allPriorFilesPreserved": 1493,
+  "allPriorA1e34c7fAnd10fed99ArtifactsPreserved": true,
+  "noUiDeviceRuntimeCloudOrProductionProofAdded": true,
+  "warmCacheHeldWithoutFurtherMutation": true,
+  "recordedAt": "2026-10-29T05:09:11.796341+00:00"
+}

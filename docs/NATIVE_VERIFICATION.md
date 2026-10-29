@@ -1,3 +1,11 @@
+# Current native verification
+
+The latest source-specific checkpoint is `48afbd65b3db577442aa8c7fc82a69cfd21dc747`: all three native builds and an independent artifact audit passed. The [checkpoint and artifact summary](evidence/2026-10-28/native-48afbd65/README.md) bind 308 tracked mobile files, current native dependencies and the unchanged custom module to the actual packages. Both embedded releases contain the current published editor, record recovery and app/workbench read recovery code. The FullAppScreen source hash includes the runtime-preparation guard.
+
+Android local Release embeds JavaScript and uses development debug signing. iOS Simulator Release embeds JavaScript and is unsigned. Android Debug requires Metro. [Stable local artifacts](evidence/2026-10-28/native-48afbd65/stable-local-artifacts.json) records the usable ignored binaries and hashes. No installation, native sign-in, native UI, device/hardware or production signing is proven. Separate mounted web recovery checks use synthetic network/storage ports and do not establish native runtime behavior.
+
+Earlier audited checkpoints [916b8773](evidence/2026-10-28/native-916b8773/README.md) and [a1e34c7f](evidence/2026-10-28/native-a1e34c7f/README.md) retain their original source identities and limits, as do the historical reports below.
+
 # Native compilation evidence — October 28, 2026
 
 Both native compilation commands completed successfully against an isolated

@@ -1,0 +1,42 @@
+{
+  "capturedAt": "2026-10-29T06:02:32.090963+00:00",
+  "sourceCommit": "48afbd65b3db577442aa8c7fc82a69cfd21dc747",
+  "coreDeploymentId": "6ae2c7c4c9c5bd7f2d7c",
+  "appId": "3d2b9a27-8e24-44cd-9ee5-4a8d9e49d4e5",
+  "checks": [
+    {
+      "name": "starter_create_and_list_refresh",
+      "status": "passed",
+      "observed": "Single Create Project Hub returned App created/Open created app, a new Project Hub list row and0alerts."
+    },
+    {
+      "name": "published_app_open_and_preview",
+      "status": "passed",
+      "observed": "Fresh starter opened LiveboardPage with0Open/0Done. Build showed publishedv1 isolated preview."
+    },
+    {
+      "name": "private_copy",
+      "status": "passed",
+      "observed": "Single Edit published version returned saved private candidate1collection/8views/5pages,0alerts; canonicalpageboardPage preserved."
+    },
+    {
+      "name": "fresh_private_draft_reload",
+      "status": "passed",
+      "observed": "Reload retained saved candidate, same policy/shape/canonicalURL and0alerts."
+    },
+    {
+      "name": "live_refresh_availability",
+      "status": "failed",
+      "observed": "ReturningLive retained0Open/0Done but displayed2 Anotherupdate transaction_conflict alerts after existing read retry limits. Exact RPC/execution attribution not collected."
+    }
+  ],
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "scrollWidth": 1280
+  },
+  "pendingInvestigation": "Actual-service local proof establishes overlapping guarded reads can conflict, not the exact Cloud source of these two alerts; scoped scheduling correction is being prepared",
+  "providerInvoked": false,
+  "manualPublicationInvoked": false,
+  "overallFlowPassed": false
+}

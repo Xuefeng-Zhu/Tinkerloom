@@ -1,0 +1,43 @@
+{
+  "capturedAt": "2026-10-29T05:24:31.272708+00:00",
+  "sourceCommit": "916b877314e5e06300c6ac0811f2622d58561328",
+  "coreDeploymentId": "6ae2c7c4c9c5bd7f2d7c",
+  "scope": "Actual RNWeb +Appwrite synthetic QA workspace, Daily Planner app ec433f34-b8bd-4c44-8d89-70e55ebd2fd4",
+  "checks": [
+    {
+      "name": "starter_creation",
+      "status": "passed",
+      "observed": "Single Create Daily Planner action returned App created and Open created app."
+    },
+    {
+      "name": "post_create_workbench_refresh",
+      "status": "failed",
+      "observed": "App created remained available but stale apps list and Another update happened at the same time warning followed a completed read conflict. No creation resubmission."
+    },
+    {
+      "name": "open_created_app",
+      "status": "passed",
+      "observed": "Open created app loaded real published Daily Planner,0total live records, todayPage entry."
+    },
+    {
+      "name": "published_read_only_preview",
+      "status": "passed",
+      "observed": "Entered omitted-page ?mode=build; version1 published preview showed2synthetic total and Edit published version. URL had canonicalized to page=todayPage before the copy click, so this does not reproduce the exact earlier omitted-page timing."
+    },
+    {
+      "name": "copy_private_candidate",
+      "status": "passed",
+      "observed": "Single Edit published version returned Private candidate is saved,1collection/8views/5pages."
+    },
+    {
+      "name": "post_copy_route_warning",
+      "status": "failed",
+      "observed": "Persistent This app has no published version for that page or record warning despite saved published-version copy; URL replaced with ?mode=build. Supported transient runtime-null while app.version remains present is under correction."
+    }
+  ],
+  "providerInvoked": false,
+  "manualPublicationInvoked": false,
+  "unknownWriteRetried": false,
+  "nativeUI": false,
+  "overallFlowPassed": false
+}

@@ -1,0 +1,41 @@
+{
+  "sourceCommit": "48afbd65b3db577442aa8c7fc82a69cfd21dc747",
+  "checkpointSha256": "96ebc0722cce505304e89db245d8e25b0c66706492123bd0f0b6329c3fe3f93a",
+  "summarySha256": "570100999ad9c1d6c778eb0e6eac08b3253b297209e7ee3c750e518931e1cab0",
+  "independentAudit": {
+    "path": "/private/tmp/tinkerloom-native-workspace-q0yymkmn/independent-native-audit.json",
+    "sha256": "28d85d4f4a9b9fe5a41119b7fc0f3c0f801d41b0e1e76e90cd748853b8742ac3"
+  },
+  "status": "completed_source_specific_checkpoint_with_independent_audit",
+  "selectedSourceInputs": {
+    "src/full/FullAppController.ts": {
+      "sha256": "d425de94b5da7932acf3dce02eb0e40c7284fc7c6f48422dd79590dbc5205f1f",
+      "gitBlob": "99aeaf70389fb9fb2d53de388db8ee4f29e87665",
+      "unchangedFrom916b8773": true
+    },
+    "src/full/FullAppScreen.tsx": {
+      "sha256": "840843e4720ad52ed8b704cacc79e5c8a88cc820db47641745338b474cbaf92b",
+      "gitBlob": "de23c777fc171a436b8c1c477424452f8e40e4e1",
+      "unchangedFrom916b8773": false
+    },
+    "src/full/FullWorkspaceController.ts": {
+      "sha256": "916b5bb8ccbadef1491c505378bbdea1a6042544fc7f06520a6d6ab9e04ccb0c",
+      "gitBlob": "deacc551a5d8d3c3ca8c173c27c61a022f3394e1",
+      "unchangedFrom916b8773": false
+    }
+  },
+  "publishedRuntimeGuardSemanticProof": "Exact source inclusion here; peer checks and browser evidence remain separate.",
+  "signingEvidenceScope": {
+    "publicCertificateInspectionUsesApkOnly": true,
+    "agentDirectPrivateKeystoreRead": false,
+    "privateKeystoreModified": false,
+    "authorizedBuildUsesExistingGeneratedDevelopmentSigning": true,
+    "productionSigning": false
+  },
+  "allAuthoredInputsStillMatch": true,
+  "allPriorFilesPreserved": 1946,
+  "allPrior916b8773A1e34c7fAnd10fed99ArtifactsPreserved": true,
+  "noUiDeviceRuntimeCloudOrProductionProofAdded": true,
+  "warmCacheHeldWithoutFurtherMutation": true,
+  "recordedAt": "2026-10-29T05:40:06.300233+00:00"
+}
