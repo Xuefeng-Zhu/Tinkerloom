@@ -1,0 +1,37 @@
+{
+  "workflowYamlParsed": true,
+  "prettierPassed": true,
+  "scriptSyntaxPassed": true,
+  "pureNodeTests": {
+    "tests": 99,
+    "passed": 99,
+    "failed": 0
+  },
+  "actualServiceBridgeTests": {
+    "tests": 14,
+    "passed": 14,
+    "failed": 0,
+    "dart": "3.11.0",
+    "node": "v24.14.1",
+    "offline": true
+  },
+  "standaloneProbeRegression": {
+    "checks": 4,
+    "assertions": 36,
+    "status": "passed",
+    "proof": "Actual PlatformService with simulated MemoryStore; no Cloud/transport proof",
+    "integerAcceptedPopulation": 3,
+    "numberAcceptedPopulation": 4,
+    "manualAutoPin": false,
+    "viewerUnpinLeavesOwnerPinned": true
+  },
+  "standardDartFilesDiscovered": 17,
+  "standardDartTests": {
+    "previousCheckpointCount": 405,
+    "rerun": false,
+    "reason": "No Dart source changed; existing checkpoint already passed"
+  },
+  "cloudCalls": 0,
+  "persistentEdits": false,
+  "gitActions": false
+}

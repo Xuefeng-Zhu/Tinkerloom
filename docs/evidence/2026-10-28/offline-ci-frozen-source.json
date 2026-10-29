@@ -1,0 +1,23 @@
+{
+  "stage": "/private/tmp/tinkerloom-offline-ci-UfjQgB",
+  "files": [
+    {
+      "path": ".github/workflows/verify.yml",
+      "baseSha256": "2779a96fd9f3ff571fbee81f66e135cafdea726cee6e9e86487241c8cafc14b3",
+      "sha256": "3b39ec6b7d0b22805c5ca7f1ff3a9df678d24ca6709936592d11daf29606a370",
+      "bytes": 4417
+    }
+  ],
+  "prerequisites": [
+    {
+      "source": "/private/tmp/tinkerloom-transaction-observer-9Dd0pj/transaction_observer.mjs",
+      "destination": "scripts/transaction_observer.mjs",
+      "sha256": "e7d43e6a24b2e8eb54c779444a154ffeb87df5cf2ebe56833f642075c8b57d5b"
+    },
+    {
+      "source": "/private/tmp/tinkerloom-transaction-observer-9Dd0pj/transaction_observer.test.mjs",
+      "destination": "scripts/transaction_observer.test.mjs",
+      "sha256": "443fc23f502120c25df8e568e886bda3270797b0995ed3b827af4ea44825ff3f"
+    }
+  ]
+}

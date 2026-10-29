@@ -1,0 +1,26 @@
+{
+  "stage": "/private/tmp/tinkerloom-transaction-observer-9Dd0pj",
+  "files": [
+    {
+      "path": "transaction_observer.mjs",
+      "sha256": "e7d43e6a24b2e8eb54c779444a154ffeb87df5cf2ebe56833f642075c8b57d5b",
+      "bytes": 13229
+    },
+    {
+      "path": "transaction_observer.test.mjs",
+      "sha256": "443fc23f502120c25df8e568e886bda3270797b0995ed3b827af4ea44825ff3f",
+      "bytes": 15143
+    },
+    {
+      "path": "README.md",
+      "sha256": "0f95c8a8acfbae3a7804fe5abc40d9be0fb35f2e1ca932ff40430f12761d9671",
+      "bytes": 3166
+    }
+  ],
+  "verification": {
+    "nodeTests": 21,
+    "cloudCalls": 0,
+    "persistentEdits": false,
+    "gitActions": false
+  }
+}

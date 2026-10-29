@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "runId": "qa-activity-mvt1f20v-68d74ac3",
+  "status": "passed",
+  "target": {
+    "endpoint": "https://sfo.cloud.appwrite.io/v1",
+    "projectId": "6ae1928a003a65851e95",
+    "functionId": "tinkerloom-core",
+    "databaseId": "tinkerloom",
+    "coreDeploymentId": "6ae2c7c4c9c5bd7f2d7c",
+    "sourceCommit": "43d4334a8f1dbe59ac6d5afa657f9128bef678a8",
+    "sourceSha256": "ddb4fef635c0cc66b8bc994b29c95c2e89cefce786c1601e2ba481fc14f52cd7",
+    "sourceAttestation": "operator_supplied_archive_mapping",
+    "matchedCoreExecutions": 88
+  },
+  "resources": {
+    "workspaceId": "ws-3b33f0dab0194978f4b1017c8379",
+    "foreignWorkspaceId": "ws-fa60007ef2abcc3058d3720cd675",
+    "appId": "app-c0a307d6c3dc41d1fb898976f33e",
+    "sameWorkspaceAppId": "app-242a1611c60f0f85bab4518ab9a4",
+    "foreignAppId": "app-e849b4bd2d790629ad5a56bf4d2e"
+  },
+  "checks": [
+    {
+      "name": "authenticate_existing_pool",
+      "status": "passed",
+      "assertions": 0,
+      "reusedVerifiedSyntheticAccounts": 5
+    },
+    {
+      "name": "preflight_exact_activity_deployment",
+      "status": "passed",
+      "assertions": 1,
+      "coreDeploymentMatched": 1
+    },
+    {
+      "name": "setup_scoped_apps_roles_and_private_values",
+      "status": "passed",
+      "assertions": 19,
+      "syntheticApps": 3,
+      "assignedRoles": 3,
+      "privateSeedRecords": 3
+    },
+    {
+      "name": "all_four_roles_metadata_paging",
+      "status": "passed",
+      "assertions": 52,
+      "authorizedRoles": 4,
+      "metadataEntries": 11,
+      "metadataFieldsPerEntry": 4
+    },
+    {
+      "name": "cross_scope_cursor_and_private_table_denials",
+      "status": "passed",
+      "assertions": 17,
+      "scopedReadDenials": 5,
+      "cursorScopeDenials": 4,
+      "directAuditRowDenials": 5,
+      "anonymousDenials": 1
+    },
+    {
+      "name": "stale_snapshot_and_current_grant_revocation",
+      "status": "passed",
+      "assertions": 16,
+      "staleCursorDenials": 1,
+      "revokedCurrentReadDenials": 1,
+      "oneAuditPerConfirmedRecordWrite": 1
+    },
+    {
+      "name": "archived_reads_and_expired_session",
+      "status": "passed",
+      "assertions": 27,
+      "archivedReadableRoles": 2,
+      "expiredSessionDenials": 1
+    },
+    {
+      "name": "temporary_session_cleanup",
+      "status": "passed",
+      "assertions": 0,
+      "cleanupSessions": 5
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "blocked": 0,
+    "observation_pending": 0,
+    "assertions": 132
+  },
+  "budget": {
+    "maxHttpRequests": 180,
+    "httpRequests": 110,
+    "reservedCleanupRequests": 6,
+    "syntheticAccountsCreated": 0,
+    "reusedVerifiedSyntheticAccounts": 5,
+    "cleanupSessions": 5,
+    "readConflicts": 3
+  },
+  "coverage": {
+    "layer": "authenticated_client_only_when_explicitly_executed",
+    "currentAccessOnEveryPageIntended": true,
+    "noRawAuditPayloadIntended": true,
+    "noProviderOrReminderApprovalIntended": true,
+    "nativeBrowserUI": "not_proven",
+    "productionOrImport": "not_proven"
+  }
+}

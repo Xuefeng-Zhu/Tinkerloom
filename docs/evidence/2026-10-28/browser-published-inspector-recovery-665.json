@@ -1,0 +1,63 @@
+{
+  "capturedAt": "2026-10-29T04:25:13.316183+00:00",
+  "mobileBaseCommit": "212000230094817bc67ba8120479279e245ab7d9",
+  "mobileRecoveryCandidateSourceSha256": "11b7289ae3699ac5c5268ad9e4b596977969640f37e9524d2e655c2d9f24d1f7",
+  "coreDeploymentId": "6ae2c7c4c9c5bd7f2d7c",
+  "coreSourceCommit": "43d4334a8f1dbe59ac6d5afa657f9128bef678a8",
+  "host": "React Native web export at localhost:8426, browser interaction via CUA",
+  "app": "synthetic Photo Journal QA app",
+  "checks": [
+    {
+      "name": "published_read_only_preview",
+      "status": "passed",
+      "observed": "Version1 shown with isolated synthetic preview and explicit Edit published version action; no starter replacement catalog."
+    },
+    {
+      "name": "explicit_copy_and_reload",
+      "status": "passed",
+      "observed": "Single click returned saved private candidate with1collection/5views/4pages; fresh reload retained it."
+    },
+    {
+      "name": "successful_copy_navigation_warning",
+      "status": "failed",
+      "observed": "After successful draft copy, Resolve the retained operation before opening this app link persisted despite no pending card. Reload cleared it. Root is tracing initial route normalization race."
+    },
+    {
+      "name": "invalid_inspector_retention_and_correction",
+      "status": "passed",
+      "observed": "Empty App name survived blur and attempted Preview selection. Build stayed selected; exact publication review disabled; correcting Photo Journal cleared validation error."
+    },
+    {
+      "name": "explicit_local_discard",
+      "status": "passed",
+      "observed": "Second invalid empty name then Discard unsaved local edits restored saved Photo Journal."
+    },
+    {
+      "name": "canvas_inspect_page",
+      "status": "passed",
+      "observed": "Inspect page: Journal selected Pages editor and journalPage with Page title Journal."
+    },
+    {
+      "name": "live_record_preservation",
+      "status": "passed",
+      "observed": "Switching Live retained synthetic live caption; Edit entry loaded original Title Synthetic browser persistence check."
+    },
+    {
+      "name": "browser_back_keep_discard",
+      "status": "passed",
+      "observed": "Unsaved title triggered Unsaved record edits on browser Back. Keep editing retained exact text; second Back+explicit discard returned journal URL with no unsaved text."
+    }
+  ],
+  "viewport": {
+    "innerWidth": 1280,
+    "scrollWidth": 1280
+  },
+  "notProven": [
+    "exact original/public and private declaration byte equality through UI",
+    "native Modal/device/hardware",
+    "320px/150percent text/assistive technology",
+    "global unknown-record recovery through actual live interruption"
+  ],
+  "providerInvoked": false,
+  "publicationInvoked": false
+}

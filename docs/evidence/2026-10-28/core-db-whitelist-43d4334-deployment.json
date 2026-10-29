@@ -1,0 +1,44 @@
+{
+  "capturedAt": "2026-10-29T04:16:41.331813Z",
+  "sourceCommit": "43d4334a8f1dbe59ac6d5afa657f9128bef678a8",
+  "archiveSha256": "ddb4fef635c0cc66b8bc994b29c95c2e89cefce786c1601e2ba481fc14f52cd7",
+  "archiveBytes": 156062,
+  "deploymentId": "6ae2c7c4c9c5bd7f2d7c",
+  "activeVerifiedByConsole": true,
+  "latestStatus": "ready",
+  "plan": "Free",
+  "core": {
+    "execute": [
+      "users"
+    ],
+    "runtime": "dart-3.11",
+    "entrypoint": "lib/main.dart",
+    "timeout": 120,
+    "runtimeSpecification": "s-0.5vcpu-512mb",
+    "scopes": [
+      "rows.read",
+      "rows.write",
+      "executions.write",
+      "files.read",
+      "files.write"
+    ],
+    "remindersEnabled": true,
+    "fixedTransactionDiagnosticsEnabled": true
+  },
+  "unchangedWorker": {
+    "deploymentId": "6ae2a775681ced8b8bab",
+    "sourceCommit": "7e01ce897a2416dc7afbbdcdd6c220273089b3b9",
+    "execute": [],
+    "events": [],
+    "domains": [],
+    "intervalMinutes": 60,
+    "emailEnabled": false,
+    "remindersEnabled": true,
+    "workerIdentityMatches": true
+  },
+  "limits": [
+    "Operator-observed Console metadata and source-archive mapping; not a public source attestation",
+    "Prior one-shot proof is retained for the unchanged worker source; new reminder delivery must be observed separately",
+    "No provider configured; no paid upgrade, production deployment or persistent key created"
+  ]
+}
