@@ -1,0 +1,6 @@
+{
+  "APPWRITE_ENDPOINT": "https://sfo.cloud.appwrite.io/v1",
+  "APPWRITE_PROJECT_ID": "6ae1928a003a65851e95",
+  "APPWRITE_FUNCTION_ID": "tinkerloom-core",
+  "TINKERLOOM_AUTO_REFRESH": false
+}

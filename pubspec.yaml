@@ -5,5 +5,7 @@ environment:
   sdk: '>=3.13.0 <3.14.0'
 
 workspace:
+  - apps/flutter
+  - packages/tinkerloom_client
   - packages/appnest_spec
   - packages/appnest_renderer

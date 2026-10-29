@@ -1,0 +1,755 @@
+{
+  "sourceCommit": "19d6336b1f59ee1187a7852d71077aa52e188884",
+  "sourceCheckout": "AppNest",
+  "includesLocalFlutterStartupImprovements": true,
+  "files": [
+    {
+      "path": "apps/flutter/.metadata",
+      "sourceSha256": "4c3021f6e1f7dc78f657650498c6abc5010e8c7d3040eff721e416d91c4c4647"
+    },
+    {
+      "path": "apps/flutter/analysis_options.yaml",
+      "sourceSha256": "595bb8832bde64228e5ff4d200747df6440969421ef646693df992a77a378e6a"
+    },
+    {
+      "path": "apps/flutter/android/app/build.gradle.kts",
+      "sourceSha256": "b71fda3317be6f6f88597a6b826dd3b1812e4465f3e2742184b176d041466fba"
+    },
+    {
+      "path": "apps/flutter/android/app/src/debug/AndroidManifest.xml",
+      "sourceSha256": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/AndroidManifest.xml",
+      "sourceSha256": "567dcdec6b89936649f70f7d29c0fde0cb4f16780a5a108b8dea33d59fade158"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
+      "sourceSha256": "eb8bcec39e9320ccaf270af42330fda95b9c913f79ec22edb60a133791884d5c"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/kotlin/com/example/appnest_flutter/DeviceCapabilitiesBridge.kt",
+      "sourceSha256": "045dd3752e6d89c642715dae6f6df19e8e10f1bd02ce69be08c78a548197cbb3"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/kotlin/com/example/appnest_flutter/MainActivity.kt",
+      "sourceSha256": "d183136eccb1782b853d8832a182f351e38aae090ed8269b1ef3a4ca4541f82a"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/drawable-v21/launch_background.xml",
+      "sourceSha256": "7ca6d5cec2169c5a98661a119db23a6f3399c8fef2256ff04f3a642831282478"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/drawable/launch_background.xml",
+      "sourceSha256": "94433756fe10005ddd6fc55cc5c0b1e9f3c10b66a08ceac795ece6713d34e28a"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "sourceSha256": "6a7c8f0d703e3682108f9662f813302236240d3f8f638bb391e32bfb96055fef"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "sourceSha256": "c7c0c0189145e4e32a401c61c9bdc615754b0264e7afae24e834bb81049eaf81"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "sourceSha256": "e14aa40904929bf313fded22cf7e7ffcbf1d1aac4263b5ef1be8bfce650397aa"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "sourceSha256": "4d470bf22d5c17d84edc5f82516d1ba8a1c09559cd761cefb792f86d9f52b540"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "sourceSha256": "3c34e1f298d0c9ea3455d46db6b7759c8211a49e9ec6e44b635fc5c87dfb4180"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/values-night/styles.xml",
+      "sourceSha256": "8c5bad5152f217e837519f9c15211d19f39bd45f5f67faf6dd81cb4b299e518f"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/values/styles.xml",
+      "sourceSha256": "937d7c82f539c72eb94fd3a3773f29b3d3fef1997213c92cb632298cedf4bda9"
+    },
+    {
+      "path": "apps/flutter/android/app/src/profile/AndroidManifest.xml",
+      "sourceSha256": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b"
+    },
+    {
+      "path": "apps/flutter/android/build.gradle.kts",
+      "sourceSha256": "6a26dba2cb8dfba1e74f540b0d17a89d96c1301d3c3bfda14348bed257fddcba"
+    },
+    {
+      "path": "apps/flutter/android/gradle.properties",
+      "sourceSha256": "0f82b18017fba6bb5ce3aa4b2d1a00c9382fc8aae7b1d9326e44b18abd66d80b"
+    },
+    {
+      "path": "apps/flutter/android/gradle/wrapper/gradle-wrapper.jar",
+      "sourceSha256": "16caeaf66d57a0d1d2087fef6a97efa62de8da69afa5b908f40db35afc4342da"
+    },
+    {
+      "path": "apps/flutter/android/gradle/wrapper/gradle-wrapper.properties",
+      "sourceSha256": "b690d26223576fe4e63889fad9a00df81945cb870b9476cc5a563152a1a88a74"
+    },
+    {
+      "path": "apps/flutter/android/gradlew",
+      "sourceSha256": "ec56c02543666d92d9ac5ae7fcc48f88ce4de0deb8b7f9b39928ca46f68c1b2b"
+    },
+    {
+      "path": "apps/flutter/android/gradlew.bat",
+      "sourceSha256": "c13c6e91b9a517783976de213d46398c661ea9e17651376d7301e839eaedcc62"
+    },
+    {
+      "path": "apps/flutter/android/settings.gradle.kts",
+      "sourceSha256": "016759283e88ade6eba92910583feeef88b962839b957aa414296afd2952d122"
+    },
+    {
+      "path": "apps/flutter/assets/config.json",
+      "sourceSha256": "131088607d57390b6a352d987528169e47922ca27b825dea04feab68ecbb9bcd"
+    },
+    {
+      "path": "apps/flutter/assets/fonts/Lora-LICENSE.txt",
+      "sourceSha256": "1d9a970809ac804b582a6ce7f0ebc4e7fefcbfd7ff6299cad35ee656a21be716"
+    },
+    {
+      "path": "apps/flutter/assets/fonts/Lora.ttf",
+      "sourceSha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7"
+    },
+    {
+      "path": "apps/flutter/ios/Flutter/AppFrameworkInfo.plist",
+      "sourceSha256": "da12038f9b2688a8a26160fea2609fa8fcb11421448c109f09c0f573efe7698d"
+    },
+    {
+      "path": "apps/flutter/ios/Flutter/Debug.xcconfig",
+      "sourceSha256": "a82d7765b37116ee4821d2cd1d65942febf8032353757ffb0826eabde785b4a6"
+    },
+    {
+      "path": "apps/flutter/ios/Flutter/Release.xcconfig",
+      "sourceSha256": "a82d7765b37116ee4821d2cd1d65942febf8032353757ffb0826eabde785b4a6"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/project.pbxproj",
+      "sourceSha256": "5d060976b3d5b9b97376037f8d4f7c5590799b5ba1b0b8c019ea3b53a61f2727"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+      "sourceSha256": "7f3b00b5c3fdb45242d7b87e1e5c4e25d1fa8129a16c94295ecc4e8ea2235c5f"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "sourceSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings",
+      "sourceSha256": "11b247bc6796892d67c9a821d18604db4dd6a880981b34f38460b9866e6b247f"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme",
+      "sourceSha256": "9fbce429f56243561dd437a527136c9f9ed77165e3b271b923faf236cfcd0484"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcworkspace/contents.xcworkspacedata",
+      "sourceSha256": "46c3c9702ff7c5584e11c954d943cfb6e07fb26e3fbd072ddbc0f388aa352de1"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "sourceSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings",
+      "sourceSha256": "11b247bc6796892d67c9a821d18604db4dd6a880981b34f38460b9866e6b247f"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/AppDelegate.swift",
+      "sourceSha256": "5396ee2f62490d27f21e40195d11aa4be41b369f5174b4a8c6e7350e52f74630"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "sourceSha256": "3b1e214f466ffedff74baa5598ad5c4421130eea6bc8d57b8fe23435e8280ae4"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png",
+      "sourceSha256": "7770183009e914112de7d8ef1d235a6a30c5834424858e0d2f8253f6b8d31926"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png",
+      "sourceSha256": "cab10a0d391ec5bc09ef50ce49e8ad401cee7ef03707ec0923a222c5c2b3d212"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png",
+      "sourceSha256": "b9ad02cf6576a04d1b6806ac02a2431481b448dd0c2e505ce25842d1f7c4730b"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png",
+      "sourceSha256": "c6e6d3b215ae744a9c391f4c4d44157eff5e739d6ad6c39f9bfa5df66dddd267"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png",
+      "sourceSha256": "5dee24dc104ac76dc162e42ae0beb163d426bf365562ee28ba7b3ad368559a60"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png",
+      "sourceSha256": "a9b21eb6f4271385655a8771f76e29eef8c1107d7879cbcfc567e6619d1f716a"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png",
+      "sourceSha256": "e677d701ffe4af7bc2935098d6b3984cc9ab7ace573e6900955a5535b12410cf"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png",
+      "sourceSha256": "b9ad02cf6576a04d1b6806ac02a2431481b448dd0c2e505ce25842d1f7c4730b"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png",
+      "sourceSha256": "7c61c42fc7b657d9cf314d32a4ec458f0647c3aaf360be1b9377857266ec2499"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png",
+      "sourceSha256": "19be171481dc71a0b2803ebcd01dd8b0c5fd5778dee34c0a3cabc948c225f24e"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png",
+      "sourceSha256": "19be171481dc71a0b2803ebcd01dd8b0c5fd5778dee34c0a3cabc948c225f24e"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png",
+      "sourceSha256": "4209a49e44a92ec40a327d3455eb1b1c153ee83d75de1c2be0a12ab18b2ff9de"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png",
+      "sourceSha256": "836c918cb613249eba0483a6b02fa3df3c1c0a89a315ee4d3b88509b83c7ab73"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png",
+      "sourceSha256": "41c7d42f6e61f8fe7f30b1ffa2256aecbc9682be06d18c4a3062043e1a2e547c"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png",
+      "sourceSha256": "5d7e5bdf01b93802bc973345b3a78c038907147625035952a08a115a563b7f81"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json",
+      "sourceSha256": "ccc7950fd5f5b82067c85f667940a9d59189151460761ece8098ca78daa19469"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png",
+      "sourceSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png",
+      "sourceSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png",
+      "sourceSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Base.lproj/LaunchScreen.storyboard",
+      "sourceSha256": "857e61203b3deafb05766d8fcda898b86a7cb6f3d5e385ecc9926c4d698215e9"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Base.lproj/Main.storyboard",
+      "sourceSha256": "fd367b6c43006d61b730f674970dd48b9f662c8f2264e52ffc1558102a2c9f2d"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/DeviceCapabilitiesBridge.swift",
+      "sourceSha256": "b6726c8897140816e0c2729b559490c72f53840a1ff169e1e9c123c552ebef24"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/GeneratedPluginRegistrant.h",
+      "sourceSha256": "a5f88cc6415d2e639d2cb549348b84e02a7fdd0261603b0063abef6fa11f075a"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/GeneratedPluginRegistrant.m",
+      "sourceSha256": "dda4d2b30dfc6dd313507079497ebbe26baa768444f7e4256f901726b8dba359"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Info.plist",
+      "sourceSha256": "85311a9fa9b5c431255a17d7bda6011de917a8b65e5632506cd678bbab8538b8"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Runner-Bridging-Header.h",
+      "sourceSha256": "1a8d11d01d1cc92c650c9c9ed35299240052d4683a15a719a2315ef44185e074"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/SceneDelegate.swift",
+      "sourceSha256": "add68b905971dedfcc0d0b5b7118030de5925ba8c081ad9815463699e3a444ad"
+    },
+    {
+      "path": "apps/flutter/ios/RunnerTests/RunnerTests.swift",
+      "sourceSha256": "5e8f4908dacea6f29b2a790e4d38bf5fded69096063f9a27a2f21584d62b30c0"
+    },
+    {
+      "path": "apps/flutter/lib/client.dart",
+      "sourceSha256": "03fe9792ed745a8bdec0e1d423184f52b2bb9d9d3bdd953c34742c2e5c32b243"
+    },
+    {
+      "path": "apps/flutter/lib/driver.dart",
+      "sourceSha256": "bb010841212083615b21e540f1bc7168af04956eb787fd290f3e2c2c4413ec46"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/appearance_editor.dart",
+      "sourceSha256": "d037d586fcc8f00bb80385a77b1a5f919e925b58b891e8a99ff8ec06a2f38bb4"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/builder_chat.dart",
+      "sourceSha256": "2b92b9ad3e920ebeaa4e7285793f846eb10d1cc4a1b6d42a930483306b675996"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/builder_screen.dart",
+      "sourceSha256": "540045c51fce22926d1c87a5767bea0490db18c2b1df4b9626da04244236e3e6"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/component_options_editor.dart",
+      "sourceSha256": "5fbd32897d4b233135d21882e720be8626495220d987647c1d6fa32e9ae755f3"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/draft_loader.dart",
+      "sourceSha256": "c106975b681beeb7fe733cbb0f2d29a77fd86f4780247c866b2b4e4bb2733bb7"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/idea_guidance.dart",
+      "sourceSha256": "641a7bca89d8c3f681ffa787410e81fde38c4cc5b3a282bb4d7de4605a3be66a"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/page_editor.dart",
+      "sourceSha256": "ba537a3018390bf26b9aece873e8cafeef85b6d7871784bef42bb54dd7f4ed55"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/reminder_editor.dart",
+      "sourceSha256": "b57a9930e1dc2342186d70988429d9ae9cec448ad7e4d99093650ce16e5ac87f"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/visual_edit_session.dart",
+      "sourceSha256": "09cd96f4d99deee48647f37f7a28a238fb9a711730adfc3da66a3f54afc27b51"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/visual_inspector.dart",
+      "sourceSha256": "00e3c6602a12f3c8570e969ec326855ac1e5f2218d1092856ca36e7c26fd53b6"
+    },
+    {
+      "path": "apps/flutter/lib/features/home/home_load_failure.dart",
+      "sourceSha256": "e3745f1e170a70eb2fa5ffda928379cffcc213e76b39674386c116ddba15e7c6"
+    },
+    {
+      "path": "apps/flutter/lib/features/home/home_screen.dart",
+      "sourceSha256": "3cdcaae07992f74df1f23fdeb7e716529491d84423f694156847a8ca1448766f"
+    },
+    {
+      "path": "apps/flutter/lib/features/home/template_preview.dart",
+      "sourceSha256": "d79125c6efeedfe5fc11bd8ba13324e1d989d6dc2734617c92e89fe12c8ab258"
+    },
+    {
+      "path": "apps/flutter/lib/features/media/image_upload.dart",
+      "sourceSha256": "1186b8ba547a7bec448e85625a528970c911fa1ac1427249ae3d08765b7caba0"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/device_capabilities.dart",
+      "sourceSha256": "acd915cced2788dcb18f1cf6a7e2e7915e7045670bc99a9d38ba7beaad2dd9be"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/device_timer_store.dart",
+      "sourceSha256": "133320c3ee27315f0e92ce19b062ac7de5ab7039203bf1170b8bdef55f77ee1b"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/invitation_link.dart",
+      "sourceSha256": "3f256b611e8269d54b47c8557d09aef0ec9af203ec75311ec98be40c0823ba78"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/live_adapter.dart",
+      "sourceSha256": "15bd6c04e3c7b9b4ddafaf893640fa8a84dd4b1c4b6975cec1497650043ab67d"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/mini_app_screen.dart",
+      "sourceSha256": "dffae19547b0e3f0f2a63e16187cd724712113876b6ed4b7ab7f26cfb76ca5bc"
+    },
+    {
+      "path": "apps/flutter/lib/main.dart",
+      "sourceSha256": "810cd8b19f27c0dd7cca7b0f8183872971235c68428c27dd4cd2d2f807bf8fb0"
+    },
+    {
+      "path": "apps/flutter/lib/navigation/app_router.dart",
+      "sourceSha256": "68c2c06883ca696755897fd281248785da901715a4423239397a9390ff09fb1b"
+    },
+    {
+      "path": "apps/flutter/lib/navigation/browser_history.dart",
+      "sourceSha256": "6f7ad0f3d482495ae9da437fe9125159ae57db03d90f3b53cd2b155dac9fcb78"
+    },
+    {
+      "path": "apps/flutter/lib/navigation/browser_history_stub.dart",
+      "sourceSha256": "88282cd08abf5400d0919c441aa0ec8caaf79fc6a5ce45aebf6b3551086e7e2f"
+    },
+    {
+      "path": "apps/flutter/lib/navigation/browser_history_web.dart",
+      "sourceSha256": "0b13b5eee1ad0fd85baaff76466f8f631a603ac1f2fa2124f12fd791ead5a647"
+    },
+    {
+      "path": "apps/flutter/lib/screens/greetings_screen.dart",
+      "sourceSha256": "70ce34c9a93f55663ac56ce73ce5f877d095d66c2f7129b14a9fb50f174c247f"
+    },
+    {
+      "path": "apps/flutter/lib/screens/sign_in_screen.dart",
+      "sourceSha256": "598f8554eca1e4a10438498c9b7d1b358b567597e943cfacf62bf1e90c1f8db2"
+    },
+    {
+      "path": "apps/flutter/linux/CMakeLists.txt",
+      "sourceSha256": "bba0fd133370f8833832fa7f49773dfba6c37fef23a67765f1ec0a948789bf1d"
+    },
+    {
+      "path": "apps/flutter/linux/flutter/CMakeLists.txt",
+      "sourceSha256": "787189e2623313cfee590a0b553338eb9fc68b3af922ddd77c5d39c75f989aeb"
+    },
+    {
+      "path": "apps/flutter/linux/flutter/generated_plugin_registrant.cc",
+      "sourceSha256": "b53225c69fc4b6eed8fc9410ddfcd00a1b8203eeb826e48bbd870f761ab7ff86"
+    },
+    {
+      "path": "apps/flutter/linux/flutter/generated_plugin_registrant.h",
+      "sourceSha256": "00f93bb5b1faefdede8f6065df327522900fb0b8efee86bacf424fd947ed14bb"
+    },
+    {
+      "path": "apps/flutter/linux/flutter/generated_plugins.cmake",
+      "sourceSha256": "cdfc510f7faa27f5c8d466aceab47d2df12cabc2fe33d5045fe7f74a875e3349"
+    },
+    {
+      "path": "apps/flutter/linux/runner/CMakeLists.txt",
+      "sourceSha256": "8cdcfd911e770fd7d511c97c7bce6559486a815352a47c953f7ef632e236d2cc"
+    },
+    {
+      "path": "apps/flutter/linux/runner/main.cc",
+      "sourceSha256": "ea23f7cdf74091d63bba29ef60486370b766157b848f0cfe62bd8b1c1695a0c1"
+    },
+    {
+      "path": "apps/flutter/linux/runner/my_application.cc",
+      "sourceSha256": "232f0c3435ff823110270dbcbc1777d61deec452423ec664850a8b7cb1125e67"
+    },
+    {
+      "path": "apps/flutter/linux/runner/my_application.h",
+      "sourceSha256": "a4218d7ac0db8a9a6716daf216b2d4fc6bdc7ac647e3183078b2c962ebdfcf70"
+    },
+    {
+      "path": "apps/flutter/macos/Flutter/Flutter-Debug.xcconfig",
+      "sourceSha256": "62290ad8e938bf410206d8c7e131262696b58a6df110d39faf3399396ffe61b1"
+    },
+    {
+      "path": "apps/flutter/macos/Flutter/Flutter-Release.xcconfig",
+      "sourceSha256": "62290ad8e938bf410206d8c7e131262696b58a6df110d39faf3399396ffe61b1"
+    },
+    {
+      "path": "apps/flutter/macos/Flutter/GeneratedPluginRegistrant.swift",
+      "sourceSha256": "c80c61464053c759520650e0299f74ddc793277d3e121a894cc79b93a11f7a25"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcodeproj/project.pbxproj",
+      "sourceSha256": "c91a5ef77322531c1fa96e41df80b98052c46eaee1f77fd90c7c04caaaa67b31"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "sourceSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme",
+      "sourceSha256": "27dd8707011fe347f7291323e632eb36428a9a609ec616603f5fb1e34d94ba53"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcworkspace/contents.xcworkspacedata",
+      "sourceSha256": "46c3c9702ff7c5584e11c954d943cfb6e07fb26e3fbd072ddbc0f388aa352de1"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "sourceSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/AppDelegate.swift",
+      "sourceSha256": "ce9dbe45a57c59e85519da50a26c471615b9c8cdd85a8f4a39d2e480e62a4af4"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "sourceSha256": "bc6ba8105ca69651aeeb77358851590de295dca04681a1d58c0f449641c242f3"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png",
+      "sourceSha256": "6232e5815af17e25e0268b2fec7aea9e068cc92ec709e9605c2b31df4ff2a313"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png",
+      "sourceSha256": "15591f03f31313af6fd644ed0512106cc04365130b8b73244f1cfa6dddfb4400"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png",
+      "sourceSha256": "cc6928b5adfc00dbf526192e2705dd9af641cdf20ab4c6c7ca7cd4936dca59f0"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png",
+      "sourceSha256": "416efd77cde932d42ef34168da24dd428a495b1f4f34bbbd125a18d2add186a2"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png",
+      "sourceSha256": "ae8c4458e41f1e28b1e851ed87d3268d4a0351ceea427fa2a84cc94ddfb6d4c5"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png",
+      "sourceSha256": "0a91c6c1bf242e54ee179e34629e9ef3e8a6d286c0fce01e302280a8be9277e6"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png",
+      "sourceSha256": "6ad229623498e5f1277800db3ab7cb11faf85eb2569e1213f7d8e55003c07b42"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Base.lproj/MainMenu.xib",
+      "sourceSha256": "be9e9ef8469d3262370e0f0b855ed163cbf9c8362c59e330b2ffe63b86fa42f4"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Configs/AppInfo.xcconfig",
+      "sourceSha256": "bfffd8aa8f414af6574b85f1f5d8d093b38a9d61a8b7edb535cd2798bef7e448"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Configs/Debug.xcconfig",
+      "sourceSha256": "8067d533ef6593760baad9a9855a786a7a77470fcc3f0925ec04fe43bc1ac4b0"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Configs/Release.xcconfig",
+      "sourceSha256": "7a6a4b4d973a23052fa0a0388dd261e32d311d7b66ba1bfc3b914b361808ac61"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Configs/Warnings.xcconfig",
+      "sourceSha256": "0e341a392b16ad302d12890aa3dac9257a6c10ece685437604259a85341645a3"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/DebugProfile.entitlements",
+      "sourceSha256": "c867999adcf46a186f64a9fe1df34bfea44d1307d971cea3973162168ff4dd4f"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Info.plist",
+      "sourceSha256": "f253e89c512b3a9a81bc5cdd7a14bf932470f835f261654a808ea4549cd94aad"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/MainFlutterWindow.swift",
+      "sourceSha256": "65c9613c11bcedfa51416b16c975d8ba6ff12b405fc19d60db8755d92e86d9fe"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Release.entitlements",
+      "sourceSha256": "b90d9c45f8b7746a3180f4252915354ee09072772964f99544153cc4598cc764"
+    },
+    {
+      "path": "apps/flutter/macos/RunnerTests/RunnerTests.swift",
+      "sourceSha256": "6bc180bc77c7def7a21d197233e25dff42cc493ab9d294632edafc18fdf0ac44"
+    },
+    {
+      "path": "apps/flutter/pubspec.yaml",
+      "sourceSha256": "0b837ed1ec10a32ce43b0ba3df877cc6799488f0e9bdf25ec840b7dfb719a220"
+    },
+    {
+      "path": "apps/flutter/test/appearance_authoring_test.dart",
+      "sourceSha256": "4ea5c1563782e5f0fbb48d8daab87280b3eaada5b5f647412d2721cecaf7d085"
+    },
+    {
+      "path": "apps/flutter/test/appearance_capture_test.dart",
+      "sourceSha256": "779b40e26f1dfdb82e59d25588c625b987a5b95eaa424c82d363c973e5b2feb2"
+    },
+    {
+      "path": "apps/flutter/test/auth_overlay_test.dart",
+      "sourceSha256": "1720e46176b6ff1b164e40f5247481b1559a019a0483266429ebd5f4e1c707ab"
+    },
+    {
+      "path": "apps/flutter/test/builder_add_field_test.dart",
+      "sourceSha256": "fb8295ff3225aa80efe6af2ccff72a84a61b10cc71043cb112c9d7e921f0b2f0"
+    },
+    {
+      "path": "apps/flutter/test/builder_creation_test.dart",
+      "sourceSha256": "7fde1900979d14d5006253e44658e617733445a315111b54ac1f418d3c9a0a8e"
+    },
+    {
+      "path": "apps/flutter/test/builder_failure_message_test.dart",
+      "sourceSha256": "86cb0cfa83fbb4b3f47780260656a67b2f71e8e91c072ec969da01427edb6404"
+    },
+    {
+      "path": "apps/flutter/test/component_binding_options_test.dart",
+      "sourceSha256": "9d08b6660ff418a0f49c375331c4ff39a7699a2ee964fac6b69955d0eb83a3e9"
+    },
+    {
+      "path": "apps/flutter/test/customization_capture_test.dart",
+      "sourceSha256": "635207a434ecc43fbed2a4116a875f14d9a38a72c53e3f96cecfed3598802be4"
+    },
+    {
+      "path": "apps/flutter/test/device_capabilities_test.dart",
+      "sourceSha256": "66105b8db72e4eae7cc8cba43054a59d7de14ef2e6c004b3ee7a8247c70bf49e"
+    },
+    {
+      "path": "apps/flutter/test/device_timer_store_test.dart",
+      "sourceSha256": "d334d8df9785718dd01a985ccc87297d958016d1bf8fea33d997753b6dcfdf73"
+    },
+    {
+      "path": "apps/flutter/test/draft_navigation_test.dart",
+      "sourceSha256": "5266ff0ffa5fcaaefec9356f02b13370152a54fd6602ccb30b80ecfc7854f9ba"
+    },
+    {
+      "path": "apps/flutter/test/home_recovery_test.dart",
+      "sourceSha256": "9259a10bf074bc08ecc1683553e5d7bd191bb17d3debcf919bf5fd89896ac0e1"
+    },
+    {
+      "path": "apps/flutter/test/idea_guidance_test.dart",
+      "sourceSha256": "4519741910f04447de82618b815f8198e860fb28b88fac8710b4df2c1b3e526b"
+    },
+    {
+      "path": "apps/flutter/test/inbox_refresh_test.dart",
+      "sourceSha256": "d53668a40c3f01c3314ef866cd9e531421fd35bff8138573bee9d33bf0d56a74"
+    },
+    {
+      "path": "apps/flutter/test/launcher_ux_test.dart",
+      "sourceSha256": "308c420656a1b26a9393142e05118bbf2f3f9ca315fac0fb6646c0c88fae2c74"
+    },
+    {
+      "path": "apps/flutter/test/live_media_stream_test.dart",
+      "sourceSha256": "d5434fc4fa204118006755d83fc4c2c809f77deb725fdd10f7f67e512fd41e18"
+    },
+    {
+      "path": "apps/flutter/test/live_runtime_feedback_test.dart",
+      "sourceSha256": "8405258b5474ee27b485422369cee5d399ef26b295852a56ef95b06c15770ed5"
+    },
+    {
+      "path": "apps/flutter/test/mini_app_navigation_test.dart",
+      "sourceSha256": "5d353fb14648e7bc8832a08c5387b0d41b471316864b35d066ef935921cf36ed"
+    },
+    {
+      "path": "apps/flutter/test/page_editor_bindings_test.dart",
+      "sourceSha256": "d192b0e7f5d7cff509ec1c4b601d5b715e39cea876ba9f63d20a91899c84266d"
+    },
+    {
+      "path": "apps/flutter/test/page_editor_compatibility_test.dart",
+      "sourceSha256": "62b7a36a5e19b8e38b85b7285ee943ba9ba8d9f27742805a128a4dba19b19ce5"
+    },
+    {
+      "path": "apps/flutter/test/rich_component_authoring_test.dart",
+      "sourceSha256": "f92e5afe6593f2706be3748e211e4ac599e5209aa703081071a0485aecf231fa"
+    },
+    {
+      "path": "apps/flutter/test/rich_inspector_test.dart",
+      "sourceSha256": "e311c419618fb54bd399b5d19e72e3deb7bc4b3595a0804a9b933ac022cfe069"
+    },
+    {
+      "path": "apps/flutter/test/sharing_ux_test.dart",
+      "sourceSha256": "86ddc78083bb428e4c6d6d91c7e6d61e6f8dafa03db3fa7fbc183518dcc206e1"
+    },
+    {
+      "path": "apps/flutter/test/utility_authoring_test.dart",
+      "sourceSha256": "ad216fe3393eeaa407802589a41e59a65465acbdd28513b337e7f1761cdb819a"
+    },
+    {
+      "path": "apps/flutter/test/visual_edit_session_test.dart",
+      "sourceSha256": "21387e1e748fd97c572ae1ac99dc107c02acea9bb7f0e4766319172131cf3ce0"
+    },
+    {
+      "path": "apps/flutter/test/visual_inspector_test.dart",
+      "sourceSha256": "283d81a1b7a380b5b892e81ecaa82dbfebc4118d1e4dc1bff844a4c34a3b7281"
+    },
+    {
+      "path": "apps/flutter/test/widget_test.dart",
+      "sourceSha256": "b151c23fbe5ef45eff7d4c3333a8e3d03923dd04513063d9886277478f1d435f"
+    },
+    {
+      "path": "apps/flutter/web/favicon.png",
+      "sourceSha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015"
+    },
+    {
+      "path": "apps/flutter/web/icons/Icon-192.png",
+      "sourceSha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3"
+    },
+    {
+      "path": "apps/flutter/web/icons/Icon-512.png",
+      "sourceSha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe"
+    },
+    {
+      "path": "apps/flutter/web/icons/Icon-maskable-192.png",
+      "sourceSha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c"
+    },
+    {
+      "path": "apps/flutter/web/icons/Icon-maskable-512.png",
+      "sourceSha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929"
+    },
+    {
+      "path": "apps/flutter/web/index.html",
+      "sourceSha256": "ca4d16d1a3d7d6e3b11fcf5f749cb60eccc0759aba65a4015ed115cc7aa6b18d"
+    },
+    {
+      "path": "apps/flutter/web/manifest.json",
+      "sourceSha256": "61561267d892aa8a1c3bece165dec6ca72ddd3ac47ab71f0248fb2d9127db1c4"
+    },
+    {
+      "path": "apps/flutter/windows/CMakeLists.txt",
+      "sourceSha256": "0e8f7a47eb72faffe15bdf9ff21b0ed0c77ecb85bdc649e484bcb971744b5a98"
+    },
+    {
+      "path": "apps/flutter/windows/flutter/CMakeLists.txt",
+      "sourceSha256": "1fe418971b6f41bb35ceb3d64113a835f3f6f171ecaa707bf232492b57a588d6"
+    },
+    {
+      "path": "apps/flutter/windows/flutter/generated_plugin_registrant.cc",
+      "sourceSha256": "1496a944b299b4be03ce4e4fd801be5780bee7a84f50ab33a70d39bab924beb8"
+    },
+    {
+      "path": "apps/flutter/windows/flutter/generated_plugin_registrant.h",
+      "sourceSha256": "dbc11635d7b1ba1887adf40df5b83d634e9c3ab0bee34510c71528bb4d73602a"
+    },
+    {
+      "path": "apps/flutter/windows/flutter/generated_plugins.cmake",
+      "sourceSha256": "51ce42c43703c9765b71380a87bdb5603953bc9beedc727e1db8ba5c9df8a8ff"
+    },
+    {
+      "path": "apps/flutter/windows/runner/CMakeLists.txt",
+      "sourceSha256": "34119ec122e36940235ef4bc245fcfb43b6960ed443e28af1a8d833a81209b9e"
+    },
+    {
+      "path": "apps/flutter/windows/runner/Runner.rc",
+      "sourceSha256": "8337254b1105f22a6d41d8e98cb8f60114780f911d5dd4130724a97da2c00b4e"
+    },
+    {
+      "path": "apps/flutter/windows/runner/flutter_window.cpp",
+      "sourceSha256": "dd185884c0b5301d400b58f12ebb36b1c8b326531597e531b40e44a6eeb0e943"
+    },
+    {
+      "path": "apps/flutter/windows/runner/flutter_window.h",
+      "sourceSha256": "38e0fcd3a0b83895852ec295cb70d90179c0dcd40d58f065eb5232a4ecd84898"
+    },
+    {
+      "path": "apps/flutter/windows/runner/main.cpp",
+      "sourceSha256": "bb26d3e96e6dd194b33c5c2bea9c774a9f7f34e622670d6253814353239c2ac8"
+    },
+    {
+      "path": "apps/flutter/windows/runner/resource.h",
+      "sourceSha256": "1fa98588b04561590ba1cf0521ab86a9db4a878312f21c9d5861d965ddd8d1ae"
+    },
+    {
+      "path": "apps/flutter/windows/runner/resources/app_icon.ico",
+      "sourceSha256": "c098d3fc85cacff98b8e69811b48e9f0d852fcee278132d794411d978869cbf8"
+    },
+    {
+      "path": "apps/flutter/windows/runner/runner.exe.manifest",
+      "sourceSha256": "825d243e9fa1542619909c1b72d09b3ed7c1f3b225bb8367c125835e5dc3f8aa"
+    },
+    {
+      "path": "apps/flutter/windows/runner/utils.cpp",
+      "sourceSha256": "6c2c87106b4b29d534c7edcafb3b7f7b9079caa3cdafa7e56671ad2adf5a2543"
+    },
+    {
+      "path": "apps/flutter/windows/runner/utils.h",
+      "sourceSha256": "95a7f7dddb832997cefa937a96f89472332277e75734a5de553610760b744b03"
+    },
+    {
+      "path": "apps/flutter/windows/runner/win32_window.cpp",
+      "sourceSha256": "9065f31ccf746cf8b390121f958f9e959033af864aed779597066625ed56bc36"
+    },
+    {
+      "path": "apps/flutter/windows/runner/win32_window.h",
+      "sourceSha256": "7dd03746b19dcf3542829b2f6e8ed40a2714ce5f2cb3b0e23f0118a2fcf62d62"
+    },
+    {
+      "path": "apps/flutter/lib/screens/startup_screen.dart",
+      "sourceSha256": "9496b7d3d269eb4e4aa24954ce1e981e6857bfbfe317f25c8d9e9f314fad6a4e"
+    },
+    {
+      "path": "apps/flutter/test/startup_test.dart",
+      "sourceSha256": "535292588f183c873f2edda68b356732ecf7783ec04063060e070e35a01ae5d2"
+    }
+  ]
+}
