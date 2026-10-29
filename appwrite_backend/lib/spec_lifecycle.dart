@@ -813,7 +813,7 @@ extension _SpecLifecycle on PlatformService {
           maximumBytes: _specResponseBytes,
         );
         return response;
-      });
+      }, retryConfirmedAborts: template != null);
     } on ServiceException catch (error) {
       if (error.code == 'transaction_conflict' ||
           error.code == 'definition_conflict') {

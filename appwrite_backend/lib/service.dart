@@ -228,27 +228,39 @@ class PlatformService {
   };
 
   Future<T> _transaction<T>(
-    Future<T> Function(String transactionId) action,
-  ) async {
-    final transactionId = await store.beginTransaction();
-    var committed = false;
-    try {
-      final response = await action(transactionId);
-      await store.finishTransaction(transactionId, commit: true);
-      committed = true;
-      return response;
-    } on RestException catch (error) {
-      if (error.status == 409)
-        throw const ServiceException('transaction_conflict', 409);
-      rethrow;
-    } finally {
-      if (!committed) {
-        try {
-          await store.finishTransaction(transactionId, commit: false);
-        } catch (_) {
-          // A lost commit response cannot undo the authoritative receipt.
+    Future<T> Function(String transactionId) action, {
+    bool retryConfirmedAborts = false,
+  }) async {
+    for (var attempt = 0; ; attempt++) {
+      final transactionId = await store.beginTransaction();
+      var finalized = false;
+      try {
+        final response = await action(transactionId);
+        await store.finishTransaction(transactionId, commit: true);
+        finalized = true;
+        return response;
+      } on ConfirmedTransactionAbort {
+        // The adapter confirmed terminal failure. Rolling back a failed
+        // Appwrite transaction is rejected because it is no longer pending.
+        finalized = true;
+        if (!retryConfirmedAborts || attempt >= 2)
+          throw const ServiceException('transaction_conflict', 409);
+      } on RestException catch (error) {
+        if (error.status == 409)
+          throw const ServiceException('transaction_conflict', 409);
+        rethrow;
+      } finally {
+        if (!finalized) {
+          try {
+            await store.finishTransaction(transactionId, commit: false);
+          } catch (_) {
+            // A lost commit response cannot undo the authoritative receipt.
+          }
         }
       }
+      // This opt-in is reserved for reviewed database-only user operations.
+      // No provider, Storage, or wakeup request may run in a retried closure.
+      await Future<void>.delayed(Duration(milliseconds: 100 * (attempt + 1)));
     }
   }
 

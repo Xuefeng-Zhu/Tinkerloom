@@ -9,3 +9,9 @@ class RestException implements Exception {
   final int status;
   final bool authFailure;
 }
+
+/// The commit endpoint rejected this attempt and its transaction is terminal.
+/// Never use this for a status-only conflict or an unconfirmed commit response.
+class ConfirmedTransactionAbort extends RestException {
+  const ConfirmedTransactionAbort() : super(409);
+}

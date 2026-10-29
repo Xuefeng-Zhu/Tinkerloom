@@ -373,7 +373,7 @@ extension _Collaboration on PlatformService {
           tx,
         );
         return response;
-      });
+      }, retryConfirmedAborts: true);
     } on ServiceException catch (error) {
       if (error.code == 'transaction_conflict') {
         final old = await _invitationReceipt(

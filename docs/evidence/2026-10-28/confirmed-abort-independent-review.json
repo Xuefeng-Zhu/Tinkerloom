@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T02:49:35.139504+00:00",
+  "reviewedSourceSha256": "66140b99d53183868b1f1e0061b0216099c72681e8d808cdddddc63b5db49a62",
+  "reviewedManifest": "/private/tmp/tinkerloom-confirmed-abort-fg2hpo9p/confirmed-abort-files.json",
+  "reviewedPaths": [
+    {
+      "path": "appwrite_backend/lib/errors.dart",
+      "baseSha256": "b054e923f80b996284a797067ba111034a4baa79e6b7c8f2727cdf411c71650f",
+      "sha256": "9586bb3fa2df552e74421c5d50924c3a5e7e58f099e5cc683e533da612c766a5",
+      "bytes": 564
+    },
+    {
+      "path": "appwrite_backend/lib/rest.dart",
+      "baseSha256": "c9e16ec470ca76eb9a49533607c4ca59a8d43c3bc0150ec9c71d33481921becb",
+      "sha256": "33dcff6f0621be956f9a17bcf4abbc4f6ecc88b751963cb540e3277b27fc42ce",
+      "bytes": 7347
+    },
+    {
+      "path": "appwrite_backend/lib/service.dart",
+      "baseSha256": "0fdb7b1314519ae3fe42e258d974e1a1627cf32bb794cc34747def466922d028",
+      "sha256": "2ce60f9ffc19e75f6a11497cd9210122306c46438b4ffc127210f8d1470c99df",
+      "bytes": 26600
+    },
+    {
+      "path": "appwrite_backend/lib/collaboration.dart",
+      "baseSha256": "168489924a45c31246b992d3ca2876386a96ac7f7d23605fd5f691f0ba355623",
+      "sha256": "f73f55fab6314358bc18e4bc683613d770ae783c9a90b8981ad481fd00ddb69f",
+      "bytes": 18884
+    },
+    {
+      "path": "appwrite_backend/lib/spec_lifecycle.dart",
+      "baseSha256": "d05aca5d3ea81196a93d93c96f65fbdf741e0c68f0c4d231b666e3ae024e4e09",
+      "sha256": "67046f48ec9b7201c77e8645471952109fadc7e853a8288fb5b7774ebc3cc54a",
+      "bytes": 29041
+    },
+    {
+      "path": "appwrite_backend/test/confirmed_abort_test.dart",
+      "baseSha256": null,
+      "sha256": "2405bd94caad0cab061cda0a313b5e237d7160f6278535e4db1c4aab418c8fa0",
+      "bytes": 20915
+    },
+    {
+      "path": "appwrite_backend/CONFIRMED_ABORTS.md",
+      "baseSha256": null,
+      "sha256": "53baf85b80ec0439cd516948dfc6404dbc75f62e4da021b644e6f6fb0df13a39",
+      "bytes": 4461
+    }
+  ],
+  "result": "no_blocking_findings",
+  "confirmed": [
+    "Only starter template instantiation and invitation acceptance opt into at most two additional attempts.",
+    "Exact commit PATCH409, bounded supported error envelope, same transaction ID and failed/rolled_back status are required before retry.",
+    "Each fresh transaction repeats current authority, issuer generation, receipt and quota checks; stable request and operation IDs are captured outside the retry loop.",
+    "Reviewed retry closures stage database records/receipts/audit/outbox/dispatch intent only; no provider, Storage or wakeup HTTP executes there.",
+    "Unknown/lost committed response and other409 paths do not enter the new retry loop; existing exact-receipt recovery remains."
+  ],
+  "focusedTests": {
+    "passed": 8,
+    "failed": 0,
+    "log": "/private/tmp/tinkerloom-independent-abort-review-tests.log",
+    "logSha256": "912537693b042055c4966e453ef22efebceda95f64bc413d518df09abc9d7d2d",
+    "scope": "Actual REST adapter with loopback database simulation, PlatformService and WorkerEngine; no Cloud requests"
+  },
+  "optionalAvailabilityNote": "Stream.timeout(15s) is an inter-event inactivity timeout, not an absolute response deadline. New bodies remain byte-bounded at8KiB and Function runtime caps execution; slow continuous trickle can exceed15s. This does not enable unsafe retry. An absolute read deadline would tighten liveness bounds.",
+  "limits": [
+    "No live Cloud deployment/version/GET-transaction behavior attestation.",
+    "Other user mutations intentionally retain existing contention/recovery behavior.",
+    "No persistent source, Cloud, Git or UI edits by reviewer."
+  ],
+  "primarySourcesIndependentlyRead": [
+    "https://appwrite.io/docs/products/databases/tablesdb/transactions",
+    "https://appwrite.io/docs/references/cloud/models/transaction",
+    "https://raw.githubusercontent.com/appwrite/appwrite/main/src/Appwrite/Platform/Modules/Databases/Http/Databases/Transactions/Update.php"
+  ]
+}

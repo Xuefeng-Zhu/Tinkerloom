@@ -5,6 +5,10 @@ import 'dart:io';
 import 'errors.dart';
 import 'store.dart';
 
+class _CommitConflictCandidate extends RestException {
+  const _CommitConflictCandidate() : super(409);
+}
+
 /// A server-only adapter. Request keys, JWTs, and provider bodies are not logged.
 class AppwriteRest implements RowStore {
   AppwriteRest(this.endpoint, this.project, this.database, this.key);
@@ -38,6 +42,8 @@ class AppwriteRest implements RowStore {
     Uri uri, {
     Map<String, dynamic>? body,
     String? jwt,
+    bool recognizeCommitConflict = false,
+    int maximumResponseBytes = 33554432,
   }) async {
     final request = await _client
         .openUrl(method, uri)
@@ -53,7 +59,16 @@ class AppwriteRest implements RowStore {
     }
     final response = await request.close().timeout(const Duration(seconds: 15));
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      await response.drain<void>();
+      if (recognizeCommitConflict &&
+          method == 'PATCH' &&
+          response.statusCode == 409 &&
+          body?.length == 1 &&
+          body?['commit'] == true) {
+        if (await _commitConflictBody(response))
+          throw const _CommitConflictCandidate();
+      } else {
+        await response.drain<void>().timeout(const Duration(seconds: 15));
+      }
       throw RestException(
         response.statusCode,
         authFailure:
@@ -63,11 +78,34 @@ class AppwriteRest implements RowStore {
     }
     final bytes = <int>[];
     await for (final chunk in response.timeout(const Duration(seconds: 15))) {
-      if (bytes.length + chunk.length > 33554432)
+      if (bytes.length + chunk.length > maximumResponseBytes)
         throw const RestException(502);
       bytes.addAll(chunk);
     }
     return Map<String, dynamic>.from(jsonDecode(utf8.decode(bytes)) as Map);
+  }
+
+  Future<bool> _commitConflictBody(HttpClientResponse response) async {
+    try {
+      final bytes = <int>[];
+      await for (final chunk in response.timeout(const Duration(seconds: 15))) {
+        if (bytes.length + chunk.length > 8192) return false;
+        bytes.addAll(chunk);
+      }
+      final data = jsonDecode(utf8.decode(bytes));
+      if (data is! Map<String, dynamic> ||
+          data['type'] != 'transaction_conflict' ||
+          data['code'] is! int ||
+          data['code'] != 409 ||
+          !data.keys.every({'type', 'code', 'message', 'version'}.contains))
+        return false;
+      for (final key in ['message', 'version']) {
+        if (data.containsKey(key) && data[key] is! String) return false;
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<Map<String, dynamic>> account(String jwt) =>
@@ -180,11 +218,31 @@ class AppwriteRest implements RowStore {
     String transactionId, {
     required bool commit,
   }) async {
-    await _request(
-      'PATCH',
-      _uri('/tablesdb/transactions/${Uri.encodeComponent(transactionId)}'),
-      body: {if (commit) 'commit': true else 'rollback': true},
+    final uri = _uri(
+      '/tablesdb/transactions/${Uri.encodeComponent(transactionId)}',
     );
+    try {
+      await _request(
+        'PATCH',
+        uri,
+        body: {if (commit) 'commit': true else 'rollback': true},
+        recognizeCommitConflict: commit,
+      );
+    } on _CommitConflictCandidate {
+      // A failed commit is not enough if terminal state cannot be confirmed.
+      // Pending/committing/committed, mismatches, cleanup races and lost replies
+      // retain the ordinary conservative conflict path without internal retry.
+      Map<String, dynamic>? current;
+      try {
+        current = await _request('GET', uri, maximumResponseBytes: 8192);
+      } catch (_) {
+        throw const RestException(409);
+      }
+      if (current[r'$id'] == transactionId &&
+          {'failed', 'rolled_back'}.contains(current['status']))
+        throw const ConfirmedTransactionAbort();
+      throw const RestException(409);
+    }
   }
 
   void close() => _client.close(force: true);
