@@ -5,26 +5,20 @@ import { ActivityController } from "./ActivityController";
 export function useActivity(appId: string) {
   const context = useAppContext();
   const owner = context.controller,
-    backend = context.backend;
+    full = context.full;
   const accountId =
     context.state?.phase === "signedIn" && !context.state.authBusy
       ? context.state.user?.id
       : null;
   const epoch = owner?.sessionVersion;
   const controller = useMemo(() => {
-    if (
-      !appId ||
-      !owner ||
-      !backend?.executeSpec ||
-      !accountId ||
-      epoch === undefined
-    )
+    if (!appId || !owner || !full || !accountId || epoch === undefined)
       return null;
     return new ActivityController({
       appId,
       accountId,
       epoch,
-      transport: (request) => backend.executeSpec!.call(backend, request),
+      transport: full.activityTransport(accountId),
       readSession: () => {
         const state = owner.getSnapshot();
         return {
@@ -36,7 +30,7 @@ export function useActivity(appId: string) {
       subscribeSession: owner.subscribe,
       onUnauthenticated: () => owner.expireSession(),
     });
-  }, [appId, owner, backend, accountId, epoch]);
+  }, [appId, owner, full, accountId, epoch]);
   useEffect(() => controller?.retain(), [controller]);
   return controller;
 }

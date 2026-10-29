@@ -133,8 +133,11 @@ export interface RuntimeAdapter {
   ): Promise<RuntimeAggregate>;
   execute(command: RuntimeCommand): Promise<CommandOutcome>;
   permits(action: ActionSpec, record?: RuntimeRecord): boolean;
-  members(): Promise<RuntimeMember[]>;
-  reminderState(recordId: string): Promise<ReminderState>;
+  members(context?: RuntimeReadContext): Promise<RuntimeMember[]>;
+  reminderState(
+    recordId: string,
+    context?: RuntimeReadContext,
+  ): Promise<ReminderState>;
   readImage(assetId: string): Promise<ImageAsset>;
   pickImage(): Promise<PickedImage | null>;
   uploadImage(

@@ -3,8 +3,8 @@ import { freezeValidated } from "./immutable";
 import { runtimeJsonSnapshot } from "./json";
 import type { RuntimeReadContext, RuntimeTransport } from "./types";
 
-// These authenticated reads stage the same app/workspace authority guards.
-// Mutations, providers, media and unknown operations always bypass this lane.
+// These authenticated reads stage or observe the same app/workspace guards.
+// Mutations, providers and unknown operations always bypass this lane.
 const guardedReads = new Set([
   "spec.getApp",
   "spec.review",
@@ -14,6 +14,14 @@ const guardedReads = new Set([
   "spec.getRecord",
   "spec.summary",
   "spec.aggregate",
+  "spec.reminderState",
+  "spec.runs",
+  "spec.listActivity",
+  "spec.inbox",
+  "listMembers",
+  "spec.media.status",
+  "spec.media.read",
+  "spec.media.usage",
   "spec.launcher",
   "spec.listDrafts",
   "spec.listVersions",

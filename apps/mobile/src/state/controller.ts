@@ -142,6 +142,39 @@ export class AppController {
     }
   }
 
+  /** listApps can reject a guarded snapshot after an otherwise read-only refresh. */
+  private async readApps(
+    workspaceId: string,
+    session: number,
+    request: number,
+  ) {
+    const current = () =>
+      session === this.session &&
+      request === this.request &&
+      this.state.workspaceId === workspaceId &&
+      !this.state.authBusy;
+    for (let attempt = 0; ; attempt++) {
+      if (!current()) return null;
+      try {
+        const apps = await this.backend.listApps(workspaceId);
+        return current() ? apps : null;
+      } catch (error) {
+        if (!current()) return null;
+        if (
+          attempt >= 2 ||
+          !(error instanceof BackendError) ||
+          error.kind !== "service" ||
+          error.status !== 409 ||
+          error.code !== "definition_conflict" ||
+          error.uncertain !== false
+        )
+          throw error;
+        await new Promise((resolve) =>
+          setTimeout(resolve, 100 * (attempt + 1)),
+        );
+      }
+    }
+  }
   async refresh(): Promise<void> {
     if (!this.state.user || this.state.authBusy) return;
     const session = this.session;
@@ -156,8 +189,11 @@ export class AppController {
         ? this.state.workspaceId
         : (workspaces[0]?.id ?? null);
       this.set({ workspaces, workspaceId, apps: [] });
-      const apps = workspaceId ? await this.backend.listApps(workspaceId) : [];
-      if (session !== this.session || request !== this.request) return;
+      const apps = workspaceId
+        ? await this.readApps(workspaceId, session, request)
+        : [];
+      if (session !== this.session || request !== this.request || apps === null)
+        return;
       this.set({ apps, loading: false });
     } catch (error) {
       if (
@@ -187,8 +223,8 @@ export class AppController {
       notice: null,
     });
     try {
-      const apps = await this.backend.listApps(workspaceId);
-      if (session === this.session && request === this.request)
+      const apps = await this.readApps(workspaceId, session, request);
+      if (session === this.session && request === this.request && apps !== null)
         this.set({ apps, loading: false });
     } catch (error) {
       if (

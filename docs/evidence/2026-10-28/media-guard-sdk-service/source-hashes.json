@@ -1,0 +1,22 @@
+{
+  "candidateStage": "/private/tmp/tinkerloom-guarded-read-completeness",
+  "baselineAcceptedCommit": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "candidateProductionHashes": {
+    "apps/mobile/src/backend/core.ts": "9141960d738de34246e163833b809671686ece38e511bcbe81078de8420fa34d",
+    "apps/mobile/src/full/FullRegistry.ts": "3ea2bfe4d3b52e885ca053c6f5d59f37c3ec31e29b14da50501aee77afc2d934",
+    "apps/mobile/src/runtime/guardedReads.ts": "5f51bc6003494a5d74572d710f773d4eebea77f88a2914c8c32311aa6bd4adf8",
+    "apps/mobile/src/runtime/functionAdapter.ts": "3a113c419e2d6b29bcd40919ae4b60662a2772646a417fb6c74e619004b9ec73",
+    "apps/mobile/src/media/controller.ts": "9e58d64ac52995b10568ffec63d460637db1d4b6294711b4392fea8db06b2380",
+    "apps/mobile/src/media/recovery.ts": "e37483aa0bc140c3c1a6d8dcece58c907d8c929732edc58503cd182f0d7fb4b0",
+    "apps/mobile/src/host/scope.ts": "62c04e8f27f11973c0d90cade8a69b73ac555a0485528a86616afadf8a0419a3",
+    "apps/mobile/src/host/storage.ts": "ddea61ba593d29888d0a9cd8d5fc85ee97c85b2d3ca4c331adb891f7fcbfe9af"
+  },
+  "actualBackendHashes": {
+    "appwrite_backend/lib/service.dart": "4d7b568eedd47c848d12468d48619ac40f2c37ad5b3361852d0c52e0cb874d60",
+    "appwrite_backend/lib/private_media.dart": "80198fa9aa053e81e91e2b9f961ce0d8a56a024c7ec312084d441d82d31eecdf",
+    "appwrite_backend/lib/rest.dart": "53d8a6641bd6b4ebd8af42f180ce0b3e4dd8ca4c42e67c88a22adaa7285e4540",
+    "appwrite_backend/test/confirmed_abort_test.dart": "29ad7ebed252cf19e874e1c35d9173e1368dc1d253dda43eabd9ce6d3deb8534",
+    "appwrite_backend/test/media_check.dart": "e1512e5e12a4a58ac7a429481dcc0c2442657350eae2187e4f911ae8d42709fa"
+  },
+  "sdkVersion": "29.1.0"
+}

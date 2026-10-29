@@ -1,0 +1,22 @@
+{
+  "source": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "proofLayer": "offline actual PlatformService; synthetic optimistic MemoryStore and fake PrivateFileStore; no Cloud/auth/browser evidence",
+  "paths": {
+    "appwrite_backend/lib/service.dart": "4d7b568eedd47c848d12468d48619ac40f2c37ad5b3361852d0c52e0cb874d60",
+    "appwrite_backend/lib/spec_runtime.dart": "f39425e3794587496540b7825d0d48d251d5b965b2ab53e527a93f12f4897ca6",
+    "appwrite_backend/lib/spec_lifecycle.dart": "6b7314ad8c70fbace7f131ea5fd1827d6a26512ca323cfbda7d83033cbfadad9",
+    "appwrite_backend/lib/private_media.dart": "80198fa9aa053e81e91e2b9f961ce0d8a56a024c7ec312084d441d82d31eecdf",
+    "apps/mobile/src/media/controller.ts": "5352dd0be0eba29dfb171430beb477ca50459cddfaec44a8278f97c26e57ddfc",
+    "apps/mobile/src/renderer/fields.tsx": "6fc489475227dc87aeace3a3e3d090a8394615f9dd951571f456ea9bbb1d8f8b",
+    "apps/mobile/src/renderer/views.tsx": "ac35fc4f6a5f934bd041f71633918bd8803c758de5084ef8a53f943d93aefb30",
+    "apps/mobile/src/full/createLiveRuntime.ts": "9dc12a04c5843cbe5be20bbafb7240cde139bece8e4c87be25ae7dbd5e93f30a",
+    "apps/mobile/src/runtime/guardedReads.ts": "67bfa51815346a45f97a51c2899b3b161dcc4333cab355f3eb86956cf9853e5b",
+    "apps/mobile/src/state/controller.ts": "1c482b16e68d0b2cd7cee19b68abfe6a7bd1491ca26d7a822f2544a76b092796",
+    "apps/mobile/src/backend/core.ts": "9141960d738de34246e163833b809671686ece38e511bcbe81078de8420fa34d"
+  },
+  "artifacts": {
+    "probe.dart": "9e8a6168a7137fca68b1bcf5273a604206debfa063bd28c415cdb5364402a850",
+    "result.json": "1175b308f46bcf7fb3e8ec7a2883afa10ec827bd8321ec3070bf069a3766307f"
+  },
+  "failedHarnessAttemptPreserved": "initial-invalid-query.json: wrong synthetic collection ID corrected to template-declared ID; not a product finding"
+}

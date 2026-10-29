@@ -154,7 +154,7 @@ export function RecordReminder({ record }: { record: RuntimeRecord }) {
   useEffect(() => {
     let active = true;
     if (!requested || !adapter.features.has("reminders")) return;
-    adapter.reminderState(record.id).then(
+    adapter.reminderState(record.id, { isCurrent: () => active }).then(
       (state) => {
         if (active)
           setResponse({

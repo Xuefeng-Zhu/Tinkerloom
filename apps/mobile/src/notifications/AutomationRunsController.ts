@@ -65,11 +65,19 @@ export class AutomationRunsController {
     const sequence = ++this.sequence;
     this.emit({ loading: true, error: null });
     try {
-      const response = await this.options.transport({
-        op: "spec.runs",
-        appId: this.options.appId,
-        ...(cursor ? { afterId: cursor } : {}),
-      });
+      const response = await this.options.transport(
+        {
+          op: "spec.runs",
+          appId: this.options.appId,
+          ...(cursor ? { afterId: cursor } : {}),
+        },
+        {
+          isCurrent: () =>
+            !this.closed &&
+            this.options.lifetime.active &&
+            sequence === this.sequence,
+        },
+      );
       this.active();
       if (sequence !== this.sequence) return;
       const page = runsPage(response);

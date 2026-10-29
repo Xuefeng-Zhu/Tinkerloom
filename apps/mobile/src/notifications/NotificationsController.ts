@@ -157,10 +157,19 @@ export class NotificationsController {
     const sequence = ++this.sequence;
     this.emit({ loading: true, error: null });
     try {
-      const response = await this.options.transport({
-        op: "spec.inbox",
-        ...(cursor ? { afterId: cursor } : {}),
-      });
+      const response = await this.options.transport(
+        {
+          op: "spec.inbox",
+          ...(cursor ? { afterId: cursor } : {}),
+        },
+        {
+          isCurrent: () =>
+            !this.closed &&
+            this.host.lifetime.active &&
+            (this.options.lifetime?.active ?? true) &&
+            sequence === this.sequence,
+        },
+      );
       this.active();
       if (sequence !== this.sequence) return;
       const page = inboxPage(response);

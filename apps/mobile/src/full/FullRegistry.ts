@@ -201,6 +201,18 @@ export class FullRegistry {
     }
     return workspace;
   }
+  /** Activity shares the account read lane without exposing a mutation transport. */
+  activityTransport(accountId: string): RuntimeTransport {
+    const transport = this.transport(this.session(accountId));
+    return (request, context) => {
+      ensure(
+        request.op === "spec.listActivity",
+        "invalid_request",
+        "The activity transport only reads app activity.",
+      );
+      return transport(request, context);
+    };
+  }
   notifications(accountId: string): NotificationsServices {
     const expected = this.session(accountId);
     if (this.inboxServices) return this.inboxServices;

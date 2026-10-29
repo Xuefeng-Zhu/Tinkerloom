@@ -1,0 +1,43 @@
+{
+  "format": 1,
+  "frozen": true,
+  "layer": "offline actual-service synthetic optimistic MemoryStore + fake Storage; no Cloud",
+  "source": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "checks": {
+    "dart311Format": "passed",
+    "actualServicePairs": 3,
+    "overlapConflictPairs": 3,
+    "serialSuccessfulPairs": 3,
+    "businessRowCountsUnchanged": true,
+    "fileIdentitiesUnchanged": true,
+    "sourceEdits": false,
+    "CloudCalls": 0
+  },
+  "files": [
+    {
+      "path": "probe.dart",
+      "bytes": 3779,
+      "sha256": "9e8a6168a7137fca68b1bcf5273a604206debfa063bd28c415cdb5364402a850"
+    },
+    {
+      "path": "result.json",
+      "bytes": 3206,
+      "sha256": "1175b308f46bcf7fb3e8ec7a2883afa10ec827bd8321ec3070bf069a3766307f"
+    },
+    {
+      "path": "source-hashes.json",
+      "bytes": 1801,
+      "sha256": "a4e4306631208da600965266f1afeddfcbe5f1d842671c59898fb608880a107a"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4797,
+      "sha256": "665e4dffc482d86a575d1d801aa419ae6427bcf095f46fa9cebe018b0d472bcf"
+    },
+    {
+      "path": "initial-invalid-query.json",
+      "bytes": 3303,
+      "sha256": "20dedc321282ccce9c60b85292c84703a6e849bef1960b143a8f753246310a32"
+    }
+  ]
+}

@@ -171,7 +171,7 @@ test("superseded, disposed and throwing queued scopes cannot dispatch or poison 
   assert.equal(calls.includes("closed"), false);
 });
 
-test("bounded read backlog rejects overflow while writes, providers, files, unknown operations and capabilities bypass once", async () => {
+test("bounded read backlog queues media reads while writes, providers, file mutations, unknown operations and capabilities bypass once", async () => {
   const lane = new GuardedReadCoordinator(),
     gate = deferred(),
     calls: string[] = [];
@@ -187,7 +187,17 @@ test("bounded read backlog rejects overflow while writes, providers, files, unkn
     );
   });
   const first = transport({ op: "spec.getApp" });
-  const waiting = Array.from({ length: 128 }, () =>
+  const mediaRead = assert.rejects(
+    transport({
+      op: "spec.media.read",
+      appId: "app",
+      assetId: "asset",
+      variant: "thumbnail",
+      offset: 0,
+    }),
+    stale,
+  );
+  const waiting = Array.from({ length: 127 }, () =>
     transport({ op: "spec.query" }),
   );
   const observed = waiting.map((p) => assert.rejects(p, stale));
@@ -201,7 +211,6 @@ test("bounded read backlog rejects overflow while writes, providers, files, unkn
     "spec.saveDraft",
     "spec.generate",
     "spec.guidance",
-    "spec.media.read",
     "spec.media.begin",
     "spec.unknown",
     "spec.capabilities",
@@ -211,11 +220,12 @@ test("bounded read backlog rejects overflow while writes, providers, files, unkn
       (e: unknown) =>
         e instanceof BackendError && e.code === "transaction_conflict",
     );
-  assert.equal(calls.length, 10);
+  assert.equal(calls.includes("spec.media.read"), false);
+  assert.equal(calls.length, 9);
   const stopped = assert.rejects(first, stale);
   lane.dispose();
   gate.resolve(null);
-  await Promise.all([stopped, ...observed]);
+  await Promise.all([stopped, mediaRead, ...observed]);
 });
 
 test("bounded adapter retries release the lane for other reads and preserve real exhaustion without replaying writes", async () => {

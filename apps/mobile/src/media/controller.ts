@@ -261,11 +261,25 @@ export class PrivateMediaController {
     const generation = this.generation;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let cancel: (() => void) | undefined;
+    let requestActive = true;
+    const readContext = [
+      "spec.media.status",
+      "spec.media.read",
+      "spec.media.usage",
+    ].includes(String(request.op))
+      ? {
+          isCurrent: () => {
+            if (!requestActive) return false;
+            this.guard(generation);
+            return true;
+          },
+        }
+      : undefined;
     try {
       const result = await Promise.race([
         Promise.resolve().then(() => {
           this.guard(generation);
-          return this.transport(request);
+          return this.transport(request, readContext);
         }),
         new Promise<never>((_, reject) => {
           cancel = () =>
@@ -289,6 +303,7 @@ export class PrivateMediaController {
       this.guard(generation);
       return result;
     } finally {
+      requestActive = false;
       if (timer) clearTimeout(timer);
       if (cancel) this.cancellations.delete(cancel);
     }

@@ -32,7 +32,7 @@ export function ActionControl({
   useEffect(() => {
     let active = true;
     if (expanded && action.capability === "assignment.assign.v1")
-      adapter.members().then(
+      adapter.members({ isCurrent: () => active }).then(
         (rows) => {
           if (active) setMembers(rows);
         },

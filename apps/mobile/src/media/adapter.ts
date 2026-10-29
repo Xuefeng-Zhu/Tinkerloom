@@ -115,9 +115,8 @@ export function withPrivateMedia(
     execute: (command: RuntimeCommand) => forward(() => base.execute(command)),
     permits: (action: ActionSpec, record?: RuntimeRecord) =>
       lifetime.active && !closed && base.permits(action, record),
-    members: () => forward(() => base.members()),
-    reminderState: (recordId: string) =>
-      forward(() => base.reminderState(recordId)),
+    members: (...args) => forward(() => base.members(...args)),
+    reminderState: (...args) => forward(() => base.reminderState(...args)),
     readImage: (assetId: string) => media.read(assetId),
     pickImage: () => media.pickImage(),
     uploadImage: async (

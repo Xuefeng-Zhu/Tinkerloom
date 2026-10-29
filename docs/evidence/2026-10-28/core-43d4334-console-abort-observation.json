@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-10-29T06:48:53.491047+00:00",
+  "method": "Read-only CUA Appwrite Console Core execution drawer, response Errors and Body tabs",
+  "functionId": "tinkerloom-core",
+  "deploymentId": "6ae2c7c4c9c5bd7f2d7c",
+  "runtimeSourceCommit": "43d4334a8f1dbe59ac6d5afa657f9128bef678a8",
+  "executionId": "6ae2e91c34d1c265af79",
+  "executionStatus": "Completed",
+  "responseStatusCode": 409,
+  "fixedDiagnosticMarkers": [
+    "commitBodyAccepted",
+    "abortConfirmed",
+    "retryNotEnabled"
+  ],
+  "responseBodyCaptured": false,
+  "requestOperationObserved": false,
+  "limits": [
+    "Appwrite Console says body data is not captured for user security/privacy.",
+    "Operation and exact browser request are unknown; this cannot attribute the two reminder-card failures.",
+    "This separate admin observation does not change earlier normal-client observer reports with zero visible enum markers.",
+    "No raw headers, IP address, credentials or body data retained; no Cloud settings or deployment changed."
+  ]
+}

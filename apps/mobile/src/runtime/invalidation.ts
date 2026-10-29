@@ -296,7 +296,7 @@ export function withInvalidation(
     aggregate: (...args) => guarded(() => base.aggregate(...args)),
     execute: (...args) => guarded(() => base.execute(...args)),
     permits: (...args) => current() && base.permits(...args),
-    members: () => guarded(() => base.members()),
+    members: (...args) => guarded(() => base.members(...args)),
     reminderState: (...args) => guarded(() => base.reminderState(...args)),
     readImage: (...args) => guarded(() => base.readImage(...args)),
     pickImage: () => guarded(() => base.pickImage()),

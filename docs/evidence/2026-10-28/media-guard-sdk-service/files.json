@@ -1,0 +1,55 @@
+{
+  "format": 1,
+  "frozen": true,
+  "proof": "real SDK + actual PrivateMediaController/service/REST adapter; synthetic actor/optimistic store/fake Storage; noCloud",
+  "candidateCoordinatorSha256": "5f51bc6003494a5d74572d710f773d4eebea77f88a2914c8c32311aa6bd4adf8",
+  "checks": {
+    "dart311Format": true,
+    "prettierFormat": true,
+    "actualSDKServiceProof": "passed",
+    "rawPairs": 3,
+    "completeImagePipelines": 2,
+    "SDKQuery": 1,
+    "pipelineSDKRequests": 5,
+    "maximumSDKInFlight": 1,
+    "businessContentsUnchanged": true,
+    "StorageByteContentsUnchanged": true
+  },
+  "files": [
+    {
+      "path": "sdk-proof.ts",
+      "sha256": "3a104cd0fdc3c53933596611e10dd0146bbff6a52d82466ce84f317e067538d4",
+      "bytes": 11239
+    },
+    {
+      "path": "service_bridge.dart",
+      "sha256": "3c0d83622c050a4d261323a1eb376f3013d265affe1ad534c2e7adc8cba2ad28",
+      "bytes": 5387
+    },
+    {
+      "path": "result.json",
+      "sha256": "b1dba969860875855e3e782e7789b123ca9d57b4eba6cedfc14dcac6cd546e1f",
+      "bytes": 1787
+    },
+    {
+      "path": "source-hashes.json",
+      "sha256": "9df4473fee9dfb6cc7ffa559dfd8c7bf9f9b9984e87364d4ad65e56560e405d7",
+      "bytes": 1693
+    },
+    {
+      "path": "README.md",
+      "sha256": "c05ccb5a1d8da806b3fc47e57a639d8420362a3a211b5bb71e3c380aeae131ae",
+      "bytes": 2062
+    },
+    {
+      "path": "initial-harness-interface-assertion.json",
+      "sha256": "6db62c92d8ac24876cb8531e234e57dc5ddd760b58fc72814e8c98c7b0d25f9c",
+      "bytes": 399
+    },
+    {
+      "path": "verification.log",
+      "sha256": "b1dba969860875855e3e782e7789b123ca9d57b4eba6cedfc14dcac6cd546e1f",
+      "bytes": 1787
+    }
+  ]
+}

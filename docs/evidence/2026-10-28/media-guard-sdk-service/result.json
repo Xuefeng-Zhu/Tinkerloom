@@ -1,0 +1,52 @@
+{
+  "proof": "actual_Appwrite_SDK_backend_accountTransport_21op_FIFO_PrivateMediaController_Functions_loopback_actual_PlatformService_AppwriteRest_optimistic_MemoryStore_fakeStorage",
+  "authority": "synthetic_injected_alice_not_Cloud_authenticated",
+  "sdkVersion": "29.1.0",
+  "rawOverlapPairs": [
+    {
+      "first": "spec.media.status",
+      "second": "spec.media.status",
+      "confirmedConflict": 1
+    },
+    {
+      "first": "spec.media.read",
+      "second": "spec.media.read",
+      "confirmedConflict": 1
+    },
+    {
+      "first": "spec.media.read",
+      "second": "spec.query",
+      "confirmedConflict": 1
+    }
+  ],
+  "coordinatedPipeline": {
+    "completePrivateMediaControllerReads": 2,
+    "actualQuery": 1,
+    "assetStatusCalls": 2,
+    "assetChunkReadCalls": 2,
+    "totalSDKCalls": 5,
+    "sdkDispatchWhileFirstHeld": 1,
+    "maximumConcurrentSDK": 1,
+    "newFailedTransactions": 0,
+    "businessRowCountsUnchanged": true,
+    "businessRowContentsUnchanged": true,
+    "StorageByteContentsUnchanged": true,
+    "wholeTransportByteHashesVerifiedByController": 2,
+    "newWriteIDs": 0,
+    "pickerCalls": 0
+  },
+  "cachedRead": {
+    "reauthorizedStatusCalls": 1,
+    "additionalChunkReads": 0
+  },
+  "disposal": {
+    "ownedImageResources": 0,
+    "localRecoveryEntries": 0
+  },
+  "limitations": [
+    "Functions gateway envelope and actor are synthetic; no actual Cloud sign-in, Cloud timing, native/UI/provider proof",
+    "Storage file port and image-resource URI port are fake; actual service PNG sanitizer and client byte/hash validation execute",
+    "Optimistic store commit failure is locally modeled; actual Appwrite REST adapter communicates only with loopback test server"
+  ],
+  "sourceStage": "/private/tmp/tinkerloom-guarded-read-completeness"
+}

@@ -107,7 +107,7 @@ export function RecordForm({
   useEffect(() => {
     let active = true;
     if (needsMembers) {
-      adapter.members().then(
+      adapter.members({ isCurrent: () => active }).then(
         (rows) => {
           if (active) setMembers(rows);
         },

@@ -113,12 +113,15 @@ export class ActivityController {
     const sequence = ++this.sequence;
     this.emit({ loading: true, error: null });
     try {
-      const response = await this.options.transport({
-        op: "spec.listActivity",
-        appId: this.options.appId,
-        limit: 50,
-        ...(cursor ? { cursor } : {}),
-      });
+      const response = await this.options.transport(
+        {
+          op: "spec.listActivity",
+          appId: this.options.appId,
+          limit: 50,
+          ...(cursor ? { cursor } : {}),
+        },
+        { isCurrent: () => this.current() && sequence === this.sequence },
+      );
       if (!this.current()) {
         this.dispose();
         return;

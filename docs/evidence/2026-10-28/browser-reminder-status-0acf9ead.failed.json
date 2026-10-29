@@ -1,0 +1,27 @@
+{
+  "capturedAt": "2026-10-29T06:41:35.206767+00:00",
+  "sourceCommit": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "status": "failed",
+  "scope": "Additional reminder-bearing card UI smoke after separately passing eight full read cases",
+  "host": "React Native web with actual Appwrite Free development backend",
+  "setup": {
+    "app": "Existing synthetic Daily Planner",
+    "newAccounts": 0,
+    "newApps": 0,
+    "newRecords": 2,
+    "recordTitles": [
+      "Synthetic read coordination task A",
+      "Synthetic read coordination task B"
+    ],
+    "perRecordCreateClicks": 1,
+    "perRecordAcknowledgment": "Saved",
+    "dueDateSet": false,
+    "reminderDateSet": false,
+    "publicationSelected": false
+  },
+  "observation": "Tasks page settled with both synthetic records displayed and enabled Refresh; both record cards show Reminder status could not be loaded.",
+  "visibleStatusFailures": 2,
+  "sourceFinding": "RecordReminder per-card status calls spec.reminderState, a guard-staging authenticated read omitted from source0acf FIFO.",
+  "attributionLimit": "No browser network trace captured; exact Cloud error envelope is unverified. Offline service race proof and the observed UI failure are separate layers.",
+  "followUp": "Queue explicit pure guarded reads including reminder status with caller lifetime context; no reminder mutation retry."
+}

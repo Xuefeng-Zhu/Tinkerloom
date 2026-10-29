@@ -140,21 +140,40 @@ export function withReminders(
     aggregate: (...args) => guard(() => base.aggregate(...args)),
     execute: (...args) => guard(() => base.execute(...args)),
     permits: (...args) => !closed && lifetime.active && base.permits(...args),
-    members: () => guard(() => base.members()),
+    members: (...args) => guard(() => base.members(...args)),
     readImage: (...args) => guard(() => base.readImage(...args)),
     pickImage: () => guard(() => base.pickImage()),
     uploadImage: (...args) => guard(() => base.uploadImage(...args)),
-    reminderState: (recordId) =>
+    reminderState: (recordId, context) =>
       guard(async () => {
         if (!operational) return unavailable("Live reminders");
         id(recordId);
-        const response = await transport({
-          op: "spec.reminderState",
-          appId,
-          versionId,
-          recordId,
-        });
+        const isCurrent = () =>
+          !closed &&
+          lifetime.active &&
+          base.appId === appId &&
+          base.versionId === versionId &&
+          (context?.isCurrent() ?? true);
+        ensure(
+          isCurrent(),
+          "superseded_read",
+          "This reminder read has been superseded.",
+        );
+        const response = await transport(
+          {
+            op: "spec.reminderState",
+            appId,
+            versionId,
+            recordId,
+          },
+          { isCurrent },
+        );
         active();
+        ensure(
+          isCurrent(),
+          "superseded_read",
+          "This reminder read has been superseded.",
+        );
         return collapsedReminder(
           reminderPage(
             response,

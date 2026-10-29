@@ -1,0 +1,155 @@
+{
+  "proof": "actual_PlatformService_synthetic_optimistic_MemoryStore_fake_Storage_only_not_Cloud",
+  "source": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "cases": [
+    {
+      "pausedOp": "spec.media.status",
+      "otherOp": "spec.media.status",
+      "overlap": [
+        {
+          "status": 409,
+          "code": "transaction_conflict"
+        },
+        {
+          "status": 200,
+          "keys": [
+            "asset"
+          ]
+        }
+      ],
+      "sequential": [
+        {
+          "status": 200,
+          "keys": [
+            "asset"
+          ]
+        },
+        {
+          "status": 200,
+          "keys": [
+            "asset"
+          ]
+        }
+      ],
+      "businessRowsUnchanged": true,
+      "fileIdentitiesUnchanged": true
+    },
+    {
+      "pausedOp": "spec.media.read",
+      "otherOp": "spec.media.read",
+      "overlap": [
+        {
+          "status": 409,
+          "code": "transaction_conflict"
+        },
+        {
+          "status": 200,
+          "keys": [
+            "assetId",
+            "variant",
+            "offset",
+            "nextOffset",
+            "byteLength",
+            "contentType",
+            "sha256",
+            "chunkSha256",
+            "dataBase64",
+            "width",
+            "height",
+            "cacheControl"
+          ]
+        }
+      ],
+      "sequential": [
+        {
+          "status": 200,
+          "keys": [
+            "assetId",
+            "variant",
+            "offset",
+            "nextOffset",
+            "byteLength",
+            "contentType",
+            "sha256",
+            "chunkSha256",
+            "dataBase64",
+            "width",
+            "height",
+            "cacheControl"
+          ]
+        },
+        {
+          "status": 200,
+          "keys": [
+            "assetId",
+            "variant",
+            "offset",
+            "nextOffset",
+            "byteLength",
+            "contentType",
+            "sha256",
+            "chunkSha256",
+            "dataBase64",
+            "width",
+            "height",
+            "cacheControl"
+          ]
+        }
+      ],
+      "businessRowsUnchanged": true,
+      "fileIdentitiesUnchanged": true
+    },
+    {
+      "pausedOp": "spec.media.read",
+      "otherOp": "spec.query",
+      "overlap": [
+        {
+          "status": 200,
+          "keys": [
+            "assetId",
+            "variant",
+            "offset",
+            "nextOffset",
+            "byteLength",
+            "contentType",
+            "sha256",
+            "chunkSha256",
+            "dataBase64",
+            "width",
+            "height",
+            "cacheControl"
+          ]
+        },
+        {
+          "status": 400,
+          "code": "invalid_spec"
+        }
+      ],
+      "sequential": [
+        {
+          "status": 200,
+          "keys": [
+            "assetId",
+            "variant",
+            "offset",
+            "nextOffset",
+            "byteLength",
+            "contentType",
+            "sha256",
+            "chunkSha256",
+            "dataBase64",
+            "width",
+            "height",
+            "cacheControl"
+          ]
+        },
+        {
+          "status": 400,
+          "code": "invalid_spec"
+        }
+      ],
+      "businessRowsUnchanged": true,
+      "fileIdentitiesUnchanged": true
+    }
+  ]
+}

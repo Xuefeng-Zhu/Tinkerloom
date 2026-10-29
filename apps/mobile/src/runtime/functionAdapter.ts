@@ -483,13 +483,20 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
       );
     }
   }
-  async members(): Promise<{ id: string; label: string }[]> {
+  async members(
+    context?: RuntimeReadContext,
+  ): Promise<{ id: string; label: string }[]> {
     const rows: { id: string; label: string }[] = [],
       seen = new Set<string>(),
       cursors = new Set<string>();
     let afterId: string | undefined;
     do {
-      const result = await this.call("listMembers", afterId ? { afterId } : {});
+      const result = await this.call(
+        "listMembers",
+        afterId ? { afterId } : {},
+        false,
+        context,
+      );
       const members = array(result.members);
       ensure(
         members.length <= (afterId ? 50 : 51),
