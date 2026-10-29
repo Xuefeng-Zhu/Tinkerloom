@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-29T06:32:33.899771+00:00",
+  "sourceCommit": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "status": "failed",
+  "scope": "Additional basic home navigation after the separately passing8-case full-runtime read smoke",
+  "observation": "Back to workbench from existing Photo Journal record detail reached / with selected workspace, an empty app list and visible message: This app changed. Refresh it before saving again.",
+  "selectedBusinessWrites": 0,
+  "sourceFinding": {
+    "path": "appwrite_backend/lib/service.dart",
+    "operation": "listApps",
+    "behavior": "Read compares workspace guard before/after app enumeration and throws definition_conflict409 when it changes. Authenticated full-runtime guarded reads also stage that workspace guard.",
+    "clientPath": "apps/mobile/src/state/controller.ts",
+    "clientBehavior": "Basic refresh/listApps path has no bounded known-read conflict recovery and clears apps before listApps returns."
+  },
+  "attributionLimit": "Source establishes a possible guard-change mechanism. No browser network trace was captured to attribute the exact Cloud response.",
+  "followUp": "Narrow basic listApps read recovery and all16 non-media guarded-read coverage under implementation.",
+  "relatedBoundedPass": "browser-guarded-reads-0acf9ead.passed.json"
+}

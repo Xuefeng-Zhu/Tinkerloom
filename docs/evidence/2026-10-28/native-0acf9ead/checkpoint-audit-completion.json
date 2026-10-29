@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "checkpointSha256": "59ffca874df666d95ab1b27836d8d75037be1e016da375bec9b1c23c70e504c1",
+  "summarySha256": "53703a1328cee6d2d052076620b2c7ec591f74451d50dcdf2b489c8f2d47bf13",
+  "independentAudit": {
+    "path": "/private/tmp/tinkerloom-native-guarded-fsrbzngh/independent-native-audit.json",
+    "sha256": "b19d63f37e456911877a63e3e14844a5107eb96869a00494ec54ff3030b4c14b"
+  },
+  "status": "completed_source_specific_checkpoint_with_independent_audit",
+  "guardedReadCoordinatorSemanticProof": "Exact source inclusion here; deterministic SDK/service tests and fresh browser evidence remain separate.",
+  "signingEvidenceScope": {
+    "publicCertificateInspectionUsesApkOnly": true,
+    "agentDirectPrivateKeystoreRead": false,
+    "privateKeystoreModified": false,
+    "authorizedBuildUsesExistingGeneratedDevelopmentSigning": true,
+    "productionSigning": false
+  },
+  "allAuthoredInputsStillMatch": true,
+  "allPriorFilesPreserved": 2403,
+  "preservedInitialSandboxFailures": 8,
+  "allPrior48afbd65AndEarlierArtifactsPreserved": true,
+  "noUiDeviceRuntimeCloudOrProductionProofAdded": true,
+  "warmCacheHeldWithoutFurtherMutation": true,
+  "recordedAt": "2026-10-29T06:26:45.276350+00:00"
+}
