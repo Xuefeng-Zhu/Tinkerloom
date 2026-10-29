@@ -46,6 +46,8 @@ function RoleChoices({
           accessibilityRole="radio"
           accessibilityLabel={title}
           accessibilityState={{ checked: value === role, disabled }}
+          aria-checked={value === role}
+          aria-disabled={disabled}
           disabled={disabled}
           onPress={() => onChange(role)}
           style={{ paddingVertical: 10, gap: 4 }}

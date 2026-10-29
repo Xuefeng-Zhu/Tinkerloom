@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T02:40:48.314216+00:00",
+  "environment": "React Native web export in IAB at localhost8426; existing synthetic browser account",
+  "sourceFile": {
+    "path": "apps/mobile/src/sharing/SharingScreen.tsx",
+    "sha256": "c3761b84dc0365f4c5d5f487ccabd0b8568deb2c39fb5a92109c56791345d4f1"
+  },
+  "before": "Viewer selection appeared as a visual dot but its radio lacked checked state in the rendered accessibility snapshot.",
+  "after": [
+    {
+      "selection": "Viewer",
+      "ariaChecked": {
+        "Viewer": true,
+        "Member": false,
+        "Builder": false
+      }
+    },
+    {
+      "selection": "Member",
+      "ariaChecked": {
+        "Viewer": false,
+        "Member": true,
+        "Builder": false
+      }
+    },
+    {
+      "selection": "Viewer restored",
+      "ariaChecked": {
+        "Viewer": true,
+        "Member": false,
+        "Builder": false
+      }
+    }
+  ],
+  "verification": "Direct DOM aria-label and aria-checked measurements plus rendered accessibility snapshot. Selected roles only; Create invitation not invoked.",
+  "limits": [
+    "Browser semantic-state proof; no screen-reader/native interaction claim."
+  ]
+}

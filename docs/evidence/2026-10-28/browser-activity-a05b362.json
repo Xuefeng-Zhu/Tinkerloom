@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T02:34:37.273535+00:00",
+  "environment": "React Native web export in IAB at localhost8426; normal existing synthetic browser account; actual Appwrite Development Free",
+  "backend": {
+    "coreDeploymentId": "6ae2a7bc1eb91be5b447",
+    "sourceCommit": "a05b3623154b997e7b40525a22bad10d52c73a8d",
+    "sourceMapping": "operatorConsole metadata, not server attestation"
+  },
+  "checks": [
+    {
+      "name": "sharing_entry_to_activity",
+      "status": "passed",
+      "observation": "Sharing Activity button opened App activity for the same authorized Photo Journal app."
+    },
+    {
+      "name": "actual_committed_metadata",
+      "status": "passed",
+      "observation": "Two real entries rendered: App created from a starter and Record created, each with a localized date/time and Committed status. No record content or principals displayed."
+    },
+    {
+      "name": "numeric_browser_layout",
+      "status": "passed",
+      "observation": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "documentScrollWidth": 1280
+      }
+    },
+    {
+      "name": "visual_inspection",
+      "status": "passed",
+      "observation": "Screenshot shows readable heading, localized times, two cards, Back to app and Refresh activity controls, without overlap at observed viewport."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/mobile/src/activity/ActivityController.ts",
+      "sha256": "056fc960af30e79d2768cb92868d0417e9e83731196b6e80ba7349fa2c0c4051"
+    },
+    {
+      "path": "apps/mobile/src/activity/ActivityScreen.tsx",
+      "sha256": "53c3150276997f60b982bd4aeb752e156e1c98f571d8c342c7d6f159e5fc932b"
+    },
+    {
+      "path": "apps/mobile/src/activity/README.md",
+      "sha256": "d66c7dcfeb24ac9a4e4ffd55cc419c3698cc240550bc32a7c5fa3b1c4099dc73"
+    },
+    {
+      "path": "apps/mobile/src/activity/activity.test.ts",
+      "sha256": "112cb99da7e3378185191cecd96e85d7006d7544bad77a1bf97a4194b8b55e43"
+    },
+    {
+      "path": "apps/mobile/src/activity/contracts.ts",
+      "sha256": "b059ac4d167809dddd2fc38a48a2e081479c54c2ce34bc5f525f77d2ef23ccca"
+    },
+    {
+      "path": "apps/mobile/src/activity/fixtures/serviceWire.json",
+      "sha256": "0f55c151d444a7ae1592bab3d5866136f1adbe7549aab3a008492faeaeb1f8d3"
+    },
+    {
+      "path": "apps/mobile/src/activity/useActivity.ts",
+      "sha256": "fe1605b739738b18a903ef973ae685b82b64774cb23d2926dcccbd8406a191a6"
+    },
+    {
+      "path": "apps/mobile/src/app/apps/[appId]/activity.tsx",
+      "sha256": "3f152e9c1e2e66b6ee0cd1cd07a9c7c36d83b995049f1d8677f5d6e5e59f64ce"
+    }
+  ],
+  "limits": [
+    "Observed activity component files are byte-identical to the committed activity slice; this is not final whole-mobile-source acceptance.",
+    "One owner session and one app UI; multi-role and denial tests remain separate.",
+    "No native device, narrow/large-font/assistive-technology proof.",
+    "Hosted all-role probe stopped on acceptInvitation transaction conflict; that pending report remains unchanged."
+  ]
+}
