@@ -308,7 +308,13 @@ export class NotificationsController {
       );
       const versionId = adapter.versionId;
       id(versionId);
-      const record = await adapter.get(item.recordId);
+      const record = await adapter.get(item.recordId, {
+        isCurrent: () =>
+          !this.closed &&
+          this.host.lifetime.active &&
+          (this.options.lifetime?.active ?? true) &&
+          sequence === this.targetSequence,
+      });
       this.active();
       if (sequence !== this.targetSequence) return null;
       this.loaded(item);

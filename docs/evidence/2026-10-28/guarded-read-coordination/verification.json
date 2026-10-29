@@ -1,0 +1,144 @@
+{
+  "status": "passed",
+  "scope": "TMP-only implementation; no root/Git/Cloud/native changes",
+  "baselineCommit": "48afbd65b3db577442aa8c7fc82a69cfd21dc747",
+  "changedFiles": 13,
+  "productionFiles": 11,
+  "newTestFiles": 2,
+  "prior699TestsPreserved": true,
+  "checks": {
+    "focused": {
+      "exit": 0,
+      "passed": 13,
+      "failed": 0
+    },
+    "clientFull": {
+      "exit": 0,
+      "passed": 712,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheck": {
+      "exit": 0
+    },
+    "lint": {
+      "exit": 0
+    },
+    "format": {
+      "exit": 0
+    },
+    "exportAll": {
+      "exit": 0,
+      "platforms": [
+        "web",
+        "ios",
+        "android"
+      ]
+    }
+  },
+  "review": {
+    "agent": "/root/runtime_reads/read_review",
+    "status": "accepted_no_remaining_blocker",
+    "independentNewTestsPassed": 13
+  },
+  "sdkServiceProof": {
+    "proof": "actual_appwrite_web_sdk_backend_account_transport_coordinator_service_loopback_rest_optimistic_memory_only",
+    "actorAuthentication": "synthetic_injected_alice_not_Cloud_auth",
+    "rawOverlap": {
+      "confirmedConflict": 1
+    },
+    "coordinated": [
+      {
+        "first": "spec.getApp",
+        "second": "spec.query",
+        "crossApp": false,
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessUnchanged": true
+      },
+      {
+        "first": "spec.watch",
+        "second": "spec.query",
+        "crossApp": false,
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessUnchanged": true
+      },
+      {
+        "first": "spec.query",
+        "second": "spec.query",
+        "crossApp": false,
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessUnchanged": true
+      },
+      {
+        "first": "spec.getApp",
+        "second": "spec.getApp",
+        "crossApp": true,
+        "sdkDispatchWhileFirstHeld": 1,
+        "sdkDispatchesTotal": 2,
+        "newFailedTransactions": 0,
+        "businessUnchanged": true
+      }
+    ],
+    "sdkVersion": "29.1.0",
+    "business": {
+      "receipts": 4,
+      "audit": 4,
+      "outbox": 4,
+      "spec_records": 0,
+      "spec_cells": 0,
+      "spec_versions": 3
+    }
+  },
+  "artifacts": {
+    "guarded-reads.patch": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/guarded-reads.patch",
+      "sha256": "74f13e17d7d6289d9bad2797de25ea84ecedcb3c32867f6f6bde886e6042c392"
+    },
+    "change-manifest.json": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/change-manifest.json",
+      "sha256": "d23b8734856fa5fcbd534e9e27a79a18ea855559a9137a018b057f8923945824"
+    },
+    "baseline-source.json": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/baseline-source.json",
+      "sha256": "5a81ef33e91de2d960a3b3295b9cd9cfe0e88c5afe67840ea885a0786cd6b675"
+    },
+    "sdk-service-proof.json": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/sdk-service-proof.json",
+      "sha256": "12add110567285ceb9753078941fd76a9c0fc1cd71383c516044b61b1a914378"
+    },
+    "sdk-proof.ts": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/sdk-proof.ts",
+      "sha256": "8fdb6bfc85f38c4a86d6ff92c552cb1897bb3710d2d32f7204e18284ae1e67aa"
+    },
+    "service_bridge.dart": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/service_bridge.dart",
+      "sha256": "016330f75dab30090a59db31bad7b3279dc384960eb6e2bf4222ab584d76f4d5"
+    },
+    "client-test.log": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/client-test.log",
+      "sha256": "1a8233ffadc0d07cb334a47e70faed21a8b8595a5b67d185dcb282d0e9cb11fa"
+    },
+    "client-typecheck.log": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/client-typecheck.log",
+      "sha256": "ae6da71b215a3f31fcf494d48bd3f61d7283c965e3691f7d3b91c29f1afc5eed"
+    },
+    "client-lint.log": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/client-lint.log",
+      "sha256": "db7c61efa2e0107ec48b5cc5eab0681739d85553827d2eb727f753e860398024"
+    },
+    "client-format.log": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/client-format.log",
+      "sha256": "34ebb1a0bbedb89db700b79843ac08f424497186eddaf2b6a180ef0b110bdbbd"
+    },
+    "client-export.log": {
+      "path": "/private/tmp/tinkerloom-guarded-reads/client-export.log",
+      "sha256": "beac85c2bc3e347ccf5a57c6484bb9f5a81e66e0a6cef9271f40f5c4dbc99b24"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "proof": "actual_appwrite_web_sdk_backend_account_transport_coordinator_service_loopback_rest_optimistic_memory_only",
+  "actorAuthentication": "synthetic_injected_alice_not_Cloud_auth",
+  "rawOverlap": {
+    "confirmedConflict": 1
+  },
+  "coordinated": [
+    {
+      "first": "spec.getApp",
+      "second": "spec.query",
+      "crossApp": false,
+      "sdkDispatchWhileFirstHeld": 1,
+      "sdkDispatchesTotal": 2,
+      "newFailedTransactions": 0,
+      "businessUnchanged": true
+    },
+    {
+      "first": "spec.watch",
+      "second": "spec.query",
+      "crossApp": false,
+      "sdkDispatchWhileFirstHeld": 1,
+      "sdkDispatchesTotal": 2,
+      "newFailedTransactions": 0,
+      "businessUnchanged": true
+    },
+    {
+      "first": "spec.query",
+      "second": "spec.query",
+      "crossApp": false,
+      "sdkDispatchWhileFirstHeld": 1,
+      "sdkDispatchesTotal": 2,
+      "newFailedTransactions": 0,
+      "businessUnchanged": true
+    },
+    {
+      "first": "spec.getApp",
+      "second": "spec.getApp",
+      "crossApp": true,
+      "sdkDispatchWhileFirstHeld": 1,
+      "sdkDispatchesTotal": 2,
+      "newFailedTransactions": 0,
+      "businessUnchanged": true
+    }
+  ],
+  "sdkVersion": "29.1.0",
+  "business": {
+    "receipts": 4,
+    "audit": 4,
+    "outbox": 4,
+    "spec_records": 0,
+    "spec_cells": 0,
+    "spec_versions": 3
+  }
+}

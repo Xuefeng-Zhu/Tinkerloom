@@ -623,7 +623,9 @@ export class FullAppController {
     for (let attempt = 0; ; attempt++) {
       if (!current()) return supersededRead;
       try {
-        const response = await this.options.transport(request);
+        const response = await this.options.transport(request, {
+          isCurrent: current,
+        });
         return current() ? response : supersededRead;
       } catch (error) {
         if (!current()) return supersededRead;

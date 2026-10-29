@@ -25,6 +25,7 @@ import type {
   RuntimeLocation,
   RuntimeRecord,
   RuntimeSummary,
+  RuntimeReadContext,
 } from "./types";
 
 export interface RuntimeViewState {
@@ -337,7 +338,12 @@ export class RuntimeController {
     const authority = ++this.authorityRequest;
     let location: RuntimeLocation;
     try {
-      location = await resolveLocation(this.adapter, request);
+      location = await resolveLocation(this.adapter, request, {
+        isCurrent: () =>
+          !this.disposed &&
+          generation === this.locationRequest &&
+          authority === this.authorityRequest,
+      });
     } catch (error) {
       if (this.disposed || authority !== this.authorityRequest) return "stale";
       const failure = runtimeError(error);
@@ -412,6 +418,7 @@ export class RuntimeController {
   private async readView(
     view: ViewSpec,
     retain: number,
+    context: RuntimeReadContext,
   ): Promise<RuntimeViewState> {
     if (!view.collectionId) return { ...emptyView({}), loading: false };
     let settings = this.settingsFor(view.id);
@@ -428,6 +435,7 @@ export class RuntimeController {
           view.collectionId,
           query,
           view.groupByFieldId!,
+          context,
         ),
       };
     if (view.type === "metric" || view.type === "chart") {
@@ -453,6 +461,7 @@ export class RuntimeController {
         view.collectionId,
         query,
         aggregate,
+        context,
       );
       return {
         ...emptyView(query),
@@ -461,7 +470,7 @@ export class RuntimeController {
         aggregate: result,
       };
     }
-    let page = await this.adapter.query(view.collectionId, query),
+    let page = await this.adapter.query(view.collectionId, query, context),
       records = page.records;
     const cursors = new Set<string>();
     while (page.nextCursor && records.length < retain) {
@@ -471,10 +480,14 @@ export class RuntimeController {
         "The refreshed cursor did not advance.",
       );
       cursors.add(page.nextCursor);
-      page = await this.adapter.query(view.collectionId, {
-        ...query,
-        cursor: page.nextCursor,
-      });
+      page = await this.adapter.query(
+        view.collectionId,
+        {
+          ...query,
+          cursor: page.nextCursor,
+        },
+        context,
+      );
       records = [...records, ...page.records];
     }
     ensure(
@@ -497,19 +510,25 @@ export class RuntimeController {
         { ...settings, selectedDay: undefined },
         this.now(),
       );
-      result.aggregate = await this.adapter.aggregate(view.collectionId, base, {
-        metric: "count",
-        dateFieldId: view.options!.dateFieldId,
-        buckets: monthBuckets(
-          settings.month ?? settings.selectedDay ?? this.now(),
-        ),
-      });
+      result.aggregate = await this.adapter.aggregate(
+        view.collectionId,
+        base,
+        {
+          metric: "count",
+          dateFieldId: view.options!.dateFieldId,
+          buckets: monthBuckets(
+            settings.month ?? settings.selectedDay ?? this.now(),
+          ),
+        },
+        context,
+      );
     }
     if (view.type === "board" && view.groupByFieldId)
       result.summary = await this.adapter.summary(
         view.collectionId,
         query,
         view.groupByFieldId,
+        context,
       );
     return result;
   }
@@ -569,7 +588,13 @@ export class RuntimeController {
       authority = this.authorityRequest,
       previous = this.state.views,
       views = this.views,
-      recordId = this.state.location.recordId;
+      recordId = this.state.location.recordId,
+      context = {
+        isCurrent: () =>
+          !this.disposed &&
+          generation === this.request &&
+          authority === this.authorityRequest,
+      };
     this.emit({ loading: true, error: null });
     const results = await Promise.allSettled(
       views.map(
@@ -579,6 +604,7 @@ export class RuntimeController {
             await this.readView(
               view,
               retain ? (previous[view.id]?.records.length ?? 0) : 0,
+              context,
             ),
           ] as const,
       ),
@@ -587,7 +613,7 @@ export class RuntimeController {
       recordError: RuntimeError | null = null;
     if (recordId) {
       try {
-        record = await this.adapter.get(recordId);
+        record = await this.adapter.get(recordId, context);
       } catch (error) {
         recordError = runtimeError(error);
       }
@@ -648,10 +674,20 @@ export class RuntimeController {
     });
     this.pageReads++;
     try {
-      const page = await this.adapter.query(view.collectionId!, {
-        ...current.query,
-        cursor,
-      });
+      const page = await this.adapter.query(
+        view.collectionId!,
+        {
+          ...current.query,
+          cursor,
+        },
+        {
+          isCurrent: () =>
+            !this.disposed &&
+            generation === this.request &&
+            authority === this.authorityRequest &&
+            this.state.location === location,
+        },
+      );
       if (
         this.disposed ||
         generation !== this.request ||

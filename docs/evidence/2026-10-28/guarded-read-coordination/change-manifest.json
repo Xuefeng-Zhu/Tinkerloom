@@ -1,0 +1,85 @@
+{
+  "baselineFileCount": 268,
+  "unchangedBaselineFiles": 258,
+  "rootDrift": [],
+  "changed": [
+    {
+      "path": "apps/mobile/src/full/FullAppController.ts",
+      "before": "d425de94b5da7932acf3dce02eb0e40c7284fc7c6f48422dd79590dbc5205f1f",
+      "after": "a934f5629d97f7f842280642fc10d693cc8e37484b33d7bbc09fc5b19b4ced5b",
+      "bytes": 50670
+    },
+    {
+      "path": "apps/mobile/src/full/FullRegistry.ts",
+      "before": "edc2ec8d0abcebe5bdd65a487d4201a2c07cadafe7fd94bd4fb08af3fa3104a1",
+      "after": "b93b555b35d0dbe9bd89a1c13a7439316e8a126eea72095d33a78aa4979c842c",
+      "bytes": 10167
+    },
+    {
+      "path": "apps/mobile/src/full/FullWorkspaceController.ts",
+      "before": "916b5bb8ccbadef1491c505378bbdea1a6042544fc7f06520a6d6ab9e04ccb0c",
+      "after": "afc5666f09c02f823e7bbd616a47d2a843b40404054f20dcd2a3c17396cc5753",
+      "bytes": 25193
+    },
+    {
+      "path": "apps/mobile/src/full/guardedReadIntegration.test.ts",
+      "before": null,
+      "after": "4bb2627dc04fb8b6d8215ced30457ed0ce9c609bef99498726451f8e59b8e5bd",
+      "bytes": 11953
+    },
+    {
+      "path": "apps/mobile/src/media/adapter.ts",
+      "before": "2350813c162c7774b9103034062c6668bb40ba018d5f62aa705ad3da749ab6fa",
+      "after": "ea201bb82003dcb4d7802e7be2c41cba2c1305c9499311794792cd9d26376c89",
+      "bytes": 4497
+    },
+    {
+      "path": "apps/mobile/src/notifications/NotificationsController.ts",
+      "before": "9b85591ef497fad09f3aa2ed04a430db6e0ed03a832d06ed52527f990314b830",
+      "after": "c2ac31538c96fa262554b576fd70f91ef6afe44e796b76ed8b0aeb3a139f962d",
+      "bytes": 11377
+    },
+    {
+      "path": "apps/mobile/src/runtime/controller.ts",
+      "before": "98b75011b1bfad048fa2ed1d7abddca199c0865902d30fdb73ac9224c3fa5ef4",
+      "after": "22dcfd4e7d5e82e43ba2b7edcc84ea8110470ecb9d9c0711a77d1501ec01abac",
+      "bytes": 27635
+    },
+    {
+      "path": "apps/mobile/src/runtime/functionAdapter.ts",
+      "before": "28eb2b72389d7396a584adee7127c7e6107bb8f99515bf59b00eccbd30712645",
+      "after": "db1423445701f20e98b548a0ca2661c5074cdc663e655f0693c5948bc6d55e15",
+      "bytes": 16221
+    },
+    {
+      "path": "apps/mobile/src/runtime/guardedReads.test.ts",
+      "before": null,
+      "after": "7a25c9605a95c091dd2bdbbaaba82f77641e97ca9ef1898d26b3b7aa3bc924d6",
+      "bytes": 13746
+    },
+    {
+      "path": "apps/mobile/src/runtime/guardedReads.ts",
+      "before": null,
+      "after": "67bfa51815346a45f97a51c2899b3b161dcc4333cab355f3eb86956cf9853e5b",
+      "bytes": 2820
+    },
+    {
+      "path": "apps/mobile/src/runtime/invalidation.ts",
+      "before": "7448d889013656fbbafaee6d2601bfba1dec813cec31f7a66cce18f220c67cab",
+      "after": "54442a523663e1e7fe0c716f46cb7e6fe673c35dc78e646fe04bf55c14db7b83",
+      "bytes": 10213
+    },
+    {
+      "path": "apps/mobile/src/runtime/location.ts",
+      "before": "4c391b57c53e5e014300214a16dac57a4c49490695dc4f08fd77eda03ebc2e55",
+      "after": "f6debaac0fdc07bb3c7956f20e0c09075bdb97eecae5fb62b78d3f9cc21f8b66",
+      "bytes": 4537
+    },
+    {
+      "path": "apps/mobile/src/runtime/types.ts",
+      "before": "fd3a5bf794bd62251bdc559922436f3a953703632f6c7b8ea1a4bd5ef1d09127",
+      "after": "4014449b8bdf1ca9b47f5e9795d110d65f60490d4f0e7c0eb3af29b9bf1696e2",
+      "bytes": 4296
+    }
+  ]
+}

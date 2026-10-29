@@ -97,6 +97,10 @@ export interface DeviceBridge {
   release(control: DeviceControl): Promise<void>;
   dispose(): void;
 }
+/** Internal dispatch fence; never serialized into an Appwrite request. */
+export interface RuntimeReadContext {
+  isCurrent(): boolean;
+}
 export interface RuntimeAdapter {
   readonly appId: string;
   readonly versionId: string;
@@ -109,17 +113,23 @@ export interface RuntimeAdapter {
   readonly features: ReadonlySet<
     "members" | "reminders" | "imageRead" | "imageUpload" | "watch"
   >;
-  query(collectionId: string, query: RecordQuery): Promise<RecordPage>;
-  get(recordId: string): Promise<RuntimeRecord>;
+  query(
+    collectionId: string,
+    query: RecordQuery,
+    context?: RuntimeReadContext,
+  ): Promise<RecordPage>;
+  get(recordId: string, context?: RuntimeReadContext): Promise<RuntimeRecord>;
   summary(
     collectionId: string,
     query: RecordQuery,
     groupFieldId: string,
+    context?: RuntimeReadContext,
   ): Promise<RuntimeSummary>;
   aggregate(
     collectionId: string,
     query: RecordQuery,
     aggregate: AggregateQuery,
+    context?: RuntimeReadContext,
   ): Promise<RuntimeAggregate>;
   execute(command: RuntimeCommand): Promise<CommandOutcome>;
   permits(action: ActionSpec, record?: RuntimeRecord): boolean;
@@ -138,4 +148,5 @@ export interface RuntimeAdapter {
 }
 export type RuntimeTransport = (
   request: Record<string, unknown>,
+  context?: RuntimeReadContext,
 ) => Promise<unknown>;

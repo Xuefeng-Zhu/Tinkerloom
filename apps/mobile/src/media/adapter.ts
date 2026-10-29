@@ -7,7 +7,7 @@ import type {
   RuntimeRecord,
   RuntimeCommand,
 } from "../runtime/types";
-import type { ActionSpec, RecordQuery, AggregateQuery } from "../spec/types";
+import type { ActionSpec } from "../spec/types";
 import { PrivateMediaController } from "./controller";
 import type { PrivateMediaOptions } from "./controller";
 import type {
@@ -108,16 +108,10 @@ export function withPrivateMedia(
       return features;
     },
     media,
-    query: (collectionId: string, query: RecordQuery) =>
-      forward(() => base.query(collectionId, query)),
-    get: (recordId: string) => forward(() => base.get(recordId)),
-    summary: (collectionId: string, query: RecordQuery, field: string) =>
-      forward(() => base.summary(collectionId, query, field)),
-    aggregate: (
-      collectionId: string,
-      query: RecordQuery,
-      aggregate: AggregateQuery,
-    ) => forward(() => base.aggregate(collectionId, query, aggregate)),
+    query: (...args) => forward(() => base.query(...args)),
+    get: (...args) => forward(() => base.get(...args)),
+    summary: (...args) => forward(() => base.summary(...args)),
+    aggregate: (...args) => forward(() => base.aggregate(...args)),
     execute: (command: RuntimeCommand) => forward(() => base.execute(command)),
     permits: (action: ActionSpec, record?: RuntimeRecord) =>
       lifetime.active && !closed && base.permits(action, record),

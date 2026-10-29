@@ -29,6 +29,7 @@ import type {
   RuntimeSummary,
   RuntimeTransport,
   RuntimeAggregate,
+  RuntimeReadContext,
 } from "./types";
 
 type ObjectData = Record<string, unknown>;
@@ -200,6 +201,7 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
     op: string,
     payload: ObjectData,
     mutation = false,
+    context?: RuntimeReadContext,
   ): Promise<ObjectData> {
     const request = freezeValidated(
       runtimeJsonSnapshot({
@@ -218,10 +220,20 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
         "spec.aggregate",
         "listMembers",
       ].includes(op);
+    const readContext = {
+      isCurrent: () => !this.disposed && (context?.isCurrent() ?? true),
+    };
     for (let attempt = 0; ; attempt++) {
       ensure(!this.disposed, "disposed", "This app is closed.");
+      ensure(
+        readContext.isCurrent(),
+        "superseded_read",
+        "This read has been superseded.",
+      );
       try {
-        const result = object(await this.transport(request));
+        const result = object(
+          await this.transport(request, mutation ? undefined : readContext),
+        );
         // Raw/unknown envelopes never qualify for the definite service-error retry.
         if (result.error) {
           const error = object(result.error),
@@ -238,6 +250,11 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
           !this.disposed,
           "disposed",
           "This app was closed while loading.",
+        );
+        ensure(
+          readContext.isCurrent(),
+          "superseded_read",
+          "This read has been superseded.",
         );
         return result;
       } catch (error) {
@@ -326,12 +343,21 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
       allowedActions,
     };
   }
-  async query(collectionId: string, input: RecordQuery): Promise<RecordPage> {
+  async query(
+    collectionId: string,
+    input: RecordQuery,
+    context?: RuntimeReadContext,
+  ): Promise<RecordPage> {
     const query = validateRecordQuery(
         getCollection(this.spec, collectionId),
         runtimeJsonSnapshot(input) as RecordQuery,
       ),
-      result = await this.call("spec.query", { collectionId, query });
+      result = await this.call(
+        "spec.query",
+        { collectionId, query },
+        false,
+        context,
+      );
     this.version(result);
     const records = array(result.records).map((row) => this.record(row));
     ensure(
@@ -348,8 +374,13 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
       versionId: this.versionId,
     };
   }
-  async get(recordId: string) {
-    const result = await this.call("spec.getRecord", { recordId });
+  async get(recordId: string, context?: RuntimeReadContext) {
+    const result = await this.call(
+      "spec.getRecord",
+      { recordId },
+      false,
+      context,
+    );
     this.version(result);
     const row = this.record(result.record);
     ensure(
@@ -363,16 +394,22 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
     collectionId: string,
     input: RecordQuery,
     groupFieldId: string,
+    context?: RuntimeReadContext,
   ): Promise<RuntimeSummary> {
     const query = validateRecordQuery(
         getCollection(this.spec, collectionId),
         input,
       ),
-      result = await this.call("spec.summary", {
-        collectionId,
-        query,
-        groupFieldId,
-      });
+      result = await this.call(
+        "spec.summary",
+        {
+          collectionId,
+          query,
+          groupFieldId,
+        },
+        false,
+        context,
+      );
     this.version(result);
     const groups = Object.fromEntries(
       Object.entries(object(result.groups)).map(([key, value]) => [
@@ -386,15 +423,21 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
     collectionId: string,
     input: RecordQuery,
     aggregation: AggregateQuery,
+    context?: RuntimeReadContext,
   ): Promise<RuntimeAggregate> {
     const collection = getCollection(this.spec, collectionId),
       query = validateRecordQuery(collection, input),
       aggregate = validateAggregateQuery(collection, aggregation),
-      result = await this.call("spec.aggregate", {
-        collectionId,
-        query,
-        aggregate,
-      });
+      result = await this.call(
+        "spec.aggregate",
+        {
+          collectionId,
+          query,
+          aggregate,
+        },
+        false,
+        context,
+      );
     this.version(result);
     const groups = array(result.groups).map((item) => {
       const group = object(item);

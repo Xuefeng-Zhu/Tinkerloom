@@ -1,5 +1,10 @@
 import { ensure } from "./errors";
-import type { RuntimeAdapter, RuntimeLocation, RuntimeRecord } from "./types";
+import type {
+  RuntimeAdapter,
+  RuntimeLocation,
+  RuntimeRecord,
+  RuntimeReadContext,
+} from "./types";
 import type { ViewSpec, ViewSpecOf } from "../spec/types";
 
 export type RuntimeNavigationKind = "push" | "pop" | "external";
@@ -77,6 +82,7 @@ export function recordEditorView(
 export async function resolveLocation(
   adapter: RuntimeAdapter,
   request: RuntimeLocationRequest,
+  context?: RuntimeReadContext,
 ): Promise<RuntimeLocation> {
   const nav = adapter.spec.navigation;
   const entry = nav?.entryPageId ?? "__legacy__";
@@ -92,7 +98,7 @@ export async function resolveLocation(
     "Editing a record requires its identity.",
   );
   if (!request.recordId) return { pageId };
-  const record = await adapter.get(request.recordId);
+  const record = await adapter.get(request.recordId, context);
   ensure(
     record.id === request.recordId,
     "invalid_response",

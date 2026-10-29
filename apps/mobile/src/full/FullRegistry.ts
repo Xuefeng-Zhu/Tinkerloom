@@ -1,3 +1,4 @@
+import { GuardedReadCoordinator } from "../runtime/guardedReads";
 import { BackendError } from "../backend/errors";
 import type { AppBackend } from "../backend/types";
 import { HostLifetime } from "../host/scope";
@@ -72,6 +73,7 @@ export class FullRegistry {
   private runControllers = new Map<string, AutomationRunsController>();
   private key: string | null = null;
   private closed = false;
+  private reads = new GuardedReadCoordinator();
   constructor(
     private readonly options: {
       backend: AppBackend;
@@ -91,6 +93,8 @@ export class FullRegistry {
     }
   }
   private clear() {
+    this.reads.dispose();
+    this.reads = new GuardedReadCoordinator();
     for (const app of this.apps.values()) app.dispose();
     for (const workspace of this.workspaces.values()) workspace.dispose();
     this.apps.clear();
@@ -115,13 +119,15 @@ export class FullRegistry {
   private transport(expected: AccountSession): RuntimeTransport {
     const execute = this.options.backend.executeSpec;
     ensure(execute, "unavailable", "The full app service is unavailable.");
-    return accountTransport({
-      execute: (request) => execute.call(this.options.backend, request),
-      expected,
-      readSession: this.options.readSession,
-      alive: () => !this.closed,
-      onUnauthenticated: this.options.onUnauthenticated,
-    });
+    return this.reads.transport(
+      accountTransport({
+        execute: (request) => execute.call(this.options.backend, request),
+        expected,
+        readSession: this.options.readSession,
+        alive: () => !this.closed,
+        onUnauthenticated: this.options.onUnauthenticated,
+      }),
+    );
   }
   app(accountId: string, appId: string) {
     const expected = this.session(accountId);

@@ -139,7 +139,10 @@ export function withInvalidation(
     queued = false;
     let delay = interval;
     try {
-      const response = await transport({ op: "spec.watch", appId });
+      const response = await transport(
+        { op: "spec.watch", appId },
+        { isCurrent: () => current() && started === epoch && permitted() },
+      );
       if (!current() || started !== epoch || !permitted()) return;
       let stamp: InvalidationStamp;
       try {
