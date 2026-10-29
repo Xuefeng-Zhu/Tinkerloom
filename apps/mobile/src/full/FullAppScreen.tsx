@@ -368,11 +368,18 @@ export function FullAppScreen({
           "Resolve the retained operation before opening this app link.",
         );
         restore();
-      } else if (snapshot.dirty || current.dirty || current.editorError) {
+      } else if (
+        snapshot.dirty ||
+        current.dirty ||
+        current.editorError ||
+        controller.hasRejectedEditorInput
+      ) {
         restore();
         // Save the private candidate before changing mode; only record form input needs discard consent.
         if (
-          (current.dirty || current.editorError) &&
+          (current.dirty ||
+            current.editorError ||
+            controller.hasRejectedEditorInput) &&
           !(await controller.flush())
         )
           return;
@@ -734,7 +741,12 @@ export function FullAppScreen({
                   label={
                     state.dirty ? "Save private candidate" : "Candidate saved"
                   }
-                  disabled={locked || !state.dirty}
+                  disabled={
+                    locked ||
+                    !state.dirty ||
+                    !!state.editorError ||
+                    controller.hasRejectedEditorInput
+                  }
                   onPress={() => {
                     void controller.save();
                   }}
@@ -745,14 +757,17 @@ export function FullAppScreen({
                   disabled={
                     state.busy ||
                     !!state.pending ||
-                    (!state.dirty && !state.conflict && !state.editorError)
+                    (!state.dirty &&
+                      !state.conflict &&
+                      !state.editorError &&
+                      !controller.hasRejectedEditorInput)
                   }
                   onPress={() => controller.discardLocalEdits()}
                 />
                 <Text accessibilityLiveRegion="polite" style={styles.muted}>
                   {state.busy
                     ? "Saving…"
-                    : state.editorError
+                    : state.editorError || controller.hasRejectedEditorInput
                       ? "Fix the invalid local edit"
                       : state.conflict
                         ? "The server draft changed; reload before continuing."
@@ -771,6 +786,8 @@ export function FullAppScreen({
               <SpecEditor
                 staticImageAssets={state.previewStaticImageAssets}
                 spec={state.candidate}
+                editorResetEpoch={state.editorResetEpoch}
+                registerInputGuard={controller.registerEditorInputGuard}
                 disabled={locked}
                 onFlush={async () =>
                   controller.canBuild &&

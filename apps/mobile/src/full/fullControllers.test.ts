@@ -602,7 +602,7 @@ test("invalid projected text stops an earlier debounce and blocks save until exp
   assert.equal(controller.getSnapshot().dirty, false);
   controller.dispose();
 });
-test("a competing flush cannot unlock a save while its durable write is still pending", async () => {
+test("competing flush and save join the pending durable save without early unlock or another write", async () => {
   data.clear();
   const gate = deferred<void>();
   const values = new Map<string, string>();
@@ -640,12 +640,26 @@ test("a competing flush cannot unlock a save while its durable write is still pe
   const saving = controller.save();
   await new Promise((resolve) => setTimeout(resolve, 0));
   assert.equal(controller.getSnapshot().busy, true);
-  assert.equal(await controller.flush(), false);
-  await controller.save();
+  let flushed = false,
+    savedAgain = false;
+  const flushing = controller.flush().then((result) => {
+    flushed = true;
+    return result;
+  });
+  const joiningSave = controller.save().then(() => {
+    savedAgain = true;
+  });
+  await Promise.resolve();
+  assert.equal(flushed, false);
+  assert.equal(savedAgain, false);
   assert.equal(controller.getSnapshot().busy, true);
   assert.equal(writes, 0);
   gate.resolve();
   await saving;
+  assert.equal(await flushing, true);
+  await joiningSave;
+  assert.equal(flushed, true);
+  assert.equal(savedAgain, true);
   assert.equal(writes, 1);
   assert.equal(controller.getSnapshot().busy, false);
   controller.dispose();

@@ -158,6 +158,7 @@ export interface NavigationSource {
   };
   runtime: { getSnapshot(): { pending: unknown; dirty: boolean } } | null;
   host: { lifetime: { active: boolean } };
+  readonly hasRejectedEditorInput?: boolean;
   flush(): Promise<boolean>;
 }
 /** The same gate serves buttons and Expo Router's blocked Back/Forward action. */
@@ -188,7 +189,11 @@ export async function guardHostNavigation(options: {
     return;
   }
   const current = source.getSnapshot();
-  if ((current.dirty || current.editorError) && !(await source.flush())) return;
+  if (
+    (current.dirty || current.editorError || source.hasRejectedEditorInput) &&
+    !(await source.flush())
+  )
+    return;
   if (!active() || locked()) return;
   const apply = () => {
     if (!active() || locked()) return;

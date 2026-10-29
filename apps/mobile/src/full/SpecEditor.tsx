@@ -1,6 +1,17 @@
 import type { PreviewStaticImageAssets } from "../runtime/previewImageAssets";
-import { createContext, useContext, useLayoutEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useLayoutEffect,
+  useState,
+  useRef,
+  useSyncExternalStore,
+} from "react";
 import { InspectorFlushQueue } from "./inspectorSelection";
+import {
+  InspectorTextDraft,
+  InspectorInputRegistry,
+} from "./inspectorTextDraft";
 import { Text, View } from "react-native";
 import { Button } from "../components/Button";
 import { Field } from "../components/Field";
@@ -32,39 +43,70 @@ type Section =
   | "appearance"
   | "reminders"
   | "JSON";
-const InspectorFlushContext = createContext<(() => Promise<boolean>) | null>(
-  null,
-);
+const InspectorFlushContext = createContext<{
+  flush: () => Promise<boolean>;
+  resetEpoch: number;
+  register: (input: InspectorTextDraft) => () => void;
+  accepted: () => void;
+} | null>(null);
 function LabelInput({
+  identity,
   label,
   value,
   onChange,
   disabled = false,
 }: {
+  identity: string;
   label: string;
   value: string;
-  onChange: (text: string) => void;
+  onChange: (text: string) => boolean | void;
   disabled?: boolean;
 }) {
-  const [draft, setDraft] = useState<string | null>(null);
-  const flush = useContext(InspectorFlushContext);
+  const context = useContext(InspectorFlushContext);
+  const resetEpoch = context?.resetEpoch ?? 0;
+  const register = context?.register;
+  const [draft] = useState(
+    () => new InspectorTextDraft(value, identity, resetEpoch),
+  );
+  const text = useSyncExternalStore(
+    draft.subscribe,
+    draft.getSnapshot,
+    draft.getSnapshot,
+  );
+  useLayoutEffect(() => {
+    draft.activate();
+    return () => draft.dispose();
+  }, [draft]);
+  useLayoutEffect(() => {
+    draft.configure(value, identity, resetEpoch);
+  }, [draft, value, identity, resetEpoch]);
+  useLayoutEffect(() => register?.(draft), [register, draft]);
   return (
     <Field
       label={label}
-      value={draft ?? value}
+      value={draft.matches(identity, resetEpoch) ? text : value}
       editable={!disabled}
-      onFocus={() => setDraft(value)}
+      onFocus={() => draft.focus()}
       onBlur={() => {
-        setDraft(null);
-        void flush?.();
+        void draft.blur(() => context?.flush() ?? Promise.resolve(true));
       }}
       onChangeText={(text) => {
-        setDraft(text);
-        onChange(text);
+        draft.change(text, false);
+        try {
+          if (onChange(text) === false) draft.reject();
+          else {
+            draft.accept();
+            context?.accepted();
+          }
+        } catch (error) {
+          draft.reject();
+          throw error;
+        }
       }}
     />
   );
 }
+
 function JsonDetails({
   label,
   value,
@@ -193,6 +235,8 @@ export function SpecEditor({
   onEdit,
   onReplace,
   onFlush,
+  editorResetEpoch = 0,
+  registerInputGuard,
 }: {
   spec: AppSpec;
   staticImageAssets?: PreviewStaticImageAssets;
@@ -200,18 +244,31 @@ export function SpecEditor({
   onEdit: (edit: SemanticEdit, debounce?: boolean) => void;
   onReplace: (value: unknown) => void;
   onFlush?: () => Promise<boolean>;
+  editorResetEpoch?: number;
+  registerInputGuard?: (
+    guard: () => boolean,
+    subscribe: (listener: () => void) => () => void,
+  ) => () => void;
 }) {
   const [section, setSection] = useState<Section>("design"),
-    [error, setError] = useState<string | null>(null),
+    [error, setError] = useState<{ message: string; epoch: number } | null>(
+      null,
+    ),
     [collectionId, setCollection] = useState(spec.collections[0]?.id ?? ""),
     [viewId, setView] = useState(spec.views[0]?.id ?? ""),
     [pageId, setPage] = useState(spec.navigation?.pages[0]?.id ?? ""),
     [actionId, setAction] = useState(spec.actions[0]?.id ?? ""),
     [fieldId, setField] = useState(spec.collections[0]?.fields[0]?.id ?? "");
+  const errorRef = useRef<typeof error>(null);
+  const [inputs] = useState(() => new InspectorInputRegistry());
+  useLayoutEffect(
+    () => registerInputGuard?.(inputs.canFlush, inputs.subscribe),
+    [registerInputGuard, inputs],
+  );
   const [inspector] = useState(
     () =>
       new InspectorFlushQueue({
-        flush: () => onFlush?.() ?? Promise.resolve(true),
+        flush: () => Promise.resolve(false),
         spec: () => spec,
         available: () => !disabled,
         select: (target) => {
@@ -238,11 +295,14 @@ export function SpecEditor({
   }, [inspector]);
   useLayoutEffect(() => {
     inspector.configure({
-      flush: () => onFlush?.() ?? Promise.resolve(true),
+      flush: () =>
+        errorRef.current?.epoch === editorResetEpoch || !inputs.canFlush()
+          ? Promise.resolve(false)
+          : (onFlush?.() ?? Promise.resolve(true)),
       spec: () => spec,
       available: () => !disabled,
     });
-  }, [inspector, spec, disabled, onFlush]);
+  }, [inspector, spec, disabled, onFlush, editorResetEpoch, inputs]);
   const navigationDisabled = disabled && !inspector.flushing;
   const collection =
       spec.collections.find((c) => c.id === collectionId) ??
@@ -260,17 +320,24 @@ export function SpecEditor({
   const apply = (edit: SemanticEdit, debounce = false) => {
     try {
       onEdit(edit, debounce);
-      setError(null);
+      if (inputs.canFlush()) {
+        errorRef.current = null;
+        setError(null);
+      }
+      return true;
     } catch (issue) {
-      setError(
-        issue instanceof Error ? issue.message : "This change is invalid.",
-      );
+      setError({
+        message:
+          issue instanceof Error ? issue.message : "This change is invalid.",
+        epoch: editorResetEpoch,
+      });
+      return false;
     }
   };
   const updateView = (changes: Record<string, unknown>) => {
     if (!view) return;
     const { id, ...definition } = view;
-    apply({
+    return apply({
       type: "UpdateView",
       viewId: id,
       view: { ...definition, ...changes } as Omit<ViewSpec, "id">,
@@ -279,7 +346,7 @@ export function SpecEditor({
   const updatePage = (changes: Partial<PageSpec>) => {
     if (!page) return;
     const { id, ...definition } = page;
-    apply({
+    return apply({
       type: "UpdatePage",
       pageId: id,
       page: { ...definition, ...changes },
@@ -312,7 +379,9 @@ export function SpecEditor({
           void inspector.transition(() => setSection(next));
         }}
       />
-      {error && <Notice text={error} error />}
+      {error?.epoch === editorResetEpoch && (
+        <Notice text={error.message} error />
+      )}
       {section === "design" && (
         <Card title="Design canvas">
           <Text style={styles.body}>
@@ -320,6 +389,7 @@ export function SpecEditor({
             actions; switch to Try preview to test with isolated sample data.
           </Text>
           <LabelInput
+            identity="app:name"
             label="App name"
             value={spec.name}
             disabled={disabled}
@@ -364,6 +434,7 @@ export function SpecEditor({
                 }}
               />
               <LabelInput
+                identity={`collection:${collection.id}:label`}
                 label="Collection label"
                 value={collection.label}
                 disabled={disabled}
@@ -402,6 +473,7 @@ export function SpecEditor({
                       {field.required ? "Required" : "Optional"}
                     </Text>
                     <LabelInput
+                      identity={`field:${collection.id}:${field.id}:label`}
                       label={`${field.id} label`}
                       value={field.label}
                       disabled={disabled}
@@ -511,12 +583,16 @@ export function SpecEditor({
                 label="Inspect view"
                 values={spec.views.map((v) => v.id)}
                 value={view.id}
-                onChange={setView}
+                disabled={navigationDisabled}
+                onChange={(next) => {
+                  void inspector.transition(() => setView(next));
+                }}
               />
               <Text style={styles.muted}>
                 {view.type} · {view.id}
               </Text>
               <LabelInput
+                identity={`view:${view.id}:label`}
                 label="View label"
                 value={view.label}
                 disabled={disabled}
@@ -624,6 +700,7 @@ export function SpecEditor({
                 ))}
               {view.type === "richText" && (
                 <LabelInput
+                  identity={`view:${view.id}:markdown`}
                   label="Markdown content"
                   value={view.options?.markdown ?? ""}
                   disabled={disabled}
@@ -633,12 +710,14 @@ export function SpecEditor({
               {view.type === "banner" && (
                 <>
                   <LabelInput
+                    identity={`view:${view.id}:title`}
                     label="Banner title"
                     value={view.options?.title ?? ""}
                     disabled={disabled}
                     onChange={(title) => updateOptions({ title })}
                   />
                   <LabelInput
+                    identity={`view:${view.id}:body`}
                     label="Banner body"
                     value={view.options?.body ?? ""}
                     disabled={disabled}
@@ -815,9 +894,13 @@ export function SpecEditor({
                 label="Inspect action"
                 values={spec.actions.map((a) => a.id)}
                 value={action.id}
-                onChange={setAction}
+                disabled={navigationDisabled}
+                onChange={(next) => {
+                  void inspector.transition(() => setAction(next));
+                }}
               />
               <LabelInput
+                identity={`action:${action.id}:label`}
                 label="Action label"
                 value={action.label}
                 disabled={disabled}
@@ -900,9 +983,13 @@ export function SpecEditor({
                 label="Inspect page"
                 values={spec.navigation.pages.map((p) => p.id)}
                 value={page.id}
-                onChange={setPage}
+                disabled={navigationDisabled}
+                onChange={(next) => {
+                  void inspector.transition(() => setPage(next));
+                }}
               />
               <LabelInput
+                identity={`page:${page.id}:title`}
                 label="Page title"
                 value={page.title}
                 disabled={disabled}
@@ -1017,6 +1104,7 @@ export function SpecEditor({
       {section === "appearance" && (
         <Card title="Appearance">
           <LabelInput
+            identity="app:name"
             label="App name"
             value={spec.name}
             disabled={disabled}
@@ -1101,6 +1189,7 @@ export function SpecEditor({
             }
           />
           <LabelInput
+            identity="app:accentColor"
             label="Accent color (#RRGGBB)"
             value={spec.appearance?.accentColor ?? ""}
             disabled={disabled}
@@ -1151,7 +1240,19 @@ export function SpecEditor({
     </View>
   );
   return (
-    <InspectorFlushContext.Provider value={() => inspector.flush()}>
+    <InspectorFlushContext.Provider
+      value={{
+        flush: () => inspector.flush(),
+        resetEpoch: editorResetEpoch,
+        register: inputs.register,
+        accepted: () => {
+          if (inputs.canFlush()) {
+            errorRef.current = null;
+            setError(null);
+          }
+        },
+      }}
+    >
       {content}
     </InspectorFlushContext.Provider>
   );

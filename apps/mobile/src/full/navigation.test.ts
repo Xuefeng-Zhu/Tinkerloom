@@ -278,3 +278,46 @@ test("cleaning a form does not silently consume or replace the exact deferred na
   visits.dismissAttempt(latest.id);
   assert.equal(visits.getProtection().attempt, null);
 });
+
+test("mounted rejected input still validates after another semantic control clears the general editor error", async () => {
+  const s = source();
+  let flushes = 0;
+  const guarded: NavigationSource = {
+    ...s.value,
+    hasRejectedEditorInput: true,
+    flush: async () => {
+      ++flushes;
+      return false;
+    },
+  };
+  await guardHostNavigation({
+    source: guarded,
+    epoch: new NavigationEpoch(),
+    focused: () => true,
+    action: () => assert.fail("rejected raw input must retain its owner"),
+    prompt: () => assert.fail("invalid draft is not a record discard prompt"),
+    blocked: () => assert.fail("no uncertain operation exists"),
+  });
+  assert.equal(flushes, 1);
+  assert.equal(s.hostState.dirty, false);
+  assert.equal(s.hostState.editorError, null);
+});
+test("clean live-only readers can navigate without invoking builder-only flush", async () => {
+  const s = source();
+  let actions = 0;
+  await guardHostNavigation({
+    source: {
+      ...s.value,
+      hasRejectedEditorInput: false,
+      flush: async () => assert.fail("viewer cannot edit"),
+    },
+    epoch: new NavigationEpoch(),
+    focused: () => true,
+    action: () => {
+      ++actions;
+    },
+    prompt: () => assert.fail("pristine reader"),
+    blocked: () => assert.fail("no unresolved write"),
+  });
+  assert.equal(actions, 1);
+});

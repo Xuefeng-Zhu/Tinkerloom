@@ -25,7 +25,12 @@ export function PublicationPanel({
   const approved = review !== null && approvedReview === review;
   const setApproved = (value: boolean) =>
     setApprovedReview(value ? review : null);
-  const locked = state.busy || !!state.pending || !controller.canBuild;
+  const locked =
+    state.busy ||
+    !!state.pending ||
+    !controller.canBuild ||
+    !!state.editorError ||
+    controller.hasRejectedEditorInput;
   const recordIds = records.split(/[\s,]+/).filter(Boolean);
   const scopeMatches =
     !!review &&

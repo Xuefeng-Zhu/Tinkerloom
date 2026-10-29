@@ -81,6 +81,7 @@ export interface FullAppState {
   candidate: AppSpec | null;
   dirty: boolean;
   editorError: string | null;
+  editorResetEpoch: number;
   loading: boolean;
   busy: boolean;
   error: string | null;
@@ -107,6 +108,7 @@ export class FullAppController {
     candidate: null,
     dirty: false,
     editorError: null,
+    editorResetEpoch: 0,
     loading: false,
     busy: false,
     error: null,
@@ -126,6 +128,7 @@ export class FullAppController {
     previewUnavailableAssetCount: 0,
   };
   private listeners = new Set<() => void>();
+  private editorInputGuards = new Set<() => boolean>();
   private liveLeases = new Map<symbol, boolean>();
   private closed = false;
   private sequence = 0;
@@ -133,6 +136,7 @@ export class FullAppController {
   private preparedIdea: string | null = null;
   private composerRequest: string | null = null;
   private autosave: ReturnType<typeof setTimeout> | null = null;
+  private saveTask: Promise<void> | null = null;
   readonly host: HostStorage;
   private journal: FullCommandJournal;
   private journalSuspended = false;
@@ -464,10 +468,37 @@ export class FullAppController {
       (app.archived || app.capabilities.editDefinition === true)
     );
   }
+  registerEditorInputGuard = (
+    guard: () => boolean,
+    subscribe?: (listener: () => void) => () => void,
+  ) => {
+    if (this.closed || !this.host.lifetime.active) return () => {};
+    this.editorInputGuards.add(guard);
+    const notify = () => {
+      if (!this.closed && this.host.lifetime.active) this.emit({});
+    };
+    const unsubscribe = subscribe?.(notify);
+    notify();
+    return () => {
+      unsubscribe?.();
+      if (this.editorInputGuards.delete(guard)) notify();
+    };
+  };
+  private editorInputsReady() {
+    try {
+      return [...this.editorInputGuards].every((guard) => guard());
+    } catch {
+      return false;
+    }
+  }
+  get hasRejectedEditorInput() {
+    return !this.editorInputsReady();
+  }
   get canLeave() {
     return (
       !this.state.dirty &&
       !this.state.editorError &&
+      this.editorInputsReady() &&
       !this.state.busy &&
       !this.state.pending &&
       (this.runtime?.canLeave ?? true)
@@ -522,11 +553,13 @@ export class FullAppController {
       this.stopAutosave();
       this.preparedIdea = null;
       this.composerRequest = null;
+      this.editorInputGuards.clear();
       this.disposeRuntime();
       this.journal.dispose();
       this.journalSuspended = true;
       this.emit({
         app: null,
+        editorResetEpoch: this.state.editorResetEpoch + 1,
         preparedRequest: null,
         generationRequest: "",
         candidate: null,
@@ -573,6 +606,7 @@ export class FullAppController {
       ["owner", "builder"].includes(app.role) &&
       app.capabilities.editDefinition === true;
     if (!build) {
+      this.editorInputGuards.clear();
       this.preparedIdea = null;
       this.composerRequest = null;
     }
@@ -637,11 +671,18 @@ export class FullAppController {
       !same(this.state.candidate, candidate) ||
       prior?.draft?.revision !== app.draft?.revision ||
       prior?.version?.id !== app.version?.id;
+    const resetEditor =
+      !build ||
+      (!this.state.dirty &&
+        !this.state.editorError &&
+        !this.hasRejectedEditorInput &&
+        !same(this.state.candidate, candidate));
     const clarificationChanged = candidateChanged || !build;
     if (clarificationChanged) this.guidanceSequence++;
     this.emit({
       app,
       candidate,
+      editorResetEpoch: this.state.editorResetEpoch + (resetEditor ? 1 : 0),
       preparedRequest: build ? this.preparedIdea : null,
       generationRequest: build
         ? (this.composerRequest ??
@@ -718,6 +759,7 @@ export class FullAppController {
     this.guidanceSequence++;
     this.emit({
       candidate: this.state.app?.draft?.spec ?? null,
+      editorResetEpoch: this.state.editorResetEpoch + 1,
       dirty: false,
       editorError: null,
       conflict: false,
@@ -728,7 +770,7 @@ export class FullAppController {
       error: null,
     });
   }
-  setCandidate(input: unknown, debounce = false) {
+  setCandidate(input: unknown, debounce = false, preserveInputs = false) {
     this.editable();
     this.stopAutosave();
     try {
@@ -736,6 +778,8 @@ export class FullAppController {
       this.guidanceSequence++;
       this.emit({
         candidate,
+        editorResetEpoch:
+          this.state.editorResetEpoch + (preserveInputs ? 0 : 1),
         dirty: !same(candidate, this.state.app?.draft?.spec),
         editorError: null,
         review: null,
@@ -760,17 +804,18 @@ export class FullAppController {
     }
   }
   edit(edit: SemanticEdit, debounce = false) {
-    this.editable();
-    this.stopAutosave();
-    ensure(
-      this.state.candidate,
-      "invalid_input",
-      "Choose a template or create a candidate first.",
-    );
     try {
+      this.editable();
+      this.stopAutosave();
+      ensure(
+        this.state.candidate,
+        "invalid_input",
+        "Choose a template or create a candidate first.",
+      );
       this.setCandidate(
         applySemanticEdit(this.state.candidate, edit, this.options.newId),
         debounce,
+        true,
       );
     } catch (error) {
       this.emit({
@@ -865,12 +910,27 @@ export class FullAppController {
       this.fail(error, true);
     }
   }
-  async save() {
+  save(): Promise<void> {
+    if (this.saveTask) return this.saveTask;
+    if (this.state.busy) return Promise.resolve();
+    const task = Promise.resolve().then(() => this.performSave());
+    this.saveTask = task;
+    void task.then(
+      () => {
+        if (this.saveTask === task) this.saveTask = null;
+      },
+      () => {
+        if (this.saveTask === task) this.saveTask = null;
+      },
+    );
+    return task;
+  }
+  private async performSave() {
     if (this.state.busy) return;
     try {
       this.editable();
       ensure(
-        !this.state.editorError,
+        !this.state.editorError && this.editorInputsReady(),
         "invalid_edit",
         "Fix or discard the invalid local edit before saving.",
       );
@@ -899,12 +959,21 @@ export class FullAppController {
     }
   }
   async flush() {
-    if (this.state.busy) return false;
     this.stopAutosave();
-    await this.save();
+    if (this.saveTask) await this.saveTask;
+    else {
+      if (this.state.busy || !this.editorInputsReady()) return false;
+      await this.save();
+    }
     return (
+      !this.closed &&
+      this.host.lifetime.active &&
+      this.canBuild &&
+      !this.state.loading &&
+      !this.state.refreshRequired &&
       !this.state.dirty &&
       !this.state.editorError &&
+      this.editorInputsReady() &&
       !this.state.pending &&
       !this.state.busy &&
       !this.state.conflict
@@ -995,6 +1064,11 @@ export class FullAppController {
     if (this.state.busy) return;
     try {
       this.editable();
+      ensure(
+        !this.state.editorError && this.editorInputsReady(),
+        "invalid_edit",
+        "Fix or discard the invalid local edit before publishing.",
+      );
       const review = this.state.review,
         draft = this.state.app!.draft;
       ensure(
@@ -1265,6 +1339,7 @@ export class FullAppController {
     this.closed = true;
     this.preparedIdea = null;
     this.composerRequest = null;
+    this.editorInputGuards.clear();
     this.liveLeases.clear();
     this.sequence++;
     this.guidanceSequence++;
