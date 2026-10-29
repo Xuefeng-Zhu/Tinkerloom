@@ -1,3 +1,9 @@
+import {
+  assessClarification,
+  builtInClarification,
+  clarificationAccessFailure,
+  type ClarificationAssessment,
+} from "./clarification";
 import { StaticPreviewImagePreloader } from "../host/staticPreviewImages";
 import { staticPreviewImageIds } from "../runtime/previewImageAssets";
 import type { PreviewStaticImageAssets } from "../runtime/previewImageAssets";
@@ -85,7 +91,10 @@ export interface FullAppState {
   reviewSpec: AppSpec | null;
   runtimeOutdated: boolean;
   refreshRequired: boolean;
-  guidance: { question: string; options: string[] }[] | null;
+  guidance: ClarificationAssessment | null;
+  guidanceLoading: boolean;
+  preparedRequest: string | null;
+  generationRequest: string;
   previewStaticImageAssets: PreviewStaticImageAssets | undefined;
   previewImagesLoading: boolean;
   previewUnavailableAssetCount: number;
@@ -109,6 +118,9 @@ export class FullAppController {
     runtimeOutdated: false,
     refreshRequired: false,
     guidance: null,
+    guidanceLoading: false,
+    preparedRequest: null,
+    generationRequest: "",
     previewStaticImageAssets: undefined,
     previewImagesLoading: false,
     previewUnavailableAssetCount: 0,
@@ -118,6 +130,8 @@ export class FullAppController {
   private closed = false;
   private sequence = 0;
   private guidanceSequence = 0;
+  private preparedIdea: string | null = null;
+  private composerRequest: string | null = null;
   private autosave: ReturnType<typeof setTimeout> | null = null;
   readonly host: HostStorage;
   private journal: FullCommandJournal;
@@ -499,21 +513,27 @@ export class FullAppController {
     const failure = runtimeError(error, mutation);
     if (
       isRuntimeAccessFailure(failure) ||
+      failure.code === "session_changed" ||
       (accessRead && failure.code === "not_found") ||
       (accessRead && error instanceof BackendError && error.status === 404)
     ) {
       this.sequence++;
       this.guidanceSequence++;
       this.stopAutosave();
+      this.preparedIdea = null;
+      this.composerRequest = null;
       this.disposeRuntime();
       this.journal.dispose();
       this.journalSuspended = true;
       this.emit({
         app: null,
+        preparedRequest: null,
+        generationRequest: "",
         candidate: null,
         review: null,
         reviewSpec: null,
         guidance: null,
+        guidanceLoading: false,
         pending: null,
         pendingStatus: null,
         dirty: false,
@@ -552,6 +572,10 @@ export class FullAppController {
       !app.archived &&
       ["owner", "builder"].includes(app.role) &&
       app.capabilities.editDefinition === true;
+    if (!build) {
+      this.preparedIdea = null;
+      this.composerRequest = null;
+    }
     if (!this.canRecover(app)) {
       this.stopAutosave();
       this.guidanceSequence++;
@@ -613,15 +637,27 @@ export class FullAppController {
       !same(this.state.candidate, candidate) ||
       prior?.draft?.revision !== app.draft?.revision ||
       prior?.version?.id !== app.version?.id;
+    const clarificationChanged = candidateChanged || !build;
+    if (clarificationChanged) this.guidanceSequence++;
     this.emit({
       app,
       candidate,
+      preparedRequest: build ? this.preparedIdea : null,
+      generationRequest: build
+        ? (this.composerRequest ??
+          this.preparedIdea ??
+          app.generation?.requestText ??
+          "")
+        : "",
       editorError: build ? this.state.editorError : null,
       dirty: build && this.state.dirty && !acceptCandidate,
       conflict: staleDirty || (!acceptCandidate && this.state.conflict),
       review: candidateChanged ? null : this.state.review,
       reviewSpec: candidateChanged ? null : this.state.reviewSpec,
-      guidance: candidateChanged ? null : this.state.guidance,
+      guidance: clarificationChanged ? null : this.state.guidance,
+      guidanceLoading: clarificationChanged
+        ? false
+        : this.state.guidanceLoading,
       pending: this.canRecover(app) ? this.journal.pending : null,
       pendingStatus: this.canRecover(app) ? this.journal.status : null,
       runtimeOutdated: preserveRuntime && changedRuntime,
@@ -679,6 +715,7 @@ export class FullAppController {
       "A retained operation cannot be discarded.",
     );
     this.stopAutosave();
+    this.guidanceSequence++;
     this.emit({
       candidate: this.state.app?.draft?.spec ?? null,
       dirty: false,
@@ -687,6 +724,7 @@ export class FullAppController {
       review: null,
       reviewSpec: null,
       guidance: null,
+      guidanceLoading: false,
       error: null,
     });
   }
@@ -703,6 +741,7 @@ export class FullAppController {
         review: null,
         reviewSpec: null,
         guidance: null,
+        guidanceLoading: false,
         error: null,
       });
       if (debounce && this.state.dirty)
@@ -816,6 +855,7 @@ export class FullAppController {
       review: null,
       reviewSpec: null,
       guidance: null,
+      guidanceLoading: false,
     });
     try {
       await this.journal.prepare(request, context);
@@ -1003,6 +1043,9 @@ export class FullAppController {
         "invalid_input",
         "Describe the app in no more than 16 KiB.",
       );
+      this.composerRequest = request;
+      this.emit({ generationRequest: request });
+      this.clearPreparedIdea();
       await this.mutate(
         {
           op: "spec.generate",
@@ -1076,56 +1119,94 @@ export class FullAppController {
       this.fail(error);
     }
   }
-  async requestGuidance(request: string) {
+  /** Memory-only handoff from an explicitly created shell; never a generation command. */
+  prepareIdea(request: string) {
+    this.active();
+    ensure(
+      request.trim().length > 0 &&
+        new TextEncoder().encode(request).byteLength <= 16384,
+      "invalid_input",
+      "The prepared idea must fit 16 KiB.",
+    );
+    this.preparedIdea = request;
+    if (this.state.app && !this.canBuild) {
+      this.preparedIdea = null;
+      return false;
+    }
+    if (this.canBuild)
+      this.emit({
+        preparedRequest: request,
+        generationRequest: this.composerRequest ?? request,
+      });
+    return true;
+  }
+  setGenerationRequest(request: string) {
+    this.active();
+    ensure(this.canBuild, "forbidden", "Current builder access is required.");
+    this.composerRequest = request;
+    this.preparedIdea = null;
+    this.guidanceSequence++;
+    this.emit({
+      generationRequest: request,
+      preparedRequest: null,
+      guidance: null,
+      guidanceLoading: false,
+    });
+  }
+  clearPreparedIdea() {
+    this.preparedIdea = null;
+    this.emit({ preparedRequest: null });
+  }
+  async requestGuidance(request: string, startFromScratch = false) {
+    const sequence = ++this.guidanceSequence;
     try {
       this.editable();
-      ensure(
-        this.state.platform?.guidance,
-        "unavailable",
-        "Guidance is not configured.",
-      );
-      ensure(
-        request.length <= 2000 &&
-          new TextEncoder().encode(request).length <= 4000,
-        "invalid_input",
-        "Guidance requests must fit 2,000 characters and 4,000 bytes.",
-      );
-      const sequence = ++this.guidanceSequence;
-      this.emit({ error: null, guidance: null });
-      const response = row(
-        await this.options.transport({
-          op: "spec.guidance",
-          workspaceId: this.state.app!.workspaceId,
-          appId: this.options.scope.appId,
-          request,
-        }),
-      );
-      if (this.closed || sequence !== this.guidanceSequence) return;
-      ensure(
-        Array.isArray(response.questions) && response.questions.length <= 3,
-        "invalid_response",
-        "Guidance could not be read.",
-      );
-      const questions = response.questions.map((item) => {
-        const q = row(item);
-        ensure(
-          typeof q.question === "string" &&
-            q.question.length <= 2000 &&
-            Array.isArray(q.options) &&
-            q.options.every((v) => typeof v === "string" && v.length <= 2000),
-          "invalid_response",
-          "Guidance could not be read.",
-        );
-        return { question: q.question, options: q.options as string[] };
+      const mode =
+        this.state.candidate && !startFromScratch ? "edit" : "create";
+      this.emit({ error: null, guidance: null, guidanceLoading: true });
+      const assessment = await assessClarification({
+        request,
+        mode,
+        providerEnabled: this.state.platform?.guidance ?? null,
+        askProvider: () =>
+          this.options.transport({
+            op: "spec.guidance",
+            workspaceId: this.state.app!.workspaceId,
+            appId: this.options.scope.appId,
+            request,
+          }),
+        isAlive: () => !this.closed && this.host.lifetime.active,
+        isCurrent: () => sequence === this.guidanceSequence,
       });
-      this.emit({ guidance: questions });
+      if (this.closed || sequence !== this.guidanceSequence || !assessment)
+        return;
+      this.emit({ guidance: assessment, guidanceLoading: false });
     } catch (error) {
-      this.fail(error);
+      if (
+        this.closed ||
+        (sequence !== this.guidanceSequence &&
+          !clarificationAccessFailure(error))
+      )
+        return;
+      this.emit({ guidanceLoading: false });
+      this.fail(error, false, true);
     }
+  }
+  useBuiltInGuidance() {
+    if (!this.state.guidance || !this.canBuild) return;
+    const { requestText, mode } = this.state.guidance;
+    this.guidanceSequence++;
+    this.emit({
+      guidance: builtInClarification(requestText, mode, "optional"),
+      guidanceLoading: false,
+    });
   }
   invalidateGuidance(keepVisible = false) {
     this.guidanceSequence++;
-    if (!keepVisible) this.emit({ guidance: null });
+    this.emit({
+      guidanceLoading: false,
+      ...(!keepVisible ? { guidance: null } : {}),
+    });
   }
   async useLatestVersion() {
     if (this.runtime && !this.runtime.canLeave) {
@@ -1182,6 +1263,8 @@ export class FullAppController {
   dispose() {
     if (this.closed) return;
     this.closed = true;
+    this.preparedIdea = null;
+    this.composerRequest = null;
     this.liveLeases.clear();
     this.sequence++;
     this.guidanceSequence++;
@@ -1194,12 +1277,15 @@ export class FullAppController {
     this.state = {
       ...this.state,
       app: null,
+      preparedRequest: null,
+      generationRequest: "",
       candidate: null,
       editorError: null,
       review: null,
       reviewSpec: null,
       pending: null,
       guidance: null,
+      guidanceLoading: false,
     };
     this.listeners.clear();
   }

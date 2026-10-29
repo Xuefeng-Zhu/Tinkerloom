@@ -1,3 +1,9 @@
+import {
+  assessClarification,
+  builtInClarification,
+  clarificationAccessFailure,
+  type ClarificationAssessment,
+} from "./clarification";
 import { BackendError } from "../backend/errors";
 import { createHostStorage } from "../host/createHostStorage";
 import type { HostScope } from "../host/scope";
@@ -11,7 +17,14 @@ import {
 import type { RuntimeTransport } from "../runtime/types";
 import { freezeValidated } from "../runtime/immutable";
 import { FullCommandJournal, type RetainedFullCommand } from "./commandJournal";
-import { row, text, count, nullableText, manifest } from "./contracts";
+import {
+  row,
+  text,
+  count,
+  nullableText,
+  manifest,
+  platformCapabilities,
+} from "./contracts";
 import type { HostStorage } from "./FullAppController";
 
 export interface VersionSummary {
@@ -116,10 +129,16 @@ export interface WorkspaceOptions {
   newId: () => string;
   host?: HostStorage;
   onAccessFailure?: (code: string) => void;
+  onPreparedIdea?: (appId: string, request: string) => boolean;
 }
 export interface WorkspaceState {
   pinnedOnly: boolean;
   catalogLoaded: boolean;
+  accessLost: boolean;
+  plannedIdea: string;
+  guidance: ClarificationAssessment | null;
+  guidanceLoading: boolean;
+  createdIdeaStatus: "prepared" | "not-restored" | null;
   apps: LauncherApp[];
   drafts: PrivateDraftSummary[];
   cursor: string | null;
@@ -141,10 +160,21 @@ export class FullWorkspaceController {
   private closed = false;
   private sequence = 0;
   private historySequence = 0;
+  private guidanceSequence = 0;
+  private creationIdea: {
+    operationId: string;
+    appId: string;
+    requestText: string | null;
+  } | null = null;
   private listeners = new Set<() => void>();
   private state: WorkspaceState = {
     pinnedOnly: false,
     catalogLoaded: false,
+    accessLost: false,
+    plannedIdea: "",
+    guidance: null,
+    guidanceLoading: false,
+    createdIdeaStatus: null,
     apps: [],
     drafts: [],
     cursor: null,
@@ -207,19 +237,29 @@ export class FullWorkspaceController {
       "This account's workbench is closed.",
     );
   }
-  private fail(error: unknown, mutation = false) {
+  private fail(error: unknown, mutation = false, accessRead = false) {
     if (this.closed) return;
     const failure = runtimeError(error, mutation);
     if (
       isRuntimeAccessFailure(failure) ||
+      failure.code === "session_changed" ||
+      (accessRead && failure.code === "not_found") ||
       (error instanceof BackendError && error.status === 404)
     ) {
       this.sequence++;
       this.historySequence++;
+      this.guidanceSequence++;
+      this.creationIdea = null;
       this.journal.dispose();
       this.emit({
         apps: [],
         drafts: [],
+        guidance: null,
+        guidanceLoading: false,
+        createdAppId: null,
+        createdIdeaStatus: null,
+        accessLost: true,
+        plannedIdea: "",
         versions: [],
         historical: null,
         pending: null,
@@ -296,6 +336,7 @@ export class FullWorkspaceController {
         pendingStatus: this.journal.status,
         loading: false,
         catalogLoaded: true,
+        accessLost: false,
       });
     } catch (error) {
       if (sequence === this.sequence) this.fail(error);
@@ -382,6 +423,13 @@ export class FullWorkspaceController {
     }
   }
   private async transmit() {
+    const command = this.journal.pending;
+    const prepared =
+      this.creationIdea &&
+      command?.request.operationId === this.creationIdea.operationId &&
+      command.request.id === this.creationIdea.appId
+        ? this.creationIdea
+        : null;
     this.emit({
       busy: true,
       error: null,
@@ -404,7 +452,7 @@ export class FullWorkspaceController {
               "invalid_response",
               "The pin response did not confirm the original preference.",
             );
-            return { appId: null };
+            return { appId: null, createdShell: false };
           }
           const app = manifest(data.app, String(request.id));
           ensure(
@@ -412,13 +460,29 @@ export class FullWorkspaceController {
             "invalid_response",
             "The created app belongs to a different workspace.",
           );
-          return { appId: app.id };
+          return {
+            appId: app.id,
+            createdShell: request.op === "spec.createApp",
+          };
         },
       );
       this.active();
+      let createdIdeaStatus: WorkspaceState["createdIdeaStatus"] = null;
+      if (result.createdShell && result.appId) {
+        if (prepared?.requestText && this.options.onPreparedIdea) {
+          createdIdeaStatus = this.options.onPreparedIdea(
+            result.appId,
+            prepared.requestText,
+          )
+            ? "prepared"
+            : "not-restored";
+        } else if (!prepared) createdIdeaStatus = "not-restored";
+      }
+      this.creationIdea = null;
       this.emit({
         busy: false,
         pending: null,
+        createdIdeaStatus,
         pendingStatus: null,
         createdAppId: result.appId,
       });
@@ -427,14 +491,35 @@ export class FullWorkspaceController {
       this.fail(error, true);
     }
   }
-  private async mutate(request: Record<string, unknown>) {
+  private async mutate(
+    request: Record<string, unknown>,
+    preparedIdea: string | null = null,
+  ) {
     this.active();
+    ensure(
+      !this.state.accessLost,
+      "forbidden",
+      "Current workspace access is required.",
+    );
     ensure(
       !this.state.busy && !this.state.pending,
       "pending_command",
       "Resolve the retained operation first.",
     );
-    this.emit({ busy: true, error: null });
+    this.guidanceSequence++;
+    if (request.op === "spec.createApp") {
+      this.creationIdea = {
+        operationId: String(request.operationId),
+        appId: String(request.id),
+        requestText: preparedIdea,
+      };
+    }
+    this.emit({
+      busy: true,
+      error: null,
+      guidance: null,
+      guidanceLoading: false,
+    });
     try {
       await this.journal.prepare(request, {
         workspaceId: this.options.workspaceId,
@@ -458,15 +543,23 @@ export class FullWorkspaceController {
       this.fail(error);
     }
   }
-  async create(name: string) {
+  async create(name: string, preparedIdea = "") {
     try {
-      await this.mutate({
-        op: "spec.createApp",
-        id: this.options.newId(),
-        workspaceId: this.options.workspaceId,
-        name,
-        operationId: this.options.newId(),
-      });
+      ensure(
+        new TextEncoder().encode(preparedIdea).byteLength <= 16384,
+        "invalid_input",
+        "The prepared idea must fit 16 KiB.",
+      );
+      await this.mutate(
+        {
+          op: "spec.createApp",
+          id: this.options.newId(),
+          workspaceId: this.options.workspaceId,
+          name,
+          operationId: this.options.newId(),
+        },
+        preparedIdea.trim() ? preparedIdea : null,
+      );
     } catch (error) {
       this.fail(error);
     }
@@ -519,6 +612,7 @@ export class FullWorkspaceController {
   async acknowledgeRejection() {
     try {
       await this.journal.acknowledgeRejection();
+      this.creationIdea = null;
       this.emit({ pending: null, pendingStatus: null, error: null });
       await this.load();
     } catch (error) {
@@ -526,7 +620,71 @@ export class FullWorkspaceController {
     }
   }
   clearCreated() {
-    this.emit({ createdAppId: null });
+    this.emit({ createdAppId: null, createdIdeaStatus: null });
+  }
+  setPlannedIdea(request: string) {
+    this.active();
+    if (this.state.accessLost) return;
+    this.guidanceSequence++;
+    this.emit({ plannedIdea: request, guidance: null, guidanceLoading: false });
+  }
+  async requestGuidance(request: string) {
+    const sequence = ++this.guidanceSequence;
+    try {
+      this.active();
+      ensure(
+        !this.state.accessLost,
+        "forbidden",
+        "Current workspace access is required.",
+      );
+      ensure(
+        !this.state.busy && !this.state.pending,
+        "pending_command",
+        "Resolve the retained workbench operation before asking for help.",
+      );
+      this.emit({ error: null, guidance: null, guidanceLoading: true });
+      const assessment = await assessClarification({
+        request,
+        mode: "create",
+        providerEnabled: async () =>
+          platformCapabilities(
+            await this.options.transport({ op: "spec.capabilities" }),
+          ).guidance,
+        askProvider: () =>
+          this.options.transport({
+            op: "spec.guidance",
+            workspaceId: this.options.workspaceId,
+            request,
+          }),
+        isAlive: () => !this.closed && this.host.lifetime.active,
+        isCurrent: () => sequence === this.guidanceSequence,
+      });
+      if (this.closed || sequence !== this.guidanceSequence || !assessment)
+        return;
+      this.emit({ guidance: assessment, guidanceLoading: false });
+    } catch (error) {
+      if (
+        this.closed ||
+        (sequence !== this.guidanceSequence &&
+          !clarificationAccessFailure(error))
+      )
+        return;
+      this.emit({ guidanceLoading: false });
+      this.fail(error, false, true);
+    }
+  }
+  invalidateGuidance() {
+    this.guidanceSequence++;
+    this.emit({ guidance: null, guidanceLoading: false });
+  }
+  useBuiltInGuidance() {
+    if (!this.state.guidance) return;
+    const { requestText } = this.state.guidance;
+    this.guidanceSequence++;
+    this.emit({
+      guidance: builtInClarification(requestText, "create", "optional"),
+      guidanceLoading: false,
+    });
   }
   async history(appId: string, more = false) {
     this.active();
@@ -614,12 +772,19 @@ export class FullWorkspaceController {
   dispose() {
     if (this.closed) return;
     this.closed = true;
+    this.creationIdea = null;
+    this.guidanceSequence++;
     this.sequence++;
     this.historySequence++;
     this.journal.dispose();
     this.host.lifetime.dispose();
     this.state = {
       ...this.state,
+      guidance: null,
+      guidanceLoading: false,
+      plannedIdea: "",
+      createdAppId: null,
+      createdIdeaStatus: null,
       apps: [],
       drafts: [],
       pending: null,

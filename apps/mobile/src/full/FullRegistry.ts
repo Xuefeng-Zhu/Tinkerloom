@@ -10,7 +10,7 @@ import type { NotificationsServices } from "../notifications/NotificationsContex
 import type { HostScope } from "../host/scope";
 import type { RuntimeTransport } from "../runtime/types";
 import { ensure } from "../runtime/errors";
-import { FullAppController } from "./FullAppController";
+import { FullAppController, type HostStorage } from "./FullAppController";
 import { createLiveRuntime } from "./createLiveRuntime";
 import { FullWorkspaceController } from "./FullWorkspaceController";
 
@@ -79,6 +79,7 @@ export class FullRegistry {
       readSession: () => AccountSession;
       onUnauthenticated: () => void;
       openNotification?: (target: VerifiedNotificationTarget) => void;
+      hostFactory?: (scope: HostScope) => HostStorage;
     },
   ) {}
 
@@ -133,6 +134,11 @@ export class FullRegistry {
     if (!app) {
       app = new FullAppController({
         scope: { ...this.options.scope, accountId, appId },
+        host: this.options.hostFactory?.({
+          ...this.options.scope,
+          accountId,
+          appId,
+        }),
         transport: this.transport(expected),
         newId: () => this.options.backend.newId(),
         adapterFactory: (manifest, transport, context) => {
@@ -166,8 +172,23 @@ export class FullRegistry {
     if (!workspace) {
       workspace = new FullWorkspaceController({
         scope: { ...this.options.scope, accountId },
+        host: this.options.hostFactory?.({
+          ...this.options.scope,
+          accountId,
+          appId: `workspace_${workspaceId}`,
+        }),
         workspaceId,
         transport: this.transport(expected),
+        onPreparedIdea: (appId, request) => {
+          this.session(accountId);
+          ensure(
+            this.workspaces.get(workspaceId) === workspace &&
+              sessionKey(this.options.readSession()) === sessionKey(expected),
+            "session_changed",
+            "This prepared idea belongs to a closed account session.",
+          );
+          return this.app(accountId, appId).prepareIdea(request);
+        },
         newId: () => this.options.backend.newId(),
       });
       this.workspaces.set(workspaceId, workspace);

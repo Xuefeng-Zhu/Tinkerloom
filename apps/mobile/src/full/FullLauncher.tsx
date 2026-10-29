@@ -19,6 +19,7 @@ import type { FullWorkspaceController } from "./FullWorkspaceController";
 import { fullTemplates } from "./catalog";
 import { IsolatedPreview } from "./IsolatedPreview";
 import { Card, Toggle, styles } from "./ui";
+import { ClarificationPanel } from "./ClarificationPanel";
 export interface FullLauncherProps {
   controller: FullWorkspaceController;
   onOpenApp: (id: string) => void;
@@ -46,13 +47,16 @@ export function FullLauncher({
   useEffect(() => {
     void controller.load();
   }, [controller]);
-  const locked = state.busy || !!state.pending;
+  const idea = state.plannedIdea;
+  const setIdea = (value: string) => controller.setPlannedIdea(value);
+  const locked = state.busy || !!state.pending || state.accessLost;
   const firstTime =
     state.catalogLoaded &&
+    !state.accessLost &&
     !state.pinnedOnly &&
     state.apps.length === 0 &&
     state.drafts.length === 0;
-  const showCreation = creationOpen || firstTime;
+  const showCreation = (creationOpen || firstTime) && !state.accessLost;
   const scrollToCreation = () => {
     scroll.current?.scrollTo({ y: creationOffset.current, animated: true });
   };
@@ -138,7 +142,8 @@ export function FullLauncher({
               Original workspace: {String(state.pending.context.workspaceId)}.
               The original app ID, template or source version, and operation
               remain locked until their outcome is resolved. Leaving does not
-              undo a request.
+              undo a request. Optional planning text stays only in this account
+              session and is not restored after signing out or restarting.
             </Text>
             {state.pendingStatus === "uncertain" && (
               <Button
@@ -166,9 +171,23 @@ export function FullLauncher({
               The new app contains its own definition. No records, grants, jobs,
               claims or reminder approvals were copied.
             </Text>
+            {state.createdIdeaStatus === "prepared" && (
+              <Notice text="Your planned idea is ready in the new builder for review. It has not been generated or published." />
+            )}
+            {state.createdIdeaStatus === "not-restored" && (
+              <Notice text="The app was recovered, but optional planning text is memory-only and was not restored. Enter your idea in the builder before generating." />
+            )}
             <Button
-              label="Open created app"
-              onPress={() => onOpenApp(state.createdAppId!)}
+              label={
+                state.createdIdeaStatus
+                  ? "Open created builder"
+                  : "Open created app"
+              }
+              onPress={() =>
+                state.createdIdeaStatus && onResumeDraft
+                  ? onResumeDraft(state.createdAppId!, "appspec.v1")
+                  : onOpenApp(state.createdAppId!)
+              }
             />
             <Button
               label="Dismiss"
@@ -326,6 +345,7 @@ export function FullLauncher({
             {!showCreation && (
               <Button
                 label="Show creation options"
+                disabled={locked}
                 variant="secondary"
                 onPress={() => setCreationOpen(true)}
               />
@@ -339,12 +359,47 @@ export function FullLauncher({
                   maxLength={120}
                   onChangeText={setName}
                 />
+                <Field
+                  label="Describe an idea (optional)"
+                  multiline
+                  value={idea}
+                  editable={!locked}
+                  maxLength={16384}
+                  onChangeText={(value) => {
+                    setIdea(value);
+                    controller.invalidateGuidance();
+                  }}
+                  hint="Planning text stays in this account session. Help never creates an app. Creating a shell carries the original submitted idea to its builder for review; generation requires a separate action."
+                />
+                <Button
+                  label="Help me clarify this idea"
+                  variant="secondary"
+                  disabled={locked || state.guidanceLoading || !idea.trim()}
+                  onPress={() => {
+                    void controller.requestGuidance(idea);
+                  }}
+                />
+                <ClarificationPanel
+                  assessment={state.guidance}
+                  loading={state.guidanceLoading}
+                  currentRequest={idea}
+                  disabled={locked}
+                  onUse={(value) => {
+                    setIdea(value);
+                    controller.invalidateGuidance();
+                  }}
+                  onContinue={(value) => {
+                    setIdea(value);
+                    controller.invalidateGuidance();
+                  }}
+                  onBuiltIn={() => controller.useBuiltInGuidance()}
+                />
                 <View style={styles.row}>
                   <Button
                     label="Create private builder shell"
                     disabled={locked || !name.trim()}
                     onPress={() => {
-                      void controller.create(name);
+                      void controller.create(name, idea);
                     }}
                   />
                   <Button

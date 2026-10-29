@@ -1,0 +1,27 @@
+# Optional idea clarification
+
+The workbench creation section has an optional idea composer. **Help me clarify this idea** checks only the selected workspace; it does not allocate an app ID, begin a shell, enqueue generation, save a definition or publish. The existing builder's **Help me clarify** uses the same flow with its current author context. Typing sends no provider request.
+
+Provider guidance is used only after capability confirmation and when the request fits both 2,000 characters and 4,000 UTF-8 bytes. Longer requests, unavailable configuration, quota/network failure or unusable provider questions open clearly labeled built-in choices. These local questions need no provider keys or spend. Permission/session/missing-app errors remain authority failures and clear private state rather than becoming a local success.
+
+Built-in create/edit questions and provider validation preserve the original `legacy_appnest/appnest_flutter/lib/features/builder/idea_guidance.dart` behavior. A usable nonempty provider answer has two or three unique questions and three or four unique choices each. An explicit empty answer shows **Ready to continue**, with a continuation and optional local questions; it is never an empty, unexplained panel.
+
+Each question allows one local selection and can be skipped. Selections leave the original request byte-for-byte unchanged. **Use selections** adds the selected question/answer pairs to that original text as an ordinary editable request and returns to the composer. **Continue with original request** returns the exact original text. Neither action creates an app or generates. Applying choices checks the 16 KiB generation input bound; an oversized combination shows a local notice without changing the request. Editing the request invalidates prior questions/selections. Old successful assessments and ordinary failures cannot attach after a request, author candidate, workspace controller or account scope changes.
+
+## Explicit shell-to-builder handoff
+
+**Create private builder shell** is a separate action. It captures the submitted name and optional idea. The supported creation RPC and encrypted durable command retain only their original contract; no prompt field is added to the RPC, journal or URL. The idea association lives in scoped memory under that exact app/operation ID. An unknown creation outcome can be retried explicitly, carrying only the original associated idea, even if a different idea was typed later. No automatic replay occurs.
+
+After the creation receipt is confirmed and the durable command has been cleared, the account registry checks its captured account epoch and workspace-controller identity, then supplies the idea to the created app's controller. The app exposes that prefill only after an authorized builder/owner manifest. **Open created builder** uses the existing builder navigation callback; no prompt is encoded in navigation. The user reviews/edits the prefill and chooses **Generate private preview** separately. Provider availability still controls whether generation is enabled. An older server job cannot overwrite a different unsent composer.
+
+Unsent planning and builder composer text are memory-only controller state. They survive navigation within that account session but are cleared synchronously on authority loss or account disposal. They are not saved drafts. Signing out, restarting the process or reconstructing a controller loses the unsent idea. Recovered creation requests explicitly say when that planning text was not restored and never substitute a newly entered idea. No claim is made that the prefill is persisted before an explicit generation submission.
+
+`FullRegistry.hostFactory` is an optional trusted host injection used by offline account/registry tests. The normal registry still constructs the existing encrypted browser/native storage. The injected in-memory test port is not proof of durable browser or native storage.
+
+## Verification and remaining proof
+
+Twenty-eight new local groups cover character/byte limits, strict DTO cleanup, local create/edit fallback, zero-question ready, one-choice application and original preservation, stale responses/failures, authoritative 401/403/404 clearing, workspace-only wire envelopes, exact unknown-create handoff/reopen behavior, actual registry account fencing, explicit generation, preservation of unsent text and actual RNWeb panel output. The combined isolated client snapshot passes all 535 tests, typecheck, lint and owned-file formatting.
+
+No Cloud request, real provider call/spend, persistent source write, device operation or native build was performed for this patch. After integration, verify the browser sequence: describe an idea; request clarification with provider off; select/change/skip answers; continue unchanged or use selections; explicitly create the shell; open its builder; check the prefill; confirm no job is created until Generate is selected and configured. Also check account switching and keyboard/screen-reader behavior. Browser interaction and native assistive-technology proof are separate from the local tests.
+
+Source contracts: `appwrite_backend/WORKERS.md`, `lib/generation.dart` (`spec.guidance` workspace authorization and input bounds), and `legacy_appnest/docs/CREATION_FLOW.md` optional clarification semantics. Existing Expo58/RN0.88 View/Text/Pressable/TextInput APIs are reused; no dependencies, native configuration, provider keys or operational capability flags change.

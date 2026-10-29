@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { Button } from "../components/Button";
 import { Field } from "../components/Field";
 import { Notice } from "../components/Notice";
 import type { FullAppController, FullAppState } from "./FullAppController";
 import { Card, Toggle, styles } from "./ui";
+import { ClarificationPanel } from "./ClarificationPanel";
 export function GenerationPanel({
   controller,
   state,
@@ -12,18 +13,11 @@ export function GenerationPanel({
   controller: FullAppController;
   state: FullAppState;
 }) {
-  const [request, setRequest] = useState(""),
-    [scratch, setScratch] = useState(false);
-  const previous = useRef<string | null>(null);
+  const [scratch, setScratch] = useState(false);
+  const request = state.generationRequest;
   const job = state.app?.generation,
     active =
       !!job && ["queued", "generating", "validating"].includes(job.status);
-  useEffect(() => {
-    if (job && job.id !== previous.current) {
-      previous.current = job.id;
-      setRequest(job.requestText);
-    }
-  }, [job]);
   useEffect(() => {
     if (!active) return;
     const timer = setInterval(() => {
@@ -31,7 +25,9 @@ export function GenerationPanel({
     }, 4000);
     return () => clearInterval(timer);
   }, [controller, active, job?.id]);
-  const locked = state.busy || !!state.pending || !controller.canBuild;
+  const locked =
+    state.busy || !!state.pending || state.loading || !controller.canBuild;
+  if (!controller.canBuild) return null;
   return (
     <Card title={state.candidate ? "Refine with AI" : "Describe your app"}>
       <Text style={styles.body}>
@@ -45,6 +41,19 @@ export function GenerationPanel({
           <Notice text="AI generation is not configured on this backend. Start from a template or use the manual editor." />
         )
       )}
+      {state.preparedRequest && (
+        <Notice text="Your planned idea was carried into this builder in memory only. Review or edit it, then choose Generate explicitly. It is not saved until you submit a generation request." />
+      )}
+      {state.preparedRequest && request !== state.preparedRequest && (
+        <Button
+          label="Use prepared idea"
+          variant="secondary"
+          disabled={locked}
+          onPress={() =>
+            controller.setGenerationRequest(state.preparedRequest!)
+          }
+        />
+      )}
       <Field
         label="What would you like to build or change?"
         multiline
@@ -52,17 +61,19 @@ export function GenerationPanel({
         editable={!locked}
         maxLength={16384}
         onChangeText={(value) => {
-          setRequest(value);
-          controller.invalidateGuidance();
+          controller.setGenerationRequest(value);
         }}
-        hint="Your request goes to the backend provider. Live records and device information are not included."
+        hint="Generate and provider clarification send this text only when selected. Built-in questions stay local. Live records and device information are not included."
       />
       {state.candidate && (
         <Toggle
           label="Start a fresh candidate from this request"
           value={scratch}
           disabled={locked}
-          onChange={setScratch}
+          onChange={(value) => {
+            setScratch(value);
+            controller.invalidateGuidance();
+          }}
         />
       )}
       <View style={styles.row}>
@@ -78,36 +89,25 @@ export function GenerationPanel({
         <Button
           label="Help me clarify"
           variant="secondary"
-          disabled={
-            locked ||
-            !state.platform?.guidance ||
-            !request.trim() ||
-            request.length > 2000
-          }
+          disabled={locked || state.guidanceLoading || !request.trim()}
           onPress={() => {
-            void controller.requestGuidance(request);
+            void controller.requestGuidance(request, scratch);
           }}
         />
       </View>
-      {state.guidance?.map((q, i) => (
-        <View key={`${i}:${q.question}`} style={{ gap: 8 }}>
-          <Text style={styles.body}>{q.question}</Text>
-          <View style={styles.row}>
-            {q.options.map((answer, index) => (
-              <Button
-                key={`${index}:${answer}`}
-                label={answer}
-                variant="secondary"
-                disabled={locked}
-                onPress={() => {
-                  setRequest((value) => `${value}\n${q.question}\n${answer}`);
-                  controller.invalidateGuidance(true);
-                }}
-              />
-            ))}
-          </View>
-        </View>
-      ))}
+      <ClarificationPanel
+        assessment={state.guidance}
+        loading={state.guidanceLoading}
+        currentRequest={request}
+        disabled={locked}
+        onUse={(value) => {
+          controller.setGenerationRequest(value);
+        }}
+        onContinue={(value) => {
+          controller.setGenerationRequest(value);
+        }}
+        onBuiltIn={() => controller.useBuiltInGuidance()}
+      />
       {job && (
         <View style={{ gap: 8 }}>
           <Text accessibilityLiveRegion="polite" style={styles.title}>
