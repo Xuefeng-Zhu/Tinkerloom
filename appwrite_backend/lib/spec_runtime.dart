@@ -385,6 +385,7 @@ extension _SpecRuntime on PlatformService {
       },
       requestBytes: _specRequestBytes,
       responseBytes: _specResponseBytes,
+      retryConfirmedAborts: true,
     );
   }
 
@@ -559,6 +560,7 @@ extension _SpecRuntime on PlatformService {
       },
       requestBytes: _specRequestBytes,
       responseBytes: _specResponseBytes,
+      retryConfirmedAborts: true,
     );
   }
 

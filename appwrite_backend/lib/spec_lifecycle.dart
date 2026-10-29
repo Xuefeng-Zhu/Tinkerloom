@@ -623,35 +623,42 @@ extension _SpecLifecycle on PlatformService {
     final expected = _revision(input['expectedRevision']);
     if (input['pinned'] is! bool)
       throw const ServiceException('invalid_request', 400);
-    return _mutate(actor, input, 'read', (tx, access) async {
-      _publishedOrOwner(access);
-      final old = await _ownShortcut(actor, access, tx);
-      if ((old?['revision'] ?? 0) != expected || expected >= 2147483646)
-        throw const ServiceException('revision_conflict', 409);
-      final id = _identity('k', [access.app[r'$id'] as String, actor]);
-      final data = {
-        'workspaceId': access.app['workspaceId'],
-        'appId': access.app[r'$id'],
-        'actorId': actor,
-        'pinned': input['pinned'],
-        'revision': expected + 1,
-        'updatedAt': clock().toUtc().toIso8601String(),
-      };
-      if (old == null) {
-        await store.create('shortcuts', id, data, transactionId: tx);
-      } else {
-        await store.update('shortcuts', id, data, transactionId: tx);
-      }
-      // A shortcut is actor-private preference state, not a business mutation or
-      // an effect-enrollment event. Its exact private receipt commits atomically.
-      return {
-        'shortcut': {
+    return _mutate(
+      actor,
+      input,
+      'read',
+      (tx, access) async {
+        _publishedOrOwner(access);
+        final old = await _ownShortcut(actor, access, tx);
+        if ((old?['revision'] ?? 0) != expected || expected >= 2147483646)
+          throw const ServiceException('revision_conflict', 409);
+        final id = _identity('k', [access.app[r'$id'] as String, actor]);
+        final data = {
+          'workspaceId': access.app['workspaceId'],
           'appId': access.app[r'$id'],
+          'actorId': actor,
           'pinned': input['pinned'],
           'revision': expected + 1,
-        },
-      };
-    }, writable: false);
+          'updatedAt': clock().toUtc().toIso8601String(),
+        };
+        if (old == null) {
+          await store.create('shortcuts', id, data, transactionId: tx);
+        } else {
+          await store.update('shortcuts', id, data, transactionId: tx);
+        }
+        // A shortcut is actor-private preference state, not a business mutation or
+        // an effect-enrollment event. Its exact private receipt commits atomically.
+        return {
+          'shortcut': {
+            'appId': access.app[r'$id'],
+            'pinned': input['pinned'],
+            'revision': expected + 1,
+          },
+        };
+      },
+      writable: false,
+      retryConfirmedAborts: true,
+    );
   }
 
   spec.AppSpec _withoutAssets(spec.AppSpec source) {

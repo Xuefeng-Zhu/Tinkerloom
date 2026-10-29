@@ -174,7 +174,7 @@ extension _Collaboration on PlatformService {
         'acceptedAt': null,
       }, transactionId: tx);
       return {'invitation': _publicInvitation(row)};
-    });
+    }, retryConfirmedAborts: true);
   }
 
   Future<(Row, AppAccess)> _invitationContext(
@@ -420,17 +420,24 @@ extension _Collaboration on PlatformService {
   Future<Row> _revokeInvitation(String actor, Row input) async {
     _inputKeys(input, {'op', 'appId', 'invitationId', 'operationId'});
     final id = _validId(input['invitationId']);
-    return _mutate(actor, input, 'share', (tx, access) async {
-      final row = await store.get('invitations', id, transactionId: tx);
-      if (row == null ||
-          row['appId'] != access.app[r'$id'] ||
-          row['workspaceId'] != access.app['workspaceId'])
-        throw const ServiceException('not_found', 404);
-      final updated = await store.update('invitations', id, {
-        'revoked': true,
-      }, transactionId: tx);
-      return {'invitation': _publicInvitation(updated)};
-    }, writable: false);
+    return _mutate(
+      actor,
+      input,
+      'share',
+      (tx, access) async {
+        final row = await store.get('invitations', id, transactionId: tx);
+        if (row == null ||
+            row['appId'] != access.app[r'$id'] ||
+            row['workspaceId'] != access.app['workspaceId'])
+          throw const ServiceException('not_found', 404);
+        final updated = await store.update('invitations', id, {
+          'revoked': true,
+        }, transactionId: tx);
+        return {'invitation': _publicInvitation(updated)};
+      },
+      writable: false,
+      retryConfirmedAborts: true,
+    );
   }
 
   Future<Row> _listMembers(String actor, Row input) async {
@@ -502,35 +509,42 @@ extension _Collaboration on PlatformService {
       throw const ServiceException('invalid_request', 400);
     final role = input['role'] == null ? null : _role(input['role']);
     final expected = _revision(input['expectedRevision']);
-    return _mutate(actor, input, 'share', (tx, access) async {
-      if (target == access.app['ownerId'])
-        throw const ServiceException('forbidden', 403);
-      final grant = await _grant(
-        access.app[r'$id'] as String,
-        target,
-        transactionId: tx,
-      );
-      if (grant == null ||
-          grant['appId'] != access.app[r'$id'] ||
-          grant['workspaceId'] != access.app['workspaceId'] ||
-          grant['actorId'] != target)
-        throw const ServiceException('not_found', 404);
-      if (grant['revision'] != expected)
-        throw const ServiceException('revision_conflict', 409);
-      if (expected >= 2147483646)
-        throw const ServiceException('revision_conflict', 409);
-      final row = await store.update('grants', grant[r'$id'] as String, {
-        'role': role ?? grant['role'],
-        'revoked': role == null,
-        'revision': expected + 1,
-      }, transactionId: tx);
-      return {
-        'member': {
-          'actorId': target,
-          'role': role,
-          'revision': row['revision'],
-        },
-      };
-    }, writable: role != null);
+    return _mutate(
+      actor,
+      input,
+      'share',
+      (tx, access) async {
+        if (target == access.app['ownerId'])
+          throw const ServiceException('forbidden', 403);
+        final grant = await _grant(
+          access.app[r'$id'] as String,
+          target,
+          transactionId: tx,
+        );
+        if (grant == null ||
+            grant['appId'] != access.app[r'$id'] ||
+            grant['workspaceId'] != access.app['workspaceId'] ||
+            grant['actorId'] != target)
+          throw const ServiceException('not_found', 404);
+        if (grant['revision'] != expected)
+          throw const ServiceException('revision_conflict', 409);
+        if (expected >= 2147483646)
+          throw const ServiceException('revision_conflict', 409);
+        final row = await store.update('grants', grant[r'$id'] as String, {
+          'role': role ?? grant['role'],
+          'revoked': role == null,
+          'revision': expected + 1,
+        }, transactionId: tx);
+        return {
+          'member': {
+            'actorId': target,
+            'role': role,
+            'revision': row['revision'],
+          },
+        };
+      },
+      writable: role != null,
+      retryConfirmedAborts: true,
+    );
   }
 }

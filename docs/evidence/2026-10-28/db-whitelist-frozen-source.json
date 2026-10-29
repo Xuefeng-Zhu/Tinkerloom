@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "stage": "/private/tmp/tinkerloom-db-whitelist-dm_wba2i/package",
+  "checkedBackendRoot": "/private/tmp/tinkerloom-db-whitelist-dm_wba2i",
+  "baselineSourceCommit": "1b6d8a52b4ab486492ee01d4caf554db5cb9159a",
+  "files": [
+    {
+      "path": "appwrite_backend/lib/errors.dart",
+      "baseSha256": "9586bb3fa2df552e74421c5d50924c3a5e7e58f099e5cc683e533da612c766a5",
+      "sha256": "36317d307b7df4cfeaa3a7c87f126cc3d4def1c045c847883bbc3e1304057a98",
+      "bytes": 1373
+    },
+    {
+      "path": "appwrite_backend/lib/rest.dart",
+      "baseSha256": "33dcff6f0621be956f9a17bcf4abbc4f6ecc88b751963cb540e3277b27fc42ce",
+      "sha256": "53d8a6641bd6b4ebd8af42f180ce0b3e4dd8ca4c42e67c88a22adaa7285e4540",
+      "bytes": 8531
+    },
+    {
+      "path": "appwrite_backend/lib/service.dart",
+      "baseSha256": "2ce60f9ffc19e75f6a11497cd9210122306c46438b4ffc127210f8d1470c99df",
+      "sha256": "4d7b568eedd47c848d12468d48619ac40f2c37ad5b3361852d0c52e0cb874d60",
+      "bytes": 27438
+    },
+    {
+      "path": "appwrite_backend/lib/collaboration.dart",
+      "baseSha256": "f73f55fab6314358bc18e4bc683613d770ae783c9a90b8981ad481fd00ddb69f",
+      "sha256": "218a8096a74ea9767d2a35ca44dd5201459484a2fb7197969ea9672bedf98a0e",
+      "bytes": 19132
+    },
+    {
+      "path": "appwrite_backend/lib/spec_runtime.dart",
+      "baseSha256": "815b458a70f581278cd9fb7939cf1f0fa4a6f4974067326e9a5db28c9c5322b8",
+      "sha256": "f39425e3794587496540b7825d0d48d251d5b965b2ab53e527a93f12f4897ca6",
+      "bytes": 24049
+    },
+    {
+      "path": "appwrite_backend/lib/main.dart",
+      "baseSha256": "0b952b8f0307851ac4f536ad53f1656c37a257c5aa2a2975309eaac66018fab6",
+      "sha256": "55a4283f2f579ddeeecc747dd3cfebfa109ea63d60119a8decd55cf19013c016",
+      "bytes": 4747
+    },
+    {
+      "path": "appwrite_backend/lib/spec_actions.dart",
+      "baseSha256": "d0047577d2f0632aae48efbb350ae8266442eb6d1c4769618827e3272095c538",
+      "sha256": "0540c4d89d2067c4dd5b0876eeaf74e50a2c8d2719587dc90ca2db3a98e8131c",
+      "bytes": 17386
+    },
+    {
+      "path": "appwrite_backend/lib/spec_lifecycle.dart",
+      "baseSha256": "67046f48ec9b7201c77e8645471952109fadc7e853a8288fb5b7774ebc3cc54a",
+      "sha256": "6b7314ad8c70fbace7f131ea5fd1827d6a26512ca323cfbda7d83033cbfadad9",
+      "bytes": 29168
+    },
+    {
+      "path": "appwrite_backend/lib/inbox.dart",
+      "baseSha256": "a27d2b0807fdeb0413b56644c69730ca7db94873c9b65762ef6af4e774cf8479",
+      "sha256": "0ad9a17b4612bdd2df12ff3a05486bb9947ac55a8bca0024534fbf716db67782",
+      "bytes": 6985
+    },
+    {
+      "path": "appwrite_backend/test/confirmed_abort_test.dart",
+      "baseSha256": "2405bd94caad0cab061cda0a313b5e237d7160f6278535e4db1c4aab418c8fa0",
+      "sha256": "29ad7ebed252cf19e874e1c35d9173e1368dc1d253dda43eabd9ce6d3deb8534",
+      "bytes": 31050
+    },
+    {
+      "path": "appwrite_backend/CONFIRMED_ABORTS.md",
+      "baseSha256": "53baf85b80ec0439cd516948dfc6404dbc75f62e4da021b644e6f6fb0df13a39",
+      "sha256": "1df22591f8152a29e42ef2013aa606594d7dcedc6cbf1ab956f8545a0db834ca",
+      "bytes": 7943
+    },
+    {
+      "path": "appwrite_backend/test/db_mutation_retry_test.dart",
+      "baseSha256": null,
+      "sha256": "509f34eadd07374bd9891b9cd3d850c39eaed05e9bcb0997c5af15cd03e6e946",
+      "bytes": 20308
+    }
+  ],
+  "sourceSha256": "62a10c9a39d85357d5200933ab7229c21198747531d4929853cc11f9f7242bc3",
+  "eligibleOperations": [
+    "spec.instantiate(template only)",
+    "acceptInvitation",
+    "createInvitation",
+    "spec.saveDraft",
+    "spec.publish",
+    "setGrant",
+    "revokeInvitation",
+    "archiveApp",
+    "spec.setPinned",
+    "spec.readNotification"
+  ],
+  "specExecuteAllowedCapabilities": [
+    "records.create.v1",
+    "records.patch.v1",
+    "assignment.assign.v1",
+    "workflow.transition.v1",
+    "capacity.configure.v1",
+    "capacity.claim.v1",
+    "capacity.release.v1"
+  ],
+  "genericDefault": false,
+  "strictCommitClassifierChanged": false,
+  "stagingRollbackRecoveryImplemented": false,
+  "diagnostics": {
+    "flag": "PLATFORM_TRANSACTION_DIAGNOSTICS=true",
+    "defaultEnabled": false,
+    "maxEventsPerExecution": 12,
+    "prefix": "transaction_diagnostic:",
+    "fixedEnumOnly": true
+  },
+  "newScopes": [],
+  "newSchema": [],
+  "newPublicFields": [],
+  "cloudRequestsByAuthor": 0,
+  "persistentEditsByAuthor": 0
+}

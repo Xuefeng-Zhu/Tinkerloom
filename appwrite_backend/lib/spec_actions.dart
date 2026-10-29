@@ -1,5 +1,15 @@
 part of 'service.dart';
 
+const _dbOnlyActionCapabilities = {
+  'records.create.v1',
+  'records.patch.v1',
+  'assignment.assign.v1',
+  'workflow.transition.v1',
+  'capacity.configure.v1',
+  'capacity.claim.v1',
+  'capacity.release.v1',
+};
+
 extension _SpecActions on PlatformService {
   bool _specAllowed(
     AppAccess access,
@@ -294,6 +304,8 @@ extension _SpecActions on PlatformService {
       _specEngine(access);
       final historical = await _specVersion(access, versionId, tx);
       final action = historical.definition.action(actionId);
+      if (!_dbOnlyActionCapabilities.contains(action.capability))
+        throw const ServiceException('unsupported_runtime', 400);
       if (!_specAllowed(access, historical.definition, action, writable: false))
         throw const ServiceException('forbidden', 403);
     }
@@ -461,6 +473,7 @@ extension _SpecActions on PlatformService {
       requestBytes: _specRequestBytes,
       responseBytes: _specResponseBytes,
       authorize: authorize,
+      retryConfirmedAborts: true,
     );
   }
 }

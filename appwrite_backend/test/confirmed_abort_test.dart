@@ -25,6 +25,8 @@ Future<void> transportCase({
   bool terminalTimeout = false,
   bool commit = true,
   bool staging = false,
+  List<TransactionDiagnostic>? events,
+  bool throwingLogger = false,
   required Matcher expected,
 }) async {
   final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
@@ -62,6 +64,10 @@ Future<void> transportCase({
     'project',
     'db',
     'synthetic-key',
+    diagnostics: (event) {
+      events?.add(event);
+      if (throwingLogger) throw StateError('PRIVATE_LOGGER_FAILURE');
+    },
   );
   try {
     await expectLater(
@@ -297,7 +303,315 @@ class LocalDatabase {
       });
 }
 
+Row draftCommand(
+  LocalDatabase f, {
+  String actor = 'alice',
+  int revision = 0,
+  String operation = 'draft-new',
+}) {
+  final version = f.memory.rows['spec_versions']!.values.firstWhere(
+    (row) => row['appId'] == 'app-one',
+  );
+  final spec = Map<String, dynamic>.from(
+    jsonDecode(version['specJson'] as String) as Map,
+  )..['name'] = 'Private candidate';
+  return {
+    'op': 'spec.saveDraft',
+    'appId': 'app-one',
+    'operationId': operation,
+    'expectedRevision': revision,
+    'expectedVersionId': version[r'$id'],
+    'spec': spec,
+  };
+}
+
+Future<Row> publicationCommand(
+  LocalDatabase f, {
+  String actor = 'alice',
+}) async {
+  final result = await f.service.execute(actor, draftCommand(f, actor: actor));
+  final app = result['app'] as Row,
+      draft = app['draft'] as Row,
+      version = app['version'] as Row;
+  final review =
+      (await f.service.execute(actor, {
+            'op': 'spec.review',
+            'appId': 'app-one',
+            'expectedRevision': draft['revision'],
+            'enabledRuleIds': [],
+            'activateExistingRecordIds': [],
+          }))['review']
+          as Row;
+  return {
+    'op': 'spec.publish',
+    'appId': 'app-one',
+    'operationId': 'publish-new',
+    'expectedRevision': draft['revision'],
+    'expectedVersionId': version['id'],
+    'candidateHash': review['candidateHash'],
+    'reviewHash': review['reviewHash'],
+    'enabledRuleIds': [],
+    'activateExistingRecordIds': [],
+  };
+}
+
+Future<Row> eligibleCommand(
+  LocalDatabase f,
+  String op, {
+  String actor = 'alice',
+}) async {
+  if (op == 'spec.saveDraft') return draftCommand(f, actor: actor);
+  if (op == 'spec.publish') return publicationCommand(f, actor: actor);
+  return {
+    'op': 'createInvitation',
+    'appId': 'app-one',
+    'id': 'new-invitation',
+    'operationId': 'new-invitation',
+    'recipientId': 'bob',
+    'role': 'member',
+    'token': base64Url
+        .encode(List.generate(32, (n) => n + 2))
+        .replaceAll('=', ''),
+  };
+}
+
 void main() {
+  test(
+    'diagnostics are disabled by default bounded to twelve fixed categories and immune to logging failure',
+    () async {
+      var calls = 0;
+      final disabled = TransactionDiagnosticLog((event) {
+        calls++;
+      });
+      for (var n = 0; n < 20; n++)
+        disabled.emit(TransactionDiagnostic.retryStarted);
+      expect(calls, 0);
+      final enabled = TransactionDiagnosticLog((event) {
+        calls++;
+        throw StateError('PRIVATE_LOGGER_FAILURE');
+      }, enabled: true);
+      for (var n = 0; n < 30; n++)
+        enabled.emit(TransactionDiagnostic.retryStarted);
+      expect(calls, 12);
+      final events = <TransactionDiagnostic>[];
+      await transportCase(
+        events: events,
+        throwingLogger: true,
+        expected: confirmed,
+      );
+      expect(events, [
+        TransactionDiagnostic.commitBodyAccepted,
+        TransactionDiagnostic.abortConfirmed,
+      ]);
+      events.clear();
+      await transportCase(events: events, staging: true, expected: ordinary);
+      expect(events, [TransactionDiagnostic.stagingConflict]);
+      events.clear();
+      await transportCase(
+        events: events,
+        terminalStatus: 403,
+        expected: ordinary,
+      );
+      expect(events, [
+        TransactionDiagnostic.commitBodyAccepted,
+        TransactionDiagnostic.terminalLookupDenied,
+      ]);
+    },
+  );
+  for (final op in ['createInvitation', 'spec.saveDraft', 'spec.publish']) {
+    test(
+      'actual worker race retries confirmed abort for $op without duplicate state or receipts',
+      () async {
+        final f = await LocalDatabase.create();
+        addTearDown(f.close);
+        await f.setup();
+        final input = await eligibleCommand(f, op);
+        f.memory.arm();
+        final pending = f.service.execute('alice', input);
+        await f.memory.paused!.future;
+        try {
+          await WorkerEngine(f.service).reminders();
+        } finally {
+          f.memory.resume!.complete();
+        }
+        final result = await pending;
+        expect(f.getStates, hasLength(1));
+        expect(
+          f.memory.rows['receipts']!.values.where(
+            (row) => row[r'$id'] == input['operationId'],
+          ),
+          hasLength(1),
+        );
+        expect(
+          f.memory.rows['audit']!.values.where((row) => row['action'] == op),
+          hasLength(1),
+        );
+        final receipt = await f.service.execute('alice', input);
+        expect(jsonEncode(receipt), jsonEncode(result));
+        if (op == 'createInvitation') {
+          expect(f.memory.rows['invitations'], hasLength(1));
+          final limit = f.memory.rows['actor_limits']!.values.singleWhere(
+            (row) => row['actorId'] == 'alice',
+          );
+          expect(
+            jsonDecode(limit['invitationTimesJson'] as String),
+            hasLength(1),
+          );
+          expect(
+            f.memory.rows['receipts'].toString(),
+            isNot(contains(input['token'])),
+          );
+        } else if (op == 'spec.saveDraft') {
+          expect(((result['app'] as Row)['draft'] as Row)['revision'], 1);
+        } else {
+          expect(
+            f.memory.rows['spec_versions']!.values.where(
+              (row) => row['appId'] == 'app-one',
+            ),
+            hasLength(2),
+          );
+        }
+      },
+    );
+  }
+  test(
+    'new opt-ins recheck builder authority and never recover receipts for a demoted actor',
+    () async {
+      for (final op in ['createInvitation', 'spec.saveDraft', 'spec.publish']) {
+        final f = await LocalDatabase.create();
+        addTearDown(f.close);
+        await f.setup();
+        final token = base64Url
+            .encode(List.generate(32, (n) => n + 4))
+            .replaceAll('=', '');
+        await f.service.execute('alice', {
+          'op': 'createInvitation',
+          'appId': 'app-one',
+          'id': 'builder',
+          'operationId': 'builder-invite',
+          'role': 'builder',
+          'recipientId': 'builder',
+          'token': token,
+        });
+        await f.service.execute('builder', {
+          'op': 'acceptInvitation',
+          'token': token,
+          'operationId': 'builder-accept',
+        });
+        final input = await eligibleCommand(f, op, actor: 'builder');
+        f.forcedAborts = 1;
+        f.afterAbort = () async {
+          final grant = f.memory.rows['grants']!.values.singleWhere(
+            (row) => row['actorId'] == 'builder',
+          );
+          await f.memory.update('grants', grant[r'$id'] as String, {
+            'role': 'viewer',
+            'revision': 2,
+          });
+        };
+        await expectLater(
+          f.service.execute('builder', input),
+          throwsA(
+            isA<ServiceException>().having((e) => e.code, 'code', 'forbidden'),
+          ),
+        );
+        expect(f.memory.rows['receipts']?[input['operationId']], isNull);
+      }
+    },
+  );
+  test(
+    'save draft CAS and publication candidate checks reject intervening state after a confirmed abort',
+    () async {
+      for (final op in ['spec.saveDraft', 'spec.publish']) {
+        final f = await LocalDatabase.create();
+        addTearDown(f.close);
+        await f.setup();
+        await f.service.execute(
+          'alice',
+          draftCommand(f, operation: 'initial-draft'),
+        );
+        final Row input;
+        if (op == 'spec.saveDraft') {
+          input = draftCommand(f, revision: 1, operation: 'changed-draft');
+        } else {
+          final draft = f.memory.rows['spec_drafts']!.values.single;
+          final review =
+              (await f.service.execute('alice', {
+                    'op': 'spec.review',
+                    'appId': 'app-one',
+                    'expectedRevision': 1,
+                    'enabledRuleIds': [],
+                    'activateExistingRecordIds': [],
+                  }))['review']
+                  as Row;
+          input = {
+            'op': op,
+            'appId': 'app-one',
+            'operationId': 'changed-publication',
+            'expectedRevision': 1,
+            'expectedVersionId': draft['baseVersionId'],
+            'candidateHash': review['candidateHash'],
+            'reviewHash': review['reviewHash'],
+            'enabledRuleIds': [],
+            'activateExistingRecordIds': [],
+          };
+        }
+        f.forcedAborts = 1;
+        f.afterAbort = () async {
+          final draft = f.memory.rows['spec_drafts']!.values.single;
+          await f.memory.update(
+            'spec_drafts',
+            draft[r'$id'] as String,
+            op == 'spec.saveDraft'
+                ? {'revision': 2}
+                : {'candidateHash': '0' * 64},
+          );
+        };
+        await expectLater(
+          f.service.execute('alice', input),
+          throwsA(
+            isA<ServiceException>().having(
+              (e) => e.code,
+              'code',
+              op == 'spec.saveDraft'
+                  ? 'revision_conflict'
+                  : 'definition_conflict',
+            ),
+          ),
+        );
+        expect(f.memory.rows['receipts']?[input['operationId']], isNull);
+        expect(
+          f.memory.rows['spec_versions']!.values.where(
+            (row) => row['appId'] == 'app-one',
+          ),
+          hasLength(1),
+        );
+      }
+    },
+  );
+  test(
+    'publication retains exact review validation without ever committing an invalid review',
+    () async {
+      final f = await LocalDatabase.create();
+      addTearDown(f.close);
+      await f.setup();
+      final input = await publicationCommand(f);
+      input['reviewHash'] = '0' * 64;
+      final before = f.commits.length;
+      await expectLater(
+        f.service.execute('alice', input),
+        throwsA(
+          isA<ServiceException>().having(
+            (e) => e.code,
+            'code',
+            'invalid_review',
+          ),
+        ),
+      );
+      expect(f.commits.length, before);
+      expect(f.memory.rows['receipts']?[input['operationId']], isNull);
+    },
+  );
   test(
     'only exact commit conflict plus matching terminal state is classified',
     () async {
@@ -611,9 +925,9 @@ void main() {
     },
   );
   test(
-    'remix and generic mutations remain opted out despite typed confirmed abort',
+    'remix and reads remain opted out despite typed confirmed abort',
     () async {
-      for (final op in ['archiveApp', 'spec.remix']) {
+      for (final op in ['spec.getApp', 'spec.remix']) {
         final f = await LocalDatabase.create();
         addTearDown(f.close);
         await f.setup();
@@ -625,8 +939,8 @@ void main() {
         await expectLater(
           f.service.execute(
             'alice',
-            op == 'archiveApp'
-                ? {'op': op, 'appId': 'app-one', 'operationId': 'archive'}
+            op == 'spec.getApp'
+                ? {'op': op, 'appId': 'app-one'}
                 : {
                     'op': op,
                     'id': 'remix',

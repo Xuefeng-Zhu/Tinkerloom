@@ -11,11 +11,24 @@ class _CommitConflictCandidate extends RestException {
 
 /// A server-only adapter. Request keys, JWTs, and provider bodies are not logged.
 class AppwriteRest implements RowStore {
-  AppwriteRest(this.endpoint, this.project, this.database, this.key);
+  AppwriteRest(
+    this.endpoint,
+    this.project,
+    this.database,
+    this.key, {
+    this.diagnostics,
+  });
   final Uri endpoint;
   final String project;
   final String database;
   final String key;
+  final void Function(TransactionDiagnostic)? diagnostics;
+  void _diagnostic(TransactionDiagnostic event) {
+    try {
+      diagnostics?.call(event);
+    } catch (_) {}
+  }
+
   final _client = HttpClient()..connectionTimeout = const Duration(seconds: 8);
 
   Uri _uri(
@@ -64,9 +77,19 @@ class AppwriteRest implements RowStore {
           response.statusCode == 409 &&
           body?.length == 1 &&
           body?['commit'] == true) {
-        if (await _commitConflictBody(response))
+        if (await _commitConflictBody(response)) {
+          _diagnostic(TransactionDiagnostic.commitBodyAccepted);
           throw const _CommitConflictCandidate();
+        }
+        _diagnostic(TransactionDiagnostic.commitBodyRejected);
       } else {
+        if (recognizeCommitConflict) {
+          _diagnostic(TransactionDiagnostic.commitResponseOther);
+        } else if (response.statusCode == 409 &&
+            (body?['transactionId'] is String ||
+                uri.queryParameters.containsKey('transactionId'))) {
+          _diagnostic(TransactionDiagnostic.stagingConflict);
+        }
         await response.drain<void>().timeout(const Duration(seconds: 15));
       }
       throw RestException(
@@ -235,12 +258,23 @@ class AppwriteRest implements RowStore {
       Map<String, dynamic>? current;
       try {
         current = await _request('GET', uri, maximumResponseBytes: 8192);
-      } catch (_) {
+      } catch (error) {
+        _diagnostic(
+          error is RestException && {401, 403}.contains(error.status)
+              ? TransactionDiagnostic.terminalLookupDenied
+              : TransactionDiagnostic.terminalLookupUnavailable,
+        );
         throw const RestException(409);
       }
-      if (current[r'$id'] == transactionId &&
-          {'failed', 'rolled_back'}.contains(current['status']))
+      if (current[r'$id'] != transactionId) {
+        _diagnostic(TransactionDiagnostic.terminalIdentityMismatch);
+        throw const RestException(409);
+      }
+      if ({'failed', 'rolled_back'}.contains(current['status'])) {
+        _diagnostic(TransactionDiagnostic.abortConfirmed);
         throw const ConfirmedTransactionAbort();
+      }
+      _diagnostic(TransactionDiagnostic.terminalNotConfirmed);
       throw const RestException(409);
     }
   }

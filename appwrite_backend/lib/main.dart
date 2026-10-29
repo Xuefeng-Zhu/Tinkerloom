@@ -40,7 +40,17 @@ Future<dynamic> main(dynamic context) async {
     context.error('Invalid media quota configuration');
     return context.res.json({'error': 'backend_unavailable'}, 503);
   }
-  final backend = AppwriteRest(Uri.parse(endpoint), project, database, key);
+  final diagnosticLog = TransactionDiagnosticLog(
+    (event) => context.error('transaction_diagnostic:${event.name}'),
+    enabled: Platform.environment['PLATFORM_TRANSACTION_DIAGNOSTICS'] == 'true',
+  );
+  final backend = AppwriteRest(
+    Uri.parse(endpoint),
+    project,
+    database,
+    key,
+    diagnostics: diagnosticLog.emit,
+  );
   final bucket = Platform.environment['PLATFORM_MEDIA_BUCKET_ID'];
   final files = bucket == null || bucket.isEmpty
       ? null
@@ -76,6 +86,7 @@ Future<dynamic> main(dynamic context) async {
       remindersEnabled:
           Platform.environment['PLATFORM_REMINDERS_ENABLED'] == 'true',
       wakeups: wakeups,
+      transactionDiagnostics: diagnosticLog.emit,
     );
     final result = await service.execute(actor, data);
     // Commit precedes optional delivery. A scheduling outage never fabricates

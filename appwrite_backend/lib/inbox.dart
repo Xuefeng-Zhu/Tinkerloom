@@ -90,46 +90,58 @@ extension _InboxRuntime on PlatformService {
     });
     final runId = _validId(input['runId']),
         notificationId = _validId(input['notificationId']);
-    return _mutate(actor, input, 'read', (tx, access) async {
-      _specEngine(access);
-      if (notificationId != _identity('n', [runId, actor]))
-        throw const ServiceException('not_found', 404);
-      final batch = await store.get(
-        'notification_batches',
-        _identity('b', [runId]),
-        transactionId: tx,
-      );
-      final run = await store.get('automation_runs', runId, transactionId: tx);
-      if (batch == null ||
-          run == null ||
-          batch['appId'] != access.app[r'$id'] ||
-          batch['workspaceId'] != access.app['workspaceId'] ||
-          run['appId'] != access.app[r'$id'] ||
-          run['status'] != 'succeeded' ||
-          run['leaseGeneration'] != batch['leaseGeneration'] ||
-          !(jsonDecode(batch['recipientIdsJson'] as String) as List).contains(
-            actor,
-          ))
-        throw const ServiceException('not_found', 404);
-      final id = _identity('h', [notificationId, actor]);
-      if (await store.get('notification_reads', id, transactionId: tx) == null)
-        await store.create('notification_reads', id, {
-          'workspaceId': access.app['workspaceId'],
-          'appId': access.app[r'$id'],
-          'actorId': actor,
-          'notificationId': notificationId,
-          'runId': runId,
-          'readAt': _now(),
-        }, transactionId: tx);
-      await _specChanged(
-        actor,
-        access,
-        input['operationId'] as String,
-        'notification.read',
-        tx,
-      );
-      return {'notificationId': notificationId, 'isRead': true};
-    }, writable: false);
+    return _mutate(
+      actor,
+      input,
+      'read',
+      (tx, access) async {
+        _specEngine(access);
+        if (notificationId != _identity('n', [runId, actor]))
+          throw const ServiceException('not_found', 404);
+        final batch = await store.get(
+          'notification_batches',
+          _identity('b', [runId]),
+          transactionId: tx,
+        );
+        final run = await store.get(
+          'automation_runs',
+          runId,
+          transactionId: tx,
+        );
+        if (batch == null ||
+            run == null ||
+            batch['appId'] != access.app[r'$id'] ||
+            batch['workspaceId'] != access.app['workspaceId'] ||
+            run['appId'] != access.app[r'$id'] ||
+            run['status'] != 'succeeded' ||
+            run['leaseGeneration'] != batch['leaseGeneration'] ||
+            !(jsonDecode(batch['recipientIdsJson'] as String) as List).contains(
+              actor,
+            ))
+          throw const ServiceException('not_found', 404);
+        final id = _identity('h', [notificationId, actor]);
+        if (await store.get('notification_reads', id, transactionId: tx) ==
+            null)
+          await store.create('notification_reads', id, {
+            'workspaceId': access.app['workspaceId'],
+            'appId': access.app[r'$id'],
+            'actorId': actor,
+            'notificationId': notificationId,
+            'runId': runId,
+            'readAt': _now(),
+          }, transactionId: tx);
+        await _specChanged(
+          actor,
+          access,
+          input['operationId'] as String,
+          'notification.read',
+          tx,
+        );
+        return {'notificationId': notificationId, 'isRead': true};
+      },
+      writable: false,
+      retryConfirmedAborts: true,
+    );
   }
 
   Future<Row> _runHistory(String actor, Row input) async {

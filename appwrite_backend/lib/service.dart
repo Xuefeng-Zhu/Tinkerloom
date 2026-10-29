@@ -70,6 +70,7 @@ class PlatformService {
     ai.GuidanceProvider? guidanceProvider,
     this.remindersEnabled = false,
     this.wakeups,
+    this.transactionDiagnostics,
   }) : clock = clock ?? (() => DateTime.now().toUtc()),
        guidanceProvider =
            guidanceProvider ??
@@ -77,6 +78,13 @@ class PlatformService {
                ? aiProvider as ai.GuidanceProvider
                : null);
   final RowStore store;
+  final void Function(TransactionDiagnostic)? transactionDiagnostics;
+  void _transactionDiagnostic(TransactionDiagnostic event) {
+    try {
+      transactionDiagnostics?.call(event);
+    } catch (_) {}
+  }
+
   final PrivateFileStore? media;
   final int mediaProjectBytes;
   final DateTime Function() clock;
@@ -243,8 +251,15 @@ class PlatformService {
         // The adapter confirmed terminal failure. Rolling back a failed
         // Appwrite transaction is rejected because it is no longer pending.
         finalized = true;
-        if (!retryConfirmedAborts || attempt >= 2)
+        if (!retryConfirmedAborts || attempt >= 2) {
+          _transactionDiagnostic(
+            !retryConfirmedAborts
+                ? TransactionDiagnostic.retryNotEnabled
+                : TransactionDiagnostic.retryExhausted,
+          );
           throw const ServiceException('transaction_conflict', 409);
+        }
+        _transactionDiagnostic(TransactionDiagnostic.retryStarted);
       } on RestException catch (error) {
         if (error.status == 409)
           throw const ServiceException('transaction_conflict', 409);
@@ -254,6 +269,7 @@ class PlatformService {
           try {
             await store.finishTransaction(transactionId, commit: false);
           } catch (_) {
+            _transactionDiagnostic(TransactionDiagnostic.cleanupUnconfirmed);
             // A lost commit response cannot undo the authoritative receipt.
           }
         }
@@ -365,6 +381,7 @@ class PlatformService {
     int requestBytes = 32768,
     int responseBytes = 65536,
     Future<void> Function(AppAccess, String?)? authorize,
+    bool retryConfirmedAborts = false,
   }) async {
     final appId = _validId(input['appId']);
     final operationId = _validId(input['operationId']);
@@ -429,7 +446,7 @@ class PlatformService {
           maximumBytes: receiptResponseBytes,
         );
         return response;
-      });
+      }, retryConfirmedAborts: retryConfirmedAborts);
     } on ServiceException catch (error) {
       if ({
         'revision_conflict',
@@ -724,18 +741,28 @@ class PlatformService {
         return _setGrant(actor, input);
       case 'archiveApp':
         _inputKeys(input, {'op', 'appId', 'operationId'});
-        return _mutate(actor, input, 'owner', (tx, access) async {
-          final app = await store.update('apps', access.app[r'$id'] as String, {
-            'archived': true,
-          }, transactionId: tx);
-          return {
-            'app': await _publicApp(
-              actor,
-              AppAccess(app, access.workspace, access.role),
+        return _mutate(
+          actor,
+          input,
+          'owner',
+          (tx, access) async {
+            final app = await store.update(
+              'apps',
+              access.app[r'$id'] as String,
+              {'archived': true},
               transactionId: tx,
-            ),
-          };
-        }, writable: false);
+            );
+            return {
+              'app': await _publicApp(
+                actor,
+                AppAccess(app, access.workspace, access.role),
+                transactionId: tx,
+              ),
+            };
+          },
+          writable: false,
+          retryConfirmedAborts: true,
+        );
       default:
         throw const ServiceException('unknown_operation', 400);
     }

@@ -1,0 +1,52 @@
+{
+  "capturedAt": "2026-10-29T04:11:53.338081+00:00",
+  "candidateSourceSha256": "62a10c9a39d85357d5200933ab7229c21198747531d4929853cc11f9f7242bc3",
+  "rootValidation": {
+    "focusedTests": 39,
+    "failed": 0,
+    "analysis": "pass",
+    "coreDart311Aot": "pass",
+    "workerDart311Aot": "pass"
+  },
+  "authorValidation": {
+    "standardDartTests": 405,
+    "serviceChecks": 118,
+    "bothDart311Aot": "pass",
+    "positiveRaceTestsFailBeforeAndPassAfter": 12
+  },
+  "independentReview": "db-whitelist-independent-review.json",
+  "logs": {
+    "focusedTests": {
+      "path": "/private/tmp/tinkerloom-root-db-whitelist-tests.log",
+      "sha256": "f38e67af34931f56b2f2695aeed933d950e0644b4e45b4259cca2d5de1c6be9e"
+    },
+    "analysis": {
+      "path": "/private/tmp/tinkerloom-root-db-whitelist-analyze.log",
+      "sha256": "8abdba08e425d8f45b6516412ad5f3a1c4f949761ded4a6c3fc6c8d301fe0161"
+    },
+    "coreAot": {
+      "path": "/private/tmp/tinkerloom-root-db-whitelist-core-aot.log",
+      "sha256": "1329f8188f8b0b539a85c0c172aab81585b6a54c926047aae9590cce96b972dd"
+    },
+    "workerAot": {
+      "path": "/private/tmp/tinkerloom-root-db-whitelist-worker-main-aot.log",
+      "sha256": "64bbbd2bf8098b79bd382b5546efdc53afbc87759dcb6a85525e49a897f4ce38"
+    }
+  },
+  "preservedHostedFailure": {
+    "file": "full-cloud-1b6d8a5.failed.json",
+    "sha256": "9cb7837600435b3f3ffba3fc4926703bf4b285469a24156a7ca3a3df0a8ed0e7",
+    "passed": 28,
+    "failed": 2,
+    "blocked": 17,
+    "assertions": 350,
+    "failures": [
+      "join_reading_as_member: createInvitation returned completed transaction_conflict",
+      "private_author_drafts_and_global_stale_publication: builder spec.saveDraft returned completed transaction_conflict"
+    ],
+    "bothFailedOperationsOptedOutAtThatSource": true,
+    "doesNotEstablishCommitClassifierFailure": true
+  },
+  "cloudProofForThisCandidate": false,
+  "schemaOrScopeChanges": false
+}
