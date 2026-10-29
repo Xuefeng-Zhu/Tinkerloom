@@ -1,0 +1,21 @@
+{
+  "capturedAt": "2026-10-29T06:24:22.623219+00:00",
+  "sourceCommit": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "command": "npm run verify",
+  "exitCode": 0,
+  "tests": 712,
+  "pass": 712,
+  "fail": 0,
+  "skipped": 0,
+  "typecheck": "passed",
+  "lint": "passed",
+  "format": "passed",
+  "exportAll": [
+    "web",
+    "ios",
+    "android"
+  ],
+  "logSha256": "f3d645149ab61f36b8c371c16aa31e4f1b64e42af3d76cc55593df7e2828fd8b",
+  "exportProof": "docs/evidence/2026-10-28/mobile-712-persistent-export.json",
+  "scope": "Client local checks and actual export inclusion only; native artifacts and Cloud browser evidence separately scoped"
+}

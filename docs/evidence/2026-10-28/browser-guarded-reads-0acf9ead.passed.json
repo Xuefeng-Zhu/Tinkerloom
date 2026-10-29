@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T06:25:47.013959+00:00",
+  "status": "passed",
+  "sourceCommit": "0acf9eadeed00b3cd966c57465a36ce9ffc823fb",
+  "clientHost": "React Native web export served locally at localhost:8426",
+  "backend": "Actual Appwrite Free development Core43d4334 deployment6ae2c7c4c9c5bd7f2d7c; no backend deployment changed for this client fix",
+  "actor": "Existing synthetic browser QA account; no new account created",
+  "method": "CUA browser accessibility state after each action and settled follow-up states",
+  "cases": [
+    {
+      "id": "project_hub_live_reload",
+      "status": "passed",
+      "observation": "Intentional reload of the new static export loaded canonical boardPage, Open0/Done0, enabled Refresh and no visible conflict alerts."
+    },
+    {
+      "id": "project_hub_manual_refresh",
+      "status": "passed",
+      "observation": "One normal Live Refresh disabled while loading, then re-enabled; board stayed Open0/Done0 without visible errors."
+    },
+    {
+      "id": "saved_private_draft",
+      "status": "passed",
+      "observation": "Build opened the existing revision1 private candidate with Candidate saved, original Project Hub definition, five pages and isolated synthetic preview; no new save or publication selected."
+    },
+    {
+      "id": "build_to_live",
+      "status": "passed",
+      "observation": "Returned from Build to Live on canonical boardPage; settled Open0/Done0 and enabled Refresh access/Refresh without prior stale warning or false unpublished message."
+    },
+    {
+      "id": "runtime_page_navigation",
+      "status": "passed",
+      "observation": "Tasks table, Schedule calendar/Coming up, then Board all loaded and settled on canonical page URLs without visible conflict or superseded-read alerts."
+    },
+    {
+      "id": "workspace_refresh",
+      "status": "passed",
+      "observation": "Full workspace launcher and one Refresh workbench settled showing four existing apps and three own revision1 drafts; no stale-list error."
+    },
+    {
+      "id": "existing_record_detail",
+      "status": "passed",
+      "observation": "Opened existing Photo Journal and its synthetic record; canonical detailPage+recordId loaded original title, caption, Rating4 and FavoriteYes."
+    },
+    {
+      "id": "record_deep_link_reload",
+      "status": "passed",
+      "observation": "Intentional reload of canonical record deep link restored the same detail fields with enabled Refresh, no alert, and no conflict/unpublished message."
+    }
+  ],
+  "totals": {
+    "passed": 8,
+    "failed": 0,
+    "blocked": 0
+  },
+  "selectedBusinessWrites": {
+    "record": 0,
+    "draftSave": 0,
+    "publication": 0,
+    "appCreation": 0,
+    "invitation": 0
+  },
+  "observed": {
+    "visibleAlertsAtSettledCheckpoints": 0,
+    "projectHubLiveRecords": 0,
+    "workspaceApps": 4,
+    "ownDrafts": 3,
+    "photoJournalLiveRecords": 1,
+    "recordRating": 4,
+    "recordFavorite": true
+  },
+  "relatedPreservedPartial": "browser-published-48afbd65.partial.json",
+  "limits": [
+    "One existing synthetic browser account and two apps, not broad concurrency or all roles.",
+    "No network trace or exact count of background watch polls; absence of visible alerts does not prove absence of internally retried conflicts.",
+    "Existing record values reloaded; no new record creation or write-recovery semantics exercised in this read-only UI smoke.",
+    "This is React Native web UI with actual Cloud backend; no native installation, UI, hardware, accessibility-device or production proof."
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T06:25:47.013959+00:00",
+  "method": "Fresh read-only CUA computer inventory",
+  "nativeAppsAvailable": false,
+  "result": "Mac remains locked; automatic unlock unavailable",
+  "userDirection": "Keep implementing for now",
+  "continuedWork": [
+    "Client source implementation and verification",
+    "Actual Cloud-backed browser read smoke",
+    "Native compilation and artifact audit"
+  ],
+  "unverified": [
+    "Native installation and UI",
+    "Native sign-in and picker/device capabilities",
+    "Physical hardware and accessibility validation"
+  ]
+}
