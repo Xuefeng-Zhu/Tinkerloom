@@ -1,0 +1,13 @@
+{
+  "capturedAt": "2026-10-29T07:38:44.852643+00:00",
+  "source": "Direct user answer in this chat",
+  "question": "Should Tinkerloom keep a fresh Appwrite development database, or also migrate existing AppNest users and records? I will preserve the original AppNest data either way.",
+  "answer": "Fresh development data only (Recommended)",
+  "scopeDecision": {
+    "tinkerloomData": "Fresh Appwrite development data",
+    "existingAppNestData": "Preserve existing users, records and credentials in the original project",
+    "actualDataCutover": "Out of scope",
+    "importApplyRunner": "Not required for this authorized migration scope"
+  },
+  "historicalEvidence": "Existing offline import planner/simulation receipts remain historical; this decision does not claim an import or rollback was executed."
+}

@@ -1,3 +1,5 @@
+> Historical initial React Native checkpoint. The current implementation, active deployment and remaining gates are recorded in [MIGRATION_STATUS_CURRENT.md](MIGRATION_STATUS_CURRENT.md), with native compilation in [NATIVE_VERIFICATION.md](NATIVE_VERIFICATION.md). The original checkpoint below is preserved with its original coverage and limits.
+
 # React Native migration status
 
 The primary frontend is `apps/mobile`, built with React Native, Expo, and TypeScript. Appwrite Functions are the trusted backend; the deployed Function is Dart. Tinkerloom now has a saved builder and live-record slice, while the full AppNest feature set remains a migration reference.
