@@ -34,6 +34,7 @@ part 'worker_support.dart';
 part 'reminders.dart';
 part 'generation.dart';
 part 'inbox.dart';
+part 'activity.dart';
 part 'worker_dispatch.dart';
 
 typedef Row = Map<String, dynamic>;

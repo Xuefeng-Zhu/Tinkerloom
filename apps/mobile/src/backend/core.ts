@@ -459,6 +459,7 @@ export class AppwriteBackend implements AppBackend {
       "spec.reminderState",
       "spec.inbox",
       "spec.runs",
+      "spec.listActivity",
       "spec.media.usage",
       "spec.media.status",
       "spec.media.read",

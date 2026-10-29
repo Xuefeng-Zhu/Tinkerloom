@@ -116,11 +116,13 @@ export function SharingScreen({
   controller,
   userId,
   onBack,
+  onActivity,
 }: {
   state: SharingState;
   controller: SharingController;
   userId: string;
   onBack: () => void;
+  onActivity?: () => void;
 }) {
   const [role, setRole] = useState<GrantRole>("viewer");
   const [recipient, setRecipient] = useState("");
@@ -151,6 +153,9 @@ export function SharingScreen({
     >
       <View style={styles.toolbar}>
         <Button label="← App" variant="quiet" onPress={onBack} />
+        {onActivity && state.app?.engine === "appspec.v1" && (
+          <Button label="Activity" variant="quiet" onPress={onActivity} />
+        )}
         <Button
           label="Refresh people"
           variant="quiet"

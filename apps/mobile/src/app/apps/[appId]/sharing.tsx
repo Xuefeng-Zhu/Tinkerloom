@@ -17,6 +17,9 @@ export default function SharingRoute() {
       controller={controller}
       state={state}
       userId={userId}
+      onActivity={() =>
+        router.push({ pathname: "/apps/[appId]/activity", params: { appId } })
+      }
       onBack={() =>
         router.replace({ pathname: "/apps/[appId]", params: { appId } })
       }

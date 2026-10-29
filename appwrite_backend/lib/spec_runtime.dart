@@ -675,6 +675,8 @@ extension _SpecRuntime on PlatformService {
         return _readNotification(actor, input);
       case 'spec.runs':
         return _runHistory(actor, input);
+      case 'spec.listActivity':
+        return _listActivity(actor, input);
       default:
         throw const ServiceException('unknown_operation', 400);
     }
