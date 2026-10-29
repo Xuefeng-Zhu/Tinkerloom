@@ -1,6 +1,6 @@
 {
   "format": "tinkerloom.current-migration-index.v1",
-  "capturedAt": "2026-10-29T02:14:36.565575+00:00",
+  "capturedAt": "2026-10-29T07:35:44.596001+00:00",
   "uniqueRows": 125,
   "criteriaRows": 15,
   "otherRows": 110,
@@ -16,10 +16,38 @@
       "sourceLine": 57,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["spec", "engine", "life", "render"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
-      "remainingGate": "Full-engine templates/versions/records and fresh sessions passed REST; final frozen-client/mounted/native reopen remains.",
-      "relatedRows": ["L01", "L02", "L04", "S06", "B01"],
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "life",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43",
+        "LOCAL712",
+        "EXPORT712",
+        "BROWSER0ACF",
+        "BASIC0ACF_FAILED",
+        "READ21_SOURCE",
+        "READ21_CHECKS",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "NATIVE60",
+        "NATIVE60_AUDIT",
+        "BROWSER60_READS"
+      ],
+      "remainingGate": "Core 43 full 48/1956 persistence passes. Accepted 60e7 root 730/all 3 exports314 inputs/CI3 and exact native3-build independent audit pass. Current final browser receipt is being preserved; complete mounted/role/accessibility/device/provider/cutover gates remain separate.",
+      "relatedRows": [
+        "L01",
+        "L02",
+        "L04",
+        "S06",
+        "B01"
+      ],
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
         "apps/mobile/src/spec/values.ts",
@@ -47,9 +75,27 @@
       "sourceLine": 58,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["share", "engine", "media", "notify"],
-      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
-      "remainingGate": "App/record/invite/media wire negatives pass; natural invite expiry, actual reminder/inbox/effect isolation and final client/device cases remain.",
+      "sourceGroups": [
+        "share",
+        "engine",
+        "media",
+        "notify"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "ACTIVITY",
+        "REMINDER",
+        "FULL43",
+        "LOCAL712",
+        "READFIFO",
+        "MEDIA_READ_RACE",
+        "READ21_CHECKS",
+        "MEDIA_FIFO_SDK"
+      ],
+      "remainingGate": "Current full/activity/reminder/media source-specific isolation passes; accepted21-operation lane preserves per-session/current/lifetime fencing and pre/post-Storage authority. Local actual SDK/service pairs pass; corrected-source multi-role/native/UI/cutover gates remain.",
       "relatedRows": [
         "S01",
         "S02",
@@ -89,8 +135,17 @@
       "sourceLine": 59,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["spec", "engine", "share"],
-      "evidence": ["LOCAL", "FULL", "COLLAB"],
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "share"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "FULL43"
+      ],
       "remainingGate": "Three-policy protected fields/roles pass bounded REST; final mounted role/action controls and all new effect boundaries remain.",
       "relatedRows": [
         "P01",
@@ -128,10 +183,19 @@
       "sourceLine": 60,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["engine"],
-      "evidence": ["LOCAL", "FULL"],
-      "remainingGate": "20 parallel HTTP attempts/20keys/3authenticatedactors observed one allocation. No20-distinct-actor or server execution barrier proof.",
-      "relatedRows": ["A06", "A07"],
+      "sourceGroups": [
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
+      "remainingGate": "Current bounded trial:20 parallel commands/20 unique keys/3 authenticated actors,3 success responses for1 distinct allocated actor and1 committed allocation. No20-distinct-actor/server execution barrier or final native contention proof.",
+      "relatedRows": [
+        "A06",
+        "A07"
+      ],
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
         "appwrite_backend/lib/spec_actions.dart",
@@ -148,9 +212,29 @@
       "sourceLine": 61,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["engine", "builder", "host", "media", "notify"],
-      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA", "STORAGE"],
-      "remainingGate": "Exact receipt/changed-input cases pass multiple live APIs; integrated forced lost reply/native restart and notification-read receipt acceptance remain.",
+      "sourceGroups": [
+        "engine",
+        "builder",
+        "host",
+        "media",
+        "notify"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "STORAGE",
+        "RETRY",
+        "RECOVERY",
+        "REMINDER",
+        "HARNESSA1",
+        "PROBEREAD",
+        "LOCAL683",
+        "HARNESS916",
+        "FULL43"
+      ],
+      "remainingGate": "Source-specific wire receipts and current reminder read cases pass. Source 916 mounted RNWeb recovery2 groups and earlier a1 broader5 groups demonstrate exact retained controls with syntheticRPC/memory;0acf preserves this source. Real persistent reload/native process/Cloud lost-reply recovery remains.",
       "relatedRows": [
         "A01",
         "A02",
@@ -184,7 +268,9 @@
         "appwrite_backend/lib/inbox.dart",
         "apps/mobile/src/notifications/NotificationsController.ts",
         "apps/mobile/src/notifications/withReminders.ts",
-        "apps/mobile/src/notifications/AutomationRunsController.ts"
+        "apps/mobile/src/notifications/AutomationRunsController.ts",
+        "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+        "apps/mobile/src/renderer/recordRecovery.ts"
       ]
     },
     {
@@ -196,10 +282,23 @@
       "sourceLine": 62,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["engine", "worker"],
-      "evidence": ["LOCAL", "FULL"],
-      "remainingGate": "Claim/release/rejection counts pass REST and failures inject locally; all real Appwrite staging-boundary rollback cases remain unrun.",
-      "relatedRows": ["A06", "A07", "D01", "D06"],
+      "sourceGroups": [
+        "engine",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RETRY",
+        "FULL43"
+      ],
+      "remainingGate": "Current full 48/1956 includes bounded capacity/rollback invariants; explicit DB-only retry races have12 local before-fail/after-pass cases. Every Cloud staging/effect failure boundary and server barrier are not proved.",
+      "relatedRows": [
+        "A06",
+        "A07",
+        "D01",
+        "D06"
+      ],
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
         "appwrite_backend/lib/spec_actions.dart",
@@ -220,10 +319,21 @@
       "sourceLine": 63,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["preview", "device"],
-      "evidence": ["LOCAL", "RENDER"],
+      "sourceGroups": [
+        "preview",
+        "device"
+      ],
+      "evidence": [
+        "LOCAL",
+        "RENDER"
+      ],
       "remainingGate": "Isolated factories, memory bytes and no-live-adapter tests pass; final all-capability mounted/native negative instrumentation remains.",
-      "relatedRows": ["B13", "M05", "U04", "U08"],
+      "relatedRows": [
+        "B13",
+        "M05",
+        "U04",
+        "U08"
+      ],
       "sourcePaths": [
         "apps/mobile/src/runtime/preview.ts",
         "apps/mobile/src/runtime/previewImageInflate.ts",
@@ -244,10 +354,23 @@
       "sourceLine": 64,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["spec", "engine", "media"],
-      "evidence": ["LOCAL", "FULL", "MEDIA"],
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "media"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "MEDIA",
+        "FULL43"
+      ],
       "remainingGate": "Compatible optional fields/IDs/publication/records have local/REST proof; final combined claims/media retention across all evolution cases remains.",
-      "relatedRows": ["L04", "B03", "M03"],
+      "relatedRows": [
+        "L04",
+        "B03",
+        "M03"
+      ],
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
         "apps/mobile/src/spec/values.ts",
@@ -272,10 +395,29 @@
       "sourceLine": 65,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["builder", "worker", "engine"],
-      "evidence": ["LOCAL", "FULL"],
-      "remainingGate": "Private/global draft and exact review/publication REST pass; actual provider stale/superseded job and enabled-rule effect gates remain.",
-      "relatedRows": ["B08", "B09", "B10", "B11"],
+      "sourceGroups": [
+        "builder",
+        "worker",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "PUBLISHED",
+        "RECOVERY",
+        "BROWSER665",
+        "FULL43",
+        "BROWSER916FAIL",
+        "LOCAL699",
+        "READINESS"
+      ],
+      "remainingGate": "Current full 43 passes private drafts, stale publication and exact review. Complete read coordination is accepted at source 60e7 with root 730, 27 independent checks and current CI. Final fresh browser/native proof and actual provider stale-job/cold-recovery behavior remain separate gates.",
+      "relatedRows": [
+        "B08",
+        "B09",
+        "B10",
+        "B11"
+      ],
       "sourcePaths": [
         "apps/mobile/src/full/FullAppController.ts",
         "apps/mobile/src/full/SpecEditor.tsx",
@@ -300,10 +442,21 @@
       "sourceLine": 66,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["worker"],
-      "evidence": ["LOCAL", "MEDIA", "CLEANUP", "REMINDER"],
-      "remainingGate": "Private media/one scheduled cleanup prove selected work; reminder interruption/missed-wakeup/reconciler/dedup acceptance still pending.",
-      "relatedRows": ["D02", "D03", "D05"],
+      "sourceGroups": [
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "CLEANUP",
+        "REMINDER"
+      ],
+      "remainingGate": "Current reminder public observations delivered2 runs/suppressed2/zero-recipient1 and same-occurrence inbox count1. Private media/cleanup also pass selected work; worker interruption/missed wakeups/hourly recovery and full dedup/reconcile matrix remain unproven.",
+      "relatedRows": [
+        "D02",
+        "D03",
+        "D05"
+      ],
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
         "appwrite_backend/lib/reminders.dart",
@@ -320,10 +473,27 @@
       "sourceLine": 67,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["worker", "share", "media"],
-      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA", "REMINDER"],
-      "remainingGate": "Archive/revocation wire behavior passes for writes/media; actual stale-effect suppression on dates/rules/claims/grants/archive remains pending.",
-      "relatedRows": ["D04", "D05", "D06", "S07"],
+      "sourceGroups": [
+        "worker",
+        "share",
+        "media"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "REMINDER",
+        "ACTIVITY",
+        "FULL43"
+      ],
+      "remainingGate": "Current reminder selected pre-due invalidation/current-grant suppression passed, alongside archived activity and older media/write revocation. All archive/rule/claim/date stale-effect combinations and final mounted/native cases remain.",
+      "relatedRows": [
+        "D04",
+        "D05",
+        "D06",
+        "S07"
+      ],
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
         "appwrite_backend/lib/reminders.dart",
@@ -348,10 +518,48 @@
       "sourceLine": 68,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["watch", "nav", "account"],
-      "evidence": ["LOCAL", "FORM"],
-      "remainingGate": "Polling/focus/account/dirty fences have local proof; live reconnect/resume/cancellation and complete final browser/native recovery remain.",
-      "relatedRows": ["D08", "U01", "G09"],
+      "sourceGroups": [
+        "watch",
+        "nav",
+        "account"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FORM",
+        "RECOVERY",
+        "BROWSER665",
+        "LOCAL673",
+        "ROUTE",
+        "LOCAL683",
+        "CLIENTREAD",
+        "HARNESSA1",
+        "LOCAL699",
+        "READINESS",
+        "BROWSER48_PARTIAL",
+        "READ_CONTENTION",
+        "LOCAL712",
+        "READFIFO",
+        "BROWSER0ACF",
+        "BASIC0ACF_FAILED",
+        "MEDIA_READ_RACE",
+        "READ21_SOURCE",
+        "READ21_CHECKS",
+        "READ21_SDK",
+        "REMINDER0ACF_FAILED",
+        "MEDIA_FIFO_SDK",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "NATIVE60",
+        "NATIVE60_AUDIT",
+        "BROWSER60_READS"
+      ],
+      "remainingGate": "Accepted 60e7 explicit21-operation read lane/current caller fences and boundedbasic list recovery pass730root/27peer and local actual SDK/service proof.0acf8browserpass plus additionalbasic/two-card failures remain preserved. Fresh correctedsource reconnect/resume/mount/native acceptance remains.",
+      "relatedRows": [
+        "D08",
+        "U01",
+        "G09"
+      ],
       "sourcePaths": [
         "appwrite_backend/lib/spec_watch.dart",
         "apps/mobile/src/runtime/invalidation.ts",
@@ -364,7 +572,9 @@
         "apps/mobile/src/backend/core.ts",
         "apps/mobile/src/screens/AuthScreen.tsx",
         "apps/mobile/src/screens/HomeScreen.tsx",
-        "apps/mobile/src/full/FullRegistry.ts"
+        "apps/mobile/src/full/FullRegistry.ts",
+        "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+        "apps/mobile/src/renderer/recordRecovery.ts"
       ]
     },
     {
@@ -376,10 +586,29 @@
       "sourceLine": 69,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["provider", "builder", "life"],
-      "evidence": ["LOCAL", "FULL", "CLARIFY"],
-      "remainingGate": "Template mode and provider-off clarification pass; no real AI request/spend. B04 conversation/split presentation source gap and approved provider create/edit receipts remain.",
-      "relatedRows": ["B04", "B06", "B07", "B08", "B09", "B10", "B14", "B15"],
+      "sourceGroups": [
+        "provider",
+        "builder",
+        "life"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "CLARIFY",
+        "CONVERSATION",
+        "FULL43"
+      ],
+      "remainingGate": "B04 accepted-request session history and measured desktop split/mobile tabs are implemented at10fed99. Template mode/provider-off clarification work; real approved provider create/edit/failure receipts and final mounted layout remain unproven.",
+      "relatedRows": [
+        "B04",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "B14",
+        "B15"
+      ],
       "sourcePaths": [
         "appwrite_backend/lib/providers/provider.dart",
         "appwrite_backend/lib/providers/creation_compiler.dart",
@@ -403,9 +632,23 @@
       "sourceLine": 70,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["render", "nav", "device"],
-      "evidence": ["LOCAL", "FORM", "RENDER", "N5"],
-      "remainingGate": "1280x720 form/clarification and older synthetic renderer subset pass; full320px/150%/keyboard/AT/native device acceptance is not complete.",
+      "sourceGroups": [
+        "render",
+        "nav",
+        "device"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FORM",
+        "RENDER",
+        "N5",
+        "BROWSER665",
+        "NATIVE916",
+        "HARNESS916",
+        "NATIVE60",
+        "NATIVE60_AUDIT"
+      ],
+      "remainingGate": "Accepted 60e7 native3-build/314-source audit and all-platform exports pass; prior real browser form/published/read subsets and mounted synthetic recovery remain distinct. Full320px/150%/keyboard/assistive/native-device acceptance remains incomplete.",
       "relatedRows": [
         "V01",
         "V02",
@@ -460,10 +703,32 @@
       "sourceLine": 71,
       "section": "Original fifteen acceptance criteria",
       "sourceState": "Cross-row acceptance partial",
-      "sourceGroups": ["life", "builder", "worker", "host"],
-      "evidence": ["LOCAL", "FULL", "CLARIFY"],
-      "remainingGate": "Author-private draft/lifecycle REST and browser explicit prefill exist; current job restoration/provider recovery and real integrated process reopen remain.",
-      "relatedRows": ["B01", "B10", "S05", "G09"],
+      "sourceGroups": [
+        "life",
+        "builder",
+        "worker",
+        "host"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "CLARIFY",
+        "CONVERSATION",
+        "PUBLISHED",
+        "RECOVERY",
+        "BROWSER665",
+        "LOCAL683",
+        "CLIENTREAD",
+        "HARNESSA1",
+        "FULL43"
+      ],
+      "remainingGate": "Author-private discovery and prior published-copy/reload have narrowREST/browser proof. Bounded manifest/job/capability/review reads and durable retained envelopes are authored at0acf. Actual persisted cold-reopen/provider completion/native process behavior remains.",
+      "relatedRows": [
+        "B01",
+        "B10",
+        "S05",
+        "G09"
+      ],
       "sourcePaths": [
         "appwrite_backend/lib/spec_lifecycle.dart",
         "apps/mobile/src/full/FullWorkspaceController.ts",
@@ -479,7 +744,9 @@
         "apps/mobile/src/host/storage.ts",
         "apps/mobile/src/host/browserStorage.ts",
         "apps/mobile/src/host/encryptedFiles.ts",
-        "apps/mobile/src/runtime/timer.ts"
+        "apps/mobile/src/runtime/timer.ts",
+        "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+        "apps/mobile/src/renderer/recordRecovery.ts"
       ]
     },
     {
@@ -491,8 +758,14 @@
       "sourceLine": 79,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Final frozen-source parser/canonical negative regression; no missing language implementation identified.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -510,8 +783,17 @@
       "sourceLine": 80,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "engine", "life", "worker"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "life",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Final deployment history/record-version regression; generation rule-generation behavior still needs hosted reminder evidence.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -540,8 +822,15 @@
       "sourceLine": 81,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "builder"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "builder"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Retain golden omission/Unicode/numeric/receipt tests in final freeze; do not treat client hashes as server authority.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -563,8 +852,16 @@
       "sourceLine": 82,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "engine", "builder"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "builder"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Final compatibility/invalid cross-collection regressions and mounted full-field authoring coverage.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -590,8 +887,14 @@
       "sourceLine": 83,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Real REST covers projections/counts and contention; forced rollback at every staging boundary is still local-only.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -609,9 +912,22 @@
       "sourceLine": 84,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "engine", "watch", "notify", "media"],
-      "evidence": ["LOCAL", "FULL", "MEDIA"],
-      "remainingGate": "Current redeployed capabilities/effects/watch attestation and unsupported-client recovery remain to be observed; parser support alone never enables effects.",
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "watch",
+        "notify",
+        "media"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "MEDIA",
+        "CORE43",
+        "ACTIVITY",
+        "FULL43"
+      ],
+      "remainingGate": "Current Core 43d4334 Free deployment/configuration is operator-bound with reminders/diagnostics true and unchanged private worker; current activity REST passed. Reminder effect delivery and unsupported-client recovery remain separately unaccepted.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
         "apps/mobile/src/spec/values.ts",
@@ -644,8 +960,15 @@
       "sourceLine": 85,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "account"],
-      "evidence": ["LOCAL", "RICH", "COLLAB"],
+      "sourceGroups": [
+        "engine",
+        "account"
+      ],
+      "evidence": [
+        "LOCAL",
+        "RICH",
+        "COLLAB"
+      ],
       "remainingGate": "Final bounded-engine regression on latest deployment; actual original-data import/conversion policy remains G07/G08 scope, with no data moved.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -667,8 +990,17 @@
       "sourceLine": 93,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "render", "engine"],
-      "evidence": ["LOCAL", "FULL", "FORM"],
+      "sourceGroups": [
+        "spec",
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FORM",
+        "FULL43"
+      ],
       "remainingGate": "Boundary/Unicode local and REST cases exist; finish mounted multiline/required/optional controls on final narrow/native client.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -694,8 +1026,16 @@
       "sourceLine": 94,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Safe integer versus number distinction and rejection populations passed REST; finish native raw-input/blank/zero presentation.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -721,8 +1061,16 @@
       "sourceLine": 95,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Finite \u00b11e15 validation and global numeric results passed; finish final mounted range/raw-invalid/blank controls across views.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -748,8 +1096,16 @@
       "sourceLine": 96,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Typed false/missing preservation has local/REST proof; complete mounted switch/checklist interaction and native accessibility.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -775,8 +1131,16 @@
       "sourceLine": 97,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Declared-choice validation and workflow cases passed; complete mounted choice/group controls and final compatibility regression.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -802,8 +1166,17 @@
       "sourceLine": 98,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "render", "engine"],
-      "evidence": ["LOCAL", "FULL", "FORM"],
+      "sourceGroups": [
+        "spec",
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FORM",
+        "FULL43"
+      ],
       "remainingGate": "Offset/UTC/lossless projection cases passed locally/REST; DST/device-local input behavior needs final mounted/native acceptance.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -829,8 +1202,16 @@
       "sourceLine": 99,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Current eligible assignment/protected-field and revoked-access cases passed REST; complete picker UX and historical revoked reference interactions.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -855,10 +1236,18 @@
       "originalFinalGate": "Authorized upload/read/reference, cross-app/revoked/expired cases, preview-only bytes, no AI-invented asset ID.",
       "sourceLine": 100,
       "section": "Definition language and persistence contract",
-      "sourceState": "Implemented",
-      "sourceGroups": ["spec", "render", "media"],
-      "evidence": ["LOCAL", "MEDIA"],
-      "remainingGate": "Broker/private same-app reference cases passed media REST; native picker/cache and mounted image failure/revocation UI remain unverified.",
+      "sourceState": "Implemented; attachment correction pending",
+      "sourceGroups": [
+        "spec",
+        "render",
+        "media"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "BROWSER60_MEDIA_PARTIAL"
+      ],
+      "remainingGate": "Backend/media transport and complete two-image SDK/service pipelines have separate proof. Actual60e7 browser uploaded one76-byte asset to READY but settled attachment failed without a preview and showed a false retained-operation host warning. Narrow callback-lifetime source fix/mounted regression are underway; valid saved attachment, fresh exact source/native proof remain. No two-distinct Cloudasset claim.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
         "apps/mobile/src/spec/values.ts",
@@ -883,8 +1272,15 @@
       "sourceLine": 108,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Full typed create/receipt/policy REST cases passed; final mounted/native create and actual client lost-response recovery remain.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -906,8 +1302,15 @@
       "sourceLine": 109,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Full patch/protected-field/receipt REST cases passed; final mounted/native patch and conflict recovery remain.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -929,8 +1332,15 @@
       "sourceLine": 110,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Assignment and protected-field REST tests passed; final RN eligibility/revocation picker flows remain.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -952,8 +1362,16 @@
       "sourceLine": 111,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "Workflow/protected-state REST and bounded synthetic browser transitions passed; drag/accessibility/native transitions need final coverage.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -975,8 +1393,16 @@
       "sourceLine": 112,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "Capacity configuration and unauthorized generic edits passed REST; final mounted role-specific configuration/native recovery remain.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -998,8 +1424,16 @@
       "sourceLine": 113,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "20 concurrent HTTP attempts/20 keys/3 actors yielded one allocation; no server execution barrier or 20-distinct-actor proof, and native UI remains.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -1021,8 +1455,16 @@
       "sourceLine": 114,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "Exact release/counter/reactivation REST invariants passed; final mounted/native ambiguous-release recovery remains.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -1044,8 +1486,16 @@
       "sourceLine": 115,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "engine", "share"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "share"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Three-policy owner/builder/member/viewer/outsider wire cases passed; finish the equivalent mounted client negative-action matrix and final deployment regression.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -1071,8 +1521,16 @@
       "sourceLine": 116,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "engine", "share"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "share"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Three-policy owner/builder/member/viewer/outsider wire cases passed; finish the equivalent mounted client negative-action matrix and final deployment regression.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -1098,8 +1556,16 @@
       "sourceLine": 117,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "engine", "share"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "engine",
+        "share"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Three-policy owner/builder/member/viewer/outsider wire cases passed; finish the equivalent mounted client negative-action matrix and final deployment regression.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -1125,8 +1591,17 @@
       "sourceLine": 127,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine", "nav"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "render",
+        "engine",
+        "nav"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "Configured search/filter/sort/paging source and backend REST exist; final live mounted all-bindings and return-state coverage remains.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1152,8 +1627,18 @@
       "sourceLine": 128,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine", "nav"],
-      "evidence": ["LOCAL", "FULL", "RENDER", "FORM"],
+      "sourceGroups": [
+        "render",
+        "engine",
+        "nav"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FORM",
+        "FULL43"
+      ],
       "remainingGate": "Live browser confirms empty-title inline focus, steps and unsaved leave behavior; other types, 320px/large text and native controls remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1179,8 +1664,17 @@
       "sourceLine": 129,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine", "nav"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "render",
+        "engine",
+        "nav"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "Authorized lookup/route source and local races exist; complete final live direct-link/unavailable/access-loss browser/native flows.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1206,8 +1700,16 @@
       "sourceLine": 130,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "Synthetic browser button transition and board columns passed; actual drag, accessible Move and live/native workflow UX remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1229,8 +1731,15 @@
       "sourceLine": 131,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Full-collection totals passed REST; finish mounted summary predicate/empty/access-change cases on final source.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1252,8 +1761,16 @@
       "sourceLine": 132,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "REST capacity and synthetic Join/release browser paths passed; live role/recovery/native capacity presentation remains.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1275,8 +1792,15 @@
       "sourceLine": 133,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "All seven action dispatches/policies have source and wire cases; complete mounted per-action busy/unknown/rejected UX.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1298,8 +1822,15 @@
       "sourceLine": 134,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Global sorting/paging backend passed; final mounted narrow horizontal table, column keyboard and detail-return behavior remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1321,8 +1852,15 @@
       "sourceLine": 135,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Timestamp/local-day query logic and counts are implemented; final live month/day/undated/DST mounted interactions remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1344,8 +1882,15 @@
       "sourceLine": 136,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Local-day grouping/Undated/paging source exists; final live return/paging and native local-zone behavior remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1367,8 +1912,15 @@
       "sourceLine": 137,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Complete numeric/choice/date aggregates passed REST; final mounted bar/donut/line values and narrow/keyboard checks remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1390,8 +1942,15 @@
       "sourceLine": 138,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Global count/sum/average/empty semantics passed; final mounted positive-target/over-target/empty display checks remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1412,10 +1971,26 @@
       "originalFinalGate": "Opaque image/caption field binding, authorized bytes, revoked/failed image states and isolated preview.",
       "sourceLine": 139,
       "section": "Definition language and persistence contract",
-      "sourceState": "Implemented",
-      "sourceGroups": ["render", "media", "preview"],
-      "evidence": ["LOCAL", "MEDIA"],
-      "remainingGate": "Private image/caption source and broker REST pass; final mounted/native imageCards bytes, failure and revocation interaction remain.",
+      "sourceState": "Implemented; attachment correction pending",
+      "sourceGroups": [
+        "render",
+        "media",
+        "preview"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "MEDIA_READ_RACE",
+        "MEDIA_READ_RACE_SOURCE",
+        "MEDIA_FIFO_SDK",
+        "MEDIA_FIFO_SDK_SOURCE",
+        "READ21_SOURCE",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "BROWSER60_MEDIA_PARTIAL"
+      ],
+      "remainingGate": "Backend/media transport and complete two-image SDK/service pipelines have separate proof. Actual60e7 browser uploaded one76-byte asset to READY but settled attachment failed without a preview and showed a false retained-operation host warning. Narrow callback-lifetime source fix/mounted regression are underway; valid saved attachment, fresh exact source/native proof remain. No two-distinct Cloudasset claim.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
         "apps/mobile/src/renderer/fields.tsx",
@@ -1439,10 +2014,26 @@
       "originalFinalGate": "Each item is an authorized record, image/caption bindings, pagination and no bearer/public URL leakage.",
       "sourceLine": 140,
       "section": "Definition language and persistence contract",
-      "sourceState": "Implemented",
-      "sourceGroups": ["render", "media", "preview"],
-      "evidence": ["LOCAL", "MEDIA"],
-      "remainingGate": "Private image-record paging source and broker REST pass; final mounted/native gallery and cache cleanup interaction remain.",
+      "sourceState": "Implemented; attachment correction pending",
+      "sourceGroups": [
+        "render",
+        "media",
+        "preview"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "MEDIA_READ_RACE",
+        "MEDIA_READ_RACE_SOURCE",
+        "MEDIA_FIFO_SDK",
+        "MEDIA_FIFO_SDK_SOURCE",
+        "READ21_SOURCE",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "BROWSER60_MEDIA_PARTIAL"
+      ],
+      "remainingGate": "Backend/media transport and complete two-image SDK/service pipelines have separate proof. Actual60e7 browser uploaded one76-byte asset to READY but settled attachment failed without a preview and showed a false retained-operation host warning. Narrow callback-lifetime source fix/mounted regression are underway; valid saved attachment, fresh exact source/native proof remain. No two-distinct Cloudasset claim.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
         "apps/mobile/src/renderer/fields.tsx",
@@ -1467,8 +2058,12 @@
       "sourceLine": 141,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render"],
-      "evidence": ["LOCAL"],
+      "sourceGroups": [
+        "render"
+      ],
+      "evidence": [
+        "LOCAL"
+      ],
       "remainingGate": "Restricted Markdown source/local parsing exists; final mounted heading/list/code/forbidden-embed/accessibility cases remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1486,8 +2081,16 @@
       "sourceLine": 142,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "media", "preview"],
-      "evidence": ["LOCAL", "RENDER", "MEDIA"],
+      "sourceGroups": [
+        "render",
+        "media",
+        "preview"
+      ],
+      "evidence": [
+        "LOCAL",
+        "RENDER",
+        "MEDIA"
+      ],
       "remainingGate": "Banner/layout/source and authorized static preview injection exist; final real-image banner/tab interaction and large-text layouts remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1513,8 +2116,15 @@
       "sourceLine": 143,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "render",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Boolean/workflow typed patch/policy source exists; final live checklist controls and accessible native action flow remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1536,8 +2146,12 @@
       "sourceLine": 144,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render"],
-      "evidence": ["LOCAL"],
+      "sourceGroups": [
+        "render"
+      ],
+      "evidence": [
+        "LOCAL"
+      ],
       "remainingGate": "Local analog/digital options and isolated source exist; final clock/time-format native/browser interaction remains.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1555,8 +2169,14 @@
       "sourceLine": 145,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "host"],
-      "evidence": ["LOCAL", "STORAGE"],
+      "sourceGroups": [
+        "render",
+        "host"
+      ],
+      "evidence": [
+        "LOCAL",
+        "STORAGE"
+      ],
       "remainingGate": "Scoped persistent timer/deadline logic and storage tests exist; integrated cold reopen/visibility/native timer proof remains; this is not an OS alarm.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1578,8 +2198,14 @@
       "sourceLine": 146,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "device"],
-      "evidence": ["LOCAL", "N5"],
+      "sourceGroups": [
+        "render",
+        "device"
+      ],
+      "evidence": [
+        "LOCAL",
+        "N5"
+      ],
       "remainingGate": "Coarse local info/consent/web-unavailable source exists and compiles at N5; real native readings/permission lifecycle remain untested.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1601,8 +2227,14 @@
       "sourceLine": 147,
       "section": "Definition language and persistence contract",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "device"],
-      "evidence": ["LOCAL", "N5"],
+      "sourceGroups": [
+        "render",
+        "device"
+      ],
+      "evidence": [
+        "LOCAL",
+        "N5"
+      ],
       "remainingGate": "Fixed native controls/lifecycle source compiles at N5; actual hardware torch/brightness/awake/haptics, denial/settings and cleanup remain untested.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -1624,8 +2256,17 @@
       "sourceLine": 155,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["account", "share"],
-      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
+      "sourceGroups": [
+        "account",
+        "share"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "FULL43"
+      ],
       "remainingGate": "Basic authenticated REST and account fences pass; final native expiry/switch/cold-session and every new worker boundary need final acceptance.",
       "sourcePaths": [
         "apps/mobile/src/backend/core.ts",
@@ -1647,9 +2288,19 @@
       "sourceLine": 156,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["share", "engine"],
-      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
-      "remainingGate": "Current workspace-plus-grant isolation passed bounded REST; complete final client and new inbox/activity/effect access cases.",
+      "sourceGroups": [
+        "share",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "ACTIVITY",
+        "FULL43"
+      ],
+      "remainingGate": "Workspace-plus-explicit-grant REST isolation and current activity four-role/cross-app/workspace/cursor/revocation checks passed. Final mounted client and inbox/effect access cases remain.",
       "sourcePaths": [
         "appwrite_backend/lib/collaboration.dart",
         "apps/mobile/src/sharing/SharingController.ts",
@@ -1670,8 +2321,15 @@
       "sourceLine": 157,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["share"],
-      "evidence": ["LOCAL", "FULL", "COLLAB"],
+      "sourceGroups": [
+        "share"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "FULL43"
+      ],
       "remainingGate": "Binding/revoke/single-use/role/receipt cases pass; natural seven-day expiry and final mounted/native invitation flow remain unverified.",
       "sourcePaths": [
         "appwrite_backend/lib/collaboration.dart",
@@ -1689,8 +2347,17 @@
       "sourceLine": 158,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["share", "render"],
-      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
+      "sourceGroups": [
+        "share",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "FULL43"
+      ],
       "remainingGate": "Grant/protected field/current-upload authority cases pass; final directory pagination/picker/revocation UI and larger configured bounds remain.",
       "sourcePaths": [
         "appwrite_backend/lib/collaboration.dart",
@@ -1712,9 +2379,25 @@
       "sourceLine": 159,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["life", "account"],
-      "evidence": ["LOCAL", "FULL", "COLLAB"],
-      "remainingGate": "Launcher/templates/pins/author drafts implemented; server-backed pin filter/hierarchy fixes are local-tested, awaiting final browser/native return-flow checks.",
+      "sourceGroups": [
+        "life",
+        "account"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "FULL43",
+        "LOCAL712",
+        "BASIC0ACF_FAILED",
+        "READ21_SOURCE",
+        "READ21_SDK",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "BROWSER60_READS"
+      ],
+      "remainingGate": "Accepted 60e7 basic list recovery passes local actual service409\u2192200 and realbrowser return-to-workbench4apps withoutmanualRefresh; current CI/export/native proofs are source-specific. Broader launcher/role/native UI acceptance remains.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_lifecycle.dart",
         "apps/mobile/src/full/FullWorkspaceController.ts",
@@ -1734,8 +2417,15 @@
       "sourceLine": 160,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["life", "preview"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "life",
+        "preview"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "All12 canonical template instantiations, empty data, history/remix/personal pins passed REST; finish mounted remix/history and image-strip UI flow.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_lifecycle.dart",
@@ -1756,9 +2446,21 @@
       "sourceLine": 161,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["share", "engine", "media", "worker"],
-      "evidence": ["LOCAL", "FULL", "COLLAB", "MEDIA"],
-      "remainingGate": "Archived reads/new-write denial/exact receipt cases passed; actual stale reminder suppression and final mounted/native archive flows remain.",
+      "sourceGroups": [
+        "share",
+        "engine",
+        "media",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "ACTIVITY",
+        "FULL43"
+      ],
+      "remainingGate": "Archived activity reads and current revocation passed on Core 43d4334; older write/media/archive receipt cases remain source-specific passes. Actual stale reminder suppression and final mounted/native archive flows remain.",
       "sourcePaths": [
         "appwrite_backend/lib/collaboration.dart",
         "apps/mobile/src/sharing/SharingController.ts",
@@ -1787,9 +2489,26 @@
       "sourceLine": 162,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["activity", "notify"],
-      "evidence": ["LOCAL", "ACTIVITY", "REMINDER"],
-      "remainingGate": "Activity deployed source plus local10backend/16client cases; current activity Cloud read and inbox/delivery/run-history live acceptance are actively pending.",
+      "sourceGroups": [
+        "activity",
+        "notify"
+      ],
+      "evidence": [
+        "LOCAL",
+        "ACTIVITY",
+        "REMINDER",
+        "ACTIVITY_DIAGNOSTICS",
+        "REMINDER_DIAGNOSTICS",
+        "LOCAL712",
+        "READFIFO",
+        "READ21_SOURCE",
+        "READ21_SDK",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "BROWSER60_READS"
+      ],
+      "remainingGate": "Activity8/132 and reminder6/61 bounded REST passes retain meaning. Accepted activity/runs/inbox/member read lane+caller fences passes local actual SDK/service8pairs. Mounted paging/navigation/accessloss/native acceptance remains.",
       "sourcePaths": [
         "appwrite_backend/lib/activity.dart",
         "apps/mobile/src/activity/ActivityController.ts",
@@ -1809,8 +2528,15 @@
       "sourceLine": 163,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["spec", "engine"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "spec",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Typed multi-filter/search/range proof is local and bounded REST; final all-operator/invalid/empty cases on current frozen deployment remain.",
       "sourcePaths": [
         "apps/mobile/src/spec/decode.ts",
@@ -1832,8 +2558,15 @@
       "sourceLine": 164,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "nav"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "engine",
+        "nav"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "115-record rank/global-sort paging passed; final mounted duplicate/stale-query/cursor/source-scroll return and native deep-link tests remain.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -1855,8 +2588,15 @@
       "sourceLine": 165,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Global aggregate counts/sum/average/date buckets passed more-than-page REST data; final mounted chart/metric/empty numeric displays remain.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -1878,8 +2618,16 @@
       "sourceLine": 166,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "render"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "engine",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "Local-day/DST boundary logic and selected REST/browser cases exist; final actual device-zone and 23/25h calendar/timeline UX remain.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
@@ -1901,8 +2649,16 @@
       "sourceLine": 167,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["nav", "engine"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "nav",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "Current scoped record lookup and pages/routes implemented; final real browser Back/Forward/direct-entry/rejected-leave plus native fallback remain.",
       "sourcePaths": [
         "apps/mobile/src/full/navigation.ts",
@@ -1924,9 +2680,32 @@
       "sourceLine": 168,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["life", "builder"],
-      "evidence": ["LOCAL", "FULL"],
-      "remainingGate": "Author-private latest draft discovery passed REST; job recovery is local-tested only; final mounted reopen/revocation/job restore and native process reopen remain.",
+      "sourceGroups": [
+        "life",
+        "builder"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "PUBLISHED",
+        "RECOVERY",
+        "BROWSER665",
+        "LOCAL683",
+        "CLIENTREAD",
+        "HARNESSA1",
+        "FULL43",
+        "BROWSER916FAIL",
+        "WORKSPACEREAD",
+        "LOCAL699",
+        "BROWSER48_PARTIAL",
+        "READ_CONTENTION",
+        "LOCAL712",
+        "BROWSER0ACF",
+        "BASIC0ACF_FAILED",
+        "READ21_SOURCE",
+        "READ21_SDK"
+      ],
+      "remainingGate": "Private author discovery/full 43 and priorpublishedcopy/reload passes retain scope. Accepted 60e7 closes known basic catalog availability path with fencedread-only recovery; root 730/localserviceproof pass. Fresh workbench/persistedcold/native acceptance remains.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_lifecycle.dart",
         "apps/mobile/src/full/FullWorkspaceController.ts",
@@ -1934,7 +2713,9 @@
         "apps/mobile/src/full/FullAppController.ts",
         "apps/mobile/src/full/SpecEditor.tsx",
         "apps/mobile/src/full/GenerationPanel.tsx",
-        "apps/mobile/src/full/PublicationPanel.tsx"
+        "apps/mobile/src/full/PublicationPanel.tsx",
+        "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+        "apps/mobile/src/renderer/recordRecovery.ts"
       ]
     },
     {
@@ -1946,8 +2727,15 @@
       "sourceLine": 169,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["builder", "spec"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "builder",
+        "spec"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Listed semantic edit operations exist with validation/stable IDs; final mounted all-control persistence, failure/Discard and native keyboard acceptance remain.",
       "sourcePaths": [
         "apps/mobile/src/full/FullAppController.ts",
@@ -1969,8 +2757,15 @@
       "sourceLine": 170,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["builder", "spec"],
-      "evidence": ["LOCAL", "FULL"],
+      "sourceGroups": [
+        "builder",
+        "spec"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Atomic explicit/implicit AddField and final-step bindings have local/REST evidence; final mounted cross-target and narrow/native editing remain.",
       "sourcePaths": [
         "apps/mobile/src/full/FullAppController.ts",
@@ -1991,10 +2786,21 @@
       "originalFinalGate": "Fresh creation hides placeholder until validated candidate; desktop conversation+preview/mobile tabs; no fake progress or generated sample writes.",
       "sourceLine": 171,
       "section": "Platform, authoring, and query catalog",
-      "sourceState": "Partial source",
-      "sourceGroups": ["builder", "preview"],
-      "evidence": ["LOCAL", "FULL", "CLARIFY"],
-      "remainingGate": "Partial source: latest request/job + Build/Preview modes exist, but session accepted-prompt conversation history and desktop conversation/preview split are absent. Approved next source slice; real provider loop still needs config/spend decision.",
+      "sourceState": "Implemented",
+      "sourceGroups": [
+        "builder",
+        "preview"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "CLARIFY",
+        "CONVERSATION",
+        "LOCAL645",
+        "LOCAL673",
+        "FULL43"
+      ],
+      "remainingGate": "Implemented10fed99 and retained in accepted 0acf: accepted-session history, labelled latest-job restore, measured desktop split/mobile tabs and image-interaction guard. Real provider loop and full mounted/narrow/native layout remain unproven.",
       "sourcePaths": [
         "apps/mobile/src/full/FullAppController.ts",
         "apps/mobile/src/full/SpecEditor.tsx",
@@ -2003,7 +2809,10 @@
         "apps/mobile/src/runtime/preview.ts",
         "apps/mobile/src/runtime/previewImageInflate.ts",
         "apps/mobile/src/host/staticPreviewImages.ts",
-        "apps/mobile/src/full/PreviewSession.ts"
+        "apps/mobile/src/full/PreviewSession.ts",
+        "apps/mobile/src/full/conversation.ts",
+        "apps/mobile/src/full/ConversationHistory.tsx",
+        "apps/mobile/src/renderer/containerWidth.ts"
       ]
     },
     {
@@ -2015,8 +2824,15 @@
       "sourceLine": 172,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["clarify", "builder", "life"],
-      "evidence": ["LOCAL", "CLARIFY"],
+      "sourceGroups": [
+        "clarify",
+        "builder",
+        "life"
+      ],
+      "evidence": [
+        "LOCAL",
+        "CLARIFY"
+      ],
       "remainingGate": "Provider-off built-ins/selection/original/explicit shell prefill passed browser; real provider questions and separate live quota need approved config/spend, plus final narrow/native checks.",
       "sourcePaths": [
         "apps/mobile/src/full/clarification.ts",
@@ -2039,8 +2855,14 @@
       "sourceLine": 173,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["provider", "spec", "worker"],
-      "evidence": ["LOCAL"],
+      "sourceGroups": [
+        "provider",
+        "spec",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL"
+      ],
       "remainingGate": "Full-create/semantic-edit parsing and compilation are source/local-tested; current real-provider malformed/unsupported result acceptance remains unrun and requires approval.",
       "sourcePaths": [
         "appwrite_backend/lib/providers/provider.dart",
@@ -2066,8 +2888,16 @@
       "sourceLine": 174,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["provider", "worker"],
-      "evidence": ["LOCAL", "FULL", "CLARIFY"],
+      "sourceGroups": [
+        "provider",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "CLARIFY",
+        "FULL43"
+      ],
       "remainingGate": "Server-only configuration/empty provider mode implemented; actual endpoint/model/credentials/spend remain undecided. No provider call or cost acceptance is claimed.",
       "sourcePaths": [
         "appwrite_backend/lib/providers/provider.dart",
@@ -2089,8 +2919,13 @@
       "sourceLine": 175,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["worker", "builder"],
-      "evidence": ["LOCAL"],
+      "sourceGroups": [
+        "worker",
+        "builder"
+      ],
+      "evidence": [
+        "LOCAL"
+      ],
       "remainingGate": "Durable jobs/leases/quotas/three attempts/source fences implemented; real configured provider enqueue, lease expiry, concurrency and wakeup recovery remain unverified.",
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
@@ -2112,8 +2947,13 @@
       "sourceLine": 176,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["provider", "worker"],
-      "evidence": ["LOCAL"],
+      "sourceGroups": [
+        "provider",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL"
+      ],
       "remainingGate": "Bounded repair/quality/adaptation tests use mocks/local HTTP; real malformed/transient/truncated provider behavior and diagnostics need approved profile testing.",
       "sourcePaths": [
         "appwrite_backend/lib/providers/provider.dart",
@@ -2135,9 +2975,17 @@
       "sourceLine": 177,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["worker", "builder", "host"],
-      "evidence": ["LOCAL"],
-      "remainingGate": "Exact retained enqueue and consistent job+candidate logic tested locally; actual lost enqueue/reopen/provider completion and failed-edit Keep previous UX remain.",
+      "sourceGroups": [
+        "worker",
+        "builder",
+        "host"
+      ],
+      "evidence": [
+        "LOCAL",
+        "LOCAL683",
+        "CLIENTREAD"
+      ],
+      "remainingGate": "Generation enqueue/recovery retains exact envelopes; bounded read recovery and complete 21-operation coordination are accepted at source 60e7 without replaying provider calls, mutations or journal writes. Real lost-enqueue/provider completion/Keep previous/persistent native reopen remain unproven.",
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
         "appwrite_backend/lib/reminders.dart",
@@ -2162,9 +3010,19 @@
       "sourceLine": 178,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["builder", "engine", "worker"],
-      "evidence": ["LOCAL", "FULL"],
-      "remainingGate": "Exact review/hash/base/rule/record-scope REST passes; rejected-input publication barrier now local-tested; enabled effect enrollment/live confirmation and final UI approval remain.",
+      "sourceGroups": [
+        "builder",
+        "engine",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "PUBLISHED",
+        "BROWSER665",
+        "FULL43"
+      ],
+      "remainingGate": "Exact review/hash/base/rule/record scope passed full REST. Current reminder setup explicitly approved selected owner rules and enrolled member/new-record scope (20 setup assertions passed). Broader approval/existing-record scopes, mounted publication UI and actual provider evolution remain; published-copy browser proof does not publish automatically.",
       "sourcePaths": [
         "apps/mobile/src/full/FullAppController.ts",
         "apps/mobile/src/full/SpecEditor.tsx",
@@ -2189,9 +3047,23 @@
       "sourceLine": 179,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["inspector", "builder"],
-      "evidence": ["LOCAL", "FORM"],
-      "remainingGate": "Inspector targets, serial/joined saves, raw invalid preservation/reset/subscribed guards implemented; latest inspector browser invalid-blur/fix/Discard/publish/Back acceptance remains.",
+      "sourceGroups": [
+        "inspector",
+        "builder"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FORM",
+        "BROWSER665",
+        "RECOVERY",
+        "LOCAL673",
+        "ROUTE",
+        "BROWSER916FAIL",
+        "FULL43",
+        "LOCAL699",
+        "READINESS"
+      ],
+      "remainingGate": "Prior browser665 inspector cases/current full 43 backend save-review and0acf accepted source preserve measured editing/metadata-based preparation. Prior failures remain. Full inspector/narrow/native and corrected read-coordination mounted acceptance remain.",
       "sourcePaths": [
         "apps/mobile/src/full/SpecEditor.tsx",
         "apps/mobile/src/full/inspectorTextDraft.ts",
@@ -2210,9 +3082,18 @@
       "sourceLine": 180,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["preview", "inspector"],
-      "evidence": ["LOCAL", "RENDER"],
-      "remainingGate": "Presentation fingerprint preserves sample data/receipts/routes; semantic change restarts; final keyboard/nested selection/all-controls browser/native interaction remains.",
+      "sourceGroups": [
+        "preview",
+        "inspector"
+      ],
+      "evidence": [
+        "LOCAL",
+        "RENDER",
+        "CONVERSATION",
+        "PUBLISHED",
+        "BROWSER665"
+      ],
+      "remainingGate": "Presentation fingerprints preserve preview state; measured container/layout guards and published-to-private preview continuity have local proof. Browser665 page inspection passed; all controls/keyboard/nested/narrow/native acceptance remains.",
       "sourcePaths": [
         "apps/mobile/src/runtime/preview.ts",
         "apps/mobile/src/runtime/previewImageInflate.ts",
@@ -2233,8 +3114,17 @@
       "sourceLine": 181,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["life", "provider", "builder"],
-      "evidence": ["LOCAL", "FULL", "RENDER"],
+      "sourceGroups": [
+        "life",
+        "provider",
+        "builder"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "RENDER",
+        "FULL43"
+      ],
       "remainingGate": "All12 original template families have source/REST instances; real fresh/edit provider modes and latest mounted full flow still require config/spend and final client acceptance.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_lifecycle.dart",
@@ -2259,8 +3149,12 @@
       "sourceLine": 185,
       "section": "Platform, authoring, and query catalog",
       "sourceState": "Implemented",
-      "sourceGroups": ["provider"],
-      "evidence": ["LOCAL"],
+      "sourceGroups": [
+        "provider"
+      ],
+      "evidence": [
+        "LOCAL"
+      ],
       "remainingGate": "Allowlisted transport/model profiles implemented and mock-tested; exact chosen route/model availability, quota, cost and live quality are undecided and unverified.",
       "sourcePaths": [
         "appwrite_backend/lib/providers/provider.dart",
@@ -2278,9 +3172,20 @@
       "sourceLine": 191,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["engine", "worker"],
-      "evidence": ["LOCAL", "FULL", "MEDIA"],
-      "remainingGate": "Business/action/publication atomicity has local injection plus bounded real contention/rejection evidence; every real staging/effect failure boundary remains unexercised.",
+      "sourceGroups": [
+        "engine",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FULL",
+        "MEDIA",
+        "RETRY",
+        "CORE43",
+        "ACTIVITY",
+        "FULL43"
+      ],
+      "remainingGate": "Explicit DB-only opt-ins preserve current authority/CAS/receipt/audit/outbox in local actual-worker race tests;405 standard tests/118 checks author-verified and39 retry cases independently root-verified. Current activity passed, but full hosted publication/action contention and every staging/effect failure remain unaccepted.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_runtime.dart",
         "appwrite_backend/lib/spec_actions.dart",
@@ -2301,9 +3206,16 @@
       "sourceLine": 192,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["worker"],
-      "evidence": ["LOCAL", "MEDIA", "CLEANUP"],
-      "remainingGate": "Persistent planning/run/dedupe source exists; media readiness/cleanup proves selected private-worker work only, not reminder reorder/interruption/deduplication acceptance.",
+      "sourceGroups": [
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "CLEANUP",
+        "REMINDER"
+      ],
+      "remainingGate": "Current reminder observed2 delivered/2 suppressed/1 zero-recipient runs and one same-occurrence item after bounded dedup checks. Durable source/local tests and media work exist; worker interruption/reordering/reconciliation and full planned/retry/delivery matrix remain.",
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
         "appwrite_backend/lib/reminders.dart",
@@ -2320,9 +3232,16 @@
       "sourceLine": 193,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["worker"],
-      "evidence": ["LOCAL", "MEDIA", "CLEANUP", "REMINDER"],
-      "remainingGate": "Actual private media wakeup and one quiet cleanup observed; missed reminder dispatch/expired leases/hourly reconciliation interruption remain pending. No ten-second cadence claim.",
+      "sourceGroups": [
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "CLEANUP",
+        "REMINDER"
+      ],
+      "remainingGate": "Current reminder terminal/inbox observation passed with real future dates, but public client cannot identify one-shot causality and the window does not prove hourly recovery. Prior media wakeup/quiet cleanup remains separate; missed dispatch/lease/reconcile interruption still needs evidence.",
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
         "appwrite_backend/lib/reminders.dart",
@@ -2339,9 +3258,16 @@
       "sourceLine": 194,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["worker", "notify"],
-      "evidence": ["LOCAL", "REMINDER"],
-      "remainingGate": "Owner/assignee/active-claimant in-app reminder source exists; real enabled reminder recipient/due-condition delivery is actively under probe, not yet a passing receipt.",
+      "sourceGroups": [
+        "worker",
+        "notify"
+      ],
+      "evidence": [
+        "LOCAL",
+        "REMINDER",
+        "CORE43"
+      ],
+      "remainingGate": "Current reminder6/61 pass observed one owner and one self-assigned member private inbox item with2 delivered/2 suppressed/1 zero-recipient runs. Active-claimant fanout, full current-recipient matrix and email/push/provider/device UI remain unverified.",
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
         "appwrite_backend/lib/reminders.dart",
@@ -2362,9 +3288,15 @@
       "sourceLine": 195,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["worker", "engine"],
-      "evidence": ["LOCAL", "REMINDER"],
-      "remainingGate": "Approval/enrollment/generation/occurrence/dedup source is tested locally; live reschedule/unrelated edit/disable/archive/revoke and presentation-preserved enrollment remain pending.",
+      "sourceGroups": [
+        "worker",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "REMINDER"
+      ],
+      "remainingGate": "Current reminder explicit owner approval/member acceptance, real future dates, selected pre-due invalidation/suppression and bounded same-occurrence dedup passed. Full reschedule/unrelated-edit/rule-disable/archive/claim and presentation-preserved enrollment matrix remains.",
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
         "appwrite_backend/lib/reminders.dart",
@@ -2385,9 +3317,14 @@
       "sourceLine": 196,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["worker"],
-      "evidence": ["LOCAL", "REMINDER"],
-      "remainingGate": "Due/backoff/attempt budget and shared-guard tests are local; hosted early/duplicate wakes, failures and exhaustion remain pending.",
+      "sourceGroups": [
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "REMINDER"
+      ],
+      "remainingGate": "Current reminder actual terminal observation passed without client clock/proof override. Hosted early/duplicate wake causality, failure/backoff/exhaustion, worker interruption and starvation remain unproven; no recovery cadence guarantee is inferred.",
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
         "appwrite_backend/lib/reminders.dart",
@@ -2404,9 +3341,26 @@
       "sourceLine": 197,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["notify", "render"],
-      "evidence": ["LOCAL", "REMINDER"],
-      "remainingGate": "Strict state mapping/inbox/read/run controllers implemented; real delivered/suppressed/failed states, receipt read retry and target navigation remain pending.",
+      "sourceGroups": [
+        "notify",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "REMINDER",
+        "CORE43",
+        "ACTIVITY",
+        "LOCAL712",
+        "READFIFO",
+        "READ21_SOURCE",
+        "READ21_SDK",
+        "REMINDER0ACF_FAILED",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "BROWSER60_READS"
+      ],
+      "remainingGate": "Selectedreminder/inbox/history backend and live6/61 pass. Accepted21-op/callerfence correction now passes actualtwo-card unsetstatus,emptyruns andactivity4-entry browsercases. Fullfailed/backoff/pagination/native matrix remains.",
       "sourcePaths": [
         "appwrite_backend/lib/inbox.dart",
         "apps/mobile/src/notifications/NotificationsController.ts",
@@ -2427,9 +3381,25 @@
       "sourceLine": 198,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["watch", "nav"],
-      "evidence": ["LOCAL"],
-      "remainingGate": "Revision/role/archive polling,15sminimum/120smax backoff and dirty coalescing exist; full Cloud probe excludes watch. Final live reconnect/resume/cancellation/client loss proof remains.",
+      "sourceGroups": [
+        "watch",
+        "nav"
+      ],
+      "evidence": [
+        "LOCAL",
+        "LOCAL712",
+        "READFIFO",
+        "BROWSER0ACF",
+        "BASIC0ACF_FAILED",
+        "READ21_SOURCE",
+        "READ21_CHECKS",
+        "READ21_SDK",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "BROWSER60_READS"
+      ],
+      "remainingGate": "Accepted complete21-op FIFO/source caller lifetimes prevents identified local overlapping guard reads; root 730/27 independent checks and actual SDK/service proofs pass withoutmutationretry. Fresh browser/reconnect/resume/current role/watch/native acceptance remains.",
       "sourcePaths": [
         "appwrite_backend/lib/spec_watch.dart",
         "apps/mobile/src/runtime/invalidation.ts",
@@ -2450,8 +3420,12 @@
       "sourceLine": 199,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["worker"],
-      "evidence": ["LOCAL"],
+      "sourceGroups": [
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL"
+      ],
       "remainingGate": "Separate executions and bounded provider/image leases are implemented; no real stalled-provider alongside reminder/queue-lag proof or Free nonstarvation guarantee.",
       "sourcePaths": [
         "appwrite_backend/lib/generation.dart",
@@ -2469,9 +3443,15 @@
       "sourceLine": 200,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["media"],
-      "evidence": ["LOCAL", "MEDIA"],
-      "remainingGate": "Real 5MiB begin/chunks/complete, exact receipts, reads and current-authority denials passed; native/mounted picker transport and final session recovery remain.",
+      "sourceGroups": [
+        "media"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "BROWSER60_MEDIA_PARTIAL"
+      ],
+      "remainingGate": "Authenticated begin/complete/read backend and older media22/242 pass; current browser76-byte upload reachedREADY. UI attachment callback lifecycle is separately broken and beingfixed; READY alone does not prove a saved image field. Current-role/context/reference/native UI acceptance remains.",
       "sourcePaths": [
         "appwrite_backend/lib/private_media.dart",
         "appwrite_backend/lib/image_sanitizer.dart",
@@ -2488,8 +3468,13 @@
       "sourceLine": 201,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["media"],
-      "evidence": ["LOCAL", "MEDIA"],
+      "sourceGroups": [
+        "media"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA"
+      ],
       "remainingGate": "Actual sanitizer/resource vectors plus live orientation/metadata/whole-byte/pixel proof pass; padded5MiB image is small, not worst-case16MP/512MB/performance acceptance.",
       "sourcePaths": [
         "appwrite_backend/lib/private_media.dart",
@@ -2507,8 +3492,14 @@
       "sourceLine": 202,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["media", "engine"],
-      "evidence": ["LOCAL", "MEDIA"],
+      "sourceGroups": [
+        "media",
+        "engine"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA"
+      ],
       "remainingGate": "Draft publication/record references and cross-app/read/current authority pass REST; historical retention/interruption/late-I/O edge matrix remains local-only.",
       "sourcePaths": [
         "appwrite_backend/lib/private_media.dart",
@@ -2530,8 +3521,15 @@
       "sourceLine": 203,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["media", "worker"],
-      "evidence": ["LOCAL", "MEDIA", "CLEANUP"],
+      "sourceGroups": [
+        "media",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "CLEANUP"
+      ],
       "remainingGate": "Reservations and one natural16minute original cleanup observed; media pass still has optional quiet phase pending. Full500asset/250MiB/24h/lease interruption/project-quota Cloud gates remain.",
       "sourcePaths": [
         "appwrite_backend/lib/private_media.dart",
@@ -2553,8 +3551,16 @@
       "sourceLine": 204,
       "section": "Durable effects, media, and refresh",
       "sourceState": "Implemented",
-      "sourceGroups": ["preview", "media", "provider"],
-      "evidence": ["LOCAL", "RENDER", "MEDIA"],
+      "sourceGroups": [
+        "preview",
+        "media",
+        "provider"
+      ],
+      "evidence": [
+        "LOCAL",
+        "RENDER",
+        "MEDIA"
+      ],
       "remainingGate": "Memory-only actual byte uploads, static host injection and AI/remix restrictions implemented; final mounted authorized static preview/revocation and no-live-adapter proof remain; provider bytes never sent.",
       "sourcePaths": [
         "apps/mobile/src/runtime/preview.ts",
@@ -2579,10 +3585,26 @@
       "originalFinalGate": "Actual upload/download transport, session loss/revocation, simultaneous requests, resource cleanup; already-delivered bytes cannot be recalled and must not be claimed otherwise.",
       "sourceLine": 205,
       "section": "Durable effects, media, and refresh",
-      "sourceState": "Implemented",
-      "sourceGroups": ["media", "host"],
-      "evidence": ["LOCAL", "MEDIA", "N5"],
-      "remainingGate": "Authenticated REST downloads/revocation pass and modules compile at5f; real browser picker/cache eviction, native session loss/parallel transfer and device transport remain unverified.",
+      "sourceState": "Implemented; attachment correction pending",
+      "sourceGroups": [
+        "media",
+        "host"
+      ],
+      "evidence": [
+        "LOCAL",
+        "MEDIA",
+        "N5",
+        "MEDIA_READ_RACE",
+        "MEDIA_READ_RACE_SOURCE",
+        "MEDIA_FIFO_SDK",
+        "MEDIA_FIFO_SDK_SOURCE",
+        "READ21_SOURCE",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "BROWSER60_MEDIA_PARTIAL"
+      ],
+      "remainingGate": "Backend/media transport and complete two-image SDK/service pipelines have separate proof. Actual60e7 browser uploaded one76-byte asset to READY but settled attachment failed without a preview and showed a false retained-operation host warning. Narrow callback-lifetime source fix/mounted regression are underway; valid saved attachment, fresh exact source/native proof remain. No two-distinct Cloudasset claim.",
       "sourcePaths": [
         "appwrite_backend/lib/private_media.dart",
         "appwrite_backend/lib/image_sanitizer.dart",
@@ -2603,9 +3625,28 @@
       "sourceLine": 211,
       "section": "Navigation, appearance, utilities, and devices",
       "sourceState": "Implemented",
-      "sourceGroups": ["nav", "render"],
-      "evidence": ["LOCAL", "FORM", "RENDER"],
-      "remainingGate": "Route/page/scroll/source state and dirty guards implemented with recent regressions; final browser Back/Forward/push/rapid leave/unavailable/access scenarios and native fallback remain.",
+      "sourceGroups": [
+        "nav",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "FORM",
+        "RENDER",
+        "BROWSER665",
+        "RECOVERY",
+        "LOCAL673",
+        "ROUTE",
+        "LOCAL683",
+        "HARNESSA1",
+        "BROWSER916FAIL",
+        "LOCAL699",
+        "READINESS",
+        "READINESS_REVIEW",
+        "BROWSER48_PARTIAL",
+        "READ_CONTENTION"
+      ],
+      "remainingGate": "Accepted48 fixes preparing metadata guard; actual creation/published copy/canonical page/reload passed. Live return had2 read-conflict alerts; exact Cloud source uncollected. Local overlap mechanism proof and guarded-read coordinator work do not complete full routing/native acceptance.",
       "sourcePaths": [
         "apps/mobile/src/full/navigation.ts",
         "apps/mobile/src/full/FullAppScreen.tsx",
@@ -2614,7 +3655,9 @@
         "apps/mobile/src/renderer/views.tsx",
         "apps/mobile/src/renderer/fields.tsx",
         "apps/mobile/src/renderer/form.tsx",
-        "apps/mobile/src/renderer/actions.tsx"
+        "apps/mobile/src/renderer/actions.tsx",
+        "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+        "apps/mobile/src/renderer/recordRecovery.ts"
       ]
     },
     {
@@ -2626,8 +3669,14 @@
       "sourceLine": 212,
       "section": "Navigation, appearance, utilities, and devices",
       "sourceState": "Implemented",
-      "sourceGroups": ["render", "spec"],
-      "evidence": ["LOCAL", "RENDER"],
+      "sourceGroups": [
+        "render",
+        "spec"
+      ],
+      "evidence": [
+        "LOCAL",
+        "RENDER"
+      ],
       "remainingGate": "Appearance tokens/strict resets/omission source and tests exist; final all-style/accent/type/density/corner mounted/native screenshots and interactions remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
@@ -2649,9 +3698,16 @@
       "sourceLine": 213,
       "section": "Navigation, appearance, utilities, and devices",
       "sourceState": "Implemented",
-      "sourceGroups": ["render"],
-      "evidence": ["LOCAL", "RENDER"],
-      "remainingGate": "Responsive layout rules exist; broad320px and150% text/narrow-wide component acceptance has not been completed.",
+      "sourceGroups": [
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "RENDER",
+        "CONVERSATION",
+        "N10"
+      ],
+      "remainingGate": "Measured inner-container rules and desktop conversation/preview/mobile-tab composition are implemented/local-tested at10fed99. Broad320px/150% text and actual narrow/wide/native layout acceptance remain.",
       "sourcePaths": [
         "apps/mobile/src/renderer/views.tsx",
         "apps/mobile/src/renderer/fields.tsx",
@@ -2668,8 +3724,15 @@
       "sourceLine": 214,
       "section": "Navigation, appearance, utilities, and devices",
       "sourceState": "Implemented",
-      "sourceGroups": ["host", "render"],
-      "evidence": ["LOCAL", "STORAGE", "N5"],
+      "sourceGroups": [
+        "host",
+        "render"
+      ],
+      "evidence": [
+        "LOCAL",
+        "STORAGE",
+        "N5"
+      ],
       "remainingGate": "Scoped timers/deadlines/encrypted storage tested; integrated reload/process termination/native persistence and timing UI remain; no OS alarm promised.",
       "sourcePaths": [
         "apps/mobile/src/host/storage.ts",
@@ -2691,8 +3754,14 @@
       "sourceLine": 215,
       "section": "Navigation, appearance, utilities, and devices",
       "sourceState": "Implemented",
-      "sourceGroups": ["device", "host"],
-      "evidence": ["LOCAL", "N5"],
+      "sourceGroups": [
+        "device",
+        "host"
+      ],
+      "evidence": [
+        "LOCAL",
+        "N5"
+      ],
       "remainingGate": "Local off-by-default consent and scope/permission-sheet logic tested; physical native grants/settings/corrupt recovery/publication request UX remain untested.",
       "sourcePaths": [
         "apps/mobile/src/host/device.ts",
@@ -2714,8 +3783,13 @@
       "sourceLine": 216,
       "section": "Navigation, appearance, utilities, and devices",
       "sourceState": "Implemented",
-      "sourceGroups": ["device"],
-      "evidence": ["LOCAL", "N5"],
+      "sourceGroups": [
+        "device"
+      ],
+      "evidence": [
+        "LOCAL",
+        "N5"
+      ],
       "remainingGate": "Fixed coarse readings and local-only data path implemented; actual iOS/Android foreground readings/network/localization still need device evidence.",
       "sourcePaths": [
         "apps/mobile/src/host/device.ts",
@@ -2733,8 +3807,13 @@
       "sourceLine": 217,
       "section": "Navigation, appearance, utilities, and devices",
       "sourceState": "Implemented",
-      "sourceGroups": ["device"],
-      "evidence": ["LOCAL", "N5"],
+      "sourceGroups": [
+        "device"
+      ],
+      "evidence": [
+        "LOCAL",
+        "N5"
+      ],
       "remainingGate": "Torch/brightness/keep-awake/haptic native module compiles; actual supported hardware action, denial and restoration proof remains pending by user preference.",
       "sourcePaths": [
         "apps/mobile/src/host/device.ts",
@@ -2752,8 +3831,14 @@
       "sourceLine": 218,
       "section": "Navigation, appearance, utilities, and devices",
       "sourceState": "Implemented",
-      "sourceGroups": ["device", "watch"],
-      "evidence": ["LOCAL", "N5"],
+      "sourceGroups": [
+        "device",
+        "watch"
+      ],
+      "evidence": [
+        "LOCAL",
+        "N5"
+      ],
       "remainingGate": "Lease/lifecycle/late-effect fences implemented and tested; actual background/app-switch/resource release and abrupt-termination OS limits need hardware observation.",
       "sourcePaths": [
         "apps/mobile/src/host/device.ts",
@@ -2783,8 +3868,42 @@
         "notify",
         "inspector"
       ],
-      "evidence": ["LOCAL", "FORM", "CLARIFY"],
-      "remainingGate": "Inline focus/steps/leave and local clarification browser cases passed. Returning pins, raw inspector, contextual mobile actions/account/inbox/radio fixes have source/local proof; full320px/150%/AT/native UX remains partial.",
+      "evidence": [
+        "LOCAL",
+        "FORM",
+        "CLARIFY",
+        "CONVERSATION",
+        "PUBLISHED",
+        "RECOVERY",
+        "BROWSER665",
+        "LOCAL673",
+        "ROUTE",
+        "LOCAL683",
+        "HARNESSA1",
+        "FULL43",
+        "BROWSER916FAIL",
+        "WORKSPACEREAD",
+        "LOCAL699",
+        "READINESS",
+        "BROWSER48_PARTIAL",
+        "READ_CONTENTION",
+        "LOCAL712",
+        "BROWSER0ACF",
+        "BASIC0ACF_FAILED",
+        "MEDIA_READ_RACE",
+        "READ21_CHECKS",
+        "READ21_SDK",
+        "MEDIA_FIFO_SDK",
+        "REMINDER0ACF_FAILED",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "NATIVE60",
+        "NATIVE60_AUDIT",
+        "BROWSER60_READS",
+        "BROWSER60_MEDIA_PARTIAL"
+      ],
+      "remainingGate": "Accepted 60e7 root 730/CI/export314/nativeaudit and four actualreadcases pass. A separate settled image READY attachment/falsehostwarning failure exposes a callback lifetime bug under narrowfix. Fresh correctedsource/mounted/native/imageUI and completeeveryday/narrow/AT/native UI gates remain.",
       "sourcePaths": [
         "apps/mobile/src/full/navigation.ts",
         "apps/mobile/src/full/FullAppScreen.tsx",
@@ -2808,7 +3927,9 @@
         "apps/mobile/src/full/SpecEditor.tsx",
         "apps/mobile/src/full/inspectorTextDraft.ts",
         "apps/mobile/src/full/inspectorSelection.ts",
-        "apps/mobile/src/full/FullAppController.ts"
+        "apps/mobile/src/full/FullAppController.ts",
+        "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+        "apps/mobile/src/renderer/recordRecovery.ts"
       ]
     },
     {
@@ -2820,9 +3941,53 @@
       "sourceLine": 230,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Verification gate",
-      "sourceGroups": ["ops"],
-      "evidence": ["LOCAL"],
-      "remainingGate": "Repeatable client606 slice, backend/spec/provider/media/import suites and exports exist; root final combined frozen-source verify/exports and matching packages remain in progress.",
+      "sourceGroups": [
+        "ops"
+      ],
+      "evidence": [
+        "LOCAL",
+        "LOCAL645",
+        "RECOVERY",
+        "RETRY",
+        "CI900",
+        "LOCAL673",
+        "ROUTE",
+        "LOCAL683",
+        "CLIENTREAD",
+        "PROBEREAD",
+        "NATIVE916",
+        "HARNESS916",
+        "CI916",
+        "EXPORT683",
+        "FULL43",
+        "WORKSPACEREAD",
+        "WORKSPACEREAD_REVIEW",
+        "LOCAL699",
+        "EXPORT699",
+        "READINESS",
+        "READINESS_REVIEW",
+        "NATIVE48",
+        "NATIVE48_AUDIT",
+        "NATIVE48_LOCAL",
+        "CI48",
+        "BROWSER48_PARTIAL",
+        "READ_CONTENTION",
+        "LOCAL712",
+        "EXPORT712",
+        "CI0ACF",
+        "N0ACF",
+        "READFIFO",
+        "READ21_CHECKS",
+        "READ21_SOURCE",
+        "MEDIA_FIFO_SDK",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "NATIVE60",
+        "NATIVE60_AUDIT",
+        "BROWSER60_READS"
+      ],
+      "remainingGate": "Source 60e7 root 730/CI3/export314/native3build/readbrowser4 pass; all remain source-specific. New narrow image-callback fix requires reviewed source, mounted regression, rootchecks/exports/exact native and actualattachment observation. No backendfeature expansion.",
       "sourcePaths": [
         ".github/workflows/verify.yml",
         "package.json",
@@ -2839,9 +4004,30 @@
       "sourceLine": 231,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Live gate partial",
-      "sourceGroups": ["ops", "engine", "share", "media"],
-      "evidence": ["FULL", "COLLAB", "MEDIA"],
-      "remainingGate": "Actual Free schema/permissions/transactions have bounded passes; latest activity/effect deployments need their live receipts and final source/archive/client alignment.",
+      "sourceGroups": [
+        "ops",
+        "engine",
+        "share",
+        "media"
+      ],
+      "evidence": [
+        "FULL",
+        "COLLAB",
+        "MEDIA",
+        "CORE43",
+        "ACTIVITY",
+        "ACTIVITY_DIAGNOSTICS",
+        "RETRY",
+        "REMINDER",
+        "REMINDER_DIAGNOSTICS",
+        "FULL43FAIL",
+        "FULL43_DIAGNOSTICS",
+        "PROBEREAD",
+        "FULL43",
+        "FULL43_PROVENANCE",
+        "FULL43_READ_DIAGNOSTICS"
+      ],
+      "remainingGate": "Current Core 43 full 48/1956/387HTTP with5 read conflicts/5 retries passed, alongside activity8/132/reminder6/61 and older media source-specific pass. Prior43 getApp-read failure and1b6 mutation opt-out failure remain unchanged; no browser/native/provider/production proof is inferred.",
       "sourcePaths": [
         ".github/workflows/verify.yml",
         "package.json",
@@ -2870,9 +4056,23 @@
       "sourceLine": 232,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Resource gate partial",
-      "sourceGroups": ["ops", "worker", "media"],
-      "evidence": ["FULL", "MEDIA", "CLEANUP"],
-      "remainingGate": "Two Functions/private bucket and hour-scale recovery design operate in development; worst-case memory/bandwidth/body/quota/scale and enabled-reminder cadence remain unproven.",
+      "sourceGroups": [
+        "ops",
+        "worker",
+        "media"
+      ],
+      "evidence": [
+        "FULL",
+        "MEDIA",
+        "CLEANUP",
+        "CORE43",
+        "ACTIVITY",
+        "ACTIVITY_DIAGNOSTICS",
+        "REMINDER",
+        "REMINDER_DIAGNOSTICS",
+        "FULL43"
+      ],
+      "remainingGate": "Two Functions/private bucket and selected real reminder delivery/media cleanup operate in Free development. One-shot causality/hourly recovery, interruptions/backoff/starvation and worst-case memory/body/bandwidth/quota/scale remain unproven. Zero captured markers proves no internal-abort claim.",
       "sourcePaths": [
         ".github/workflows/verify.yml",
         "package.json",
@@ -2896,10 +4096,33 @@
       "originalFinalGate": "Fresh Xcode and Gradle build receipts for the migrated source, native dependencies/configuration/platform identifiers, signing status clearly recorded. Paid EAS is not required.",
       "sourceLine": 233,
       "section": "Full acceptance, native, import, and Free-cloud gates",
-      "sourceState": "Native checkpoint passed",
-      "sourceGroups": ["ops", "device"],
-      "evidence": ["N5"],
-      "remainingGate": "Both5f native compilations passed; later UI/guard/clarification/navigation changes need final incremental native source/hash/package receipts. No install implied.",
+      "sourceState": "Source-specific native checkpoint passed",
+      "sourceGroups": [
+        "ops",
+        "device"
+      ],
+      "evidence": [
+        "N5",
+        "N10",
+        "LOCAL673",
+        "NATIVEA1",
+        "NATIVEA1_AUDIT",
+        "LOCAL683",
+        "NATIVE916",
+        "NATIVE916_AUDIT",
+        "NATIVE916_LOCAL",
+        "LOCAL699",
+        "NATIVE48",
+        "NATIVE48_AUDIT",
+        "NATIVE48_LOCAL",
+        "N0ACF",
+        "N0ACF_AUDIT",
+        "N0ACF_COMPLETION",
+        "READ21_SOURCE",
+        "NATIVE60",
+        "NATIVE60_AUDIT"
+      ],
+      "remainingGate": "Current60e7 exact314-input/16-marker/16-route AndroidDebug,embedded development-signed AndroidlocalRelease and unsigned iOSSimulatorRelease passed independent source/package audit;2873 earlier files preserved. No install/launch/native auth/UI/hardware/store-signing proof.",
       "sourcePaths": [
         ".github/workflows/verify.yml",
         "package.json",
@@ -2920,9 +4143,19 @@
       "sourceLine": 234,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Execution gate unverified",
-      "sourceGroups": ["account", "device", "media"],
-      "evidence": ["N5"],
-      "remainingGate": "No simulator/device boot, install, launch, native auth/session/CRUD or physical device acceptance. Pending by user preference; builds do not satisfy it.",
+      "sourceGroups": [
+        "account",
+        "device",
+        "media"
+      ],
+      "evidence": [
+        "N5",
+        "N0ACF",
+        "NATIVE_UI_LOCKED",
+        "NATIVE60",
+        "NATIVE60_AUDIT"
+      ],
+      "remainingGate": "Current native60e7 compile/packages/audit pass; fresh Mac native UI availability remains locked and prior deferment stands. No installation/launch/native authentication/OSpermission/hardware acceptance occurred.",
       "sourcePaths": [
         "apps/mobile/src/backend/core.ts",
         "apps/mobile/src/screens/AuthScreen.tsx",
@@ -2947,9 +4180,46 @@
       "sourceLine": 235,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Browser gate partial",
-      "sourceGroups": ["nav", "render", "inspector"],
-      "evidence": ["RENDER", "FORM", "CLARIFY"],
-      "remainingGate": "Bounded browser flows pass; all views/actions/roles/routes/unknown recovery,320px/150% text/full keyboard/AT and final inspector proof remain incomplete.",
+      "sourceGroups": [
+        "nav",
+        "render",
+        "inspector"
+      ],
+      "evidence": [
+        "RENDER",
+        "FORM",
+        "CLARIFY",
+        "BROWSER665",
+        "LOCAL673",
+        "ROUTE",
+        "HARNESSA1",
+        "HARNESSA1_SOURCE",
+        "HARNESSA1_HTTP",
+        "LOCAL683",
+        "HARNESS916",
+        "HARNESS916_SOURCE",
+        "HARNESS916_HTTP",
+        "BROWSER916FAIL",
+        "LOCAL699",
+        "READINESS",
+        "BROWSER48_PARTIAL",
+        "READ_CONTENTION",
+        "BROWSER0ACF",
+        "BASIC0ACF_FAILED",
+        "MEDIA_READ_RACE",
+        "READ21_CHECKS",
+        "READ21_SDK",
+        "REMINDER0ACF_FAILED",
+        "MEDIA_FIFO_SDK",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "NATIVE60",
+        "NATIVE60_AUDIT",
+        "BROWSER60_READS",
+        "BROWSER60_MEDIA_PARTIAL"
+      ],
+      "remainingGate": "Current actualread4cases pass; preserve source 0acf/48failures and separate60e7 READY attachmentpartial. Narrow imagecallback lifecycle fix/mountedregression underway. Fresh correctedsource imageUI plus broader320px/150%/AT/role/21-view/router/native UI remain.",
       "sourcePaths": [
         "apps/mobile/src/full/navigation.ts",
         "apps/mobile/src/full/FullAppScreen.tsx",
@@ -2974,8 +4244,16 @@
       "sourceLine": 236,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Dry-run only; scope pending",
-      "sourceGroups": ["import", "engine"],
-      "evidence": ["IMPORT", "RICH", "FULL"],
+      "sourceGroups": [
+        "import",
+        "engine"
+      ],
+      "evidence": [
+        "IMPORT",
+        "RICH",
+        "FULL",
+        "FULL43"
+      ],
       "remainingGate": "Source preserved and32-test offline planner/simulator exists; actual data-move scope/consistent export/mappings/write runner/checksums/rollback are unresolved. No live writes or actual data moved.",
       "sourcePaths": [
         "appwrite_backend/tool/import/engine.dart",
@@ -2996,8 +4274,14 @@
       "sourceLine": 237,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Cutover scope unresolved",
-      "sourceGroups": ["import", "account", "media"],
-      "evidence": ["IMPORT"],
+      "sourceGroups": [
+        "import",
+        "account",
+        "media"
+      ],
+      "evidence": [
+        "IMPORT"
+      ],
       "remainingGate": "No account/password/media/effect cutover occurred. Explicit ownership/recovery mappings, media resanitization/reference strategy, legacy history/receipt retention and effect approvals remain required scope decisions.",
       "sourcePaths": [
         "appwrite_backend/tool/import/engine.dart",
@@ -3022,9 +4306,25 @@
       "sourceLine": 238,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Additional gate partial",
-      "sourceGroups": ["host", "builder", "notify"],
-      "evidence": ["LOCAL", "STORAGE"],
-      "remainingGate": "Encrypted scoped command/CAS source and browser storage reload pass; integrated real lost-response app reload and native process-termination recovery remain unverified.",
+      "sourceGroups": [
+        "host",
+        "builder",
+        "notify"
+      ],
+      "evidence": [
+        "LOCAL",
+        "STORAGE",
+        "RECOVERY",
+        "BROWSER665",
+        "LOCAL673",
+        "ROUTE",
+        "HARNESSA1",
+        "LOCAL683",
+        "CLIENTREAD",
+        "HARNESS916",
+        "BROWSER60_MEDIA_PARTIAL"
+      ],
+      "remainingGate": "Source 916 restoredBuild explicit exactretry and actualWebModal lost-reply control smoke passed; a1 broader5 covers acknowledgement/dirty prompts,0acf preserves source. SyntheticRPC/memory proof does not establish realAppwrite lost reply/persistentbrowser reload/native termination.",
       "sourcePaths": [
         "apps/mobile/src/host/storage.ts",
         "apps/mobile/src/host/browserStorage.ts",
@@ -3037,7 +4337,9 @@
         "appwrite_backend/lib/inbox.dart",
         "apps/mobile/src/notifications/NotificationsController.ts",
         "apps/mobile/src/notifications/withReminders.ts",
-        "apps/mobile/src/notifications/AutomationRunsController.ts"
+        "apps/mobile/src/notifications/AutomationRunsController.ts",
+        "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+        "apps/mobile/src/renderer/recordRecovery.ts"
       ]
     },
     {
@@ -3048,10 +4350,14 @@
       "originalFinalGate": "Actual configured recovery/verification transport and safe account flows, user-visible errors and abuse limits; no fabricated email/provider success. Do not call basic sign-in parity a recovery implementation.",
       "sourceLine": 239,
       "section": "Full acceptance, native, import, and Free-cloud gates",
-      "sourceState": "Additional gate incomplete",
-      "sourceGroups": ["account"],
-      "evidence": ["LOCAL"],
-      "remainingGate": "Basic auth/session/account ID tools exist; no active password-recovery/email-verification/account-management transport/UI and no deployed abuse/recovery proof beyond configured limits.",
+      "sourceState": "Additional readiness gate incomplete",
+      "sourceGroups": [
+        "account"
+      ],
+      "evidence": [
+        "LOCAL"
+      ],
+      "remainingGate": "Additional readiness gate, not implied migration scope: basic auth/session/account ID tools exist; recovery/verification/account-management transport/UI and deployed abuse/recovery proof remain unimplemented or unverified and require an explicit readiness decision.",
       "sourcePaths": [
         "apps/mobile/src/backend/core.ts",
         "apps/mobile/src/screens/AuthScreen.tsx",
@@ -3067,10 +4373,19 @@
       "originalFinalGate": "Readiness/privilege separation, restore rehearsal, retention that preserves receipts/enrollment, sanitized correlation logs and capacity measurements; no implied production or multi-instance guarantee.",
       "sourceLine": 240,
       "section": "Full acceptance, native, import, and Free-cloud gates",
-      "sourceState": "Additional gate incomplete",
-      "sourceGroups": ["ops", "media", "worker"],
-      "evidence": ["LOCAL", "CLEANUP"],
-      "remainingGate": "Retention/quotas/audit/correlation source exists; backup/restore rehearsal, production deployment readiness and actual capacity/operational runbooks remain incomplete.",
+      "sourceState": "Additional readiness gate incomplete",
+      "sourceGroups": [
+        "ops",
+        "media",
+        "worker"
+      ],
+      "evidence": [
+        "LOCAL",
+        "CLEANUP",
+        "RETRY",
+        "CORE43"
+      ],
+      "remainingGate": "Additional readiness gate, not implied migration scope: retention/quotas/private workers and fixed-category diagnostic source exist; backup/restore, production readiness and capacity/runbooks remain incomplete. Development deployment and zero captured markers do not satisfy it.",
       "sourcePaths": [
         ".github/workflows/verify.yml",
         "package.json",
@@ -3095,7 +4410,9 @@
       "sourceLine": 241,
       "section": "Full acceptance, native, import, and Free-cloud gates",
       "sourceState": "Audit checkpoint; not final",
-      "sourceGroups": ["ops"],
+      "sourceGroups": [
+        "ops"
+      ],
       "evidence": [
         "LOCAL",
         "FULL",
@@ -3104,9 +4421,54 @@
         "FORM",
         "CLARIFY",
         "N5",
-        "IMPORT"
+        "IMPORT",
+        "ACTIVITY",
+        "CORE43",
+        "BROWSER665",
+        "RECOVERY",
+        "N10",
+        "CI900",
+        "REMINDER",
+        "LOCAL673",
+        "ROUTE",
+        "LOCAL683",
+        "CLIENTREAD",
+        "PROBEREAD",
+        "FULL43FAIL",
+        "NATIVEA1",
+        "HARNESSA1",
+        "NATIVE916",
+        "HARNESS916",
+        "CI916",
+        "EXPORT683",
+        "FULL43",
+        "BROWSER916FAIL",
+        "WORKSPACEREAD",
+        "LOCAL699",
+        "READINESS",
+        "NATIVE48",
+        "NATIVE48_AUDIT",
+        "NATIVE48_LOCAL",
+        "CI48",
+        "BROWSER48_PARTIAL",
+        "READ_CONTENTION",
+        "LOCAL712",
+        "CI0ACF",
+        "N0ACF",
+        "BROWSER0ACF",
+        "BASIC0ACF_FAILED",
+        "READ21_SOURCE",
+        "READ21_CHECKS",
+        "MEDIA_FIFO_SDK",
+        "LOCAL730",
+        "EXPORT730",
+        "CI60E7",
+        "NATIVE60",
+        "NATIVE60_AUDIT",
+        "BROWSER60_READS",
+        "BROWSER60_MEDIA_PARTIAL"
       ],
-      "remainingGate": "This companion covers every125uniqueID and15criteria without rewriting baseline. Final frozen source/live/browser/native/device/cutover gates and unresolved failures prevent completion.",
+      "remainingGate": "All 125 IDs/875immutablevalues retained. Source 60e7 root 730/CI/export314/nativeaudit/readbrowser4 and Core 43 full/activity/reminder pass separately. Finalfreeze waits narrow imagecallback fix/UI/exact native proof; broader acceptance/user-scoped gates remain.",
       "sourcePaths": [
         ".github/workflows/verify.yml",
         "package.json",
@@ -3114,5 +4476,41 @@
         "docs/NATIVE_VERIFICATION.md"
       ]
     }
-  ]
+  ],
+  "acceptedClientSource": {
+    "commit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+    "rootTests": 730,
+    "rootFailures": 0,
+    "rootSkipped": 0,
+    "rootTypeLintFormatAndAll3Exports": "Passed, preserved exactsource rootreceipt",
+    "rootVerificationReceipt": "docs/evidence/2026-10-28/mobile-730-root-verification.json",
+    "rootVerificationReceiptPending": false,
+    "exports": [
+      "web",
+      "ios",
+      "android"
+    ],
+    "exactTrackedMobileGitBlobs": 314,
+    "independentFocusedChecks": {
+      "readCompleteness": 27
+    },
+    "readCoordinatorExplicitAllowlistCount": 21,
+    "basicListAppsReadMaximumAttempts": 3,
+    "coordinatorAddsRetries": false,
+    "currentTarget": true,
+    "pendingProductSource": true,
+    "nativeExactSourceRepackage": "Source60e7 exact314-input three-build/independent audit passed; upcoming image-callback correction will need new exact-source packaging",
+    "actualBrowserRetest": "Four repaired read cases passed; separate image READY attachment remains partial with concrete callback lifetime sourcefix underway",
+    "hostedCI": {
+      "runId": 40831687254,
+      "url": "https://github.com/Xuefeng-Zhu/Tinkerloom/actions/runs/40831687254",
+      "jobsPassed": 3,
+      "receipt": "docs/evidence/2026-10-28/ci-60e7e4e.passed.json"
+    },
+    "nativeReceipt": "docs/evidence/2026-10-28/native-60e7e4e/summary.json",
+    "nativeInputSha256": "dc7654dd34e46a7f2f47a819de529fb6baa3a59b5190b077540f934c3aba958b",
+    "nativeCompiledSourceSha256": "5d9c16e6516014dd82b42e03043fdb43598f683a9b67140ea30fc24ed97fa926",
+    "preservedPriorNativeFiles": 2873,
+    "pendingSourceScope": "Narrow image READY attachment callback lifetime correction plus mounted regression; no new featurefamily/backend change"
+  }
 }

@@ -1,0 +1,80 @@
+{
+  "stage": "/private/tmp/tinkerloom-status-683-GbvMK8",
+  "capturedAt": "2026-10-29T07:35:44.596001+00:00",
+  "files": [
+    {
+      "path": "docs/MIGRATION_STATUS_CURRENT.md",
+      "baseSha256": "d176d54869bee4921a874808092cfb302d4369d73a8fefb6d8036609c67ddd9c",
+      "sha256": "a9803d98fd6dcd9052a5b030d02493ae77f4e1043d5513ebec008888ab97d471",
+      "bytes": 165981
+    },
+    {
+      "path": "docs/current-row-index.json",
+      "baseSha256": "4fe536f6a64cd5f4154843bcb7de519538afe0be63dcbed3d94f05cb4020c0bf",
+      "sha256": "c6100a5c67250c761ab7b740c16d852d3f5a1bc583433471c5ae603d3ae8a370",
+      "bytes": 191732
+    },
+    {
+      "path": "docs/migration-evidence-index.json",
+      "baseSha256": "5142a1d18dd94eea75391fedd738677e5ddfce011d62a43cdb859748054c5ed9",
+      "sha256": "3d1c468f48fd6475c1424e99d399f24eccbc983cef956176edf11efc284b68d5",
+      "bytes": 293767
+    }
+  ],
+  "currentLiveEvidence": [
+    "FULL43 48/1956/387HTTP (probe a124)",
+    "ACTIVITY 8/132/110HTTP",
+    "REMINDER 6/61/101HTTP",
+    "MEDIA 22/242 source-specific older Cloud pass"
+  ],
+  "pendingFutureInserts": [
+    "Bind reviewed image READY attachment lifecycle correction, mountedfailure-before/pass-after, rootchecks/exports and acceptednewsource",
+    "Append corrected-source exactnative packages and actualsingleasset/savedrecordattachment browser result withlimits; no two-distinctCloudasset claim",
+    "Keep nativeUI/hardware,320px/150%/AT,provider/spend,hourlyrecovery/interruption/scale and actualcutover userchoices separate;G10/G11 additionalreadiness"
+  ],
+  "prerequisites": [
+    "Retain committed reminder4fc19 and all prior pending/failed evidence; this refresh does not rewrite reports",
+    "Accepted client 60e7e4e45f57a511d9373e60f06f4e308551995f / root 730 is bound; each source-specific live/browser/native layer retains its own evidence boundary"
+  ],
+  "frozen": true,
+  "scope": "Current truthful progressive checkpoint; accepted60e7/root730/CI/native314/readbrowser4pass; knownM06READYattachmentcallbackdefect pending; not whole migration completion",
+  "acceptedClientSource": {
+    "commit": "60e7e4e45f57a511d9373e60f06f4e308551995f",
+    "rootTests": 730,
+    "rootFailures": 0,
+    "rootSkipped": 0,
+    "rootTypeLintFormatAndAll3Exports": "Passed, preserved exactsource rootreceipt",
+    "rootVerificationReceipt": "docs/evidence/2026-10-28/mobile-730-root-verification.json",
+    "rootVerificationReceiptPending": false,
+    "exports": [
+      "web",
+      "ios",
+      "android"
+    ],
+    "exactTrackedMobileGitBlobs": 314,
+    "independentFocusedChecks": {
+      "readCompleteness": 27
+    },
+    "readCoordinatorExplicitAllowlistCount": 21,
+    "basicListAppsReadMaximumAttempts": 3,
+    "coordinatorAddsRetries": false,
+    "currentTarget": true,
+    "pendingProductSource": true,
+    "nativeExactSourceRepackage": "Source60e7 exact314-input three-build/independent audit passed; upcoming image-callback correction will need new exact-source packaging",
+    "actualBrowserRetest": "Four repaired read cases passed; separate image READY attachment remains partial with concrete callback lifetime sourcefix underway",
+    "hostedCI": {
+      "runId": 40831687254,
+      "url": "https://github.com/Xuefeng-Zhu/Tinkerloom/actions/runs/40831687254",
+      "jobsPassed": 3,
+      "receipt": "docs/evidence/2026-10-28/ci-60e7e4e.passed.json"
+    },
+    "nativeReceipt": "docs/evidence/2026-10-28/native-60e7e4e/summary.json",
+    "nativeInputSha256": "dc7654dd34e46a7f2f47a819de529fb6baa3a59b5190b077540f934c3aba958b",
+    "nativeCompiledSourceSha256": "5d9c16e6516014dd82b42e03043fdb43598f683a9b67140ea30fc24ed97fa926",
+    "preservedPriorNativeFiles": 2873,
+    "pendingSourceScope": "Narrow image READY attachment callback lifetime correction plus mounted regression; no new featurefamily/backend change"
+  },
+  "knownPendingProductDefect": "M06 image READY attachment callback lifetime failure; narrow isolated fix/mounted regression underway, currentbrowsermedia partial preserved",
+  "portableEvidenceReferences": 101,
+  "historicalFullMatrixUnchanged": "98ed1609e71357a86165dca48b1058e29741e92e32cae060ed87e8a2f0f61532"
+}

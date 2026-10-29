@@ -1,0 +1,27 @@
+{
+  "rows": 125,
+  "criteria": 15,
+  "otherRows": 110,
+  "rowOrderAndAllOriginalIdsPreserved": true,
+  "immutableFieldsPerRow": [
+    "id",
+    "contract",
+    "historicalBaseline",
+    "ownerDependency",
+    "originalFinalGate",
+    "sourceLine",
+    "section"
+  ],
+  "historicalMatrixUnchangedSha256": "98ed1609e71357a86165dca48b1058e29741e92e32cae060ed87e8a2f0f61532",
+  "rowCopiesAndMarkdownAligned": true,
+  "evidenceEntriesVerified": 101,
+  "preservedFailuresVerified": 20,
+  "sourceFilesVerified": 110,
+  "rowSourcePathsExistAndHashed": 82,
+  "pendingSourceFilesExplicitlyMarked": 0,
+  "changedCurrentAssessments": 100,
+  "wholeMigrationCompletionClaim": false,
+  "cloudCalls": 0,
+  "gitActions": false,
+  "persistentEdits": false
+}
