@@ -807,7 +807,7 @@ class _ComponentOptionsEditorState extends State<ComponentOptionsEditor> {
             'beside': 'Image beside text',
           }, fallback: 'above'),
           TextButton(
-            onPressed: !widget.enabled
+            onPressed: !widget.enabled || uploading || _pendingImage != null
                 ? null
                 : () => change('imageAssetId', null),
             child: const Text('Remove image'),

@@ -10,8 +10,9 @@ void main() {
   Future<void> mount(
     WidgetTester tester,
     Future<String?> Function() upload,
-    void Function(Map<String, dynamic>) changed,
-  ) async {
+    void Function(Map<String, dynamic>) changed, {
+    Map<String, dynamic>? initialOptions,
+  }) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -20,10 +21,12 @@ void main() {
               spec: photoJournalTemplate(),
               type: 'banner',
               collectionId: '',
-              options: const {
-                'title': 'Retained title',
-                'body': 'Retained body',
-              },
+              options:
+                  initialOptions ??
+                  const {
+                    'title': 'Retained title',
+                    'body': 'Retained body',
+                  },
               uploadImage: upload,
               onChanged: changed,
             ),
@@ -112,6 +115,64 @@ void main() {
       await tester.tap(find.text('Upload banner image'));
       await tester.pumpAndSettle();
       expect(uploads, 2);
+    },
+  );
+
+  testWidgets(
+    'pending replacement prevents Remove racing a late READY response',
+    (tester) async {
+      final ready = Completer<String>();
+      var checks = 0;
+      final changes = <Map<String, dynamic>>[];
+      await mount(
+        tester,
+        () async => throw PendingImageUpload(
+          assetId: 'replacement-image',
+          checkReady: () {
+            checks++;
+            return ready.future;
+          },
+        ),
+        changes.add,
+        initialOptions: {
+          'title': 'Retained title',
+          'body': 'Retained body',
+          'imageAssetId': 'original-image',
+        },
+      );
+      await tester.ensureVisible(find.text('Replace banner image'));
+      await tester.tap(find.text('Replace banner image'));
+      await tester.pumpAndSettle();
+      final remove = find.widgetWithText(TextButton, 'Remove image');
+      expect(tester.widget<TextButton>(remove).onPressed, isNull);
+      expect(
+        tester
+            .widget<TextButton>(
+              find.widgetWithText(TextButton, 'Discard pending image'),
+            )
+            .onPressed,
+        isNotNull,
+      );
+      await tester.ensureVisible(find.text('Check image status'));
+      await tester.tap(find.text('Check image status'));
+      await tester.pump();
+      expect(tester.widget<TextButton>(remove).onPressed, isNull);
+      expect(changes, isEmpty);
+      ready.complete('replacement-image');
+      await tester.pumpAndSettle();
+      expect(changes, hasLength(1));
+      expect(changes.single['imageAssetId'], 'replacement-image');
+      expect(tester.widget<TextButton>(remove).onPressed, isNotNull);
+      await tester.ensureVisible(find.text('Remove image'));
+      await tester.tap(find.text('Remove image'));
+      await tester.pumpAndSettle();
+      expect(changes, hasLength(2));
+      expect(changes.last['imageAssetId'], isNull);
+      expect(changes.last['title'], 'Retained title');
+      await tester.pump(const Duration(minutes: 1));
+      expect(changes, hasLength(2));
+      expect(checks, 1);
+      expect(tester.takeException(), isNull);
     },
   );
 }

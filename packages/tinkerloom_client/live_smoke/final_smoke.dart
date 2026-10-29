@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'real_http.dart';
+import 'create_recovery.dart';
 
 import 'package:appnest_spec/appnest_spec.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -51,6 +52,7 @@ void main() {
             budget: budget,
           );
       var passed = false, stage = 'sign-in';
+      SmokeCreateRecovery? recovery;
       try {
         await client.auth.signIn(email, password);
         stage = 'manifest';
@@ -92,16 +94,31 @@ void main() {
           for (final field in collection.fields.where((f) => f.required))
             field.id: marker,
         };
-        stage = 'single-create';
-        final outcome = await client.runtime.execute(
-          ActionRequest(
+        stage = 'retain-create';
+        recovery = await SmokeCreateRecovery.prepare(
+          directory: Directory('output/flutter-smoke-recovery'),
+          request: ActionRequest(
             appId: appId,
             actionId: add.id,
             expectedDefinitionVersionId: manifest.versionId!,
             input: {'data': data},
             idempotencyKey: client.newId(),
           ),
+          endpoint: endpoint,
+          projectId: project,
+          functionId: function,
+          actorId: client.auth.actorId!,
+          collectionId: collection.id,
         );
+        stage = 'single-create';
+        late final ActionOutcome outcome;
+        try {
+          outcome = await client.runtime.execute(recovery.request);
+          await recovery.markConfirmed(outcome);
+        } catch (_) {
+          await recovery.markUncertain();
+          rethrow;
+        }
         stage = 'read-back';
         final saved = await client.runtime.get(appId, outcome.recordId);
         if (!data.entries.every(
@@ -138,6 +155,7 @@ void main() {
           'imageUploads': 0,
           'aiCalls': 0,
           'automaticRetries': 0,
+          if (recovery != null) 'createRecovery': recovery.sanitized,
         };
         final report = env['TINKERLOOM_SMOKE_REPORT'];
         if (report != null && report.isNotEmpty)
