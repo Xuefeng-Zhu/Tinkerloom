@@ -704,7 +704,7 @@ export class AppwriteBackend implements AppBackend {
                     : code === "operation_conflict"
                       ? "This request ID was already used for different data."
                       : code === "transaction_conflict"
-                        ? "Another save happened at the same time. Retry this same save."
+                        ? "Another update happened at the same time. Try this request again."
                         : code === "revision_conflict" ||
                             code === "definition_conflict"
                           ? "This app changed. Refresh it before saving again."

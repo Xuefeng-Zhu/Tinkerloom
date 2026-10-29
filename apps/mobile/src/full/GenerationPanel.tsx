@@ -33,7 +33,13 @@ export function GenerationPanel({
   return (
     <View style={{ gap: 16 }}>
       <ConversationHistory conversation={state.conversation} />
-      <Card title={state.candidate ? "Refine with AI" : "Describe your app"}>
+      <Card
+        title={
+          state.candidate || state.app?.version
+            ? "Refine with AI"
+            : "Describe your app"
+        }
+      >
         <Text style={styles.body}>
           Describe the people, records and workflow you need. AI proposes a
           private declaration; you review and publish it yourself.
@@ -42,7 +48,13 @@ export function GenerationPanel({
           <Notice text="Checking AI availability…" />
         ) : (
           !state.platform.generation && (
-            <Notice text="AI generation is not configured on this backend. Start from a template or use the manual editor." />
+            <Notice
+              text={
+                state.app?.version && !state.candidate
+                  ? "AI generation is not configured on this backend. Choose Edit published version to customize this app manually."
+                  : "AI generation is not configured on this backend. Start from a template or use the manual editor."
+              }
+            />
           )
         )}
         {state.preparedRequest && (

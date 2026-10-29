@@ -23,6 +23,7 @@ import { requestedDeviceCapabilities } from "../spec/bindings";
 import { fullTemplates } from "./catalog";
 import { DeviceAccessPanel } from "./DeviceAccessPanel";
 import { GenerationPanel } from "./GenerationPanel";
+import { PublishedBasePanel } from "./PublishedBasePanel";
 import { BuilderWorkspace } from "./BuilderWorkspace";
 import { IsolatedPreview } from "./IsolatedPreview";
 import { PublicationPanel } from "./PublicationPanel";
@@ -448,6 +449,7 @@ export function FullAppScreen({
     !state.app.archived &&
     ["owner", "builder"].includes(state.app.role) &&
     state.app.capabilities.editDefinition === true;
+  const previewSpec = controller.previewSpec;
   const locked =
     state.busy ||
     !!state.pending ||
@@ -743,15 +745,17 @@ export function FullAppScreen({
                 Your private workbench
               </Text>
               <Text style={styles.body}>
-                Only your current author draft appears here. Saved candidates
-                stay private until you publish a reviewed version.
+                Preview the published definition or work on your current author
+                draft. Saved candidates stay private until you publish a
+                reviewed version.
               </Text>
+              <PublishedBasePanel controller={controller} state={state} />
               <GenerationPanel
                 controller={controller}
                 state={state}
                 active={focused && mode !== "live"}
               />
-              {!state.candidate && (
+              {!state.candidate && !state.app?.version && (
                 <Card title="Or choose a starter">
                   <Text style={styles.muted}>
                     Choosing a starter creates a private candidate. It does not
@@ -860,22 +864,29 @@ export function FullAppScreen({
             </ScrollView>
           }
           preview={
-            state.candidate ? (
-              <IsolatedPreview
-                staticImageAssets={state.previewStaticImageAssets}
-                spec={state.candidate}
-                onExit={() => {
-                  void navigate(() => {
-                    setMode("build");
-                    if (controller.runtime)
-                      onLocationChange?.(
-                        controller.runtime.getSnapshot().location,
-                        "push",
-                        "build",
-                      );
-                  });
-                }}
-              />
+            previewSpec ? (
+              <View style={{ flex: 1 }}>
+                {!state.candidate && state.app?.version ? (
+                  <Notice
+                    text={`Published version ${state.app.version.number} · Choose Edit published version in Chat to start a private draft.`}
+                  />
+                ) : null}
+                <IsolatedPreview
+                  staticImageAssets={state.previewStaticImageAssets}
+                  spec={previewSpec}
+                  onExit={() => {
+                    void navigate(() => {
+                      setMode("build");
+                      if (controller.runtime)
+                        onLocationChange?.(
+                          controller.runtime.getSnapshot().location,
+                          "push",
+                          "build",
+                        );
+                    });
+                  }}
+                />
+              </View>
             ) : (
               <Notice text="Describe your app or choose a starter in Chat to try an isolated preview." />
             )

@@ -148,6 +148,7 @@ export class FullAppController {
   private acceptedGenerationReceipts = new Map<string, Generation>();
   private autosave: ReturnType<typeof setTimeout> | null = null;
   private saveTask: Promise<void> | null = null;
+  private publishedEditTask: Promise<void> | null = null;
   readonly host: HostStorage;
   private journal: FullCommandJournal;
   private journalSuspended = false;
@@ -204,6 +205,90 @@ export class FullAppController {
     this.reconcileDraftMedia();
     this.reconcileStaticPreviewImages();
     for (const listener of this.listeners) listener();
+  }
+  /** A read-only declaration for isolated preview, never a live runtime or automatic draft. */
+  get previewSpec(): AppSpec | null {
+    return this.canBuild
+      ? (this.state.candidate ?? this.state.app?.version?.spec ?? null)
+      : null;
+  }
+  get canEditPublishedVersion(): boolean {
+    return (
+      this.canBuild &&
+      !!this.state.app?.version &&
+      !this.state.app.draft &&
+      !this.state.candidate &&
+      this.canLeave &&
+      !this.state.loading &&
+      !this.state.refreshRequired &&
+      !this.state.conflict &&
+      !["queued", "generating", "validating"].includes(
+        this.state.app.generation?.status ?? "",
+      )
+    );
+  }
+  /** Explicit customization of the displayed immutable version; never a side effect of opening Build. */
+  editPublishedVersion(): Promise<void> {
+    if (this.publishedEditTask) return this.publishedEditTask;
+    const task = this.performPublishedEdit();
+    this.publishedEditTask = task;
+    void task.then(
+      () => {
+        if (this.publishedEditTask === task) this.publishedEditTask = null;
+      },
+      () => {
+        if (this.publishedEditTask === task) this.publishedEditTask = null;
+      },
+    );
+    return task;
+  }
+  private async performPublishedEdit() {
+    try {
+      this.editable();
+      ensure(
+        this.canEditPublishedVersion,
+        "pending_command",
+        "Resolve existing draft, generation or record work before copying the published version.",
+      );
+      const published = this.state.app!.version!;
+      await this.load();
+      ensure(
+        !this.state.error && !this.state.loading && !this.state.refreshRequired,
+        "refresh_required",
+        "The current published version and access could not be confirmed. Refresh before starting an edit.",
+      );
+      // Join read-only record recovery before disposing/rebuilding any runtime for the save.
+      await this.runtime?.recover();
+      this.editable();
+      ensure(
+        this.state.app?.version?.id === published.id &&
+          this.state.app.version.hash === published.hash &&
+          same(this.state.app.version.spec, published.spec),
+        "definition_conflict",
+        "The published version changed. Review its current preview before starting an edit.",
+      );
+      ensure(
+        this.canEditPublishedVersion,
+        "revision_conflict",
+        "An existing draft or operation must be resolved before starting a published-version edit.",
+      );
+      this.setCandidate(published.spec);
+      // Capture the displayed version and zero author revision in this exact durable envelope.
+      // A concurrent server publication/draft cannot silently become this save's new base.
+      await this.mutate(
+        {
+          op: "spec.saveDraft",
+          appId: this.options.scope.appId,
+          operationId: this.options.newId(),
+          expectedRevision: 0,
+          expectedVersionId: published.id,
+          spec: published.spec,
+        },
+        { kind: "save", originalVersionId: published.id },
+      );
+    } catch (error) {
+      this.fail(error);
+    }
   }
   /** Uses only authoritative saved metadata, never the dirty candidate. */
   savedDraftMediaSnapshot(): SavedDraftMediaSnapshot | null {
@@ -300,7 +385,7 @@ export class FullAppController {
     };
   }
   private reconcileStaticPreviewImages() {
-    const spec = this.state.candidate,
+    const spec = this.previewSpec,
       source = this.staticPreviewSource();
     if (
       this.closed ||
@@ -348,7 +433,7 @@ export class FullAppController {
       !this.closed &&
       source.lifetime.active &&
       this.previewImageSource === source &&
-      this.previewImageSpec === this.state.candidate &&
+      this.previewImageSpec === this.previewSpec &&
       this.previewImageLoader === loader;
     loader = new StaticPreviewImagePreloader({
       lifetime: source.lifetime,

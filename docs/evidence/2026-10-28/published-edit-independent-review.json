@@ -1,0 +1,32 @@
+{
+  "status": "clear",
+  "reviewer": "commit_retry_review",
+  "manifest": "/private/tmp/tinkerloom-published-edit-gw3jmze4/published-edit-files.json",
+  "sourceSha256": "7d42697e567eefdd878a4f702af196fbcc006972a3e9ba65dc6801993185418e",
+  "allSixFrozenHashesMatch": true,
+  "rootIntegrationAtReview": "not yet merged; reviewed frozen stage against pinned source645/base10fed99",
+  "findings": [],
+  "verifiedBySource": [
+    "Preview getter chooses own candidate before validated current published spec; no automatic command on Build/Preview entry; blank shells stay empty",
+    "Explicit action captures displayed immutable version ID/hash/spec, refreshes access, joins record recovery and rejects changed publication/new own draft/local invalid or dirty work/active generation/pending record or full command/image interaction",
+    "Seed save uses exact captured spec with expectedRevision0 and captured expectedVersionId in existing durable journal; unchanged server transaction compares author revision and published version and synchronizes media",
+    "Unknown or lost save retains same operation/base/spec; reopening does not replay automatically; explicit recovery keeps original envelope",
+    "Published image fallback uses existing host preloader with saved/broker-confirmed IDs and current source/spec/lifetime checks; isolated preview receives only opaque owned resource grant",
+    "Screen retains same isolated preview position when fallback becomes an exact copied candidate; starter catalog hidden for published apps; no live adapter or new provider path"
+  ],
+  "independentFocusedTests": {
+    "command": "node --import tsx --test src/full/publishedEdit.test.ts",
+    "workingDirectory": "/private/tmp/tinkerloom-published-edit-gw3jmze4/apps/mobile",
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/private/tmp/tinkerloom-independent-published-edit-tests.log",
+    "logSha256": "9baf54918d471eae74979bff7d175f3eb44b1d5b8a6f58cee47d14231211143d"
+  },
+  "limits": [
+    "Local source/controller/SSR tests only",
+    "No UI/browser/native/device or Cloud/provider validation",
+    "No repeated full656 suite/export/native build; parent owns combined validation"
+  ],
+  "persistentEdits": false
+}
