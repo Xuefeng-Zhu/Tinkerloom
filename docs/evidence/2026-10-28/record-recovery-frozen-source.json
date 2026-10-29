@@ -1,0 +1,65 @@
+{
+  "status": "frozen",
+  "stage": "/private/tmp/tinkerloom-recovery-gate-6996fppw",
+  "files": [
+    {
+      "path": "apps/mobile/src/full/FullAppScreen.tsx",
+      "sha256": "1d8a9fa85ca774efa61f9a7ec0eeb5bc222e5c1b0ad8bf65a7e81adf99039bc1",
+      "bytes": 31691,
+      "baseSha256": "3708f73ec9c2c4925304b2ee8c56947ed395665714f73d34b0803e1c1940ffdd",
+      "integratedBaseSha256": "1d8a9fa85ca774efa61f9a7ec0eeb5bc222e5c1b0ad8bf65a7e81adf99039bc1"
+    },
+    {
+      "path": "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+      "sha256": "d62c076dfd727ca1ef64529620cd93441551b5d8d9c1c3ba91ad2630666b4561",
+      "bytes": 17514,
+      "baseSha256": "f0935301cf212392876be91c0e7b117d6a7ab87e4b765eb8fb59abc899252775",
+      "integratedBaseSha256": "d62c076dfd727ca1ef64529620cd93441551b5d8d9c1c3ba91ad2630666b4561"
+    },
+    {
+      "path": "apps/mobile/src/renderer/RecordRecoveryPanel.tsx",
+      "sha256": "57dbb265171baadee9d1744d50c82b4d68f8a16a79dab73965599ff6ae262e7f",
+      "bytes": 3205,
+      "baseSha256": null,
+      "integratedBaseSha256": "fe61e7e9e705a32d2709dbaa1f615e0094fe08e5a2b156c4d03c867690bf7da1"
+    },
+    {
+      "path": "apps/mobile/src/renderer/recordRecovery.ts",
+      "sha256": "35e403b1ef08bbeb5406d1afa5beb93b91b63ae82eaea222f4d039a2e72ab6cf",
+      "bytes": 3410,
+      "baseSha256": null,
+      "integratedBaseSha256": "a2aa8f7cb4d2044dd10e4ac8a0a09431b83c5fead97f49bccbd5cfe882da7bb7"
+    },
+    {
+      "path": "apps/mobile/src/renderer/recordRecovery.test.ts",
+      "sha256": "d8239dd357dab1fd19e3bc2b8262cda2782878babf830bd7de75c499bdf374b7",
+      "bytes": 20682,
+      "baseSha256": null,
+      "integratedBaseSha256": "50c57e91d40e50bc978feef1599cc577f38e19afacd7c798b23f1dc5f4acf141"
+    },
+    {
+      "path": "apps/mobile/docs/RECORD_RECOVERY_SURFACES.md",
+      "sha256": "ed75d26bb8ba17ba566d3faf89115e32832235c7270fce30b623a65e8e1bff4c",
+      "bytes": 4993,
+      "baseSha256": null,
+      "integratedBaseSha256": "3683f7b4ef2a29605a9e2af626176abb41294e72f181545c8a3d0b8abf7c1a77"
+    }
+  ],
+  "sourceSha256": "c832b080d15f671b8e03c742e23eed89715dac1e682cb054551e113f39bb6daa",
+  "verification": {
+    "tests": 667,
+    "baseline": 665,
+    "newTests": 2,
+    "failed": 0,
+    "skipped": 0,
+    "typecheck": "pass",
+    "lint": "pass",
+    "format": "pass",
+    "focusedTests": 11,
+    "lifecycleProof": "pure UI gate coordinator with real retained controllers; no mounted React/DOM/browser proof"
+  },
+  "priorRecoveryManifest": "/private/tmp/tinkerloom-record-recovery-tt77bqx6/record-recovery-files.json",
+  "changedFileDelta": "recovery-gate-delta-files.json",
+  "preservation": "source-preservation.json",
+  "scope": "Source/local only; no persistent edits, Git writes, Cloud, provider, native/device or browser actions."
+}

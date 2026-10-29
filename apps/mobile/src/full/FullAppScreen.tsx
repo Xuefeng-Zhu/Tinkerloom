@@ -18,6 +18,8 @@ import {
 import { Button } from "../components/Button";
 import { Notice } from "../components/Notice";
 import { RuntimeRenderer } from "../renderer/RuntimeRenderer";
+import { RecordRecoveryPanel } from "../renderer/RecordRecoveryPanel";
+import { recordRecoveryOutsideLive } from "../renderer/recordRecovery";
 import type { FullAppController } from "./FullAppController";
 import { requestedDeviceCapabilities } from "../spec/bindings";
 import { fullTemplates } from "./catalog";
@@ -647,29 +649,11 @@ export function FullAppScreen({
             Returning to the original form. This new visit cannot replace its
             local input.
           </Text>
-          {runtimeState?.pending ? (
-            <>
-              <Text style={styles.body}>
-                The original record operation remains retained:{" "}
-                {runtimeState.pending.status}.
-              </Text>
-              {runtimeState.pending.status === "uncertain" ? (
-                <Button
-                  label="Check original record outcome"
-                  onPress={() => {
-                    void runtimeController?.retry();
-                  }}
-                />
-              ) : null}
-              {runtimeState.pending.status === "failed" ? (
-                <Button
-                  label="Acknowledge definitive record rejection"
-                  onPress={() => runtimeController?.acknowledgeFailure()}
-                />
-              ) : null}
-            </>
-          ) : null}
         </Card>
+      ) : null}
+      {runtimeController &&
+      recordRecoveryOutsideLive(mode, editorVisible, protectedLocationOwned) ? (
+        <RecordRecoveryPanel controller={runtimeController} />
       ) : null}
       {!protectedLocationOwned ? null : mode === "live" || !editorVisible ? (
         <View style={{ flex: 1 }}>

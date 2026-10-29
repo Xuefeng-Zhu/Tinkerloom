@@ -17,6 +17,7 @@ import type { UtilityTimerController } from "../runtime/timer";
 import type { ViewSpec, ViewSpecOf } from "../spec/types";
 import { RendererContext } from "./context";
 import { useContainerWidth } from "./containerWidth";
+import { RecordRecoveryPanel } from "./RecordRecoveryPanel";
 import { pageRows, resolveAppearance } from "./appearance";
 import { Body, Button, Notice, Panel, Row } from "./primitives";
 import { DetailsView, SemanticView } from "./views";
@@ -404,35 +405,8 @@ function RuntimeRendererScope({
               or page. Your values and record revision stay together.
             </Notice>
           ) : null}
-          {state.pending ? (
-            <Panel
-              title={
-                state.pending.status === "sending"
-                  ? "Saving your change…"
-                  : state.pending.status === "uncertain"
-                    ? "Outcome not confirmed"
-                    : "Change could not be saved"
-              }
-            >
-              <Notice error={state.pending.status !== "sending"}>
-                {state.pending.error?.message ??
-                  "Keep this app open while the original operation is checked."}
-              </Notice>
-              {state.pending.status === "uncertain" ? (
-                <Button onPress={() => void controller.retry()}>
-                  Retry same change
-                </Button>
-              ) : null}
-              {state.pending.status === "failed" ? (
-                <Button subtle onPress={() => controller.acknowledgeFailure()}>
-                  Review values
-                </Button>
-              ) : null}
-              <Body muted>
-                Your original values are retained. Resolve this save before
-                making another change or leaving the app.
-              </Body>
-            </Panel>
+          {!editor && !details ? (
+            <RecordRecoveryPanel controller={controller} />
           ) : null}
           {state.error && !state.pending ? (
             <Notice error>{state.error.message}</Notice>
@@ -513,24 +487,8 @@ function RuntimeRendererScope({
                     Close details
                   </Button>
                 ) : null}
-                {state.pending ? (
-                  <Notice error>
-                    {state.pending.error?.message ??
-                      "Saving… Return to the command status on the page after this resolves."}
-                  </Notice>
-                ) : null}
-                {state.pending?.status === "uncertain" ? (
-                  <Button onPress={() => void controller.retry()}>
-                    Retry original command
-                  </Button>
-                ) : null}
-                {state.pending?.status === "failed" ? (
-                  <Button
-                    subtle
-                    onPress={() => controller.acknowledgeFailure()}
-                  >
-                    Review values
-                  </Button>
+                {editor || details ? (
+                  <RecordRecoveryPanel controller={controller} />
                 ) : null}
               </Panel>
             </ScrollView>
