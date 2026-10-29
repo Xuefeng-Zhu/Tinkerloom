@@ -1,0 +1,51 @@
+{
+  "capturedAt": "2026-10-29T07:48:11.694593+00:00",
+  "status": "blocked",
+  "scope": "Native UI preparation only; latest accepted app installation is still awaiting parent source/artifact",
+  "macNativeInventoryAvailable": true,
+  "cuaSimulatorLookup": {
+    "app": "Simulator",
+    "result": "Invalid app"
+  },
+  "selectedDeveloperDirectory": "/Applications/Xcode.app/Contents/Developer",
+  "simulatorApplicationDirectoryExists": false,
+  "officialSimulatorApplicationExists": false,
+  "readOnlyBundleSearch": {
+    "roots": [
+      "/Applications",
+      "/Library/Developer",
+      "/Users/frank/Applications"
+    ],
+    "matches": [],
+    "method": "rg --files Info.plist paths filtered for Simulator.app and SimulatorTrampoline.app"
+  },
+  "existingDeviceDirectories": [],
+  "deviceSetMetadata": {
+    "keys": [
+      "DefaultDevices",
+      "DevicePairs",
+      "Version"
+    ],
+    "sha256": "b492c59e130e6b3d56892091113fd024a265894764ac4c9acfb41c8726aa7e29",
+    "bytes": 1807
+  },
+  "runtimeImageEntries": [
+    "Inbox",
+    "images.plist",
+    "mnt"
+  ],
+  "mountedRuntimeVolumeEntries": [],
+  "interpretation": "The selected build toolchain can compile Simulator-targeted artifacts, but the Simulator GUI application is absent. No native UI/device execution is established. Runtime images alone would not provide the missing GUI.",
+  "actions": {
+    "installed": false,
+    "booted": false,
+    "launchedApp": false,
+    "downloadedRuntime": false,
+    "changedSettings": false,
+    "acceptedTerms": false,
+    "repositoryEdits": false,
+    "cloudCalls": 0,
+    "readCredentials": false
+  },
+  "parentReservedAppTabsUntouched": true
+}
