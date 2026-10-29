@@ -75,6 +75,8 @@ export class RuntimeController {
   private scrolls = new Map<string, number>();
   private request = 0;
   private locationRequest = 0;
+  // Local typing cancels values, but only newer navigation supersedes an access denial.
+  private authorityRequest = 0;
   private disposed = false;
   private unsubscribe = () => {};
   private recovered = false;
@@ -130,6 +132,7 @@ export class RuntimeController {
     ++this.request;
     this.deferredRefresh = false;
     ++this.locationRequest;
+    ++this.authorityRequest;
     this.emit({
       accessDenied: true,
       views: {},
@@ -160,29 +163,44 @@ export class RuntimeController {
     if (!this.disposed && Number.isFinite(offset))
       this.scrolls.set(pageId, Math.max(0, offset));
   }
-  focusRecord(record: RuntimeRecord, editing = false) {
+  focusRecord(record: RuntimeRecord, editing = false): boolean {
+    ensure(!this.disposed, "disposed", "This app is closed.");
+    ensure(
+      !this.state.accessDenied,
+      "forbidden",
+      "Reopen this app to confirm your current access.",
+    );
     ensure(
       !this.state.dirty && !this.state.pending,
       "unsaved_changes",
       "Finish the current command first.",
     );
+    const location = {
+      pageId: this.state.location.pageId,
+      recordId: record.id,
+      ...(editing ? { editing: true } : {}),
+    };
     ++this.request;
     ++this.locationRequest;
+    ++this.authorityRequest;
+    if (sameLocation(this.state.location, location)) {
+      this.emit({ record, loading: false, error: null });
+      return false;
+    }
     this.emit({
-      location: {
-        pageId: this.state.location.pageId,
-        recordId: record.id,
-        ...(editing ? { editing: true } : {}),
-      },
+      location,
       history: [...this.state.history, this.state.location],
       record,
+      loading: false,
       error: null,
     });
+    return true;
   }
   dismissRecord() {
     if (this.state.pending) return;
     ++this.request;
     ++this.locationRequest;
+    ++this.authorityRequest;
     this.emit({
       location: { pageId: this.state.location.pageId },
       record: null,
@@ -257,6 +275,7 @@ export class RuntimeController {
     );
     ++this.request;
     ++this.locationRequest;
+    ++this.authorityRequest;
     this.emit({
       location: { ...location },
       history: locationHistory(
@@ -283,13 +302,18 @@ export class RuntimeController {
     if (this.disposed || this.state.accessDenied) return "stale";
     if (!this.canLeave) return "blocked";
     const generation = ++this.locationRequest;
+    const authority = ++this.authorityRequest;
     let location: RuntimeLocation;
     try {
       location = await resolveLocation(this.adapter, request);
     } catch (error) {
-      if (this.disposed || generation !== this.locationRequest) return "stale";
+      if (this.disposed || authority !== this.authorityRequest) return "stale";
       const failure = runtimeError(error);
-      if (isRuntimeAccessFailure(failure)) this.invalidateAccess(failure);
+      if (isRuntimeAccessFailure(failure)) {
+        this.invalidateAccess(failure);
+        throw failure;
+      }
+      if (generation !== this.locationRequest) return "stale";
       throw failure;
     }
     if (
@@ -329,6 +353,7 @@ export class RuntimeController {
     if (sameLocation(previous, this.state.location)) return false;
     ++this.request;
     ++this.locationRequest;
+    ++this.authorityRequest;
     this.emit({
       location: previous,
       history: this.state.history.slice(0, -1),
@@ -506,6 +531,7 @@ export class RuntimeController {
     )
       return;
     const generation = ++this.request,
+      authority = this.authorityRequest,
       previous = this.state.views,
       views = this.views,
       recordId = this.state.location.recordId;
@@ -541,10 +567,11 @@ export class RuntimeController {
             )
             .find(isRuntimeAccessFailure);
     if (denied) {
-      this.invalidateAccess(denied);
+      if (authority === this.authorityRequest) this.invalidateAccess(denied);
       return;
     }
-    if (generation !== this.request) return;
+    if (generation !== this.request || authority !== this.authorityRequest)
+      return;
     const next: Record<string, RuntimeViewState> = {};
     results.forEach((result, i) => {
       const view = views[i];
@@ -573,6 +600,7 @@ export class RuntimeController {
     )
       return;
     const generation = this.request,
+      authority = this.authorityRequest,
       location = this.state.location,
       view = getView(this.adapter.spec, viewId),
       cursor = current.nextCursor;
@@ -591,6 +619,7 @@ export class RuntimeController {
       if (
         this.disposed ||
         generation !== this.request ||
+        authority !== this.authorityRequest ||
         this.state.location !== location
       )
         return;
@@ -621,10 +650,10 @@ export class RuntimeController {
       if (this.disposed) return;
       const failure = runtimeError(error);
       if (isRuntimeAccessFailure(failure)) {
-        this.invalidateAccess(failure);
+        if (authority === this.authorityRequest) this.invalidateAccess(failure);
         return;
       }
-      if (generation === this.request) {
+      if (generation === this.request && authority === this.authorityRequest) {
         this.emit({
           views: {
             ...this.state.views,
@@ -786,6 +815,7 @@ export class RuntimeController {
   dispose() {
     if (this.disposed) return;
     this.disposed = true;
+    ++this.authorityRequest;
     ++this.locationRequest;
     ++this.request;
     this.deferredRefresh = false;

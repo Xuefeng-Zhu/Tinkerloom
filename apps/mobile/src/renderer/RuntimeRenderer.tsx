@@ -178,7 +178,7 @@ function RuntimeRendererScope({
   );
   const guard = (action: () => void) => {
     const current = controller.getSnapshot();
-    if (current.pending) return;
+    if (current.pending || current.accessDenied) return;
     if (current.dirty) setLeave(() => action);
     else action();
   };
@@ -195,9 +195,9 @@ function RuntimeRendererScope({
     else
       guard(() => {
         setEditor(null);
-        controller.focusRecord(record);
+        const changed = controller.focusRecord(record);
         setDetails({ view, record });
-        notifyLocation("push");
+        if (changed) notifyLocation("push");
       });
   };
   const edit = (view: ViewSpec, record?: RuntimeRecord) => {
@@ -210,7 +210,7 @@ function RuntimeRendererScope({
     }
     guard(() => {
       setDetails(null);
-      if (record) controller.focusRecord(record, true);
+      const changed = record ? controller.focusRecord(record, true) : false;
       setEditor({
         view: {
           id: `editor_${view.id}`,
@@ -222,7 +222,7 @@ function RuntimeRendererScope({
         },
         record,
       });
-      if (record) notifyLocation("push");
+      if (changed) notifyLocation("push");
     });
   };
   const closeOverlay = () =>
