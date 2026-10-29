@@ -620,13 +620,17 @@ export class FullAppController {
       this.journal = this.createJournal();
       this.journalSuspended = false;
     }
+    const localEditorChanges =
+      this.state.dirty ||
+      !!this.state.editorError ||
+      this.hasRejectedEditorInput;
     const staleDirty =
       build &&
-      this.state.dirty &&
+      localEditorChanges &&
       !acceptCandidate &&
       prior?.draft?.revision !== app.draft?.revision;
     const candidate = build
-      ? acceptCandidate || !this.state.dirty
+      ? acceptCandidate || !localEditorChanges
         ? (app.draft?.spec ?? null)
         : this.state.candidate
       : null;

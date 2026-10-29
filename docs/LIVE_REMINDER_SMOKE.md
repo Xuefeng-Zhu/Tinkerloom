@@ -101,6 +101,11 @@ capabilities. It explicitly publishes approval and bounded old-record enrollment
 accepts recipient-bound member invitations, sets real future timestamps, and
 performs the member's self-assignment. Three separate apps let it retain a
 successful member delivery while revoking access to another app before due time.
+Each app uses its own new synthetic workspace. This adds two ordinary workspace
+creation requests and avoids contention between one app's asynchronous worker
+planning and another app's setup on a shared workspace guard. It does not change
+authorization or transaction guards, retry unknown writes, or establish that all
+concurrent work is conflict-free.
 
 It observes public run history and each account's private inbox. Before due time
 it clears a reminder timestamp, changes a workflow condition, and revokes the
@@ -126,9 +131,23 @@ external delivery, native permission prompts, and device UI are unverified here.
 
 ## Offline evidence
 
-Run `node --test scripts/live_reminder_contract.test.mjs` for 16 contract and
-orchestration groups. The positive and five-minute pending paths use only a test
-HTTP emulator and Node test timers; neither is live scheduling evidence.
+Run `node --test scripts/live_reminder_contract.test.mjs scripts/live_reminder_service.test.mjs`
+for 18 retained contract/diagnostic groups and six actual-service orchestration
+groups. The original contract tests use an HTTP emulator and Node test timers.
+The additional test-only stdio bridge executes the actual `PlatformService` and
+trusted `WorkerEngine`, with synthetic `MemoryStore`, a virtual clock, and stubbed
+HTTP authentication. The public probe has no clock override or worker RPC route.
+These checks establish local service contracts, not hosted scheduling behavior.
+
+The actual-service positive path covers all rule/action/field/role/approval and
+query envelopes used by the probe, explicit old-record enrollment, owner/member
+delivery, changed timestamp/workflow suppression, current-grant recipient
+suppression, read receipts, historical command receipts, and occurrence dedup.
+A run without any local worker drain remains pending through the virtual
+five-minute bound. A deliberately lost response after the third app is really
+committed stops without replay. A deterministic actual-service race demonstrates
+that worker planning and an instantiate in the same workspace can conflict;
+the isolated-workspace setup survives that same overlap without loosening guards.
 
 Generate the fixture with the Cloud-compatible Dart SDK from `appwrite_backend`:
 
@@ -143,9 +162,15 @@ notification, cross-recipient isolation, matching read receipts, and a revoked
 recipient count of zero. It has no Cloud or provider adapter. The JSON fixture
 contains synthetic wire data, never deployed credentials or private recipients.
 
-
 ## First real development probe
 
 The preserved `evidence/2026-10-28/reminder-cloud-a05b362.observation-pending.json` confirms authenticated operational effects against the redeployed Core, then stops during synthetic setup with an uncertain write outcome. Eleven HTTP requests included both own-session signouts. No delivery assertion ran and no uncertain mutation was replayed. This receipt lacks the failed operation and execution status; the reporter now retains only allowlisted operation names and sanitized HTTP/Function diagnostics, with idempotent sanitization and no-retry regression checks. A later run cannot retroactively pass this receipt.
+
+Request counts and operator-observed execution metadata are consistent with the
+third instantiate being the uncertain write. The local shared-workspace race
+returns `409 transaction_conflict`, but that does not identify the uncaptured
+Cloud error body. The original receipt remains unchanged and pending. No
+backend correction or weakening of numeric, authorization, or transaction
+requirements follows from this local reproduction.
 
 `reminder-development-deployments.json` and the SHA-bound worker configuration receipt document current flags, private worker permissions and the redeployment chain. Variable changes alone were not treated as runtime configuration proof.

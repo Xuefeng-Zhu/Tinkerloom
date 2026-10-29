@@ -176,12 +176,15 @@ test("background replacement preserves rejected raw text after an unrelated no-o
   assert.equal(f.controller.getSnapshot().editorError, null);
   assert.equal(f.controller.getSnapshot().dirty, false);
   assert.equal(f.controller.hasRejectedEditorInput, true);
+  const localCandidate = f.controller.getSnapshot().candidate;
   f.setApp(app({ ...spec, name: "Remote authoritative name" }, 2));
   await f.controller.load();
+  assert.equal(f.controller.getSnapshot().candidate, localCandidate);
   assert.equal(
-    f.controller.getSnapshot().candidate?.name,
+    f.controller.getSnapshot().app?.draft?.spec.name,
     "Remote authoritative name",
   );
+  assert.equal(f.controller.getSnapshot().conflict, true);
   assert.equal(f.controller.getSnapshot().editorResetEpoch, epoch);
   assert.equal(c.draft.getSnapshot(), "");
   assert.equal(f.controller.hasRejectedEditorInput, true);
@@ -237,5 +240,89 @@ test("actual publication panel disables preparing another review while mounted r
   )![0];
   assert.doesNotMatch(enabled, /(?:aria-disabled="true"| disabled="")/);
   c.close();
+  f.controller.dispose();
+});
+
+test("a remote draft removing the selected collection preserves rejected raw input and records a conflict until Discard", async () => {
+  const f = fixture();
+  await f.controller.load();
+  const initial = f.controller.getSnapshot().candidate!;
+  const collection = initial.collections[0],
+    field = collection.fields[0];
+  const identity = (c: string, f: string) => `field:${c}:${f}:label`;
+  const draft = new InspectorTextDraft(
+    field.label,
+    identity(collection.id, field.id),
+    f.controller.getSnapshot().editorResetEpoch,
+  );
+  const registry = new InspectorInputRegistry();
+  const remove = registry.register(draft);
+  const unregister = f.controller.registerEditorInputGuard(
+    registry.canFlush,
+    registry.subscribe,
+  );
+  const unsubscribe = f.controller.subscribe(() => {
+    const current = f.controller.getSnapshot(),
+      candidate = current.candidate;
+    const currentCollection =
+      candidate?.collections.find((c) => c.id === collection.id) ??
+      candidate?.collections[0];
+    const currentField =
+      currentCollection?.fields.find((item) => item.id === field.id) ??
+      currentCollection?.fields[0];
+    draft.configure(
+      currentField?.label ?? "",
+      currentCollection && currentField
+        ? identity(currentCollection.id, currentField.id)
+        : "unavailable",
+      current.editorResetEpoch,
+    );
+  });
+  draft.change("", false);
+  assert.throws(() =>
+    f.controller.edit({
+      type: "RenameField",
+      collectionId: collection.id,
+      fieldId: field.id,
+      label: "",
+    }),
+  );
+  draft.reject();
+  f.controller.edit({ type: "SetTheme", theme: initial.theme });
+  assert.equal(f.controller.getSnapshot().dirty, false);
+  assert.equal(f.controller.getSnapshot().editorError, null);
+  assert.equal(f.controller.hasRejectedEditorInput, true);
+  const epoch = f.controller.getSnapshot().editorResetEpoch;
+  const localCandidate = f.controller.getSnapshot().candidate;
+  const replacement = fullTemplates.find((item) => item.id === "notes")!.spec;
+  assert.equal(
+    replacement.collections.some((c) => c.id === collection.id),
+    false,
+  );
+  f.setApp(app(replacement, 2));
+  await f.controller.load();
+  assert.equal(f.controller.getSnapshot().candidate, localCandidate);
+  assert.deepEqual(f.controller.getSnapshot().candidate, initial);
+  assert.equal(
+    f.controller.getSnapshot().app?.draft?.spec.name,
+    replacement.name,
+  );
+  assert.equal(f.controller.getSnapshot().conflict, true);
+  assert.equal(f.controller.getSnapshot().editorResetEpoch, epoch);
+  assert.equal(draft.getSnapshot(), "");
+  assert.equal(draft.matches(identity(collection.id, field.id), epoch), true);
+  assert.equal(f.controller.hasRejectedEditorInput, true);
+  assert.equal(await f.controller.flush(), false);
+  assert.equal(f.requests.filter((r) => r.op === "spec.saveDraft").length, 0);
+  f.controller.discardLocalEdits();
+  assert.equal(f.controller.getSnapshot().candidate?.name, replacement.name);
+  assert.equal(f.controller.getSnapshot().conflict, false);
+  assert.equal(f.controller.getSnapshot().editorResetEpoch, epoch + 1);
+  assert.equal(draft.getSnapshot(), replacement.collections[0].fields[0].label);
+  assert.equal(f.controller.hasRejectedEditorInput, false);
+  unsubscribe();
+  unregister();
+  remove();
+  draft.dispose();
   f.controller.dispose();
 });

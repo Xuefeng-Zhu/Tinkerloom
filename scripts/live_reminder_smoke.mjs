@@ -396,7 +396,16 @@ export async function runReminderSmoke(
       receipt: result,
     };
   };
-  const makeApp = async (templateKey, workspaceId) => {
+  const makeApp = async (templateKey) => {
+    // Worker planning stages the workspace guard. Separate synthetic scopes
+    // prevent one app's asynchronous planning from contending with another
+    // app's setup. Keep every write single-attempt.
+    const workspaceId = newId("wor");
+    await mutate(actors.owner, {
+      op: "createWorkspace",
+      id: workspaceId,
+      name: "Synthetic reminder QA",
+    });
     const result = await mutate(actors.owner, {
       op: "spec.instantiate",
       id: newId("app"),
@@ -494,15 +503,9 @@ export async function runReminderSmoke(
       "setup_explicit_owner_approval_and_member_acceptance",
       async () => {
         actors.member = await createActor("member");
-        const workspaceId = newId("wor");
-        await mutate(actors.owner, {
-          op: "createWorkspace",
-          id: workspaceId,
-          name: "Synthetic reminder QA",
-        });
-        ownerApp = await makeApp("reminders", workspaceId);
-        memberApp = await makeApp("chores", workspaceId);
-        revokedApp = await makeApp("chores", workspaceId);
+        ownerApp = await makeApp("reminders");
+        memberApp = await makeApp("chores");
+        revokedApp = await makeApp("chores");
         const ownerRule = ownerApp.app.version.spec.automationRequests.find(
           (rule) => rule.id === "taskReminder",
         );
