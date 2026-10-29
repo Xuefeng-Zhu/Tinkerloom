@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T03:19:01.339077+00:00",
+  "origin": "Persistent apps/mobile with its own real node_modules directory, not an isolated stage symlink",
+  "verification": {
+    "tests": 645,
+    "failures": 0,
+    "skips": 0,
+    "typecheck": "passed",
+    "lint": "passed",
+    "format": "passed",
+    "exports": [
+      "web",
+      "ios",
+      "android"
+    ]
+  },
+  "platforms": [
+    {
+      "platform": "web",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/web/[templateId]-52172bc972671005ee3a5bc5a712eba0.js",
+          "bytes": 1101,
+          "sha256": "753697e4b7afd7269c8dea1534937a2f751bafbb58e5b2b2addb7a6e1764e4ee"
+        },
+        {
+          "path": "_expo/static/js/web/[templateId]-5442a32c6ec370d612befa7ba89b09ab.js",
+          "bytes": 10206,
+          "sha256": "708af8f7a2ae20c01a65b5d01df1e05aad9a026d0d916ca325dc169acee49b01"
+        },
+        {
+          "path": "_expo/static/js/web/[token]-30b9063a75408583d642cb93c3df9a48.js",
+          "bytes": 2331,
+          "sha256": "c600a9ec6d09e9701751f1bcf6bfc463db9f30cf864eabbe767ef852226fc78f"
+        },
+        {
+          "path": "_expo/static/js/web/__common-79bb22d73c1ff6fda8edabe33052a160.js",
+          "bytes": 807467,
+          "sha256": "9b378bd1d5510f214d812e75bc7383bd8ffea51e11739e32c9e19d9f4c9e7866"
+        },
+        {
+          "path": "_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js",
+          "bytes": 3751,
+          "sha256": "80e3ab02b3bac22608cdf29a2e3cc1270616a695bbe479f7f500941e8d2bbe41"
+        },
+        {
+          "path": "_expo/static/js/web/_layout-fb433ba89598680a54b2c7e617d721fb.js",
+          "bytes": 679,
+          "sha256": "c5b978b48610467b790492bf5a6d84c2f14019df18b9ae1cea6ceb1b01a789f6"
+        },
+        {
+          "path": "_expo/static/js/web/activity-315812262d0be6ece7ddeddb0d08a5e7.js",
+          "bytes": 9382,
+          "sha256": "c823e9d88479e1011660c69b7f2492306e8628101c848ba49ff2a7c3ef565af3"
+        },
+        {
+          "path": "_expo/static/js/web/edit-6bc194700a22aca2fe6d881b5fc69476.js",
+          "bytes": 7734,
+          "sha256": "4b48315dbaac751f625cd568eee220518cf910a31ad833b19273bba6b7dfb47e"
+        },
+        {
+          "path": "_expo/static/js/web/entry-e5ab9e87063a54cf07307166229d1903.js",
+          "bytes": 1115540,
+          "sha256": "af2aa617097b0340f1f3453a95310d148f4ecfdd5052ca94c82947eee67109fc"
+        },
+        {
+          "path": "_expo/static/js/web/full-b38aac9bcfa1233379180bcbb7d03618.js",
+          "bytes": 66818,
+          "sha256": "34a9bdff9b9433f86f0fbbbd2af7066b848b7301c23390f37337547cc2621cd8"
+        },
+        {
+          "path": "_expo/static/js/web/inbox-b31b035b600b473073366cea37f1430c.js",
+          "bytes": 4282,
+          "sha256": "01b14d0018188941f688a34800ca8eac60bfc9a024a7f5415d0d9127b23ac53d"
+        },
+        {
+          "path": "_expo/static/js/web/index-1ee6166b7169076ec5778daaf67d67a6.js",
+          "bytes": 202,
+          "sha256": "2ee8357f3b6c3df52b6d5ce03d8aa806e5f09a08f0d192f9c50eff447f772045"
+        },
+        {
+          "path": "_expo/static/js/web/index-634aabf58c56658def463ea772351888.js",
+          "bytes": 27760,
+          "sha256": "0a0ff99410d3b154644aaf73407742b308e61d8b2ba1405fd64ac603f6db375e"
+        },
+        {
+          "path": "_expo/static/js/web/index-64ed6a31a217d81bfe9a96fb344b769f.js",
+          "bytes": 5005,
+          "sha256": "d5e9b2d936e19820f33339cdee510241a16464f1c8bcf4190c03e657a26344cb"
+        },
+        {
+          "path": "_expo/static/js/web/index-9c16c140b32dc3e5e425a711e9f08163.js",
+          "bytes": 3522,
+          "sha256": "5d798e5f6f60a4a08db5410911b015a8bc8a25369c9932e143861b1dca399f36"
+        },
+        {
+          "path": "_expo/static/js/web/index-9f903bb46c177410588d3e5c2b091bb7.js",
+          "bytes": 1386,
+          "sha256": "784251d17f9287d752c33f36b34c12527b10f207ea6df950e470e350b651d156"
+        },
+        {
+          "path": "_expo/static/js/web/index-a861326a4888fe07a5f9710c6fa2da58.js",
+          "bytes": 1043,
+          "sha256": "d5071b6fb74f532caf5452cf94d061027f35e33c859c70ed692ef9236ef70a89"
+        },
+        {
+          "path": "_expo/static/js/web/mqtt-f10e71d990f087f6820327ea3d74157d.js",
+          "bytes": 368250,
+          "sha256": "2540a959bba379a266b9ec31d52ac2f272f2bc13efc20419967725a18c3278bf"
+        },
+        {
+          "path": "_expo/static/js/web/runs-823e8aa2b9a33f9540e2b7210ed8e935.js",
+          "bytes": 3873,
+          "sha256": "2f7b8ecd1cc1c96a4bfb5e7ee35948adeeec7d755086650fcd84cb70c712a0b5"
+        },
+        {
+          "path": "_expo/static/js/web/sharing-d28cab962aeb57304beadc526e062ea4.js",
+          "bytes": 7668,
+          "sha256": "aea46fea68e99ac55d47216a7b1a965f1718e9533a53a74558cd4daaedee5dec"
+        },
+        {
+          "path": "_expo/static/js/web/workbench-3d563556e6de68bbe04acf1cfd890ddb.js",
+          "bytes": 11526,
+          "sha256": "8391f09c2789b9177b9752a3fd29ab1d6159d8742067ef208ed3e5558b377794"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/ios/entry-43bbee06ec40fc161d7d3f5eed976fee.hbc",
+          "bytes": 5092785,
+          "sha256": "34b5dddf62f4d1b647e9d6ad695d097501af3e57f72dde484e3f29f2b37cc1f2"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "markers": {
+        "formBusy": true,
+        "Finish choosing or uploading the image": true,
+        "Chat and editor": true,
+        "This builder session": true,
+        "Accepted request": true,
+        "beginFormInteraction": true,
+        "compactRecordTable": true,
+        "useContainerWidth": true
+      },
+      "files": [
+        {
+          "path": "_expo/static/js/android/entry-974ee5595168185bf5e0ba78cde0b9c8.hbc",
+          "bytes": 5077077,
+          "sha256": "92fb50d47eb49bed54d4dd426a2c09dc5cf7026b1a37ac467e9bf1dd3fc0d537"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Bundle markers and hashes establish current feature inclusion, not runtime/device interaction.",
+    "Historical stage export exit codes with symlinked node_modules are not treated as changed-source bundle proof.",
+    "No live AI, native installation/hardware or production acceptance."
+  ],
+  "sourceCommit": "10fed99f87d0b435ee91f55d60f54a6aef6a65a0"
+}

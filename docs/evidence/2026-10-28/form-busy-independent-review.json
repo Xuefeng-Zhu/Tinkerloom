@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T02:58:46.852445+00:00",
+  "sourceSha256": "05264de863ecacc061f834f5538b9bb294079f7d0ece97bd2b3d709419a763b6",
+  "result": "no_concrete_blocking_findings",
+  "frozenBusyPaths": [
+    {
+      "path": "apps/mobile/src/runtime/controller.ts",
+      "sha256": "98b75011b1bfad048fa2ed1d7abddca199c0865902d30fdb73ac9224c3fa5ef4"
+    },
+    {
+      "path": "apps/mobile/src/renderer/RuntimeRenderer.tsx",
+      "sha256": "595ccff1d2895bb5bb03defa914a5536fa5bc453a0000930ca33e221c12b0ee8"
+    },
+    {
+      "path": "apps/mobile/src/renderer/form.tsx",
+      "sha256": "a73fe3a80dea8838dace2acdda6e2d3869d2200f532a0cdf16f0214422ad5964"
+    },
+    {
+      "path": "apps/mobile/src/renderer/fields.tsx",
+      "sha256": "6fc489475227dc87aeace3a3e3d090a8394615f9dd951571f456ea9bbb1d8f8b"
+    },
+    {
+      "path": "apps/mobile/src/renderer/actions.tsx",
+      "sha256": "3064a5b6aa1e2fea0919c08973af348a7d9f56bda21384afd32fc6bcab5e51aa"
+    },
+    {
+      "path": "apps/mobile/src/renderer/board.tsx",
+      "sha256": "c8c2216a0a1898b3b22cc4b718baa1bb4d17952e1309fe0b7c08d80fdf9ce2fe"
+    },
+    {
+      "path": "apps/mobile/src/renderer/views.tsx",
+      "sha256": "086f6b38a57676a07e54d2a93f9404714bae88afeedc1718945bccf56f91eed5"
+    },
+    {
+      "path": "apps/mobile/src/renderer/imageInteraction.ts",
+      "sha256": "2e746be98e9dfd351210102f32c8c4fdb931505e4af3dde732fc1dd318ef1e8e"
+    },
+    {
+      "path": "apps/mobile/src/renderer/imageInteraction.test.ts",
+      "sha256": "58a4563d883083032498e893985f519650804f208247909a62b0e2ccd1a3b92b"
+    }
+  ],
+  "rootHostPaths": [
+    {
+      "path": "apps/mobile/src/full/FullAppScreen.tsx",
+      "sha256": "c0179abfc671fed8113ea9229640268628c27128d5aee1400efa3f358e9927df"
+    },
+    {
+      "path": "apps/mobile/src/full/navigation.ts",
+      "sha256": "4c63db88086bc255182e5319a550e54b903a5ccaa395cf77c66edfd7c9331db7"
+    },
+    {
+      "path": "apps/mobile/src/full/navigation.test.ts",
+      "sha256": "1cf965d232c766147c3a847829082dc0418dbc22ee0864bbdb508c2258b0dd76"
+    }
+  ],
+  "checks": [
+    "Memory-only interaction token released once; stale cleanup cannot release a later token.",
+    "Access denial/disposal clears busy state and prevents new interactions; current denied reads remain authoritative while stale success values are fenced.",
+    "Upload commits local field input before lease release, making the form dirty before deferred refresh can adopt a newer record revision.",
+    "Picker cancel/unmount/failure releases the lease; late selected bytes are zeroed and dead field lifetimes cannot upload/attach.",
+    "Record writes, view selections, runtime navigation and host Back/Forward removal guards include formBusy.",
+    "Root external URL pre/post-async checks and Discard recheck current formBusy before clearing dirty state.",
+    "Runtime snapshot retention plus stable keyed forms prevents pristine revision refresh from replacing an active image interaction."
+  ],
+  "focusedTests": {
+    "passed": 24,
+    "failed": 0,
+    "log": "/private/tmp/tinkerloom-independent-form-busy-tests.log",
+    "logSha256": "782eac30d4d673f3bb39a66e8d5ab85cc778d63773bf36d9b7904cea6bb42e53"
+  },
+  "limits": [
+    "Source and pure runtime/helper/navigation tests only; no mounted browser/native picker or cross-route browser history proof.",
+    "Underlying picker/transport completion bounds remain the responsibility of existing reviewed adapters.",
+    "No persistent source, Cloud, Git or UI edits by reviewer."
+  ]
+}

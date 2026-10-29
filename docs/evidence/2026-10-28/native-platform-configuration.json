@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-29T03:11:10.116119+00:00",
+  "bundleId": "com.tinkerloom.app",
+  "localChecks": {
+    "iosBundleIdentifierMatches": true,
+    "androidPackageMatches": true,
+    "publicSdkPlatformMatches": true,
+    "appJsonSha256": "545491f4b1d147a76344840219cc963d57d629b8fb8856bd626ffd3ed3805809"
+  },
+  "consoleObserved": [
+    {
+      "name": "Tinkerloom Android",
+      "type": "Android",
+      "applicationId": "com.tinkerloom.app"
+    },
+    {
+      "name": "Tinkerloom iOS",
+      "type": "Apple",
+      "bundleId": "com.tinkerloom.app"
+    },
+    {
+      "name": "Tinkerloom localhost",
+      "hostname": "localhost"
+    }
+  ],
+  "configurationMutations": 0,
+  "limits": [
+    "Read-only Console platform metadata and local config matching only.",
+    "No native SDK signin, launch, callback, passkey, device permission or hardware proof.",
+    "Signing fingerprint list is empty; passkeys were not tested or claimed."
+  ]
+}
