@@ -1,0 +1,161 @@
+{
+  "proof": "Real Dart service DTOs and actual image decoding over a simulated store; no Cloud evidence.",
+  "capabilities": {
+    "apiVersion": 1,
+    "formatVersions": [1],
+    "parserCapabilities": [
+      "collections.v1",
+      "views.list.v1",
+      "views.form.v1",
+      "views.details.v1",
+      "views.board.v1",
+      "views.summary.v1",
+      "views.capacity.v1",
+      "views.action.v1",
+      "views.table.v1",
+      "views.calendar.v1",
+      "views.timeline.v1",
+      "views.chart.v1",
+      "views.metric.v1",
+      "views.imageCards.v1",
+      "views.gallery.v1",
+      "views.richText.v1",
+      "views.banner.v1",
+      "views.checklist.v1",
+      "views.clock.v1",
+      "views.timer.v1",
+      "views.deviceInfo.v1",
+      "views.deviceControl.v1",
+      "fields.image.v1",
+      "views.interactive.v1",
+      "capacity.v1",
+      "workflow.v1",
+      "assignment.v1",
+      "notifications.inApp.v1",
+      "navigation.v1",
+      "appearance.v1",
+      "navigation.layouts.v1",
+      "views.configured.v1",
+      "notifications.owner.v1",
+      "automations.conditions.v1",
+      "records.create.v1",
+      "records.patch.v1",
+      "assignment.assign.v1",
+      "workflow.transition.v1",
+      "capacity.configure.v1",
+      "capacity.claim.v1",
+      "capacity.release.v1"
+    ],
+    "actionCapabilities": [
+      "records.create.v1",
+      "records.patch.v1",
+      "assignment.assign.v1",
+      "workflow.transition.v1",
+      "capacity.configure.v1",
+      "capacity.claim.v1",
+      "capacity.release.v1"
+    ],
+    "queryOperators": ["eq", "in", "contains", "gte", "lte", "lt"],
+    "effects": [],
+    "generation": false,
+    "guidance": false,
+    "privateMedia": true,
+    "invalidations": {
+      "mode": "poll.v1",
+      "minimumIntervalMs": 15000
+    }
+  },
+  "png": {
+    "byteLength": 5242880,
+    "sha256": "58062ab01b2915dadd0ce35d4fd8b9f76e01da93ceba50ecc391a10e04b84580",
+    "width": 16,
+    "height": 8
+  },
+  "begin": {
+    "asset": {
+      "assetId": "if6f922ec7b4997e24daba938002cb2dc",
+      "status": "pending",
+      "uploadedBytes": 0,
+      "inputBytes": 5242880
+    },
+    "chunkBytes": 262144,
+    "expiresAt": "2030-01-01T00:10:00.000Z"
+  },
+  "firstChunk": {
+    "assetId": "if6f922ec7b4997e24daba938002cb2dc",
+    "uploadedBytes": 262144
+  },
+  "lastChunk": {
+    "assetId": "if6f922ec7b4997e24daba938002cb2dc",
+    "uploadedBytes": 5242880
+  },
+  "complete": {
+    "asset": {
+      "assetId": "if6f922ec7b4997e24daba938002cb2dc",
+      "status": "queued",
+      "uploadedBytes": 5242880,
+      "inputBytes": 5242880
+    }
+  },
+  "ready": {
+    "asset": {
+      "assetId": "if6f922ec7b4997e24daba938002cb2dc",
+      "status": "ready",
+      "contentType": "image/png",
+      "byteLength": 116,
+      "width": 16,
+      "height": 8,
+      "sha256": "fc8ebfdd5efed238b73c5cd43d10d7dfc6290be8d5b1d82932087592ff57eed7"
+    }
+  },
+  "display": {
+    "assetId": "if6f922ec7b4997e24daba938002cb2dc",
+    "variant": "display",
+    "offset": 0,
+    "nextOffset": null,
+    "byteLength": 116,
+    "contentType": "image/png",
+    "sha256": "fc8ebfdd5efed238b73c5cd43d10d7dfc6290be8d5b1d82932087592ff57eed7",
+    "chunkSha256": "fc8ebfdd5efed238b73c5cd43d10d7dfc6290be8d5b1d82932087592ff57eed7",
+    "dataBase64": "iVBORw0KGgoAAAANSUhEUgAAABAAAAAICAYAAADwdn+XAAAAO0lEQVR4nGNhYGBo4GUQrOdlEGQgB7MwyHLXMzBwM5CLQQaQrZkB6gIKDKDIBYKUGCBIrTAgywBBFD4AfgwJFNAevtcAAAAASUVORK5CYII=",
+    "width": 16,
+    "height": 8,
+    "cacheControl": "private, no-store"
+  },
+  "thumbnail": {
+    "assetId": "if6f922ec7b4997e24daba938002cb2dc",
+    "variant": "thumbnail",
+    "offset": 0,
+    "nextOffset": null,
+    "byteLength": 116,
+    "contentType": "image/png",
+    "sha256": "fc8ebfdd5efed238b73c5cd43d10d7dfc6290be8d5b1d82932087592ff57eed7",
+    "chunkSha256": "fc8ebfdd5efed238b73c5cd43d10d7dfc6290be8d5b1d82932087592ff57eed7",
+    "dataBase64": "iVBORw0KGgoAAAANSUhEUgAAABAAAAAICAYAAADwdn+XAAAAO0lEQVR4nGNhYGBo4GUQrOdlEGQgB7MwyHLXMzBwM5CLQQaQrZkB6gIKDKDIBYKUGCBIrTAgywBBFD4AfgwJFNAevtcAAAAASUVORK5CYII=",
+    "width": 16,
+    "height": 8,
+    "cacheControl": "private, no-store"
+  },
+  "usage": {
+    "reservedBytes": 5243112,
+    "assetCount": 1,
+    "pendingReleaseBytes": 5242880,
+    "maximumBytes": 262144000,
+    "maximumAssets": 500
+  },
+  "orientation": {
+    "inputBase64": "/9j/4AAQSkZJRgABAQAAAQABAAD/4QAiRXhpZgAATU0AKgAAAAgAAQESAAMAAAABAAYAAAAAAAD/2wCEAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/AABEIAAYADAMBEQACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/APhj4O/8EsPhr/ov7zSOif8ALtL9f+fY/wCfXrX8n8b/AEvOK7VtMbtL/l7T8/8Ap6fxh9Fv6eHGn/Cd+7zH/l1/y/h5f9Pz9IfDH/BLH4ajR7b95o/T/n1lP8K/9O/+f1r+Ws2+l9xT9dq+7j//AAbDu/8Ap8f7zeHv08ONP9V8D+7zHr/y/h/JT/6fn//Z",
+    "inputSha256": "2adec03e4672c42dec23b990daf14230a508dd5c68621635059f20e5196487dc",
+    "inputByteLength": 786,
+    "originalWidth": 12,
+    "originalHeight": 6,
+    "orientation": 6,
+    "displaySha256": "401482d77c9dd15d0ba94ab10eb3546f32b67c5418c1fee6d2001fa09a737b53",
+    "thumbnailSha256": "401482d77c9dd15d0ba94ab10eb3546f32b67c5418c1fee6d2001fa09a737b53",
+    "width": 6,
+    "height": 12,
+    "contentType": "image/jpeg",
+    "displayBytes": 663,
+    "thumbnailBytes": 663
+  }
+}

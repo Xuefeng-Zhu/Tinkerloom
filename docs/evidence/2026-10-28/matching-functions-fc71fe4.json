@@ -1,0 +1,51 @@
+{
+  "observedAt": "2026-10-29T00:13:00Z",
+  "evidence": "Appwrite Console raw function get and active deployment UI",
+  "sourceCommit": "fc71fe41078c6cd78b3f1987cac5c12dcf04d02c",
+  "archiveSha256": "b0578adff72de82426b2c7ddb0a484b46d7029af2a7bcf034008e680a3cb7957",
+  "archiveBytes": 153374,
+  "functions": [
+    {
+      "id": "tinkerloom-core",
+      "activeDeploymentId": "6ae289f866af0d0d2ba7",
+      "execute": [
+        "users"
+      ],
+      "entrypoint": "lib/main.dart",
+      "intervalMinutes": 0,
+      "buildSeconds": 13
+    },
+    {
+      "id": "tinkerloom-worker",
+      "activeDeploymentId": "6ae28e92c50d216f1bc6",
+      "execute": [],
+      "entrypoint": "lib/worker_main.dart",
+      "intervalMinutes": 60,
+      "buildSeconds": 17
+    }
+  ],
+  "shared": {
+    "runtime": "dart-3.11",
+    "timeoutSeconds": 120,
+    "enabled": true,
+    "live": true,
+    "logging": true,
+    "scopes": [
+      "rows.read",
+      "rows.write",
+      "executions.write",
+      "files.read",
+      "files.write"
+    ],
+    "runtimeSpecification": "s-0.5vcpu-512mb",
+    "cronSchedule": "",
+    "events": [],
+    "remindersEnabled": false,
+    "providerConfigured": false
+  },
+  "limits": [
+    "Configuration/build evidence only; private worker authorization and valid dispatch/media processing are not proved by an active deployment.",
+    "Interval 60 is minutes. No paid cron or plan upgrade was enabled.",
+    "Source identity binds the operator-uploaded committed archive; it is not runtime source attestation."
+  ]
+}

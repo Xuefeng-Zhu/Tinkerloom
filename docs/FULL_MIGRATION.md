@@ -402,3 +402,15 @@ and revocable static image grants for isolated Try/Design previews. Integrated
 verification passed 361 tests, TypeScript, lint, formatting and all three Expo
 exports. Cloud media/worker delivery and final-source native/device proof remain
 open; this source milestone does not close M01–M06 or G04/G05 by itself.
+
+
+### Bounded private-media probe preparation (2026-10-28)
+
+[LIVE_MEDIA_SMOKE.md](LIVE_MEDIA_SMOKE.md) defines a 300-request, two-account
+Cloud probe using a real 5 MiB/20-chunk synthetic PNG and an EXIF orientation-6
+JPEG. Seventeen offline checks passed, including complete orchestration against
+the actual Dart business service and sanitizer. The HTTP authorization/storage
+boundaries are explicitly stubbed in that offline orchestration. No Cloud media
+pass is inferred from it. The [matching function configuration receipt](evidence/2026-10-28/matching-functions-fc71fe4.json)
+records both active deployments on the same committed archive, a private worker
+execution list, the Free hourly interval, and disabled reminder/provider paths.
