@@ -20,7 +20,8 @@ part 'src/utility_components.dart';
 part 'src/device_components.dart';
 
 class RuntimeItem {
-  final int id, revision;
+  final String id;
+  final int revision;
   final String collectionId;
   final Map<String, dynamic> data;
   final int? capacity, allocated;
@@ -84,14 +85,14 @@ abstract class RuntimeAdapter {
   Stream<void> watch();
   bool permits(ActionSpec action);
   List<String> get approvedRuleIds => const [];
-  Future<RuntimeItem> get(int recordId) =>
+  Future<RuntimeItem> get(String recordId) =>
       Future.error(UnsupportedError('Record lookup is unavailable.'));
   Future<RuntimeSummary> summary(
     String collectionId,
     Map<String, dynamic> query,
     String groupFieldId,
   ) => Future.error(UnsupportedError('Grouped summaries are unavailable.'));
-  Future<List<RuntimeReminderState>> reminderState(int recordId) =>
+  Future<List<RuntimeReminderState>> reminderState(String recordId) =>
       Future.error(UnsupportedError('Reminder state is unavailable.'));
   Future<Map<String, dynamic>> aggregate(
     String collectionId,
@@ -154,7 +155,7 @@ class PreviewRuntimeAdapter extends RuntimeAdapter {
       for (final data in syntheticRecords(col, now: now)) {
         _items.add(
           RuntimeItem(
-            _items.length + 1,
+            '${_items.length + 1}',
             col.id,
             data,
             capacity: col.behaviors.any((b) => b.type == 'capacity.v1')
@@ -279,7 +280,7 @@ class PreviewRuntimeAdapter extends RuntimeAdapter {
   }
 
   @override
-  Future<RuntimeItem> get(int recordId) async =>
+  Future<RuntimeItem> get(String recordId) async =>
       _items.where((r) => r.id == recordId).firstOrNull ??
       (throw const SpecException('Record unavailable.'));
 
@@ -438,7 +439,7 @@ class PreviewRuntimeAdapter extends RuntimeAdapter {
   }
 
   @override
-  Future<List<RuntimeReminderState>> reminderState(int recordId) async {
+  Future<List<RuntimeReminderState>> reminderState(String recordId) async {
     final item = await get(recordId);
     return [
       for (final rule in spec.automationRequests.where(
@@ -513,7 +514,7 @@ class PreviewRuntimeAdapter extends RuntimeAdapter {
       }
       _items.add(
         RuntimeItem(
-          _items.length + 1,
+          '${_items.length + 1}',
           col.id,
           data,
           capacity: input['capacity'] as int?,

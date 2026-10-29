@@ -95,7 +95,7 @@ class DeviceAccessPanel extends StatelessWidget {
         if (adapter.supported && !adapter.preview)
           TextButton(
             onPressed: adapter.busy ? null : adapter.openSettings,
-            child: const Text('Open AppNest system settings'),
+            child: const Text('Open Tinkerloom system settings'),
           ),
       ],
     ),

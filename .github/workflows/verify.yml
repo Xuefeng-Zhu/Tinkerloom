@@ -2,7 +2,7 @@ name: Verify
 
 on:
   push:
-    branches: [main]
+    branches: [main, codex/flutter-appwrite-port]
   pull_request:
 
 permissions:
@@ -13,13 +13,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  spec:
-    name: Full AppSpec contract
+  flutter:
+    name: Flutter client and shared renderer (offline)
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    defaults:
-      run:
-        working-directory: appwrite_backend/packages/appnest_spec
+    timeout-minutes: 25
+    env:
+      CI: "1"
+      TINKERLOOM_ALLOW_CLOUD_TESTS: "0"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pinned Flutter 3.47.0 / Dart 3.13
+        run: |
+          git clone --depth 1 --branch 3.47.0 https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          test "$(git -C "$RUNNER_TEMP/flutter" rev-parse HEAD)" = "4cf24164269a5ebf0c16a028a00727d0e77bbb05"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Verify Flutter version
+        run: flutter --version
+      - name: Analyze, test and build web without Appwrite calls
+        run: bash scripts/verify.sh --client-only
+
+  backend:
+    name: Appwrite service and contract (offline)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CI: "1"
+      TINKERLOOM_ALLOW_CLOUD_TESTS: "0"
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -29,95 +51,9 @@ jobs:
         uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
         with:
           sdk: "3.11"
-      - name: Resolve standalone contract dependencies
-        run: dart pub get
-      - name: Analyze the full definition language
-        run: dart analyze lib test
-      - name: Check portable contract formatting
-        run: dart format --output=none --set-exit-if-changed lib test
-      - name: Test full schema, fixtures, patches, and compatibility
-        run: dart test
-
-  client:
-    name: React Native client
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    env:
-      CI: "1"
-      EXPO_NO_TELEMETRY: "1"
-    steps:
-      - name: Check out source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Set up Node.js 24
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: apps/mobile/package-lock.json
-      - name: Install client dependencies
-        run: npm --prefix apps/mobile ci
-      - name: Check the live probe syntax without calling Appwrite
-        run: |
-          for source in scripts/*.mjs; do
-            node --check "$source"
-          done
-      - name: Test pure probe contracts and diagnostics without network
-        run: >-
-          node --test
-          scripts/live_smoke_denial.test.mjs
-          scripts/live_collaboration_contract.test.mjs
-          scripts/live_full_contract.test.mjs
-          scripts/live_media_smoke.test.mjs
-          scripts/live_reminder_contract.test.mjs
-          scripts/live_ephemeral_accounts.test.mjs
-          scripts/transaction_observer.test.mjs
-      - name: Analyze, test, and export client bundles
-        run: npm run verify
-
-  backend:
-    name: Appwrite Dart function
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    defaults:
-      run:
-        working-directory: appwrite_backend
-    steps:
-      - name: Check out source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Set up Dart 3.11
-        uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
-        with:
-          sdk: "3.11"
       - name: Set up Node.js 24 for offline service bridges
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
-      - name: Resolve dependencies
-        run: dart pub get
-      - name: Analyze authored function source and checks
-        run: dart analyze lib test tool
-      - name: Check authored-source formatting
-        run: dart format --output=none --set-exit-if-changed lib test tool
-      - name: Run backend service, transport, and probe regression checks
-        run: |
-          dart run test/service_check.dart
-          dart run test/full_probe_fixture_check.dart
-      - name: Run all standard offline backend tests
-        run: dart test
-      - name: Test probe orchestration against the actual Dart service offline
-        run: >-
-          node --test --test-concurrency=1
-          ../scripts/live_activity_smoke.test.mjs
-          ../scripts/live_media_pipeline.test.mjs
-          ../scripts/live_reminder_service.test.mjs
-          ../scripts/live_full_read_retry_service.test.mjs
-      - name: Verify React Native fixtures against the current Dart wire contract
-        run: dart run test/export_client_wire.dart --check ../apps/mobile/src/full/fixtures/serviceWire.json
-      - name: Compile core and private worker entry points with AOT
-        run: |
-          dart compile aot-snapshot lib/main.dart -o "$RUNNER_TEMP/tinkerloom-core.aot"
-          dart compile aot-snapshot lib/worker_main.dart -o "$RUNNER_TEMP/tinkerloom-worker.aot"
+      - name: Analyze, test and compile backend without Appwrite calls
+        run: bash scripts/verify.sh --backend-only

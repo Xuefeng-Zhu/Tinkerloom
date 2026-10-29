@@ -79,7 +79,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.location!.pageId, 'taskDetailPage');
       expect(
-        (await adapter.get(2)).data['notes'],
+        (await adapter.get('2')).data['notes'],
         'A comfortable edit with larger text.',
       );
       expect(tester.takeException(), isNull);

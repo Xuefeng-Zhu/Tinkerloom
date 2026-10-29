@@ -39,7 +39,7 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
   List<RuntimeReminderState>? _reminder;
   Object? _error;
   ModalRoute<void>? _editorRoute;
-  int? _editorRecordId;
+  String? _editorRecordId;
   bool _loading = true,
       _saving = false,
       _formDirty = false,
@@ -1675,7 +1675,7 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
         reminder.eligible
             ? 'Reminder scheduled'
             : 'Reminder pending · delivery requires an eligible status',
-      'delivered' => 'Reminder delivered to your AppNest inbox',
+      'delivered' => 'Reminder delivered to your Tinkerloom inbox',
       'suppressed' => 'Reminder suppressed',
       'failed' => 'Reminder could not be delivered',
       _ => 'Reminder status unavailable',

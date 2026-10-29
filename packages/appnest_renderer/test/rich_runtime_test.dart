@@ -46,15 +46,15 @@ void main() {
         initialLocation: const MiniAppLocation('tasksPage'),
       );
       await controller.navigate(
-        const MiniAppLocation('taskDetailPage', recordId: 2),
+        const MiniAppLocation('taskDetailPage', recordId: '2'),
       );
       await tester.pumpAndSettle();
       await controller.navigate(
-        const MiniAppLocation('taskEditorPage', recordId: 2, editing: true),
+        const MiniAppLocation('taskEditorPage', recordId: '2', editing: true),
       );
       await tester.pumpAndSettle();
       await controller.navigate(
-        const MiniAppLocation('taskDetailPage', recordId: 2),
+        const MiniAppLocation('taskDetailPage', recordId: '2'),
       );
       await tester.pumpAndSettle();
       expect(controller.navigationKind, MiniAppNavigationKind.external);
@@ -173,14 +173,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       controller.location,
-      const MiniAppLocation('taskEditorPage', recordId: 3, editing: true),
+      const MiniAppLocation('taskEditorPage', recordId: '3', editing: true),
     );
     await tester.enterText(find.byType(TextField).first, 'Edited from list');
     await tester.ensureVisible(find.text('Save'));
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
     expect(controller.location, const MiniAppLocation('tasksPage'));
-    expect((await adapter.get(3)).data['title'], 'Edited from list');
+    expect((await adapter.get('3')).data['title'], 'Edited from list');
     await tester.ensureVisible(find.text('Edited from list'));
     await tester.tap(find.text('Edited from list'));
     await tester.pumpAndSettle();
@@ -235,12 +235,12 @@ void main() {
           adapter,
           initialLocation: const MiniAppLocation('tasksPage'),
         );
-        final item = await adapter.get(3);
+        final item = await adapter.get('3');
         expect(item.data['packing'], 'To pack');
         await tester.ensureVisible(find.text('Mark packed').first);
         await tester.tap(find.text('Mark packed').first);
         await tester.pumpAndSettle();
-        final updated = await adapter.get(3);
+        final updated = await adapter.get('3');
         expect(updated.data['packing'], 'Packed');
         expect(updated.data['status'], item.data['status']);
         expect(find.text('Mark to pack'), findsWidgets);
@@ -715,7 +715,7 @@ void main() {
         controller: controller,
         initialLocation: const MiniAppLocation(
           'taskEditorPage',
-          recordId: 2,
+          recordId: '2',
           editing: true,
         ),
       );
@@ -773,7 +773,7 @@ class RevocablePreview extends PreviewRuntimeAdapter {
   @override
   Stream<void> watch() => events.stream;
   @override
-  Future<RuntimeItem> get(int recordId) async {
+  Future<RuntimeItem> get(String recordId) async {
     if (revoked) throw const SpecException('Record unavailable.');
     return super.get(recordId);
   }

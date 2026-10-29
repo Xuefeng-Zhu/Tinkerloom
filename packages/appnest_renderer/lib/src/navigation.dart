@@ -4,7 +4,7 @@ part of '../appnest_renderer.dart';
 @immutable
 class MiniAppLocation {
   final String pageId;
-  final int? recordId;
+  final String? recordId;
   final bool editing;
   const MiniAppLocation(this.pageId, {this.recordId, this.editing = false});
   @override

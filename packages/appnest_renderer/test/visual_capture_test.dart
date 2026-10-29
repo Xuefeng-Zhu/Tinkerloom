@@ -51,7 +51,7 @@ void main() {
           '${directory.path}/bin/cache/artifacts/material_fonts/Roboto-Regular.ttf',
         );
         await (FontLoader(
-          'AppNestCapture',
+          'TinkerloomCapture',
         )..addFont(textFont.readAsBytes().then(ByteData.sublistView))).load();
         await (FontLoader(
           'MaterialIcons',
@@ -73,12 +73,12 @@ void main() {
     (
       'details-mobile',
       const Size(390, 844),
-      const MiniAppLocation('taskDetailPage', recordId: 2),
+      const MiniAppLocation('taskDetailPage', recordId: '2'),
     ),
     (
       'editor-mobile',
       const Size(390, 844),
-      const MiniAppLocation('taskEditorPage', recordId: 2, editing: true),
+      const MiniAppLocation('taskEditorPage', recordId: '2', editing: true),
     ),
     (
       'progress-mobile',
@@ -217,7 +217,7 @@ void main() {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               useMaterial3: true,
-              fontFamily: output.isEmpty ? null : 'AppNestCapture',
+              fontFamily: output.isEmpty ? null : 'TinkerloomCapture',
             ),
             home: Scaffold(
               body: MiniAppRuntime(

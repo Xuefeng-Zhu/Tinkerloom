@@ -56,7 +56,7 @@ class ResponseLostPreview extends PreviewRuntimeAdapter {
     }
   }
 
-  Future<void> externalEdit(int id, String title) async {
+  Future<void> externalEdit(String id, String title) async {
     await super.execute(spec.action('editRecord'), await get(id), {
       'data': {'title': title},
     }, 'external-edit');
@@ -107,10 +107,10 @@ void main() {
         ..loseResponse = false;
       final controller = await mount(tester, adapter);
       await controller.navigate(
-        const MiniAppLocation('formPage', recordId: 1, editing: true),
+        const MiniAppLocation('formPage', recordId: '1', editing: true),
       );
       await tester.pumpAndSettle();
-      await adapter.externalEdit(1, 'Other member latest title');
+      await adapter.externalEdit('1', 'Other member latest title');
       await tester.pump(const Duration(seconds: 31));
       await tester.pumpAndSettle();
       expect(
@@ -119,7 +119,7 @@ void main() {
       );
       await tester.enterText(field('Notes'), 'My unrelated note edit');
       await press(tester, 'Save');
-      final saved = await adapter.get(1);
+      final saved = await adapter.get('1');
       expect(saved.data['title'], 'Other member latest title');
       expect(saved.data['notes'], 'My unrelated note edit');
       expect(adapter.attempts.single['revision'], 2);
@@ -133,17 +133,17 @@ void main() {
         ..loseResponse = false;
       final controller = await mount(tester, adapter);
       await controller.navigate(
-        const MiniAppLocation('formPage', recordId: 1, editing: true),
+        const MiniAppLocation('formPage', recordId: '1', editing: true),
       );
       await tester.pumpAndSettle();
       await tester.enterText(field('Notes'), 'Unsaved local notes');
-      await adapter.externalEdit(1, 'Another member changed this');
+      await adapter.externalEdit('1', 'Another member changed this');
       await tester.pump(const Duration(seconds: 31));
       await tester.pumpAndSettle();
       await press(tester, 'Save');
       expect(adapter.attempts.single['revision'], 1);
       expect(
-        (await adapter.get(1)).data['title'],
+        (await adapter.get('1')).data['title'],
         'Another member changed this',
       );
       expect(
@@ -202,15 +202,15 @@ void main() {
     (tester) async {
       final adapter = ResponseLostPreview(projectHubTemplate());
       final controller = await mount(tester, adapter);
-      final original = await adapter.get(1);
+      final original = await adapter.get('1');
       await controller.navigate(
-        const MiniAppLocation('formPage', recordId: 1, editing: true),
+        const MiniAppLocation('formPage', recordId: '1', editing: true),
       );
       await tester.pumpAndSettle();
       await tester.enterText(field('Task *'), 'My acknowledged edit');
       await press(tester, 'Save');
-      expect((await adapter.get(1)).revision, original.revision + 1);
-      await adapter.externalEdit(1, 'A later edit from another member');
+      expect((await adapter.get('1')).revision, original.revision + 1);
+      await adapter.externalEdit('1', 'A later edit from another member');
       await tester.pumpAndSettle();
       await tester.pump(const Duration(seconds: 31));
       await tester.pumpAndSettle();
@@ -218,7 +218,7 @@ void main() {
       expect(adapter.attempts, hasLength(2));
       expect(adapter.attempts[1], adapter.attempts[0]);
       expect(adapter.attempts.last['revision'], original.revision);
-      final record = await adapter.get(1);
+      final record = await adapter.get('1');
       expect(record.revision, original.revision + 2);
       expect(record.data['title'], 'A later edit from another member');
       expect(find.textContaining('Save outcome unconfirmed.'), findsNothing);
@@ -363,7 +363,7 @@ void main() {
     (tester) async {
       final adapter = ResponseLostPreview(projectHubTemplate());
       await mount(tester, adapter, size: const Size(1440, 1000));
-      final original = await adapter.get(1);
+      final original = await adapter.get('1');
       final target = original.data['status'] == 'Open' ? 'Done' : 'Open';
       final move = find
           .byWidgetPredicate(
@@ -388,8 +388,8 @@ void main() {
       await press(tester, 'Retry save');
       expect(adapter.attempts, hasLength(2));
       expect(adapter.attempts.last, adapter.attempts.first);
-      expect((await adapter.get(1)).revision, original.revision + 1);
-      expect((await adapter.get(1)).data['status'], target);
+      expect((await adapter.get('1')).revision, original.revision + 1);
+      expect((await adapter.get('1')).data['status'], target);
       expect(tester.takeException(), isNull);
     },
   );

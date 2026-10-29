@@ -37,3 +37,17 @@ node_modules/
 dist/
 *.tsbuildinfo
 scripts/host-storage-probe/app.js
+
+# Flutter machine-local platform configuration
+**/android/local.properties
+**/android/.gradle/
+**/android/.kotlin/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/engine/
+**/ios/Runner.xcworkspace/xcuserdata/
+**/macos/Flutter/Flutter-Debug.xcconfig
+**/macos/Flutter/Flutter-Release.xcconfig
+**/xcuserdata/

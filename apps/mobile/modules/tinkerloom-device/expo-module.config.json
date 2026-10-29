@@ -1,9 +1,0 @@
-{
-  "platforms": ["apple", "android"],
-  "apple": {
-    "modules": ["TinkerloomDeviceModule"]
-  },
-  "android": {
-    "modules": ["expo.modules.tinkerloomdevice.TinkerloomDeviceModule"]
-  }
-}

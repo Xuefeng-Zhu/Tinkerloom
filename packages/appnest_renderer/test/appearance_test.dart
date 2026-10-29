@@ -308,7 +308,7 @@ void main() {
           await controller.navigate(
             MiniAppLocation(
               page.id,
-              recordId: page.id == 'taskDetailPage' ? 1 : null,
+              recordId: page.id == 'taskDetailPage' ? '1' : null,
             ),
           );
           await tester.pumpAndSettle();

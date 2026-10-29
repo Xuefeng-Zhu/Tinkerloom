@@ -1,60 +1,66 @@
 # Tinkerloom
 
-Tinkerloom is a mini-app platform built with **React Native, Expo, TypeScript, and Appwrite**. Start with Planner, Notes, Tasks, or Reading, customize a saved draft, review and publish its exact version, then create and edit live records in a list, table, or agenda.
+Tinkerloom restores the original **Flutter** mini-app interface with the existing **Appwrite** backend. The shared declarative renderer powers templates, live records, isolated previews, the visual builder, explicit publication, sharing and native device capabilities. The Flutter port replaces the Serverpod transport; it does not generate or execute per-app code.
 
-The rewrite includes the full declarative app engine, private drafts and visual editing, explicit publication, shared records, role-based access, collection queries and aggregates, capacity workflows, private media, activity, in-app reminders and native capability adapters. See the [current migration status](docs/MIGRATION_STATUS_CURRENT.md) for implemented behavior, known issues and remaining acceptance gates.
+The previous React Native implementation is preserved on [`codex/react-native-backup-20261029`](https://github.com/Xuefeng-Zhu/Tinkerloom/tree/codex/react-native-backup-20261029). Its 730-test, native-build and Cloud receipts remain historical, source-specific evidence and are not Flutter acceptance results. See [Flutter migration and verification](docs/FLUTTER_MIGRATION.md) for the new client’s checks and remaining gates.
 
-The current checkpoint passed 730 client tests and all three CI jobs. The authenticated Appwrite development suite passed 48 checks and 1,956 assertions; separate activity, reminder and media reports preserve their own source versions and limits. Android and iOS simulator packages compiled and passed an independent source/package audit. Native installation, UI and hardware validation remain pending. [Verification evidence](docs/migration-evidence-index.json) records each layer separately.
+Tinkerloom uses **fresh Appwrite development data**. The original AppNest checkout, users, records and credentials remain preserved. AI-provider configuration and production release are deferred.
 
-Tinkerloom uses **fresh Appwrite development data**. The original AppNest users, records and credentials remain in the original project. AI generation is implemented but disabled on this development backend until a provider is configured.
+## Run Flutter
 
-## Run the React Native client
-
-Use Node.js 24 and npm. From the repository root:
+Use **Flutter 3.47.0 / Dart 3.13.0**. Resolve the workspace from the repository root:
 
 ```sh
-npm run setup
-npm run web
+flutter pub get
+cd apps/flutter
+flutter run -d chrome --web-hostname localhost --web-port 8426 \
+  --dart-define-from-file=config/appwrite.dev.json
 ```
 
-Without Appwrite configuration, the app opens an isolated local template preview. Preview records stay in memory, reset when the preview closes, and are never copied into live storage.
+The checked-in development configuration contains only public endpoint/project/Function identifiers. It targets the existing SFO Appwrite Free development project and keeps automatic refresh off. Native applications use `com.tinkerloom.app`. Server API keys, passwords and AI credentials do not belong in application configuration.
 
-For the configured development backend, copy `apps/mobile/.env.example` to the ignored `apps/mobile/.env.local` and set these public values:
+To explore the original templates without any Appwrite calls:
 
-```dotenv
-EXPO_PUBLIC_APPWRITE_ENDPOINT=https://sfo.cloud.appwrite.io/v1
-EXPO_PUBLIC_APPWRITE_PROJECT_ID=6ae1928a003a65851e95
-EXPO_PUBLIC_APPWRITE_FUNCTION_ID=tinkerloom-core
-EXPO_PUBLIC_APPWRITE_PLATFORM_ID=com.tinkerloom.app
+```sh
+cd apps/flutter
+flutter run -t lib/preview.dart -d chrome --web-port 8426
 ```
 
-The Appwrite Free development project is in SFO, with database `tinkerloom`. Its three platform registrations cover web `localhost`, Android, and Apple; the native identifier is `com.tinkerloom.app`. Use `http://localhost:8426` for the exported web preview. Server API keys and AI credentials never belong in mobile configuration. Follow [the client setup](apps/mobile/README.md), [backend setup](appwrite_backend/README.md), and [cloud checklist](docs/CLOUD_VERIFICATION.md) when configuring another project.
+Preview records are synthetic and memory-only. They are never copied into live storage. The live client shows a configuration/startup screen when its public Appwrite configuration is absent.
 
-`npm run dev` starts Expo. `npm run ios` and `npm run android` open local development sessions. The custom device module requires a native development build; Expo Go only includes its bundled modules. See [native verification](docs/NATIVE_VERIFICATION.md) for compiled development packages and the remaining installation, UI and hardware checks.
+The restored interface retains the original theme, fonts, launcher, authoring tools, navigation and native capability bridges. Appwrite Account owns sign-in sessions; authenticated Functions enforce current access, definitions, revisions and command receipts. Private uploads use the existing bounded image protocol.
 
-## Build and use an app
+## Protect the Free development quota
 
-Sign in, create a workspace, and choose a starter app. Open its live version, or switch to Build and select **Edit published version** to create your own private candidate. Customize fields, views, actions, pages, appearance and requested reminders with the manual editor. Save, prepare an exact publication review, and publish the reviewed version. Isolated previews use synthetic records that never become live records.
+Normal tests and CI are **offline**. Development uses manual refresh by default; do not leave old React Native or Flutter polling sessions running against Cloud. Optional automatic refresh must share requests, honor the negotiated minimum interval, and stop when the app is hidden, disposed or signed out.
 
-The app engine supports typed records, complete-query sorting and aggregates, calendars, boards, galleries, forms and record navigation. Sharing grants owner, builder, member or viewer capabilities. Reminder requests need explicit approval and eligible records; delivered notifications appear in the in-app inbox.
+A single final Cloud smoke is separate from normal verification. Its hard cap is **12 Function executions, 2 authentication requests, and at most one synthetic text-record creation** using an existing account and app. It excludes uploads, AI, new accounts/apps and reminder scheduling; quota errors or uncertain writes stop the run without automatic retries. A Function execution may perform multiple database operations, so the request cap is not a database-operation count. Existing broad Cloud probe suites are retained for their historical contracts and are not part of the Flutter port’s live acceptance run.
 
-Trusted Functions validate authentication, current access, definitions, compatibility and revisions. Supported mutations commit receipts, audit and outbox changes atomically. An unconfirmed request retains its original identity and input for explicit recovery. The [current status](docs/MIGRATION_STATUS_CURRENT.md) distinguishes local tests, Cloud behavior, browser checks and native verification.
+## Verify and build
+
+```sh
+bash scripts/verify.sh --client-only
+TINKERLOOM_BACKEND_DART=/path/to/dart-3.11 \
+  bash scripts/verify.sh --backend-only
+```
+
+Client verification analyzes the restored application and shared packages, checks formatting, runs spec/renderer/adapter/widget tests, and builds release web assets. Backend verification uses its separate Dart 3.11 toolchain, in-memory services and local transport bridges, checks the shared wire fixture, and compiles both Function entry points. Neither command deploys or calls Appwrite Cloud. `npm run verify` is a convenience wrapper for both checks and needs the backend Dart path when the default `dart` is 3.13.
+
+```sh
+cd apps/flutter
+flutter build apk --release
+flutter build ios --release --no-codesign
+```
+
+Compilation does not establish installation, native UI, permission handling or hardware acceptance. Signed distribution and production operations remain separate work.
 
 ## Repository layout
 
-- `apps/mobile/` is the active React Native client for iOS, Android, and web.
-- `appwrite_backend/` contains the trusted Dart Core Function and private worker for app definitions, records, access, media and durable effects.
-- `scripts/live_full_smoke.mjs` and the activity, reminder and media probes verify the isolated development backend. Earlier bounded smoke scripts remain for their original contracts.
-- `appwrite_flutter/` is the superseded Flutter/Appwrite prototype, retained as reference.
-- `packages/` contains the original Dart definition language and Flutter renderer as migration references; React Native does not import them.
-- `legacy_appnest/` preserves the original Serverpod implementation for behavioral reference.
-
-## Verify
-
-```sh
-npm run verify
-```
-
-This runs TypeScript, lint, focused tests, formatting, and web/iOS/Android JavaScript bundle exports. `npm run preview:web` serves the exported web app on port 8426. The GitHub workflow also analyzes and checks the Dart backend; it does not call Appwrite or deploy. Bundle exports do not establish native compilation or device acceptance.
-
-Live probes are separate from `npm run verify`. They require an explicitly authorized development project and create or reuse labelled synthetic accounts and rows. Preserve failed reports alongside later results. Follow the [Cloud verification guide](docs/CLOUD_VERIFICATION.md) and [current evidence index](docs/migration-evidence-index.json) for each probe’s source, prerequisites and limits.
+- `apps/flutter/` — active Flutter application, original assets and native bridges.
+- `packages/tinkerloom_client/` — injectable Appwrite client, typed DTOs and transport tests.
+- `packages/appnest_spec/` and `packages/appnest_renderer/` — declarative definition language and shared Flutter widgets with opaque string entity IDs.
+- `appwrite_backend/` — trusted Dart Core Function and private worker. [Full engine contract](appwrite_backend/SPEC_ENGINE.md).
+- `appwrite_backend/test/fixtures/client_wire.json` — shared wire fixture exported by the real local service.
+- `scripts/` — offline verification plus preserved, separately gated historical Cloud probes.
+- `legacy_appnest/` — preserved original implementation for reference.
+- `docs/evidence/` — dated results with explicit source and verification-layer boundaries.

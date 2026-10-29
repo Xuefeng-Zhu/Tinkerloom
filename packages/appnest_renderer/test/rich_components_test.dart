@@ -133,7 +133,7 @@ void main() {
             (id) => adapter.spec.view(id).type == 'details',
           );
           await controller.navigate(
-            MiniAppLocation(page.id, recordId: details ? 1 : null),
+            MiniAppLocation(page.id, recordId: details ? '1' : null),
           );
           await tester.pumpAndSettle();
           expect(
@@ -310,11 +310,11 @@ void main() {
     await mount(tester, adapter, controller);
     await controller.navigate(const MiniAppLocation('checkinsPage'));
     await tester.pumpAndSettle();
-    final before = await adapter.get(1);
+    final before = await adapter.get('1');
     await tester.tap(find.byType(Checkbox).first);
     await tester.pumpAndSettle();
     expect(adapter.writes, 1);
-    expect((await adapter.get(1)).revision, before.revision);
+    expect((await adapter.get('1')).revision, before.revision);
     expect(
       find.text('This record changed. Refresh before saving.'),
       findsOneWidget,
@@ -328,7 +328,7 @@ void main() {
     final adapter = RecordingPreview(projectHubTemplate()),
         controller = MiniAppController();
     await mount(tester, adapter, controller);
-    final before = await adapter.get(1),
+    final before = await adapter.get('1'),
         target = before.data['status'] == 'Open' ? 'Done' : 'Open';
     await tester.ensureVisible(find.byTooltip('Move record').first);
     await tester.tap(find.byTooltip('Move record').first);
@@ -336,10 +336,10 @@ void main() {
     adapter.pendingWrite = Completer<void>();
     await tester.tap(find.text('Move to $target'));
     await tester.pump();
-    expect((await adapter.get(1)).data['status'], before.data['status']);
+    expect((await adapter.get('1')).data['status'], before.data['status']);
     adapter.pendingWrite!.complete();
     await tester.pumpAndSettle();
-    expect((await adapter.get(1)).data['status'], target);
+    expect((await adapter.get('1')).data['status'], target);
     expect(tester.takeException(), isNull);
     await close(tester, adapter, controller);
   });
@@ -356,14 +356,14 @@ void main() {
       collectionId: 'memories',
       fieldId: 'photo',
     );
-    final before = await adapter.get(1), view = adapter.spec.view('intro');
+    final before = await adapter.get('1'), view = adapter.spec.view('intro');
     adapter.applyPresentationPatch({
       'type': 'UpdateView',
       'viewId': view.id,
       'view': (view.toJson()..remove('id'))
         ..['options'] = {'markdown': '# A new heading'},
     });
-    expect((await adapter.get(1)).data, before.data);
+    expect((await adapter.get('1')).data, before.data);
     expect(await adapter.readImage(image), bytes);
     adapter.dispose();
   });
@@ -374,7 +374,7 @@ void main() {
         controller = MiniAppController();
     await adapter.execute(
       adapter.spec.action('editRecord'),
-      await adapter.get(1),
+      await adapter.get('1'),
       {
         'data': {'minutes': 999.125},
       },
@@ -382,14 +382,14 @@ void main() {
     );
     await mount(tester, adapter, controller);
     await controller.navigate(
-      const MiniAppLocation('formPage', recordId: 1, editing: true),
+      const MiniAppLocation('formPage', recordId: '1', editing: true),
     );
     await tester.pumpAndSettle();
     expect(find.text('999.125'), findsOneWidget);
     await tester.ensureVisible(find.text('Save'));
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
-    expect((await adapter.get(1)).data['minutes'], 999.125);
+    expect((await adapter.get('1')).data['minutes'], 999.125);
     await close(tester, adapter, controller);
   });
   for (final kind in ['slider', 'stepper', 'rating']) {
@@ -439,7 +439,7 @@ void main() {
         final controller = MiniAppController();
         await adapter.execute(
           adapter.spec.action('editRecord'),
-          await adapter.get(1),
+          await adapter.get('1'),
           {
             'data': {'energy': 3},
           },
@@ -448,7 +448,7 @@ void main() {
         adapter.writes = 0;
         await mount(tester, adapter, controller);
         await controller.navigate(
-          const MiniAppLocation('formPage', recordId: 1, editing: true),
+          const MiniAppLocation('formPage', recordId: '1', editing: true),
         );
         await tester.pumpAndSettle();
         final energy = find.widgetWithText(TextField, 'Energy');
@@ -458,7 +458,7 @@ void main() {
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
         expect(adapter.writes, 0);
-        expect((await adapter.get(1)).data['energy'], 3);
+        expect((await adapter.get('1')).data['energy'], 3);
         expect(find.text('Energy must be between 1 and 5.'), findsOneWidget);
         await tester.ensureVisible(find.text('Clear value'));
         await tester.tap(find.text('Clear value'));
@@ -467,7 +467,7 @@ void main() {
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
         expect(adapter.writes, 1);
-        expect((await adapter.get(1)).data.containsKey('energy'), isFalse);
+        expect((await adapter.get('1')).data.containsKey('energy'), isFalse);
         expect(tester.takeException(), isNull);
         await close(tester, adapter, controller);
       },
@@ -480,7 +480,7 @@ void main() {
         final controller = MiniAppController();
         await adapter.execute(
           adapter.spec.action('editRecord'),
-          await adapter.get(1),
+          await adapter.get('1'),
           {
             'data': {'energy': 9},
           },
@@ -489,7 +489,7 @@ void main() {
         adapter.writes = 0;
         await mount(tester, adapter, controller);
         await controller.navigate(
-          const MiniAppLocation('formPage', recordId: 1, editing: true),
+          const MiniAppLocation('formPage', recordId: '1', editing: true),
         );
         await tester.pumpAndSettle();
         final notes = find.widgetWithText(TextField, 'Notes');
@@ -499,13 +499,13 @@ void main() {
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
         expect(adapter.writes, 1);
-        expect((await adapter.get(1)).data['energy'], 9);
-        expect((await adapter.get(1)).data['notes'], 'An unrelated note');
+        expect((await adapter.get('1')).data['energy'], 9);
+        expect((await adapter.get('1')).data['notes'], 'An unrelated note');
         // Let the acknowledgement snackbar leave before reopening the editor.
         await tester.pump(const Duration(seconds: 5));
         await tester.pumpAndSettle();
         await controller.navigate(
-          const MiniAppLocation('formPage', recordId: 1, editing: true),
+          const MiniAppLocation('formPage', recordId: '1', editing: true),
         );
         await tester.pumpAndSettle();
         if (kind == 'stepper') {
@@ -528,8 +528,8 @@ void main() {
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
         expect(adapter.writes, 2);
-        expect((await adapter.get(1)).data['energy'], 5);
-        expect((await adapter.get(1)).data['notes'], 'An unrelated note');
+        expect((await adapter.get('1')).data['energy'], 5);
+        expect((await adapter.get('1')).data['notes'], 'An unrelated note');
         expect(tester.takeException(), isNull);
         await close(tester, adapter, controller);
       },
@@ -673,7 +673,7 @@ void main() {
           controller = MiniAppController();
       await mount(tester, adapter, controller);
       await controller.navigate(
-        const MiniAppLocation('formPage', recordId: 1, editing: true),
+        const MiniAppLocation('formPage', recordId: '1', editing: true),
       );
       await tester.pumpAndSettle();
       tester.widget<Slider>(find.byType(Slider)).onChanged!(
@@ -683,7 +683,7 @@ void main() {
       await tester.ensureVisible(find.text('Save'));
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
-      expect((await adapter.get(1)).data['minutes'], step);
+      expect((await adapter.get('1')).data['minutes'], step);
       await close(tester, adapter, controller);
     });
   }
@@ -780,7 +780,7 @@ void main() {
         controller = MiniAppController();
     for (final item in (await adapter.query('checkins', {})).items) {
       await adapter.execute(adapter.spec.action('editRecord'), item, {
-        'data': {'minutes': item.id == 1 ? 0.001 : null},
+        'data': {'minutes': item.id == '1' ? 0.001 : null},
       }, 'small-${item.id}');
     }
     await mount(tester, adapter, controller);
