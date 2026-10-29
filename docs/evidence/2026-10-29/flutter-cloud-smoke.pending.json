@@ -1,0 +1,19 @@
+{
+  "status": "not_run_awaiting_existing_credentials",
+  "cloudRequests": 0,
+  "functionExecutions": 0,
+  "accountRequests": 0,
+  "businessMutations": 0,
+  "limits": {
+    "functions": 12,
+    "accounts": 2,
+    "businessMutations": 1
+  },
+  "reason": "Prior synthetic credentials were memory-only and are no longer available; user was asked to supply existing credentials locally or choose offline-only completion.",
+  "newAccounts": 0,
+  "newApps": 0,
+  "uploads": 0,
+  "aiCalls": 0,
+  "automaticRetries": 0,
+  "runner": "packages/tinkerloom_client/live_smoke/final_smoke.dart"
+}

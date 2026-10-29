@@ -41,4 +41,17 @@ Without the explicit enable flag this test is skipped. Its server-state reload i
 
 ## Current verification record
 
-Restoration work is in progress. Final receipts must identify the exact accepted Flutter source, commands, test totals, build hashes and the bounded Cloud result. Record failures and unavailable native tooling separately; do not overwrite older receipts or infer current acceptance from historical React Native or Serverpod reports.
+Final runtime source: `6c57a753d338c13303362953750024cca3e04203`. The Dart/Android code is unchanged from the passing `1b87197` checkpoint; the final source additionally records the iOS plugin integration used by the successful build.
+
+- **589 offline tests passed:** shared AppSpec 90, renderer 247, Appwrite adapter/smoke guards 19, and restored application 233. Analysis and formatting passed. [Verification receipt](evidence/2026-10-29/flutter-port-verification.json).
+- The unchanged backend passed **405 standard tests**, **118 service checks**, and **17 local service-bridge tests**. Backend and Flutter GitHub jobs both passed for `1b87197`; [CI receipt](evidence/2026-10-29/flutter-ci-1b87197.passed.json).
+- Release web and the standalone offline preview built successfully. A browser check opened the original Project Hub form and saved one synthetic task in memory. [Browser receipt](evidence/2026-10-29/flutter-offline-browser.json).
+- Android Release APK and unsigned iOS arm64 Release compiled successfully. All **274 tracked inputs** and both artifacts were independently rehashed. Android uses a development debug certificate; iOS requires signing before installation. [Native receipt](evidence/2026-10-29/flutter-native-6c57a75.passed.json), [independent rehash](evidence/2026-10-29/flutter-native-root-rehash.json).
+- **Zero Appwrite Cloud requests** were made during this restoration. The one authorized capped live smoke is prepared but awaits existing credentials; it has not run. [Pending receipt](evidence/2026-10-29/flutter-cloud-smoke.pending.json).
+- The original AppNest source remains unchanged across all 187 imported source-file hashes. Existing users, records, credentials and database directories were not imported or modified. [Preservation receipt](evidence/2026-10-29/original-appnest-preserved.json).
+
+The first Android build failed because the new SDK dependency required Java library desugaring; that failure is preserved and the corrected build passed. One extra local widget invocation from the workspace root could not find app font assets; the required app-directory rerun passed all 233 tests. Neither failure was hidden by removing tests.
+
+Existing reminder approvals are not exposed by the unchanged Appwrite wire contract. The publication review labels selections for the next publication and requires explicit acknowledgement before editing an existing app with reminders; it does not pretend that unavailable approval state is known. Upload processing uses manual Check/Discard recovery, with no status polling.
+
+Compilation and offline tests do not establish native UI, hardware permissions, live account persistence or production readiness. Native device checks, AI-provider setup and store/production release remain separate work.

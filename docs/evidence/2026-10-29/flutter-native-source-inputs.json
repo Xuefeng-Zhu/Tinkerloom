@@ -1,0 +1,1385 @@
+{
+  "sourceCommit": "6c57a753d338c13303362953750024cca3e04203",
+  "trackedWorkspaceSourceFiles": 274,
+  "rows": [
+    {
+      "path": "apps/flutter/.metadata",
+      "gitSha256": "4c3021f6e1f7dc78f657650498c6abc5010e8c7d3040eff721e416d91c4c4647",
+      "workingSha256": "4c3021f6e1f7dc78f657650498c6abc5010e8c7d3040eff721e416d91c4c4647"
+    },
+    {
+      "path": "apps/flutter/analysis_options.yaml",
+      "gitSha256": "595bb8832bde64228e5ff4d200747df6440969421ef646693df992a77a378e6a",
+      "workingSha256": "595bb8832bde64228e5ff4d200747df6440969421ef646693df992a77a378e6a"
+    },
+    {
+      "path": "apps/flutter/android/app/build.gradle.kts",
+      "gitSha256": "201ceb1d563ed1db69e3068753b305fe1706cb7f7c7e2be98f44e8fe369d008e",
+      "workingSha256": "201ceb1d563ed1db69e3068753b305fe1706cb7f7c7e2be98f44e8fe369d008e"
+    },
+    {
+      "path": "apps/flutter/android/app/src/debug/AndroidManifest.xml",
+      "gitSha256": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b",
+      "workingSha256": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/AndroidManifest.xml",
+      "gitSha256": "0934c19b2bdc42a3fdc6247be40af15f7a5900f03e2a753cdf5ba99c6d21723c",
+      "workingSha256": "0934c19b2bdc42a3fdc6247be40af15f7a5900f03e2a753cdf5ba99c6d21723c"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
+      "gitSha256": "b93c8e23b2322023456a47696be3769071bcabca41c34f35ec912d961bd2e44e",
+      "workingSha256": "b93c8e23b2322023456a47696be3769071bcabca41c34f35ec912d961bd2e44e"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/kotlin/com/tinkerloom/app/DeviceCapabilitiesBridge.kt",
+      "gitSha256": "b959fb17f923933fad93cd07c5dc4d5e1e36c67ad984fb68b3baef9a05b292ce",
+      "workingSha256": "b959fb17f923933fad93cd07c5dc4d5e1e36c67ad984fb68b3baef9a05b292ce"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/kotlin/com/tinkerloom/app/MainActivity.kt",
+      "gitSha256": "d978a4ad9d10a90e95fc298076a8ba93042073656a9b2c5fc606bcc9921827e8",
+      "workingSha256": "d978a4ad9d10a90e95fc298076a8ba93042073656a9b2c5fc606bcc9921827e8"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/drawable-v21/launch_background.xml",
+      "gitSha256": "7ca6d5cec2169c5a98661a119db23a6f3399c8fef2256ff04f3a642831282478",
+      "workingSha256": "7ca6d5cec2169c5a98661a119db23a6f3399c8fef2256ff04f3a642831282478"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/drawable/launch_background.xml",
+      "gitSha256": "94433756fe10005ddd6fc55cc5c0b1e9f3c10b66a08ceac795ece6713d34e28a",
+      "workingSha256": "94433756fe10005ddd6fc55cc5c0b1e9f3c10b66a08ceac795ece6713d34e28a"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "gitSha256": "6a7c8f0d703e3682108f9662f813302236240d3f8f638bb391e32bfb96055fef",
+      "workingSha256": "6a7c8f0d703e3682108f9662f813302236240d3f8f638bb391e32bfb96055fef"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "gitSha256": "c7c0c0189145e4e32a401c61c9bdc615754b0264e7afae24e834bb81049eaf81",
+      "workingSha256": "c7c0c0189145e4e32a401c61c9bdc615754b0264e7afae24e834bb81049eaf81"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "gitSha256": "e14aa40904929bf313fded22cf7e7ffcbf1d1aac4263b5ef1be8bfce650397aa",
+      "workingSha256": "e14aa40904929bf313fded22cf7e7ffcbf1d1aac4263b5ef1be8bfce650397aa"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "gitSha256": "4d470bf22d5c17d84edc5f82516d1ba8a1c09559cd761cefb792f86d9f52b540",
+      "workingSha256": "4d470bf22d5c17d84edc5f82516d1ba8a1c09559cd761cefb792f86d9f52b540"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "gitSha256": "3c34e1f298d0c9ea3455d46db6b7759c8211a49e9ec6e44b635fc5c87dfb4180",
+      "workingSha256": "3c34e1f298d0c9ea3455d46db6b7759c8211a49e9ec6e44b635fc5c87dfb4180"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/values-night/styles.xml",
+      "gitSha256": "8c5bad5152f217e837519f9c15211d19f39bd45f5f67faf6dd81cb4b299e518f",
+      "workingSha256": "8c5bad5152f217e837519f9c15211d19f39bd45f5f67faf6dd81cb4b299e518f"
+    },
+    {
+      "path": "apps/flutter/android/app/src/main/res/values/styles.xml",
+      "gitSha256": "937d7c82f539c72eb94fd3a3773f29b3d3fef1997213c92cb632298cedf4bda9",
+      "workingSha256": "937d7c82f539c72eb94fd3a3773f29b3d3fef1997213c92cb632298cedf4bda9"
+    },
+    {
+      "path": "apps/flutter/android/app/src/profile/AndroidManifest.xml",
+      "gitSha256": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b",
+      "workingSha256": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b"
+    },
+    {
+      "path": "apps/flutter/android/build.gradle.kts",
+      "gitSha256": "6a26dba2cb8dfba1e74f540b0d17a89d96c1301d3c3bfda14348bed257fddcba",
+      "workingSha256": "6a26dba2cb8dfba1e74f540b0d17a89d96c1301d3c3bfda14348bed257fddcba"
+    },
+    {
+      "path": "apps/flutter/android/gradle.properties",
+      "gitSha256": "0f82b18017fba6bb5ce3aa4b2d1a00c9382fc8aae7b1d9326e44b18abd66d80b",
+      "workingSha256": "0f82b18017fba6bb5ce3aa4b2d1a00c9382fc8aae7b1d9326e44b18abd66d80b"
+    },
+    {
+      "path": "apps/flutter/android/gradle/wrapper/gradle-wrapper.jar",
+      "gitSha256": "16caeaf66d57a0d1d2087fef6a97efa62de8da69afa5b908f40db35afc4342da",
+      "workingSha256": "16caeaf66d57a0d1d2087fef6a97efa62de8da69afa5b908f40db35afc4342da"
+    },
+    {
+      "path": "apps/flutter/android/gradle/wrapper/gradle-wrapper.properties",
+      "gitSha256": "b690d26223576fe4e63889fad9a00df81945cb870b9476cc5a563152a1a88a74",
+      "workingSha256": "b690d26223576fe4e63889fad9a00df81945cb870b9476cc5a563152a1a88a74"
+    },
+    {
+      "path": "apps/flutter/android/gradlew",
+      "gitSha256": "ec56c02543666d92d9ac5ae7fcc48f88ce4de0deb8b7f9b39928ca46f68c1b2b",
+      "workingSha256": "ec56c02543666d92d9ac5ae7fcc48f88ce4de0deb8b7f9b39928ca46f68c1b2b"
+    },
+    {
+      "path": "apps/flutter/android/gradlew.bat",
+      "gitSha256": "f4f428c5626b3d90cef3bd4e7fd3ad3ea5760442db8c09d586b5bfe031dbe5e3",
+      "workingSha256": "f4f428c5626b3d90cef3bd4e7fd3ad3ea5760442db8c09d586b5bfe031dbe5e3"
+    },
+    {
+      "path": "apps/flutter/android/settings.gradle.kts",
+      "gitSha256": "016759283e88ade6eba92910583feeef88b962839b957aa414296afd2952d122",
+      "workingSha256": "016759283e88ade6eba92910583feeef88b962839b957aa414296afd2952d122"
+    },
+    {
+      "path": "apps/flutter/assets/config.json",
+      "gitSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "workingSha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "apps/flutter/assets/fonts/Lora-LICENSE.txt",
+      "gitSha256": "1d9a970809ac804b582a6ce7f0ebc4e7fefcbfd7ff6299cad35ee656a21be716",
+      "workingSha256": "1d9a970809ac804b582a6ce7f0ebc4e7fefcbfd7ff6299cad35ee656a21be716"
+    },
+    {
+      "path": "apps/flutter/assets/fonts/Lora.ttf",
+      "gitSha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7",
+      "workingSha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7"
+    },
+    {
+      "path": "apps/flutter/config/appwrite.dev.json",
+      "gitSha256": "49078bac38702fd88ce3960bd87da7fc84a8025fac4ab409041b7c444bd9fb23",
+      "workingSha256": "49078bac38702fd88ce3960bd87da7fc84a8025fac4ab409041b7c444bd9fb23"
+    },
+    {
+      "path": "apps/flutter/ios/Flutter/AppFrameworkInfo.plist",
+      "gitSha256": "da12038f9b2688a8a26160fea2609fa8fcb11421448c109f09c0f573efe7698d",
+      "workingSha256": "da12038f9b2688a8a26160fea2609fa8fcb11421448c109f09c0f573efe7698d"
+    },
+    {
+      "path": "apps/flutter/ios/Flutter/Debug.xcconfig",
+      "gitSha256": "690b8a8b1ae15ddd29b241429963e971bbc6720ab22f154cf8cf6b085b6d4925",
+      "workingSha256": "690b8a8b1ae15ddd29b241429963e971bbc6720ab22f154cf8cf6b085b6d4925"
+    },
+    {
+      "path": "apps/flutter/ios/Flutter/Release.xcconfig",
+      "gitSha256": "75abb819a9de1e0e41c835e7307bc64a506cac25a9a5c0b0d8253fa1c3d5d422",
+      "workingSha256": "75abb819a9de1e0e41c835e7307bc64a506cac25a9a5c0b0d8253fa1c3d5d422"
+    },
+    {
+      "path": "apps/flutter/ios/Podfile",
+      "gitSha256": "f58e643b37a91401e0ab83570b844718ddb78b14cc062a4bdee5934a29b86fd8",
+      "workingSha256": "f58e643b37a91401e0ab83570b844718ddb78b14cc062a4bdee5934a29b86fd8"
+    },
+    {
+      "path": "apps/flutter/ios/Podfile.lock",
+      "gitSha256": "af4df3138d91de8efba2b47a42b078a37311288f81d6cedfe74d84c732f599e6",
+      "workingSha256": "af4df3138d91de8efba2b47a42b078a37311288f81d6cedfe74d84c732f599e6"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/project.pbxproj",
+      "gitSha256": "96fb98bd4267d34d3478d2186a7bd323bade2f3a7c56fb5aa6321ca9bf723931",
+      "workingSha256": "96fb98bd4267d34d3478d2186a7bd323bade2f3a7c56fb5aa6321ca9bf723931"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+      "gitSha256": "7f3b00b5c3fdb45242d7b87e1e5c4e25d1fa8129a16c94295ecc4e8ea2235c5f",
+      "workingSha256": "7f3b00b5c3fdb45242d7b87e1e5c4e25d1fa8129a16c94295ecc4e8ea2235c5f"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "gitSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542",
+      "workingSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings",
+      "gitSha256": "11b247bc6796892d67c9a821d18604db4dd6a880981b34f38460b9866e6b247f",
+      "workingSha256": "11b247bc6796892d67c9a821d18604db4dd6a880981b34f38460b9866e6b247f"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme",
+      "gitSha256": "9fbce429f56243561dd437a527136c9f9ed77165e3b271b923faf236cfcd0484",
+      "workingSha256": "9fbce429f56243561dd437a527136c9f9ed77165e3b271b923faf236cfcd0484"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcworkspace/contents.xcworkspacedata",
+      "gitSha256": "465e6de5660384eb6832e8078920ba6cd5305c445cb29a24a86a2fda4aa6b67e",
+      "workingSha256": "465e6de5660384eb6832e8078920ba6cd5305c445cb29a24a86a2fda4aa6b67e"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "gitSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542",
+      "workingSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542"
+    },
+    {
+      "path": "apps/flutter/ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings",
+      "gitSha256": "11b247bc6796892d67c9a821d18604db4dd6a880981b34f38460b9866e6b247f",
+      "workingSha256": "11b247bc6796892d67c9a821d18604db4dd6a880981b34f38460b9866e6b247f"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/AppDelegate.swift",
+      "gitSha256": "1d4ac02647d8f6e371632e5abf0d4c030e41423de1f539c1cb7fa574c95d9ab7",
+      "workingSha256": "1d4ac02647d8f6e371632e5abf0d4c030e41423de1f539c1cb7fa574c95d9ab7"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "gitSha256": "3b1e214f466ffedff74baa5598ad5c4421130eea6bc8d57b8fe23435e8280ae4",
+      "workingSha256": "3b1e214f466ffedff74baa5598ad5c4421130eea6bc8d57b8fe23435e8280ae4"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png",
+      "gitSha256": "7770183009e914112de7d8ef1d235a6a30c5834424858e0d2f8253f6b8d31926",
+      "workingSha256": "7770183009e914112de7d8ef1d235a6a30c5834424858e0d2f8253f6b8d31926"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png",
+      "gitSha256": "cab10a0d391ec5bc09ef50ce49e8ad401cee7ef03707ec0923a222c5c2b3d212",
+      "workingSha256": "cab10a0d391ec5bc09ef50ce49e8ad401cee7ef03707ec0923a222c5c2b3d212"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png",
+      "gitSha256": "b9ad02cf6576a04d1b6806ac02a2431481b448dd0c2e505ce25842d1f7c4730b",
+      "workingSha256": "b9ad02cf6576a04d1b6806ac02a2431481b448dd0c2e505ce25842d1f7c4730b"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png",
+      "gitSha256": "c6e6d3b215ae744a9c391f4c4d44157eff5e739d6ad6c39f9bfa5df66dddd267",
+      "workingSha256": "c6e6d3b215ae744a9c391f4c4d44157eff5e739d6ad6c39f9bfa5df66dddd267"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png",
+      "gitSha256": "5dee24dc104ac76dc162e42ae0beb163d426bf365562ee28ba7b3ad368559a60",
+      "workingSha256": "5dee24dc104ac76dc162e42ae0beb163d426bf365562ee28ba7b3ad368559a60"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png",
+      "gitSha256": "a9b21eb6f4271385655a8771f76e29eef8c1107d7879cbcfc567e6619d1f716a",
+      "workingSha256": "a9b21eb6f4271385655a8771f76e29eef8c1107d7879cbcfc567e6619d1f716a"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png",
+      "gitSha256": "e677d701ffe4af7bc2935098d6b3984cc9ab7ace573e6900955a5535b12410cf",
+      "workingSha256": "e677d701ffe4af7bc2935098d6b3984cc9ab7ace573e6900955a5535b12410cf"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png",
+      "gitSha256": "b9ad02cf6576a04d1b6806ac02a2431481b448dd0c2e505ce25842d1f7c4730b",
+      "workingSha256": "b9ad02cf6576a04d1b6806ac02a2431481b448dd0c2e505ce25842d1f7c4730b"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png",
+      "gitSha256": "7c61c42fc7b657d9cf314d32a4ec458f0647c3aaf360be1b9377857266ec2499",
+      "workingSha256": "7c61c42fc7b657d9cf314d32a4ec458f0647c3aaf360be1b9377857266ec2499"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png",
+      "gitSha256": "19be171481dc71a0b2803ebcd01dd8b0c5fd5778dee34c0a3cabc948c225f24e",
+      "workingSha256": "19be171481dc71a0b2803ebcd01dd8b0c5fd5778dee34c0a3cabc948c225f24e"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png",
+      "gitSha256": "19be171481dc71a0b2803ebcd01dd8b0c5fd5778dee34c0a3cabc948c225f24e",
+      "workingSha256": "19be171481dc71a0b2803ebcd01dd8b0c5fd5778dee34c0a3cabc948c225f24e"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png",
+      "gitSha256": "4209a49e44a92ec40a327d3455eb1b1c153ee83d75de1c2be0a12ab18b2ff9de",
+      "workingSha256": "4209a49e44a92ec40a327d3455eb1b1c153ee83d75de1c2be0a12ab18b2ff9de"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png",
+      "gitSha256": "836c918cb613249eba0483a6b02fa3df3c1c0a89a315ee4d3b88509b83c7ab73",
+      "workingSha256": "836c918cb613249eba0483a6b02fa3df3c1c0a89a315ee4d3b88509b83c7ab73"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png",
+      "gitSha256": "41c7d42f6e61f8fe7f30b1ffa2256aecbc9682be06d18c4a3062043e1a2e547c",
+      "workingSha256": "41c7d42f6e61f8fe7f30b1ffa2256aecbc9682be06d18c4a3062043e1a2e547c"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png",
+      "gitSha256": "5d7e5bdf01b93802bc973345b3a78c038907147625035952a08a115a563b7f81",
+      "workingSha256": "5d7e5bdf01b93802bc973345b3a78c038907147625035952a08a115a563b7f81"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json",
+      "gitSha256": "ccc7950fd5f5b82067c85f667940a9d59189151460761ece8098ca78daa19469",
+      "workingSha256": "ccc7950fd5f5b82067c85f667940a9d59189151460761ece8098ca78daa19469"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png",
+      "gitSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20",
+      "workingSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png",
+      "gitSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20",
+      "workingSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png",
+      "gitSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20",
+      "workingSha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Base.lproj/LaunchScreen.storyboard",
+      "gitSha256": "857e61203b3deafb05766d8fcda898b86a7cb6f3d5e385ecc9926c4d698215e9",
+      "workingSha256": "857e61203b3deafb05766d8fcda898b86a7cb6f3d5e385ecc9926c4d698215e9"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Base.lproj/Main.storyboard",
+      "gitSha256": "fd367b6c43006d61b730f674970dd48b9f662c8f2264e52ffc1558102a2c9f2d",
+      "workingSha256": "fd367b6c43006d61b730f674970dd48b9f662c8f2264e52ffc1558102a2c9f2d"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/DeviceCapabilitiesBridge.swift",
+      "gitSha256": "b6726c8897140816e0c2729b559490c72f53840a1ff169e1e9c123c552ebef24",
+      "workingSha256": "b6726c8897140816e0c2729b559490c72f53840a1ff169e1e9c123c552ebef24"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/GeneratedPluginRegistrant.h",
+      "gitSha256": "a5f88cc6415d2e639d2cb549348b84e02a7fdd0261603b0063abef6fa11f075a",
+      "workingSha256": "a5f88cc6415d2e639d2cb549348b84e02a7fdd0261603b0063abef6fa11f075a"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/GeneratedPluginRegistrant.m",
+      "gitSha256": "99135df916e2d6da497068ff636f8d1b7718f106b86eb12a37467d48a6fd491f",
+      "workingSha256": "99135df916e2d6da497068ff636f8d1b7718f106b86eb12a37467d48a6fd491f"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Info.plist",
+      "gitSha256": "109139e94ff42f6fed2aab2f47b6da24b0cc9500587a57b90210644c617c9149",
+      "workingSha256": "109139e94ff42f6fed2aab2f47b6da24b0cc9500587a57b90210644c617c9149"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/Runner-Bridging-Header.h",
+      "gitSha256": "1a8d11d01d1cc92c650c9c9ed35299240052d4683a15a719a2315ef44185e074",
+      "workingSha256": "1a8d11d01d1cc92c650c9c9ed35299240052d4683a15a719a2315ef44185e074"
+    },
+    {
+      "path": "apps/flutter/ios/Runner/SceneDelegate.swift",
+      "gitSha256": "add68b905971dedfcc0d0b5b7118030de5925ba8c081ad9815463699e3a444ad",
+      "workingSha256": "add68b905971dedfcc0d0b5b7118030de5925ba8c081ad9815463699e3a444ad"
+    },
+    {
+      "path": "apps/flutter/ios/RunnerTests/RunnerTests.swift",
+      "gitSha256": "5e8f4908dacea6f29b2a790e4d38bf5fded69096063f9a27a2f21584d62b30c0",
+      "workingSha256": "5e8f4908dacea6f29b2a790e4d38bf5fded69096063f9a27a2f21584d62b30c0"
+    },
+    {
+      "path": "apps/flutter/lib/client.dart",
+      "gitSha256": "29d290d89c53572c3d242e7a74ea1c11fdbe06add8cfaf1b832865102b5e563f",
+      "workingSha256": "29d290d89c53572c3d242e7a74ea1c11fdbe06add8cfaf1b832865102b5e563f"
+    },
+    {
+      "path": "apps/flutter/lib/driver.dart",
+      "gitSha256": "bb010841212083615b21e540f1bc7168af04956eb787fd290f3e2c2c4413ec46",
+      "workingSha256": "bb010841212083615b21e540f1bc7168af04956eb787fd290f3e2c2c4413ec46"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/appearance_editor.dart",
+      "gitSha256": "d037d586fcc8f00bb80385a77b1a5f919e925b58b891e8a99ff8ec06a2f38bb4",
+      "workingSha256": "d037d586fcc8f00bb80385a77b1a5f919e925b58b891e8a99ff8ec06a2f38bb4"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/builder_chat.dart",
+      "gitSha256": "de8539786a53b24626e8519387aef6927d3fa8db88335e89f59b8061b37f971d",
+      "workingSha256": "de8539786a53b24626e8519387aef6927d3fa8db88335e89f59b8061b37f971d"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/builder_screen.dart",
+      "gitSha256": "1eb612daef0ac7f843c56030226a94c384f6be0223624776521ec019f2c04683",
+      "workingSha256": "1eb612daef0ac7f843c56030226a94c384f6be0223624776521ec019f2c04683"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/component_options_editor.dart",
+      "gitSha256": "39549a2dedae68853800cbb68c0bb30404511adff75509b633f339a61b7939a4",
+      "workingSha256": "39549a2dedae68853800cbb68c0bb30404511adff75509b633f339a61b7939a4"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/draft_loader.dart",
+      "gitSha256": "a456b6ffe72f610e59a9e66dca0b62c66c6dbace2b2aeb767a3851b38d664aa5",
+      "workingSha256": "a456b6ffe72f610e59a9e66dca0b62c66c6dbace2b2aeb767a3851b38d664aa5"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/idea_guidance.dart",
+      "gitSha256": "9d5e69591029aab279f35eb5fcf1ec63bb7c45335fe150dce31159b6727a0832",
+      "workingSha256": "9d5e69591029aab279f35eb5fcf1ec63bb7c45335fe150dce31159b6727a0832"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/page_editor.dart",
+      "gitSha256": "ba537a3018390bf26b9aece873e8cafeef85b6d7871784bef42bb54dd7f4ed55",
+      "workingSha256": "ba537a3018390bf26b9aece873e8cafeef85b6d7871784bef42bb54dd7f4ed55"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/reminder_editor.dart",
+      "gitSha256": "56416df9510129b91b3d40898cfe1179de37c34b703196eb5c6f9f88b6d34503",
+      "workingSha256": "56416df9510129b91b3d40898cfe1179de37c34b703196eb5c6f9f88b6d34503"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/visual_edit_session.dart",
+      "gitSha256": "9c4a6ec8210705ae1eae3e0e1c77a5afaf2f958a2fea4e03bbf1217b78d46927",
+      "workingSha256": "9c4a6ec8210705ae1eae3e0e1c77a5afaf2f958a2fea4e03bbf1217b78d46927"
+    },
+    {
+      "path": "apps/flutter/lib/features/builder/visual_inspector.dart",
+      "gitSha256": "00e3c6602a12f3c8570e969ec326855ac1e5f2218d1092856ca36e7c26fd53b6",
+      "workingSha256": "00e3c6602a12f3c8570e969ec326855ac1e5f2218d1092856ca36e7c26fd53b6"
+    },
+    {
+      "path": "apps/flutter/lib/features/home/home_load_failure.dart",
+      "gitSha256": "bae6231a028c1e4ab939d61a2235b578374e95b67856c4b3a9b3d4b7f2dfba2a",
+      "workingSha256": "bae6231a028c1e4ab939d61a2235b578374e95b67856c4b3a9b3d4b7f2dfba2a"
+    },
+    {
+      "path": "apps/flutter/lib/features/home/home_screen.dart",
+      "gitSha256": "0be711c0c7a9c0e105927d05eecf49c1a00cf45ec65dda8bc5819ff4ebd4be80",
+      "workingSha256": "0be711c0c7a9c0e105927d05eecf49c1a00cf45ec65dda8bc5819ff4ebd4be80"
+    },
+    {
+      "path": "apps/flutter/lib/features/home/template_preview.dart",
+      "gitSha256": "bf89384364744edfb6abf8997520249e8013618ce0071824ba38d16db2014d84",
+      "workingSha256": "bf89384364744edfb6abf8997520249e8013618ce0071824ba38d16db2014d84"
+    },
+    {
+      "path": "apps/flutter/lib/features/media/image_upload.dart",
+      "gitSha256": "1edf29c3addc4c1f001168484113e7d2e41a3f39c60eb6f5f5fc91abda737cba",
+      "workingSha256": "1edf29c3addc4c1f001168484113e7d2e41a3f39c60eb6f5f5fc91abda737cba"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/device_capabilities.dart",
+      "gitSha256": "dd6b207d0eb643d377d1e10785ac76fa696e80e42a9f0ebe5a191f9220175775",
+      "workingSha256": "dd6b207d0eb643d377d1e10785ac76fa696e80e42a9f0ebe5a191f9220175775"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/device_timer_store.dart",
+      "gitSha256": "965f9bd14efb4a6c08e6fbb076b43cead11ba48946dffa03e345d9672ce7b662",
+      "workingSha256": "965f9bd14efb4a6c08e6fbb076b43cead11ba48946dffa03e345d9672ce7b662"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/invitation_link.dart",
+      "gitSha256": "be3a9eb6fdf4607ad223a0fc157ad9fa801cea44e9af3b22f9aa432686927cda",
+      "workingSha256": "be3a9eb6fdf4607ad223a0fc157ad9fa801cea44e9af3b22f9aa432686927cda"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/live_adapter.dart",
+      "gitSha256": "8b0153903d04ac4975c79d8aa1e9dbe3808592d0b29b48646e611a4d2a2aaedd",
+      "workingSha256": "8b0153903d04ac4975c79d8aa1e9dbe3808592d0b29b48646e611a4d2a2aaedd"
+    },
+    {
+      "path": "apps/flutter/lib/features/mini_app/mini_app_screen.dart",
+      "gitSha256": "33658190e5608e36cfdbc6a527973ebb1fb140964b14ebe27f1bacb860cad575",
+      "workingSha256": "33658190e5608e36cfdbc6a527973ebb1fb140964b14ebe27f1bacb860cad575"
+    },
+    {
+      "path": "apps/flutter/lib/main.dart",
+      "gitSha256": "d3b3bb9b81629084c4415ca4a426e479412ce1115caa84b07eb44efbba8ebce0",
+      "workingSha256": "d3b3bb9b81629084c4415ca4a426e479412ce1115caa84b07eb44efbba8ebce0"
+    },
+    {
+      "path": "apps/flutter/lib/navigation/app_router.dart",
+      "gitSha256": "bac920bcf319556edf28257faa4baec051f52930a665fff7ba5ba64284695d35",
+      "workingSha256": "bac920bcf319556edf28257faa4baec051f52930a665fff7ba5ba64284695d35"
+    },
+    {
+      "path": "apps/flutter/lib/navigation/browser_history.dart",
+      "gitSha256": "6f7ad0f3d482495ae9da437fe9125159ae57db03d90f3b53cd2b155dac9fcb78",
+      "workingSha256": "6f7ad0f3d482495ae9da437fe9125159ae57db03d90f3b53cd2b155dac9fcb78"
+    },
+    {
+      "path": "apps/flutter/lib/navigation/browser_history_stub.dart",
+      "gitSha256": "88282cd08abf5400d0919c441aa0ec8caaf79fc6a5ce45aebf6b3551086e7e2f",
+      "workingSha256": "88282cd08abf5400d0919c441aa0ec8caaf79fc6a5ce45aebf6b3551086e7e2f"
+    },
+    {
+      "path": "apps/flutter/lib/navigation/browser_history_web.dart",
+      "gitSha256": "0b13b5eee1ad0fd85baaff76466f8f631a603ac1f2fa2124f12fd791ead5a647",
+      "workingSha256": "0b13b5eee1ad0fd85baaff76466f8f631a603ac1f2fa2124f12fd791ead5a647"
+    },
+    {
+      "path": "apps/flutter/lib/preview.dart",
+      "gitSha256": "28ebd6f82e640de485887eb5c7aaf2cd47c768b01dc1537d7e8bc449339e92b9",
+      "workingSha256": "28ebd6f82e640de485887eb5c7aaf2cd47c768b01dc1537d7e8bc449339e92b9"
+    },
+    {
+      "path": "apps/flutter/lib/screens/sign_in_screen.dart",
+      "gitSha256": "dc02578389f2ac45a6cd4521a1c730b4ea2f146eb6330b4874c7cde6a346709d",
+      "workingSha256": "dc02578389f2ac45a6cd4521a1c730b4ea2f146eb6330b4874c7cde6a346709d"
+    },
+    {
+      "path": "apps/flutter/lib/screens/startup_screen.dart",
+      "gitSha256": "27021b492db386b99003506436df8ac83ae445162dc28b5903bc43c836d6902f",
+      "workingSha256": "27021b492db386b99003506436df8ac83ae445162dc28b5903bc43c836d6902f"
+    },
+    {
+      "path": "apps/flutter/linux/CMakeLists.txt",
+      "gitSha256": "6aa8ac03f2edd3f1ab4ec6e77fc40bbae70c4a6e66e8b76eb6721d46e6a31c77",
+      "workingSha256": "6aa8ac03f2edd3f1ab4ec6e77fc40bbae70c4a6e66e8b76eb6721d46e6a31c77"
+    },
+    {
+      "path": "apps/flutter/linux/flutter/CMakeLists.txt",
+      "gitSha256": "787189e2623313cfee590a0b553338eb9fc68b3af922ddd77c5d39c75f989aeb",
+      "workingSha256": "787189e2623313cfee590a0b553338eb9fc68b3af922ddd77c5d39c75f989aeb"
+    },
+    {
+      "path": "apps/flutter/linux/flutter/generated_plugin_registrant.cc",
+      "gitSha256": "1b0ee97fdec92de9be8a7487663eb2bda07a23b0f3a1151b595343bf3a727655",
+      "workingSha256": "1b0ee97fdec92de9be8a7487663eb2bda07a23b0f3a1151b595343bf3a727655"
+    },
+    {
+      "path": "apps/flutter/linux/flutter/generated_plugin_registrant.h",
+      "gitSha256": "00f93bb5b1faefdede8f6065df327522900fb0b8efee86bacf424fd947ed14bb",
+      "workingSha256": "00f93bb5b1faefdede8f6065df327522900fb0b8efee86bacf424fd947ed14bb"
+    },
+    {
+      "path": "apps/flutter/linux/flutter/generated_plugins.cmake",
+      "gitSha256": "7617892358ed340e1060efa8f2c85186a831991a42c6640c55d250630db578eb",
+      "workingSha256": "7617892358ed340e1060efa8f2c85186a831991a42c6640c55d250630db578eb"
+    },
+    {
+      "path": "apps/flutter/linux/runner/CMakeLists.txt",
+      "gitSha256": "8cdcfd911e770fd7d511c97c7bce6559486a815352a47c953f7ef632e236d2cc",
+      "workingSha256": "8cdcfd911e770fd7d511c97c7bce6559486a815352a47c953f7ef632e236d2cc"
+    },
+    {
+      "path": "apps/flutter/linux/runner/main.cc",
+      "gitSha256": "ea23f7cdf74091d63bba29ef60486370b766157b848f0cfe62bd8b1c1695a0c1",
+      "workingSha256": "ea23f7cdf74091d63bba29ef60486370b766157b848f0cfe62bd8b1c1695a0c1"
+    },
+    {
+      "path": "apps/flutter/linux/runner/my_application.cc",
+      "gitSha256": "232f0c3435ff823110270dbcbc1777d61deec452423ec664850a8b7cb1125e67",
+      "workingSha256": "232f0c3435ff823110270dbcbc1777d61deec452423ec664850a8b7cb1125e67"
+    },
+    {
+      "path": "apps/flutter/linux/runner/my_application.h",
+      "gitSha256": "a4218d7ac0db8a9a6716daf216b2d4fc6bdc7ac647e3183078b2c962ebdfcf70",
+      "workingSha256": "a4218d7ac0db8a9a6716daf216b2d4fc6bdc7ac647e3183078b2c962ebdfcf70"
+    },
+    {
+      "path": "apps/flutter/macos/Flutter/Flutter-Debug.xcconfig",
+      "gitSha256": "62290ad8e938bf410206d8c7e131262696b58a6df110d39faf3399396ffe61b1",
+      "workingSha256": "62290ad8e938bf410206d8c7e131262696b58a6df110d39faf3399396ffe61b1"
+    },
+    {
+      "path": "apps/flutter/macos/Flutter/Flutter-Release.xcconfig",
+      "gitSha256": "62290ad8e938bf410206d8c7e131262696b58a6df110d39faf3399396ffe61b1",
+      "workingSha256": "62290ad8e938bf410206d8c7e131262696b58a6df110d39faf3399396ffe61b1"
+    },
+    {
+      "path": "apps/flutter/macos/Flutter/GeneratedPluginRegistrant.swift",
+      "gitSha256": "6ebf3d3a306f620593b077625a9a3bf3ffee46555bcfe1f88e042d1a26221d31",
+      "workingSha256": "6ebf3d3a306f620593b077625a9a3bf3ffee46555bcfe1f88e042d1a26221d31"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcodeproj/project.pbxproj",
+      "gitSha256": "492583d7db29e657a828813cf2c13ff9cda86834f4f66045527db77b5fb533ad",
+      "workingSha256": "492583d7db29e657a828813cf2c13ff9cda86834f4f66045527db77b5fb533ad"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "gitSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542",
+      "workingSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme",
+      "gitSha256": "27dd8707011fe347f7291323e632eb36428a9a609ec616603f5fb1e34d94ba53",
+      "workingSha256": "27dd8707011fe347f7291323e632eb36428a9a609ec616603f5fb1e34d94ba53"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcworkspace/contents.xcworkspacedata",
+      "gitSha256": "46c3c9702ff7c5584e11c954d943cfb6e07fb26e3fbd072ddbc0f388aa352de1",
+      "workingSha256": "46c3c9702ff7c5584e11c954d943cfb6e07fb26e3fbd072ddbc0f388aa352de1"
+    },
+    {
+      "path": "apps/flutter/macos/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "gitSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542",
+      "workingSha256": "dfa0f9bb85b95ccba9c6811adadf8cb407fb5d52088e89db83ebc308ec448542"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/AppDelegate.swift",
+      "gitSha256": "ce9dbe45a57c59e85519da50a26c471615b9c8cdd85a8f4a39d2e480e62a4af4",
+      "workingSha256": "ce9dbe45a57c59e85519da50a26c471615b9c8cdd85a8f4a39d2e480e62a4af4"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "gitSha256": "bc6ba8105ca69651aeeb77358851590de295dca04681a1d58c0f449641c242f3",
+      "workingSha256": "bc6ba8105ca69651aeeb77358851590de295dca04681a1d58c0f449641c242f3"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png",
+      "gitSha256": "6232e5815af17e25e0268b2fec7aea9e068cc92ec709e9605c2b31df4ff2a313",
+      "workingSha256": "6232e5815af17e25e0268b2fec7aea9e068cc92ec709e9605c2b31df4ff2a313"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png",
+      "gitSha256": "15591f03f31313af6fd644ed0512106cc04365130b8b73244f1cfa6dddfb4400",
+      "workingSha256": "15591f03f31313af6fd644ed0512106cc04365130b8b73244f1cfa6dddfb4400"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png",
+      "gitSha256": "cc6928b5adfc00dbf526192e2705dd9af641cdf20ab4c6c7ca7cd4936dca59f0",
+      "workingSha256": "cc6928b5adfc00dbf526192e2705dd9af641cdf20ab4c6c7ca7cd4936dca59f0"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png",
+      "gitSha256": "416efd77cde932d42ef34168da24dd428a495b1f4f34bbbd125a18d2add186a2",
+      "workingSha256": "416efd77cde932d42ef34168da24dd428a495b1f4f34bbbd125a18d2add186a2"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png",
+      "gitSha256": "ae8c4458e41f1e28b1e851ed87d3268d4a0351ceea427fa2a84cc94ddfb6d4c5",
+      "workingSha256": "ae8c4458e41f1e28b1e851ed87d3268d4a0351ceea427fa2a84cc94ddfb6d4c5"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png",
+      "gitSha256": "0a91c6c1bf242e54ee179e34629e9ef3e8a6d286c0fce01e302280a8be9277e6",
+      "workingSha256": "0a91c6c1bf242e54ee179e34629e9ef3e8a6d286c0fce01e302280a8be9277e6"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png",
+      "gitSha256": "6ad229623498e5f1277800db3ab7cb11faf85eb2569e1213f7d8e55003c07b42",
+      "workingSha256": "6ad229623498e5f1277800db3ab7cb11faf85eb2569e1213f7d8e55003c07b42"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Base.lproj/MainMenu.xib",
+      "gitSha256": "be9e9ef8469d3262370e0f0b855ed163cbf9c8362c59e330b2ffe63b86fa42f4",
+      "workingSha256": "be9e9ef8469d3262370e0f0b855ed163cbf9c8362c59e330b2ffe63b86fa42f4"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Configs/AppInfo.xcconfig",
+      "gitSha256": "f72db82f38e7e1fbb5a1470e73c8624c9465f07a8ab476f38b1c90dda5803215",
+      "workingSha256": "f72db82f38e7e1fbb5a1470e73c8624c9465f07a8ab476f38b1c90dda5803215"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Configs/Debug.xcconfig",
+      "gitSha256": "8067d533ef6593760baad9a9855a786a7a77470fcc3f0925ec04fe43bc1ac4b0",
+      "workingSha256": "8067d533ef6593760baad9a9855a786a7a77470fcc3f0925ec04fe43bc1ac4b0"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Configs/Release.xcconfig",
+      "gitSha256": "7a6a4b4d973a23052fa0a0388dd261e32d311d7b66ba1bfc3b914b361808ac61",
+      "workingSha256": "7a6a4b4d973a23052fa0a0388dd261e32d311d7b66ba1bfc3b914b361808ac61"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Configs/Warnings.xcconfig",
+      "gitSha256": "0e341a392b16ad302d12890aa3dac9257a6c10ece685437604259a85341645a3",
+      "workingSha256": "0e341a392b16ad302d12890aa3dac9257a6c10ece685437604259a85341645a3"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/DebugProfile.entitlements",
+      "gitSha256": "c867999adcf46a186f64a9fe1df34bfea44d1307d971cea3973162168ff4dd4f",
+      "workingSha256": "c867999adcf46a186f64a9fe1df34bfea44d1307d971cea3973162168ff4dd4f"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Info.plist",
+      "gitSha256": "f253e89c512b3a9a81bc5cdd7a14bf932470f835f261654a808ea4549cd94aad",
+      "workingSha256": "f253e89c512b3a9a81bc5cdd7a14bf932470f835f261654a808ea4549cd94aad"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/MainFlutterWindow.swift",
+      "gitSha256": "65c9613c11bcedfa51416b16c975d8ba6ff12b405fc19d60db8755d92e86d9fe",
+      "workingSha256": "65c9613c11bcedfa51416b16c975d8ba6ff12b405fc19d60db8755d92e86d9fe"
+    },
+    {
+      "path": "apps/flutter/macos/Runner/Release.entitlements",
+      "gitSha256": "b90d9c45f8b7746a3180f4252915354ee09072772964f99544153cc4598cc764",
+      "workingSha256": "b90d9c45f8b7746a3180f4252915354ee09072772964f99544153cc4598cc764"
+    },
+    {
+      "path": "apps/flutter/macos/RunnerTests/RunnerTests.swift",
+      "gitSha256": "6bc180bc77c7def7a21d197233e25dff42cc493ab9d294632edafc18fdf0ac44",
+      "workingSha256": "6bc180bc77c7def7a21d197233e25dff42cc493ab9d294632edafc18fdf0ac44"
+    },
+    {
+      "path": "apps/flutter/pubspec.yaml",
+      "gitSha256": "c7e4cc3c756c0c10743f3ac3217ced5637424722df6cdb7de5bfe6f7c2234485",
+      "workingSha256": "c7e4cc3c756c0c10743f3ac3217ced5637424722df6cdb7de5bfe6f7c2234485"
+    },
+    {
+      "path": "apps/flutter/test/appearance_authoring_test.dart",
+      "gitSha256": "214b8da30766bfa9aec9652e2713a6520697c1d2d4105bc4638f83be793f5dbe",
+      "workingSha256": "214b8da30766bfa9aec9652e2713a6520697c1d2d4105bc4638f83be793f5dbe"
+    },
+    {
+      "path": "apps/flutter/test/appearance_capture_test.dart",
+      "gitSha256": "4ead08f6238af525d9476838d0b24e87dc438e1a224728e4ccb1ea55ca9dc97c",
+      "workingSha256": "4ead08f6238af525d9476838d0b24e87dc438e1a224728e4ccb1ea55ca9dc97c"
+    },
+    {
+      "path": "apps/flutter/test/auth_overlay_test.dart",
+      "gitSha256": "db7ef6a6636b001c83fdbaa435307a4c8116229cfbe702e1390a44e01b7e90e3",
+      "workingSha256": "db7ef6a6636b001c83fdbaa435307a4c8116229cfbe702e1390a44e01b7e90e3"
+    },
+    {
+      "path": "apps/flutter/test/banner_image_recovery_test.dart",
+      "gitSha256": "db30279f8676a18649ed7dcf83166c9bf87cb1ef14cf8cc5f0f568258d8bb64c",
+      "workingSha256": "db30279f8676a18649ed7dcf83166c9bf87cb1ef14cf8cc5f0f568258d8bb64c"
+    },
+    {
+      "path": "apps/flutter/test/builder_add_field_test.dart",
+      "gitSha256": "8c5e2d1a8fabaf625ad77789083482d568d9f760d90aa76a2411a423679b14ed",
+      "workingSha256": "8c5e2d1a8fabaf625ad77789083482d568d9f760d90aa76a2411a423679b14ed"
+    },
+    {
+      "path": "apps/flutter/test/builder_creation_test.dart",
+      "gitSha256": "1034b497ce7aee568fb2d814e2b913eabd00997f3e2806e44ed6f2d7d2c79e4d",
+      "workingSha256": "1034b497ce7aee568fb2d814e2b913eabd00997f3e2806e44ed6f2d7d2c79e4d"
+    },
+    {
+      "path": "apps/flutter/test/builder_failure_message_test.dart",
+      "gitSha256": "4e80eb1cbfc9f470dc1b9d8a842434941c7a54dc9fce9b6cecec8d1870a9cc3e",
+      "workingSha256": "4e80eb1cbfc9f470dc1b9d8a842434941c7a54dc9fce9b6cecec8d1870a9cc3e"
+    },
+    {
+      "path": "apps/flutter/test/component_binding_options_test.dart",
+      "gitSha256": "35fc0dff2566b332404af48ceffc37331e40f6f889d7f9aba5998e51333e242f",
+      "workingSha256": "35fc0dff2566b332404af48ceffc37331e40f6f889d7f9aba5998e51333e242f"
+    },
+    {
+      "path": "apps/flutter/test/customization_capture_test.dart",
+      "gitSha256": "3c4f11f1c55b687808bf386b3d3be23b6ca2c0c636b3ad89520a8805850bb779",
+      "workingSha256": "3c4f11f1c55b687808bf386b3d3be23b6ca2c0c636b3ad89520a8805850bb779"
+    },
+    {
+      "path": "apps/flutter/test/device_capabilities_test.dart",
+      "gitSha256": "892694186a8a5f97c5d565c969d2b86b2e8645ddd5735d504ba83c11ba8474d6",
+      "workingSha256": "892694186a8a5f97c5d565c969d2b86b2e8645ddd5735d504ba83c11ba8474d6"
+    },
+    {
+      "path": "apps/flutter/test/device_timer_store_test.dart",
+      "gitSha256": "9dc9952ea52b433c61538f6fc900873187f48a1f0b996c0ed9b4230b3f68f4da",
+      "workingSha256": "9dc9952ea52b433c61538f6fc900873187f48a1f0b996c0ed9b4230b3f68f4da"
+    },
+    {
+      "path": "apps/flutter/test/draft_navigation_test.dart",
+      "gitSha256": "f207f55aeb4250da4da2d24c942f65809c50a88511e42e5928a6280ac8c7eb89",
+      "workingSha256": "f207f55aeb4250da4da2d24c942f65809c50a88511e42e5928a6280ac8c7eb89"
+    },
+    {
+      "path": "apps/flutter/test/home_recovery_test.dart",
+      "gitSha256": "fc0e42de55ed332a775ae34b0596d9142ecfb2bca634be02effc345316684b92",
+      "workingSha256": "fc0e42de55ed332a775ae34b0596d9142ecfb2bca634be02effc345316684b92"
+    },
+    {
+      "path": "apps/flutter/test/idea_guidance_test.dart",
+      "gitSha256": "e31352e83d02ef8763a0cf8ff82b844e2d294336e7b9240015cfc9372c6480c8",
+      "workingSha256": "e31352e83d02ef8763a0cf8ff82b844e2d294336e7b9240015cfc9372c6480c8"
+    },
+    {
+      "path": "apps/flutter/test/image_processing_recovery_test.dart",
+      "gitSha256": "d201ee5343f84e113f2c4a055e943a5624e2f737dba1b90d69cc6b2a07040929",
+      "workingSha256": "d201ee5343f84e113f2c4a055e943a5624e2f737dba1b90d69cc6b2a07040929"
+    },
+    {
+      "path": "apps/flutter/test/inbox_refresh_test.dart",
+      "gitSha256": "5e9b14738debc41dc7975347ea054c638a0da4286724355e74d53236bc43f89d",
+      "workingSha256": "5e9b14738debc41dc7975347ea054c638a0da4286724355e74d53236bc43f89d"
+    },
+    {
+      "path": "apps/flutter/test/launcher_ux_test.dart",
+      "gitSha256": "74bd5e83ff760a9fbcf056093d67cc6c61cb94780b9596b5d07aa9cb61498010",
+      "workingSha256": "74bd5e83ff760a9fbcf056093d67cc6c61cb94780b9596b5d07aa9cb61498010"
+    },
+    {
+      "path": "apps/flutter/test/live_media_stream_test.dart",
+      "gitSha256": "6e1dc3c6559ae4ce435cf3c08115660a81661e2a7364798d97f711e8196e8b8f",
+      "workingSha256": "6e1dc3c6559ae4ce435cf3c08115660a81661e2a7364798d97f711e8196e8b8f"
+    },
+    {
+      "path": "apps/flutter/test/live_runtime_feedback_test.dart",
+      "gitSha256": "f627873f9df5568bf3b69ca1635cc039dac52ac46d443fa8acbd45965b9e7224",
+      "workingSha256": "f627873f9df5568bf3b69ca1635cc039dac52ac46d443fa8acbd45965b9e7224"
+    },
+    {
+      "path": "apps/flutter/test/mini_app_navigation_test.dart",
+      "gitSha256": "eb161f66eae591c3ec9b21db5628cd6b0a65f5e0820ec1b00a6c1f0601faf940",
+      "workingSha256": "eb161f66eae591c3ec9b21db5628cd6b0a65f5e0820ec1b00a6c1f0601faf940"
+    },
+    {
+      "path": "apps/flutter/test/offline_preview_test.dart",
+      "gitSha256": "51ca1c165ca3c9d8e1fe1089f31572db7bc9c9cd1c2a8e3b1ad16461b2bea846",
+      "workingSha256": "51ca1c165ca3c9d8e1fe1089f31572db7bc9c9cd1c2a8e3b1ad16461b2bea846"
+    },
+    {
+      "path": "apps/flutter/test/page_editor_bindings_test.dart",
+      "gitSha256": "e44f464bef0abd88e9edbcbefce97c814a555875bba0c55f0ec5943a518b0ba0",
+      "workingSha256": "e44f464bef0abd88e9edbcbefce97c814a555875bba0c55f0ec5943a518b0ba0"
+    },
+    {
+      "path": "apps/flutter/test/page_editor_compatibility_test.dart",
+      "gitSha256": "2aee82b488023316aa03d0905801bf9259caede18ec7b1d20bedd8e77743cbfc",
+      "workingSha256": "2aee82b488023316aa03d0905801bf9259caede18ec7b1d20bedd8e77743cbfc"
+    },
+    {
+      "path": "apps/flutter/test/reminder_publication_review_test.dart",
+      "gitSha256": "96dde49c59e768bd1b451ff2d2a90c2397b31c026ea4a4b31b7563a8748f8540",
+      "workingSha256": "96dde49c59e768bd1b451ff2d2a90c2397b31c026ea4a4b31b7563a8748f8540"
+    },
+    {
+      "path": "apps/flutter/test/rich_component_authoring_test.dart",
+      "gitSha256": "c213e798c28b00cadcfab97b7ba7d5357dcea5af483d083660fac92d4add8912",
+      "workingSha256": "c213e798c28b00cadcfab97b7ba7d5357dcea5af483d083660fac92d4add8912"
+    },
+    {
+      "path": "apps/flutter/test/rich_inspector_test.dart",
+      "gitSha256": "77b4edc9c8d48ca8e7abbc21c6692b840789fd31dae10aa155289141b8af1892",
+      "workingSha256": "77b4edc9c8d48ca8e7abbc21c6692b840789fd31dae10aa155289141b8af1892"
+    },
+    {
+      "path": "apps/flutter/test/sharing_ux_test.dart",
+      "gitSha256": "c93db179b7924543cd1dad97737294c557627a368b959b5a52fc3caf1ffa4770",
+      "workingSha256": "c93db179b7924543cd1dad97737294c557627a368b959b5a52fc3caf1ffa4770"
+    },
+    {
+      "path": "apps/flutter/test/startup_test.dart",
+      "gitSha256": "0cc39396d3660866e3d322673d10a1837d8378a64d52fb710f184a54ec452f5e",
+      "workingSha256": "0cc39396d3660866e3d322673d10a1837d8378a64d52fb710f184a54ec452f5e"
+    },
+    {
+      "path": "apps/flutter/test/utility_authoring_test.dart",
+      "gitSha256": "f92edaccfc661c3b25758771266edaf7dc8e6a90b85a2ef1e1c8912fcad2ba8a",
+      "workingSha256": "f92edaccfc661c3b25758771266edaf7dc8e6a90b85a2ef1e1c8912fcad2ba8a"
+    },
+    {
+      "path": "apps/flutter/test/visual_edit_session_test.dart",
+      "gitSha256": "3aa590a97a729530a24e04131dd74262cc3f0649fad5bda46e87c2caade0098a",
+      "workingSha256": "3aa590a97a729530a24e04131dd74262cc3f0649fad5bda46e87c2caade0098a"
+    },
+    {
+      "path": "apps/flutter/test/visual_inspector_test.dart",
+      "gitSha256": "d8a6301307db0d9d88cdb3eb9e4dd7ed651485219357d982b1e4323b24c78773",
+      "workingSha256": "d8a6301307db0d9d88cdb3eb9e4dd7ed651485219357d982b1e4323b24c78773"
+    },
+    {
+      "path": "apps/flutter/test/widget_test.dart",
+      "gitSha256": "b151c23fbe5ef45eff7d4c3333a8e3d03923dd04513063d9886277478f1d435f",
+      "workingSha256": "b151c23fbe5ef45eff7d4c3333a8e3d03923dd04513063d9886277478f1d435f"
+    },
+    {
+      "path": "apps/flutter/web/favicon.png",
+      "gitSha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015",
+      "workingSha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015"
+    },
+    {
+      "path": "apps/flutter/web/icons/Icon-192.png",
+      "gitSha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3",
+      "workingSha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3"
+    },
+    {
+      "path": "apps/flutter/web/icons/Icon-512.png",
+      "gitSha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe",
+      "workingSha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe"
+    },
+    {
+      "path": "apps/flutter/web/icons/Icon-maskable-192.png",
+      "gitSha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c",
+      "workingSha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c"
+    },
+    {
+      "path": "apps/flutter/web/icons/Icon-maskable-512.png",
+      "gitSha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929",
+      "workingSha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929"
+    },
+    {
+      "path": "apps/flutter/web/index.html",
+      "gitSha256": "662c9c8d1bd60dfbcde83c484e19dfb3f4c8690494bd691c938dce732659a809",
+      "workingSha256": "662c9c8d1bd60dfbcde83c484e19dfb3f4c8690494bd691c938dce732659a809"
+    },
+    {
+      "path": "apps/flutter/web/manifest.json",
+      "gitSha256": "27ebacae8f0d5c6b5894b008edf343a29141e24c57b9e4f0cb1e4f9cdbbbe959",
+      "workingSha256": "27ebacae8f0d5c6b5894b008edf343a29141e24c57b9e4f0cb1e4f9cdbbbe959"
+    },
+    {
+      "path": "apps/flutter/windows/CMakeLists.txt",
+      "gitSha256": "0e8f7a47eb72faffe15bdf9ff21b0ed0c77ecb85bdc649e484bcb971744b5a98",
+      "workingSha256": "0e8f7a47eb72faffe15bdf9ff21b0ed0c77ecb85bdc649e484bcb971744b5a98"
+    },
+    {
+      "path": "apps/flutter/windows/flutter/CMakeLists.txt",
+      "gitSha256": "1fe418971b6f41bb35ceb3d64113a835f3f6f171ecaa707bf232492b57a588d6",
+      "workingSha256": "1fe418971b6f41bb35ceb3d64113a835f3f6f171ecaa707bf232492b57a588d6"
+    },
+    {
+      "path": "apps/flutter/windows/flutter/generated_plugin_registrant.cc",
+      "gitSha256": "bf049a719044a9151db003d92a72951cc33df7b841c342fa61e6b9a2b198d2f2",
+      "workingSha256": "bf049a719044a9151db003d92a72951cc33df7b841c342fa61e6b9a2b198d2f2"
+    },
+    {
+      "path": "apps/flutter/windows/flutter/generated_plugin_registrant.h",
+      "gitSha256": "dbc11635d7b1ba1887adf40df5b83d634e9c3ab0bee34510c71528bb4d73602a",
+      "workingSha256": "dbc11635d7b1ba1887adf40df5b83d634e9c3ab0bee34510c71528bb4d73602a"
+    },
+    {
+      "path": "apps/flutter/windows/flutter/generated_plugins.cmake",
+      "gitSha256": "1fe577d34db2b58f98e1c508ada432e3d5ecafb819abad7db396ff5dd0c6f82c",
+      "workingSha256": "1fe577d34db2b58f98e1c508ada432e3d5ecafb819abad7db396ff5dd0c6f82c"
+    },
+    {
+      "path": "apps/flutter/windows/runner/CMakeLists.txt",
+      "gitSha256": "34119ec122e36940235ef4bc245fcfb43b6960ed443e28af1a8d833a81209b9e",
+      "workingSha256": "34119ec122e36940235ef4bc245fcfb43b6960ed443e28af1a8d833a81209b9e"
+    },
+    {
+      "path": "apps/flutter/windows/runner/Runner.rc",
+      "gitSha256": "8337254b1105f22a6d41d8e98cb8f60114780f911d5dd4130724a97da2c00b4e",
+      "workingSha256": "8337254b1105f22a6d41d8e98cb8f60114780f911d5dd4130724a97da2c00b4e"
+    },
+    {
+      "path": "apps/flutter/windows/runner/flutter_window.cpp",
+      "gitSha256": "dd185884c0b5301d400b58f12ebb36b1c8b326531597e531b40e44a6eeb0e943",
+      "workingSha256": "dd185884c0b5301d400b58f12ebb36b1c8b326531597e531b40e44a6eeb0e943"
+    },
+    {
+      "path": "apps/flutter/windows/runner/flutter_window.h",
+      "gitSha256": "38e0fcd3a0b83895852ec295cb70d90179c0dcd40d58f065eb5232a4ecd84898",
+      "workingSha256": "38e0fcd3a0b83895852ec295cb70d90179c0dcd40d58f065eb5232a4ecd84898"
+    },
+    {
+      "path": "apps/flutter/windows/runner/main.cpp",
+      "gitSha256": "bb26d3e96e6dd194b33c5c2bea9c774a9f7f34e622670d6253814353239c2ac8",
+      "workingSha256": "bb26d3e96e6dd194b33c5c2bea9c774a9f7f34e622670d6253814353239c2ac8"
+    },
+    {
+      "path": "apps/flutter/windows/runner/resource.h",
+      "gitSha256": "1fa98588b04561590ba1cf0521ab86a9db4a878312f21c9d5861d965ddd8d1ae",
+      "workingSha256": "1fa98588b04561590ba1cf0521ab86a9db4a878312f21c9d5861d965ddd8d1ae"
+    },
+    {
+      "path": "apps/flutter/windows/runner/resources/app_icon.ico",
+      "gitSha256": "c098d3fc85cacff98b8e69811b48e9f0d852fcee278132d794411d978869cbf8",
+      "workingSha256": "c098d3fc85cacff98b8e69811b48e9f0d852fcee278132d794411d978869cbf8"
+    },
+    {
+      "path": "apps/flutter/windows/runner/runner.exe.manifest",
+      "gitSha256": "825d243e9fa1542619909c1b72d09b3ed7c1f3b225bb8367c125835e5dc3f8aa",
+      "workingSha256": "825d243e9fa1542619909c1b72d09b3ed7c1f3b225bb8367c125835e5dc3f8aa"
+    },
+    {
+      "path": "apps/flutter/windows/runner/utils.cpp",
+      "gitSha256": "6c2c87106b4b29d534c7edcafb3b7f7b9079caa3cdafa7e56671ad2adf5a2543",
+      "workingSha256": "6c2c87106b4b29d534c7edcafb3b7f7b9079caa3cdafa7e56671ad2adf5a2543"
+    },
+    {
+      "path": "apps/flutter/windows/runner/utils.h",
+      "gitSha256": "95a7f7dddb832997cefa937a96f89472332277e75734a5de553610760b744b03",
+      "workingSha256": "95a7f7dddb832997cefa937a96f89472332277e75734a5de553610760b744b03"
+    },
+    {
+      "path": "apps/flutter/windows/runner/win32_window.cpp",
+      "gitSha256": "9065f31ccf746cf8b390121f958f9e959033af864aed779597066625ed56bc36",
+      "workingSha256": "9065f31ccf746cf8b390121f958f9e959033af864aed779597066625ed56bc36"
+    },
+    {
+      "path": "apps/flutter/windows/runner/win32_window.h",
+      "gitSha256": "7dd03746b19dcf3542829b2f6e8ed40a2714ce5f2cb3b0e23f0118a2fcf62d62",
+      "workingSha256": "7dd03746b19dcf3542829b2f6e8ed40a2714ce5f2cb3b0e23f0118a2fcf62d62"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/appnest_renderer.dart",
+      "gitSha256": "eb5d0a222843bc75dcdb01ba928fd15d3efbe50f8b4ff020e1b71f8a052d2350",
+      "workingSha256": "eb5d0a222843bc75dcdb01ba928fd15d3efbe50f8b4ff020e1b71f8a052d2350"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/appearance.dart",
+      "gitSha256": "747e9c6e106f3a06978da0f2828f0b83b0c8e2402c55dcafd0bf5eb3af4d2e7d",
+      "workingSha256": "747e9c6e106f3a06978da0f2828f0b83b0c8e2402c55dcafd0bf5eb3af4d2e7d"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/components.dart",
+      "gitSha256": "ff192d840f60ec27a2fc04d91764201784f570d01d7ffbac995e7e94a86b412c",
+      "workingSha256": "ff192d840f60ec27a2fc04d91764201784f570d01d7ffbac995e7e94a86b412c"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/device_components.dart",
+      "gitSha256": "11ec4c4a71fd73f2ddd04ab5f7d3fcf8ee7d98929c5690647b3edf09a0f98f8a",
+      "workingSha256": "11ec4c4a71fd73f2ddd04ab5f7d3fcf8ee7d98929c5690647b3edf09a0f98f8a"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/editor.dart",
+      "gitSha256": "d35156b748dcb5b885538f050dbc486eea258ef3273da64842672f989073694c",
+      "workingSha256": "d35156b748dcb5b885538f050dbc486eea258ef3273da64842672f989073694c"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/navigation.dart",
+      "gitSha256": "a1353fea1606e3ab63cdc672b9cce9e6a730ed6429e4fbb5bf56e5c7efc85677",
+      "workingSha256": "a1353fea1606e3ab63cdc672b9cce9e6a730ed6429e4fbb5bf56e5c7efc85677"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/rich_components.dart",
+      "gitSha256": "60a2110cbe9b6f6cd7a00e0ae8aff5113dc327882b51169603fbcbbf4aeca4b0",
+      "workingSha256": "60a2110cbe9b6f6cd7a00e0ae8aff5113dc327882b51169603fbcbbf4aeca4b0"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/rich_runtime.dart",
+      "gitSha256": "d6349006381a524cfabd3cd0f571b0823155191a77f57119cc03c95879efd1e3",
+      "workingSha256": "d6349006381a524cfabd3cd0f571b0823155191a77f57119cc03c95879efd1e3"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/runtime.dart",
+      "gitSha256": "4f0d72dcbfd8df0db04560e5dfe8ca1869e911ef1dff91455739246dc23f559a",
+      "workingSha256": "4f0d72dcbfd8df0db04560e5dfe8ca1869e911ef1dff91455739246dc23f559a"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/utility_components.dart",
+      "gitSha256": "939fe8d9f007628008183e6e5f5ca2c14be55cfa052eea8cffb42015962e89f2",
+      "workingSha256": "939fe8d9f007628008183e6e5f5ca2c14be55cfa052eea8cffb42015962e89f2"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/utility_timer.dart",
+      "gitSha256": "13d1e084e8fa4e5d6300b04e3cb65e8719c6a663d8f35c0e19cdaeb9f4bc4d1b",
+      "workingSha256": "13d1e084e8fa4e5d6300b04e3cb65e8719c6a663d8f35c0e19cdaeb9f4bc4d1b"
+    },
+    {
+      "path": "packages/appnest_renderer/lib/src/visual_edit.dart",
+      "gitSha256": "06ae4c52b3a7fccd28d0ab0a3829de10721ac1d5cc936cbbea9c61b27d396512",
+      "workingSha256": "06ae4c52b3a7fccd28d0ab0a3829de10721ac1d5cc936cbbea9c61b27d396512"
+    },
+    {
+      "path": "packages/appnest_renderer/pubspec.yaml",
+      "gitSha256": "6dcd092f6d2ca23fec52d4465f8bfd9deb100ab8f56e81c33831bfad720c7099",
+      "workingSha256": "6dcd092f6d2ca23fec52d4465f8bfd9deb100ab8f56e81c33831bfad720c7099"
+    },
+    {
+      "path": "packages/appnest_renderer/test/add_field_bindings_test.dart",
+      "gitSha256": "89b82c1b51012321a29c312f6fe54e82dd29fbce66489c8894df488d703f0a01",
+      "workingSha256": "89b82c1b51012321a29c312f6fe54e82dd29fbce66489c8894df488d703f0a01"
+    },
+    {
+      "path": "packages/appnest_renderer/test/appearance_test.dart",
+      "gitSha256": "388a06f6b3ff5bded02413f04c2e7f1254a7619de0b06739679f5482bf0edd45",
+      "workingSha256": "388a06f6b3ff5bded02413f04c2e7f1254a7619de0b06739679f5482bf0edd45"
+    },
+    {
+      "path": "packages/appnest_renderer/test/device_test.dart",
+      "gitSha256": "f3c14e64bfe6f5751f641f4cf1c64b3446bba394a1da4ee94a5498c7b411fd1a",
+      "workingSha256": "f3c14e64bfe6f5751f641f4cf1c64b3446bba394a1da4ee94a5498c7b411fd1a"
+    },
+    {
+      "path": "packages/appnest_renderer/test/form_recovery_test.dart",
+      "gitSha256": "af189918c0d714677bb2648ed3186a86cf8c6ab32784112ebff7261fd8340052",
+      "workingSha256": "af189918c0d714677bb2648ed3186a86cf8c6ab32784112ebff7261fd8340052"
+    },
+    {
+      "path": "packages/appnest_renderer/test/legacy_configured_runtime_test.dart",
+      "gitSha256": "d7f2ef2e45ef4a9f4b5508a409b4c32d220a4da5c5e2a79f3183ae7b78c66749",
+      "workingSha256": "d7f2ef2e45ef4a9f4b5508a409b4c32d220a4da5c5e2a79f3183ae7b78c66749"
+    },
+    {
+      "path": "packages/appnest_renderer/test/pending_image_recovery_test.dart",
+      "gitSha256": "364f71d1fd8ce5c38f5b6d504104ffd9938ed3e94f0b560239ee15f2a77f6772",
+      "workingSha256": "364f71d1fd8ce5c38f5b6d504104ffd9938ed3e94f0b560239ee15f2a77f6772"
+    },
+    {
+      "path": "packages/appnest_renderer/test/record_display_fallback_test.dart",
+      "gitSha256": "56cdbc6875d3b2aff9c8bdec095db54ba18740252ba4748443b6c2568bfa8840",
+      "workingSha256": "56cdbc6875d3b2aff9c8bdec095db54ba18740252ba4748443b6c2568bfa8840"
+    },
+    {
+      "path": "packages/appnest_renderer/test/rich_components_test.dart",
+      "gitSha256": "88ce8f0cbfdd437f5aea7684a8e9f7bf72f823f672671d992c1ba3386100d29f",
+      "workingSha256": "88ce8f0cbfdd437f5aea7684a8e9f7bf72f823f672671d992c1ba3386100d29f"
+    },
+    {
+      "path": "packages/appnest_renderer/test/rich_large_text_test.dart",
+      "gitSha256": "a5a9f0b95d1d4d2b6fb28f98e8732988326950ba50d639e7f6047be6314c2fa2",
+      "workingSha256": "a5a9f0b95d1d4d2b6fb28f98e8732988326950ba50d639e7f6047be6314c2fa2"
+    },
+    {
+      "path": "packages/appnest_renderer/test/rich_runtime_test.dart",
+      "gitSha256": "9e71c3400e37f9a3db7298bfe275626af85abb576b7871c6cb78a612fd67cc02",
+      "workingSha256": "9e71c3400e37f9a3db7298bfe275626af85abb576b7871c6cb78a612fd67cc02"
+    },
+    {
+      "path": "packages/appnest_renderer/test/runtime_feedback_test.dart",
+      "gitSha256": "059ca6d55462971585934ffb0f17b0464dcc367cab6a440a38015dd7f92033ef",
+      "workingSha256": "059ca6d55462971585934ffb0f17b0464dcc367cab6a440a38015dd7f92033ef"
+    },
+    {
+      "path": "packages/appnest_renderer/test/runtime_test.dart",
+      "gitSha256": "13e5fc885695358c82d35e573067c6ee7320dba35ab9098cb412e404f865832c",
+      "workingSha256": "13e5fc885695358c82d35e573067c6ee7320dba35ab9098cb412e404f865832c"
+    },
+    {
+      "path": "packages/appnest_renderer/test/text_search_test.dart",
+      "gitSha256": "b493cccecd20f879f0d6e418ffa7e5abe30027e68d08567c77e02002b426755e",
+      "workingSha256": "b493cccecd20f879f0d6e418ffa7e5abe30027e68d08567c77e02002b426755e"
+    },
+    {
+      "path": "packages/appnest_renderer/test/utility_test.dart",
+      "gitSha256": "4372e6316bba74c2b9b3e076e954ce808086f6f608d29e919a614f7528ef02a0",
+      "workingSha256": "4372e6316bba74c2b9b3e076e954ce808086f6f608d29e919a614f7528ef02a0"
+    },
+    {
+      "path": "packages/appnest_renderer/test/ux_responsive_test.dart",
+      "gitSha256": "b24019d9b8fd925d65a95d72c7a99f4533acbd08178e47219e2e0a0b24a8c5f3",
+      "workingSha256": "b24019d9b8fd925d65a95d72c7a99f4533acbd08178e47219e2e0a0b24a8c5f3"
+    },
+    {
+      "path": "packages/appnest_renderer/test/visual_capture_test.dart",
+      "gitSha256": "7224be1a8fb3d2e072fdd571c5155a9eed9c9baa6bfef9c37b0dec697e7f5d2b",
+      "workingSha256": "7224be1a8fb3d2e072fdd571c5155a9eed9c9baa6bfef9c37b0dec697e7f5d2b"
+    },
+    {
+      "path": "packages/appnest_renderer/test/visual_edit_test.dart",
+      "gitSha256": "3acf7e931a5c473ff4139226329a9587b4f57df0f89f45809eeaa9e770adde4e",
+      "workingSha256": "3acf7e931a5c473ff4139226329a9587b4f57df0f89f45809eeaa9e770adde4e"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/calendar.json",
+      "gitSha256": "b6e33d7c78f39e36fda394e443da0ebe89e5d81cfcbce995284b1225ebcade14",
+      "workingSha256": "b6e33d7c78f39e36fda394e443da0ebe89e5d81cfcbce995284b1225ebcade14"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/chores.json",
+      "gitSha256": "cf6de7cc73b594ed88cd212080fc6b6737b29f23c499a5266a465b60f373663d",
+      "workingSha256": "cf6de7cc73b594ed88cd212080fc6b6737b29f23c499a5266a465b60f373663d"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/focus.json",
+      "gitSha256": "b75159a4d71736e261f6181bf5de477888ac15636290daa1edd89b9c0aa18f20",
+      "workingSha256": "b75159a4d71736e261f6181bf5de477888ac15636290daa1edd89b9c0aa18f20"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/habitTracker.json",
+      "gitSha256": "828d2e23be8ebd1b0d6733f855749188c2c05508678b0cfe69df8a3c05af56e9",
+      "workingSha256": "828d2e23be8ebd1b0d6733f855749188c2c05508678b0cfe69df8a3c05af56e9"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/notes.json",
+      "gitSha256": "12dcc2dff358c188beefe779179d6bb8c0adfb968f69bd76241009bdabc4a144",
+      "workingSha256": "12dcc2dff358c188beefe779179d6bb8c0adfb968f69bd76241009bdabc4a144"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/phoneToolkit.json",
+      "gitSha256": "9738a75544b782f6bcbf7d51fd057b3533d1eea7d7db504d96df57361fee41d1",
+      "workingSha256": "9738a75544b782f6bcbf7d51fd057b3533d1eea7d7db504d96df57361fee41d1"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/photoJournal.json",
+      "gitSha256": "64e73767bf723fa30f2efabded791bf5a9a14a27cacd1550a1eaf32d40ce3bd6",
+      "workingSha256": "64e73767bf723fa30f2efabded791bf5a9a14a27cacd1550a1eaf32d40ce3bd6"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/planner.json",
+      "gitSha256": "85052be7f5738f8ea8fbb5248f7d66b50d2fbb662f67c6cb5745df34647df512",
+      "workingSha256": "85052be7f5738f8ea8fbb5248f7d66b50d2fbb662f67c6cb5745df34647df512"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/projectHub.json",
+      "gitSha256": "689efd812599816966839eb2c91f6bf32e6353ae523e2e5a92a60141aea4e9c2",
+      "workingSha256": "689efd812599816966839eb2c91f6bf32e6353ae523e2e5a92a60141aea4e9c2"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/reading.json",
+      "gitSha256": "6ebf3fc2dcd094d22f899a19170a73ba02a8def627a5b8480e7e1ee64bbe9c88",
+      "workingSha256": "6ebf3fc2dcd094d22f899a19170a73ba02a8def627a5b8480e7e1ee64bbe9c88"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/reminders.json",
+      "gitSha256": "c09557f85552b8446b9a63cb7b5410323b77f008475c5cf05e37ad77c81acada",
+      "workingSha256": "c09557f85552b8446b9a63cb7b5410323b77f008475c5cf05e37ad77c81acada"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/unsupported.json",
+      "gitSha256": "d860862f418a7e86d032fc4bc0b1b9b8bb14c94f8ffb8620eb531c10aee8af7f",
+      "workingSha256": "d860862f418a7e86d032fc4bc0b1b9b8bb14c94f8ffb8620eb531c10aee8af7f"
+    },
+    {
+      "path": "packages/appnest_spec/fixtures/volunteer.json",
+      "gitSha256": "e00cfad8fac6ba8a1a5d62771ff6feabedf8e2fb539b4e7063564700a3a7d0f9",
+      "workingSha256": "e00cfad8fac6ba8a1a5d62771ff6feabedf8e2fb539b4e7063564700a3a7d0f9"
+    },
+    {
+      "path": "packages/appnest_spec/lib/appnest_spec.dart",
+      "gitSha256": "6241387f384c28682c7befdd550e987374d067369574af13becee687d745fe6e",
+      "workingSha256": "6241387f384c28682c7befdd550e987374d067369574af13becee687d745fe6e"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/appearance.dart",
+      "gitSha256": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e",
+      "workingSha256": "c5851f112756fb650c55e8db1cb23040960ee7a9a68664f87f0db289993b8c1e"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/device_spec.dart",
+      "gitSha256": "ad79778c211c67c074c1bf522e8bdd2a4f6ffd66e28793e3bb9359e5653a7029",
+      "workingSha256": "ad79778c211c67c074c1bf522e8bdd2a4f6ffd66e28793e3bb9359e5653a7029"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/rich_spec.dart",
+      "gitSha256": "f001a7e653e266bd6e8f86d691ed7809db00fae22a2601b3268a6e0716818b42",
+      "workingSha256": "f001a7e653e266bd6e8f86d691ed7809db00fae22a2601b3268a6e0716818b42"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/rich_templates.dart",
+      "gitSha256": "c6a4ab1d72859d41425b03b18f1e4340e870694a79954483566627b5ba721d98",
+      "workingSha256": "c6a4ab1d72859d41425b03b18f1e4340e870694a79954483566627b5ba721d98"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/schema.dart",
+      "gitSha256": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24",
+      "workingSha256": "d69e5ec714cd4c1261aa22b71eb1f89ff8d43251e487128962fdf54d5e006c24"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/spec.dart",
+      "gitSha256": "b8e82aa6613bef2451b5221946df408ddb09153ecbf2c28909eda6f990dad6e3",
+      "workingSha256": "b8e82aa6613bef2451b5221946df408ddb09153ecbf2c28909eda6f990dad6e3"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/templates.dart",
+      "gitSha256": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3",
+      "workingSha256": "673572be4dfd159e97e20a9fe25261e1e1584be3fa5846e6e8209667825b40b3"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/utility_spec.dart",
+      "gitSha256": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442",
+      "workingSha256": "e46705202a768a25a92825b6ea65dbb8a344a46432165829036d3d19e1c7a442"
+    },
+    {
+      "path": "packages/appnest_spec/lib/src/utility_templates.dart",
+      "gitSha256": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18",
+      "workingSha256": "4f6aaf6927d4fc2d2b385d6378c94ec80d4434cbdbd74f149bc24d01667b9e18"
+    },
+    {
+      "path": "packages/appnest_spec/pubspec.yaml",
+      "gitSha256": "74e0dd05a42046744392f1e43fa9b395dac1ea5a82b2e15cbcfa03e4c2aec23a",
+      "workingSha256": "74e0dd05a42046744392f1e43fa9b395dac1ea5a82b2e15cbcfa03e4c2aec23a"
+    },
+    {
+      "path": "packages/appnest_spec/schema/appspec-v1.schema.json",
+      "gitSha256": "08e4a45aee4e67a050a1202a48688c7dcce1b88c93c66d53ef42c4cb6ccf5086",
+      "workingSha256": "08e4a45aee4e67a050a1202a48688c7dcce1b88c93c66d53ef42c4cb6ccf5086"
+    },
+    {
+      "path": "packages/appnest_spec/test/add_field_bindings_test.dart",
+      "gitSha256": "192116d9bd1f70d3cbb7a0f723e7655711a0130c0ddbb425a9a45d1e3f641f75",
+      "workingSha256": "192116d9bd1f70d3cbb7a0f723e7655711a0130c0ddbb425a9a45d1e3f641f75"
+    },
+    {
+      "path": "packages/appnest_spec/test/appearance_test.dart",
+      "gitSha256": "e97146a3f87da33f92e3dbe1a6c9a2bc94d8571ce7d58a22c57e13d2c6988578",
+      "workingSha256": "e97146a3f87da33f92e3dbe1a6c9a2bc94d8571ce7d58a22c57e13d2c6988578"
+    },
+    {
+      "path": "packages/appnest_spec/test/device_test.dart",
+      "gitSha256": "c840bdc52f58dfc2c14994e5495ca7a4f7cafb0cf578ce9d519baa69db7ddfa1",
+      "workingSha256": "c840bdc52f58dfc2c14994e5495ca7a4f7cafb0cf578ce9d519baa69db7ddfa1"
+    },
+    {
+      "path": "packages/appnest_spec/test/navigation_test.dart",
+      "gitSha256": "99f42858d6eaa7f84889885d8954f65b1529a63ae55b41f8b00e8258d54be17b",
+      "workingSha256": "99f42858d6eaa7f84889885d8954f65b1529a63ae55b41f8b00e8258d54be17b"
+    },
+    {
+      "path": "packages/appnest_spec/test/rich_components_test.dart",
+      "gitSha256": "556ea13f7dcf1ca32884af774406ede5b0b142c19ca8b1a364cd1a8a2ac6dc1c",
+      "workingSha256": "556ea13f7dcf1ca32884af774406ede5b0b142c19ca8b1a364cd1a8a2ac6dc1c"
+    },
+    {
+      "path": "packages/appnest_spec/test/spec_test.dart",
+      "gitSha256": "8cf81e625897641b7b4ab585ed10c671390fc961ac20d0cc622d0f4de4f4cd6a",
+      "workingSha256": "8cf81e625897641b7b4ab585ed10c671390fc961ac20d0cc622d0f4de4f4cd6a"
+    },
+    {
+      "path": "packages/appnest_spec/test/strict_timestamp_test.dart",
+      "gitSha256": "1c7f1b5ec21d1853b0b970dc3cfe7bffb00d13df22c64cf9c82fb2ee46feb833",
+      "workingSha256": "1c7f1b5ec21d1853b0b970dc3cfe7bffb00d13df22c64cf9c82fb2ee46feb833"
+    },
+    {
+      "path": "packages/appnest_spec/test/utility_test.dart",
+      "gitSha256": "ebbfce3fb1a26f9bc236cfc7a82ea0d39742ffc504abb1381db86b9e98ae76a2",
+      "workingSha256": "ebbfce3fb1a26f9bc236cfc7a82ea0d39742ffc504abb1381db86b9e98ae76a2"
+    },
+    {
+      "path": "packages/appnest_spec/test/visual_edit_test.dart",
+      "gitSha256": "4b95c488a65c874d7529fc5b9df6d9bc49154c84040d5ce77e2faade13b11d45",
+      "workingSha256": "4b95c488a65c874d7529fc5b9df6d9bc49154c84040d5ce77e2faade13b11d45"
+    },
+    {
+      "path": "packages/appnest_spec/tool/export.dart",
+      "gitSha256": "ec021cdf14ed0cffc43996fc84bd63438826e94276589b58a12097487b3f03b3",
+      "workingSha256": "ec021cdf14ed0cffc43996fc84bd63438826e94276589b58a12097487b3f03b3"
+    },
+    {
+      "path": "packages/tinkerloom_client/README.md",
+      "gitSha256": "29caa4c0f173fe014a8d3c7d15b6c61053f0a814aa7330d5c86601f4f0666e5b",
+      "workingSha256": "29caa4c0f173fe014a8d3c7d15b6c61053f0a814aa7330d5c86601f4f0666e5b"
+    },
+    {
+      "path": "packages/tinkerloom_client/lib/src/adapter.dart",
+      "gitSha256": "3a0aeb7789862cf0f2399d832d9d930f9546af2c4a928adb795a182c7217cd56",
+      "workingSha256": "3a0aeb7789862cf0f2399d832d9d930f9546af2c4a928adb795a182c7217cd56"
+    },
+    {
+      "path": "packages/tinkerloom_client/lib/src/endpoints.dart",
+      "gitSha256": "ee8c9d2a0a48780970ca6369afff77ccd32cf4f5f8b95a907ab86f67e39aec92",
+      "workingSha256": "ee8c9d2a0a48780970ca6369afff77ccd32cf4f5f8b95a907ab86f67e39aec92"
+    },
+    {
+      "path": "packages/tinkerloom_client/lib/src/models.dart",
+      "gitSha256": "e27edd494f4fb87e88e8e60e774faede07233a909b657784eba1811a79881a17",
+      "workingSha256": "e27edd494f4fb87e88e8e60e774faede07233a909b657784eba1811a79881a17"
+    },
+    {
+      "path": "packages/tinkerloom_client/lib/src/session.dart",
+      "gitSha256": "3d149ed567b095c6bd099fec5419f634310e6417e9e843f7df3949e56172f9ea",
+      "workingSha256": "3d149ed567b095c6bd099fec5419f634310e6417e9e843f7df3949e56172f9ea"
+    },
+    {
+      "path": "packages/tinkerloom_client/lib/tinkerloom_client.dart",
+      "gitSha256": "ac55a66fd7418f4535ec79e35cee94fa1de2e1fe412c5d61cce279a2bda88fab",
+      "workingSha256": "ac55a66fd7418f4535ec79e35cee94fa1de2e1fe412c5d61cce279a2bda88fab"
+    },
+    {
+      "path": "packages/tinkerloom_client/live_smoke/create_recovery.dart",
+      "gitSha256": "3cbb052b963c278d6a95a40b065624d6795f98a23afe46043d1e6984ee49d3e1",
+      "workingSha256": "3cbb052b963c278d6a95a40b065624d6795f98a23afe46043d1e6984ee49d3e1"
+    },
+    {
+      "path": "packages/tinkerloom_client/live_smoke/final_smoke.dart",
+      "gitSha256": "5fa65275544dd066207e41303c6b8f64ad4352757c507907e56ab8a3b981f829",
+      "workingSha256": "5fa65275544dd066207e41303c6b8f64ad4352757c507907e56ab8a3b981f829"
+    },
+    {
+      "path": "packages/tinkerloom_client/live_smoke/real_http.dart",
+      "gitSha256": "329cef07bbf8b90f74c9a4c0c8df08b6b6e653ea7110e69090f6c02e37b70fe4",
+      "workingSha256": "329cef07bbf8b90f74c9a4c0c8df08b6b6e653ea7110e69090f6c02e37b70fe4"
+    },
+    {
+      "path": "packages/tinkerloom_client/pubspec.yaml",
+      "gitSha256": "b876d4fc8816b17b85b438e458142302a3814f4101cb331209dae5802b7dd48b",
+      "workingSha256": "b876d4fc8816b17b85b438e458142302a3814f4101cb331209dae5802b7dd48b"
+    },
+    {
+      "path": "packages/tinkerloom_client/test/client_test.dart",
+      "gitSha256": "9d3ca46425067747533eb5d2b7dc5bd59298d683b39c269aab4a8404f1fe6998",
+      "workingSha256": "9d3ca46425067747533eb5d2b7dc5bd59298d683b39c269aab4a8404f1fe6998"
+    },
+    {
+      "path": "packages/tinkerloom_client/test/live_runner_transport_test.dart",
+      "gitSha256": "a5f228a7595fa43e66a30574020c8a7e0ecd355d09ccfff5c362834603b0b297",
+      "workingSha256": "a5f228a7595fa43e66a30574020c8a7e0ecd355d09ccfff5c362834603b0b297"
+    },
+    {
+      "path": "packages/tinkerloom_client/test/smoke_create_recovery_test.dart",
+      "gitSha256": "61c5e6022005d3b7e5f3d6669f5e9cd3ec06b94a1038c90cd140a2d4b56e138d",
+      "workingSha256": "61c5e6022005d3b7e5f3d6669f5e9cd3ec06b94a1038c90cd140a2d4b56e138d"
+    },
+    {
+      "path": "pubspec.lock",
+      "gitSha256": "bcfbfeba6bf0a7b442941f4143c69a9ae52710acfc7e2c0e691512a3185925b6",
+      "workingSha256": "bcfbfeba6bf0a7b442941f4143c69a9ae52710acfc7e2c0e691512a3185925b6"
+    },
+    {
+      "path": "pubspec.yaml",
+      "gitSha256": "ae9a5c00d86561e306ae2d9d74197a2ac563f2335da8534b15af16026f93a5cd",
+      "workingSha256": "ae9a5c00d86561e306ae2d9d74197a2ac563f2335da8534b15af16026f93a5cd"
+    }
+  ],
+  "mismatches": [],
+  "androidCompileBaseCommit": "1b87197bf11bf0967a2f433098bd682862ffed36",
+  "unchangedNonIosTrackedInputs": 231,
+  "normalizationChangedPaths": [
+    ".gitignore",
+    "apps/flutter/ios/Podfile.lock",
+    "apps/flutter/ios/Runner.xcodeproj/project.pbxproj",
+    "apps/flutter/ios/Runner.xcworkspace/contents.xcworkspacedata"
+  ]
+}

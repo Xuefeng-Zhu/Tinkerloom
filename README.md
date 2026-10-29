@@ -4,6 +4,8 @@ Tinkerloom restores the original **Flutter** mini-app interface with the existin
 
 The previous React Native implementation is preserved on [`codex/react-native-backup-20261029`](https://github.com/Xuefeng-Zhu/Tinkerloom/tree/codex/react-native-backup-20261029). Its 730-test, native-build and Cloud receipts remain historical, source-specific evidence and are not Flutter acceptance results. See [Flutter migration and verification](docs/FLUTTER_MIGRATION.md) for the new client’s checks and remaining gates.
 
+Current verification: **589 offline Flutter/spec tests**, 405 backend tests, and successful web, Android Release and unsigned iOS Release builds. The capped Cloud smoke awaits existing credentials; this restoration has made **zero Appwrite Cloud requests**.
+
 Tinkerloom uses **fresh Appwrite development data**. The original AppNest checkout, users, records and credentials remain preserved. AI-provider configuration and production release are deferred.
 
 ## Run Flutter

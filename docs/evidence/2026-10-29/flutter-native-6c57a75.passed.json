@@ -1,0 +1,100 @@
+{
+  "capturedAt": "2026-10-29T09:53:38.860937+00:00",
+  "sourceCommit": "6c57a753d338c13303362953750024cca3e04203",
+  "status": "passed",
+  "flutter": "3.47.0",
+  "dart": "3.13.0",
+  "android": {
+    "sourceCommit": "6c57a753d338c13303362953750024cca3e04203",
+    "status": "passed",
+    "artifact": "/Users/frank/mygit/Tinkerloom/output/flutter/2026-10-29/Tinkerloom-android-release-6c57a75.apk",
+    "bytes": 62947672,
+    "sha256": "a17cb97d922d3d98addff25814f5c516a2c16df4c7bc2005c8c2476891f55bc7",
+    "bundleIdentifier": "com.tinkerloom.app",
+    "applicationLabel": "Tinkerloom",
+    "signing": "development debug key used for local release; not store signing",
+    "embeddedAotLibraries": {
+      "lib/arm64-v8a/libapp.so": {
+        "bytes": 8717192,
+        "sha256": "f3de7a912ef339861a03eba80d94338fa6f2430c864e3ff2b5741be09f05c0eb"
+      },
+      "lib/armeabi-v7a/libapp.so": {
+        "bytes": 9585224,
+        "sha256": "372ff53dfd14c088b644c868045d21ad71835e2c726e97f729717bd31a5aacd8"
+      },
+      "lib/x86_64/libapp.so": {
+        "bytes": 9044872,
+        "sha256": "f5f6fb6f0429aaaae395350648d94166afdce3cacb77436bcf6e1b740f166d3f"
+      }
+    },
+    "bundledLoraFont": [
+      "assets/flutter_assets/assets/fonts/Lora.ttf"
+    ],
+    "cloudCalls": 0,
+    "installed": false,
+    "launched": false,
+    "nativeUiValidated": false,
+    "compileBaseCommit": "1b87197bf11bf0967a2f433098bd682862ffed36",
+    "binding": "All non-iOS tracked source inputs are byte-identical between the compile base and final commit; final commit adds only iOS CocoaPods normalization and its generated-file ignore.",
+    "log": "/private/tmp/tinkerloom-flutter-native-android-1b87197.log",
+    "signatureVerification": "passed Android Debug certificate",
+    "certificateSha256": "0130f00e1caf94c7adf0cca07fe4addb73bee15aba2961881ce720147195a407"
+  },
+  "ios": {
+    "buildStartedSourceCommit": "1b87197bf11bf0967a2f433098bd682862ffed36",
+    "status": "passed",
+    "bundleIdentifier": "com.tinkerloom.app",
+    "displayName": "Tinkerloom",
+    "supportedPlatforms": [
+      "iPhoneOS"
+    ],
+    "archiveSha256": "25d52b01e172fb402d31242b26c67b3cf8a8745ad98351a10c54648d7b694b6b",
+    "archiveBytes": 8923362,
+    "signed": false,
+    "embeddedAotSha256": "e7d8b792dfd06cfcc24119b5efa7798dce621eb9c964c0fd4e048fdf6ba2614d",
+    "cloudCalls": 0,
+    "installed": false,
+    "launched": false,
+    "nativeUiValidated": false,
+    "sourceCommit": "6c57a753d338c13303362953750024cca3e04203",
+    "binding": "The actual CocoaPods-normalized working tree used for compilation is committed unchanged in this final commit.",
+    "artifact": "/Users/frank/mygit/Tinkerloom/output/flutter/2026-10-29/Tinkerloom-ios-unsigned-release-6c57a75.zip",
+    "sha256": "25d52b01e172fb402d31242b26c67b3cf8a8745ad98351a10c54648d7b694b6b",
+    "bytes": 8923362,
+    "log": "/private/tmp/tinkerloom-flutter-native-ios-1b87197.log",
+    "architecture": "arm64",
+    "minimumIosVersion": "15.0"
+  },
+  "sourceManifest": {
+    "path": "/private/tmp/tinkerloom-flutter-native-6c57a75-inputs.json",
+    "sha256": "c6a96d7aa666dc9ce1f2602c61512dcb12b8e874e17ed2590e8390c605816557",
+    "files": 274,
+    "mismatches": 0,
+    "unchangedNonIosInputsFromAndroidCompileBase": 231
+  },
+  "logs": {
+    "android": {
+      "path": "/private/tmp/tinkerloom-flutter-native-android-1b87197.log",
+      "bytes": 1718,
+      "sha256": "4425028fa2c6a59ad1cd5dfdf400918c2ead3a7ebff44bb6504d16943fa92b11"
+    },
+    "ios": {
+      "path": "/private/tmp/tinkerloom-flutter-native-ios-1b87197.log",
+      "bytes": 670,
+      "sha256": "a1c56281eb95cdc33d80ae88063dd8646c36e14000a59f655a79dd751540dcce"
+    }
+  },
+  "preservedFailure": "/private/tmp/tinkerloom-flutter-native-android-d427fbd.failed.json",
+  "publicConfiguration": "apps/flutter/config/appwrite.dev.json",
+  "cloudCalls": 0,
+  "sdkNetworkActivity": "Gradle/CocoaPods dependency resolution only; no Appwrite request or backend test",
+  "installed": false,
+  "launched": false,
+  "nativeUiValidated": false,
+  "storeSigningValidated": false,
+  "limitations": [
+    "Android Release uses the local development debug certificate.",
+    "iOS arm64 Release is unsigned and not directly installable on a device.",
+    "Compilation and package inspection do not prove native account sessions, UI, permissions or hardware behavior."
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "capturedAt": "2026-10-29T09:56:30.048994+00:00",
+  "sourceCommit": "6c57a753d338c13303362953750024cca3e04203",
+  "dartCodeVerificationCommit": "1b87197bf11bf0967a2f433098bd682862ffed36",
+  "finalSourceDelta": "Only iOS CocoaPods project integration, dependency lock and generated-file ignore; Dart/Android inputs unchanged.",
+  "flutter": "3.47.0",
+  "dart": "3.13.0",
+  "offlineTests": {
+    "sharedSpec": 90,
+    "renderer": 247,
+    "appwriteClientAndSmokeGuards": 19,
+    "originalFlutterApplication": 233,
+    "total": 589,
+    "failures": 0,
+    "skips": 0
+  },
+  "backend": {
+    "standardTests": 405,
+    "customServiceChecks": 118,
+    "offlineServiceBridgeTests": 17,
+    "runtimeChanged": false
+  },
+  "analysis": "passed",
+  "formatting": "passed",
+  "webBuild": "passed",
+  "androidRelease": "passed; development debug certificate",
+  "iosRelease": "passed; unsigned arm64",
+  "nativeUiValidated": false,
+  "originalAppNestPreserved": true,
+  "cloudRequests": 0,
+  "logs": {
+    "initialFullFlutterVerification": {
+      "path": "/private/tmp/tinkerloom-flutter-final-client-verify.log",
+      "sha256": "5c91a404e071df026da95bec8aaa385d435aee6a7cc238e29f04381f39b0410d"
+    },
+    "finalClientAnalysis": {
+      "path": "/private/tmp/tinkerloom-flutter-client-amended-analyze.log",
+      "sha256": "4118d26b35072e33aa41f18fdb1a355b7bc6962b9da1ebbd877539413964de4c"
+    },
+    "finalApplicationAnalysis": {
+      "path": "/private/tmp/tinkerloom-flutter-final-amendment-analyze.log",
+      "sha256": "7db3958ccb4e2ecf191718f4f0eb7aa67334b73da5c7b3e3c63d62be8df6cd54"
+    },
+    "finalFormatting": {
+      "path": "/private/tmp/tinkerloom-flutter-final-amendment-format.log",
+      "sha256": "688177e27bb24c7c2c206d8f58f5906f722cfeda2e5d2ca1139b5a128729e237"
+    },
+    "finalAppwriteClientTests": {
+      "path": "/private/tmp/tinkerloom-flutter-client-final19.log",
+      "sha256": "6e1d297ddb6b9a12975d689b04e2c6ab7b779482e801cfc5ceabe00de04b28b8"
+    },
+    "finalApplicationTests": {
+      "path": "/private/tmp/tinkerloom-flutter-app-final233-cwd.log",
+      "sha256": "4bdc0a90a136f310c012ab61b4ccff73dd3a7f7b188570b6c4bceff084740fa0"
+    },
+    "finalWebBuild": {
+      "path": "/private/tmp/tinkerloom-flutter-final-web-1b87197.log",
+      "sha256": "9e8c1e5c9733dc396908d08edc7cbb52081184cbbf4717b89139756ca786352a"
+    },
+    "backendServiceChecks": {
+      "path": "/private/tmp/tinkerloom-flutter-backend-service.log",
+      "sha256": "abb5ee298803a0ae59debfad1eff8c88eecc0098d9b1e972bf653542c784c200"
+    },
+    "backendTests": {
+      "path": "/private/tmp/tinkerloom-flutter-backend-tests.log",
+      "sha256": "6415e1a8a0a059087bbf6fe7639a799617592b23518fec79c81611307468fa1d"
+    },
+    "offlineServiceBridges": {
+      "path": "/private/tmp/tinkerloom-flutter-port-offline-bridges.log",
+      "sha256": "9fcdd4857387748da48f5d14776d060a4a3e4ac00314763b9aeb5158dc6154f8"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-29T09:43:24.438734+00:00",
+  "sourceCommit": "d427fbd8949dd60ca7d6aa5dee1c8c3a1962d7a1",
+  "platform": "android",
+  "buildType": "release",
+  "status": "failed",
+  "command": "flutter build apk --release --no-pub --dart-define-from-file=config/appwrite.dev.json",
+  "error": "flutter_local_notifications requires core library desugaring in app Android config",
+  "artifactProduced": false,
+  "inputManifest": "/private/tmp/tinkerloom-flutter-native-inputs.json",
+  "inputManifestSha256": "34e98d4d7b455d73292a81f5ed129cd88e57305284a1235d1f8f7830dadfa52f",
+  "log": "/private/tmp/tinkerloom-flutter-native-android-d427fbd.failed.log",
+  "logSha256": "2d80c5e4735cb1f53284b6c8486230164eafb914d983a6c53c037d38a1f95e7e",
+  "cloudCalls": 0,
+  "installed": false,
+  "launched": false,
+  "fix": "Enable coreLibraryDesugaring and desugar_jdk_libs 2.1.4 as required by installed plugin documentation; source amendment awaits parent review."
+}

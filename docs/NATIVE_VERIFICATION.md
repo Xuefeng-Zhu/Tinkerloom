@@ -1,3 +1,5 @@
+> **Historical React Native build report.** Current Flutter build evidence is in [FLUTTER_MIGRATION.md](FLUTTER_MIGRATION.md) and [the Flutter native receipt](evidence/2026-10-29/flutter-native-6c57a75.passed.json). Original source links below refer to the preserved React Native backup branch.
+
 # Current native verification
 
 The latest source-specific checkpoint is `60e7e4e45f57a511d9373e60f06f4e308551995f`: all three native builds and an independent artifact audit passed. The [checkpoint and artifact summary](evidence/2026-10-28/native-60e7e4e/README.md) bind 314 tracked mobile files, current native dependencies and the unchanged custom module to the actual packages. All 16 requested source markers and 16 route keys are included in the platform exports and both embedded releases, including the completed guarded-read coordination and reminder-read lifetime checks. Source inclusion does not establish semantic native runtime behavior.
