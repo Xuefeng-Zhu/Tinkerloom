@@ -3,6 +3,7 @@ import { useFocusEffect } from "expo-router";
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   View,
@@ -11,6 +12,7 @@ import { Button } from "../components/Button";
 import { Notice } from "../components/Notice";
 import { RuntimeRenderer } from "../renderer/RuntimeRenderer";
 import type { FullAppController } from "./FullAppController";
+import { requestedDeviceCapabilities } from "../spec/bindings";
 import { fullTemplates } from "./catalog";
 import { DeviceAccessPanel } from "./DeviceAccessPanel";
 import { GenerationPanel } from "./GenerationPanel";
@@ -18,9 +20,12 @@ import { IsolatedPreview } from "./IsolatedPreview";
 import { PublicationPanel } from "./PublicationPanel";
 import { SpecEditor } from "./SpecEditor";
 import { DraftBannerImages } from "./DraftBannerImages";
+import { mediaRecoveryPresentation } from "../media/controller";
 import { PrivateMediaRecoveryPanel } from "../media/RecoveryPanel";
 import type { MediaRuntimeAdapter } from "../media/adapter";
-import { Card, Choices, styles } from "./ui";
+import { Card, styles } from "./ui";
+const noMediaSnapshot = () => null;
+const noMediaSubscription = () => () => {};
 export interface FullAppScreenProps {
   controller: FullAppController;
   onBack: () => void;
@@ -46,6 +51,15 @@ export function FullAppScreen({
     ),
     [leave, setLeave] = useState<(() => void) | null>(null),
     [localError, setLocalError] = useState<string | null>(null);
+  const media = (controller.runtime?.adapter as MediaRuntimeAdapter | undefined)
+    ?.media;
+  const mediaState = useSyncExternalStore(
+    media?.subscribe ?? noMediaSubscription,
+    media?.getSnapshot ?? noMediaSnapshot,
+    media?.getSnapshot ?? noMediaSnapshot,
+  );
+  const showMediaRecovery =
+    mediaState && mediaRecoveryPresentation(mediaState) !== "hidden";
   useEffect(() => {
     void controller.load();
   }, [controller]);
@@ -187,22 +201,45 @@ export function FullAppScreen({
       )}
       {state.app && (
         <View style={{ padding: 12 }}>
-          <Choices
-            label="App mode"
-            disabled={state.busy}
-            values={
-              editorVisible
+          <View style={{ gap: 8 }}>
+            <Text style={styles.muted}>App mode</Text>
+            <View
+              accessibilityRole="radiogroup"
+              accessibilityLabel="App mode"
+              style={styles.row}
+            >
+              {(editorVisible
                 ? (["live", "build", "preview"] as const)
                 : (["live"] as const)
-            }
-            value={editorVisible ? mode : "live"}
-            onChange={(next) => {
-              void navigate(() => {
-                setLocalError(null);
-                setMode(next);
-              });
-            }}
-          />
+              ).map((next) => {
+                const checked = next === (editorVisible ? mode : "live");
+                return (
+                  <Pressable
+                    key={next}
+                    accessibilityRole="radio"
+                    accessibilityLabel={`App mode: ${next}`}
+                    accessibilityState={{ checked, disabled: state.busy }}
+                    aria-checked={checked}
+                    aria-disabled={state.busy}
+                    disabled={state.busy}
+                    onPress={() => {
+                      void navigate(() => {
+                        setLocalError(null);
+                        setMode(next);
+                      });
+                    }}
+                    style={[
+                      styles.choice,
+                      checked && styles.chosen,
+                      state.busy && { opacity: 0.5 },
+                    ]}
+                  >
+                    <Text style={styles.body}>{next}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
         </View>
       )}
       {state.loading && !state.app && (
@@ -227,14 +264,9 @@ export function FullAppScreen({
           {state.app?.archived && (
             <Notice text="Archived app · Existing authorized reads and exact receipt checks remain available. New record writes are disabled." />
           )}
-          {(controller.runtime?.adapter as MediaRuntimeAdapter | undefined)
-            ?.media ? (
+          {media && showMediaRecovery ? (
             <ScrollView style={{ maxHeight: 220 }}>
-              <PrivateMediaRecoveryPanel
-                controller={
-                  (controller.runtime!.adapter as MediaRuntimeAdapter).media!
-                }
-              />
+              <PrivateMediaRecoveryPanel controller={media} />
             </ScrollView>
           ) : null}
           {controller.runtime ? (
@@ -248,11 +280,14 @@ export function FullAppScreen({
               <Notice text="This app has no published version yet. Open Build to create a private candidate." />
             )
           )}
-          {controller.device && (
-            <ScrollView style={{ maxHeight: 300 }}>
-              <DeviceAccessPanel device={controller.device} />
-            </ScrollView>
-          )}
+          {controller.device &&
+            controller.runtime &&
+            requestedDeviceCapabilities(controller.runtime.adapter.spec)
+              .length > 0 && (
+              <ScrollView style={{ maxHeight: 300 }}>
+                <DeviceAccessPanel device={controller.device} />
+              </ScrollView>
+            )}
         </View>
       ) : mode === "preview" ? (
         !state.candidate && (

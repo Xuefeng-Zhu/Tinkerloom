@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Pressable, Text, View } from "react-native";
 import { canonicalJson } from "../spec/schema";
+import { mediaRecoveryPresentation } from "./controller";
 import type { PrivateMediaController } from "./controller";
 import type { MediaUploadContext } from "./types";
 import { attachReadyMedia } from "./attachment";
@@ -42,16 +43,24 @@ export function PrivateMediaRecoveryPanel({
       current.active = false;
     };
   }, [controller, identity, externallyDisabled, onAttach]);
-  if (destination && canonicalJson(controller.currentContext()) !== identity)
+  const presentation = mediaRecoveryPresentation(state);
+  if (presentation === "hidden") return null;
+  if (
+    presentation === "retained" &&
+    destination &&
+    canonicalJson(controller.currentContext()) !== identity
+  )
     return null;
-  if (!state.initialized && !state.error) return null;
-  if (!state.stage && !state.error) return null;
-  const run = async (kind: "retry" | "poll" | "discard" | "attach") => {
+  const run = async (
+    kind: "retry" | "poll" | "discard" | "attach" | "recover",
+  ) => {
     const current = lifetime.current;
     if (!current?.active || externallyDisabled) return;
     setMessage(null);
     try {
-      if (kind === "discard") {
+      if (kind === "recover") {
+        await controller.recover();
+      } else if (kind === "discard") {
         await controller.discard();
         if (current.active)
           setMessage(
@@ -83,14 +92,16 @@ export function PrivateMediaRecoveryPanel({
     } catch {
       if (current.active)
         setMessage(
-          "The image request is unavailable. Check retained status before trying again.",
+          kind === "recover"
+            ? "Local recovery is still unavailable. Upload status has not been confirmed."
+            : "The image request is unavailable. Check retained status before trying again.",
         );
     }
   };
   const disabled = externallyDisabled || state.busy || state.accessDenied;
   const button = (
     label: string,
-    kind: "retry" | "poll" | "discard" | "attach",
+    kind: "retry" | "poll" | "discard" | "attach" | "recover",
   ) => (
     <Pressable
       key={kind}
@@ -111,6 +122,22 @@ export function PrivateMediaRecoveryPanel({
       <Text>{label}</Text>
     </Pressable>
   );
+  if (presentation === "local_unavailable")
+    return (
+      <View
+        accessibilityLabel="Local image recovery unavailable"
+        style={{ gap: 8, padding: 12 }}
+      >
+        <Text style={{ fontWeight: "600" }}>
+          Local image recovery is unavailable
+        </Text>
+        <Text>
+          Image upload status cannot be confirmed until local recovery opens.
+        </Text>
+        {message ? <Text accessibilityRole="alert">{message}</Text> : null}
+        {button("Retry local recovery", "recover")}
+      </View>
+    );
   return (
     <View
       accessibilityLabel="Private image recovery"

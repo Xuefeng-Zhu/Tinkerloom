@@ -67,9 +67,11 @@ export function withPrivateMedia(
       if (closed) fail("disposed");
       const result = await work();
       lifetime.assertActive();
+      if (closed) fail("disposed");
       return result;
     } catch (error) {
-      throw media.handleFailure(error);
+      media.observeRuntimeFailure(error);
+      throw error;
     }
   };
   return {

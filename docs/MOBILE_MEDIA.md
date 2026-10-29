@@ -41,3 +41,24 @@ device UI behavior. The subsequent bounded memory-only implementation is documen
 It preserves exact accepted original bytes without claiming sanitization or full
 JPEG/WebP entropy decoding. The integrated suite now passes 482 tests, including
 121 new image groups, plus typecheck, lint, formatting and all platform exports.
+
+
+## Record-read failure and recovery presentation correction
+
+Mounted browser testing found a record-read failure was incorrectly converted
+into a private-image upload error, showing retained progress of 0/0 without an
+upload. The media wrapper now preserves base runtime errors and only explicit
+auth/lifecycle failures clear private cache authority. Recovery progress requires
+a real positive-byte saved upload; local storage initialization failures have
+their own read-only retry notice. Empty recovery wrappers and device-consent
+panels for specifications requesting no device features are omitted. App-mode
+radios also expose explicit web and native checked state.
+
+Known read operations may repeat only a definite completed service409
+transaction_conflict, at most three total attempts with the same immutable
+request. Account and disposed guards apply to every attempt. Unknown transport
+results, other errors and mutations are never automatically repeated.
+
+All490 integrated client tests, TypeScript, lint, formatting and all platform
+exports passed. Browser revalidation and the final native source delta remain
+separate acceptance steps. The5f006b9 native checkpoint predates this correction.

@@ -1,3 +1,4 @@
+import { BackendError } from "../backend/errors";
 import { decodeAppSpec } from "../spec/decode";
 import { getCollection } from "../spec/bindings";
 import {
@@ -200,43 +201,79 @@ export class FunctionRuntimeAdapter implements RuntimeAdapter {
     payload: ObjectData,
     mutation = false,
   ): Promise<ObjectData> {
-    ensure(!this.disposed, "disposed", "This app is closed.");
-    try {
-      const result = object(
-        await this.transport({
-          op,
-          appId: this.appId,
-          ...(op.startsWith("spec.") ? { versionId: this.versionId } : {}),
-          ...payload,
-        }),
-      );
-      // Both the current app transport (throws) and an unwrapped function envelope
-      // (returns error) fail closed; never treat an error body as an empty page.
-      if (result.error) {
-        const error = object(result.error);
-        const code = text(error.code);
-        throw new RuntimeError(
-          code,
-          typeof error.message === "string"
-            ? error.message
-            : "The command could not be completed.",
-          mutation && code === "transaction_conflict",
+    const request = freezeValidated(
+      runtimeJsonSnapshot({
+        op,
+        appId: this.appId,
+        ...(op.startsWith("spec.") ? { versionId: this.versionId } : {}),
+        ...payload,
+      }) as ObjectData,
+    );
+    const retryableRead =
+      !mutation &&
+      [
+        "spec.query",
+        "spec.getRecord",
+        "spec.summary",
+        "spec.aggregate",
+        "listMembers",
+      ].includes(op);
+    for (let attempt = 0; ; attempt++) {
+      ensure(!this.disposed, "disposed", "This app is closed.");
+      try {
+        const result = object(await this.transport(request));
+        // Raw/unknown envelopes never qualify for the definite service-error retry.
+        if (result.error) {
+          const error = object(result.error),
+            code = text(error.code);
+          throw new RuntimeError(
+            code,
+            typeof error.message === "string"
+              ? error.message
+              : "The command could not be completed.",
+            mutation && code === "transaction_conflict",
+          );
+        }
+        ensure(
+          !this.disposed,
+          "disposed",
+          "This app was closed while loading.",
         );
+        return result;
+      } catch (error) {
+        ensure(
+          !this.disposed,
+          "disposed",
+          "This app was closed while loading.",
+        );
+        if (
+          retryableRead &&
+          attempt < 2 &&
+          error instanceof BackendError &&
+          error.kind === "service" &&
+          error.status === 409 &&
+          error.code === "transaction_conflict" &&
+          !error.uncertain
+        ) {
+          // A completed, definite read rejection can be repeated with the same
+          // captured request. Account-fenced transport rechecks each attempt.
+          await new Promise((resolve) =>
+            setTimeout(resolve, 40 * (attempt + 1)),
+          );
+          continue;
+        }
+        if (
+          mutation &&
+          error instanceof RuntimeError &&
+          error.code === "invalid_response"
+        )
+          throw new RuntimeError(
+            "outcome_unknown",
+            "The command returned an unreadable response. Retry its original operation ID.",
+            true,
+          );
+        throw runtimeError(error, mutation);
       }
-      ensure(!this.disposed, "disposed", "This app was closed while loading.");
-      return result;
-    } catch (error) {
-      if (
-        mutation &&
-        error instanceof RuntimeError &&
-        error.code === "invalid_response"
-      )
-        throw new RuntimeError(
-          "outcome_unknown",
-          "The command returned an unreadable response. Retry its original operation ID.",
-          true,
-        );
-      throw runtimeError(error, mutation);
     }
   }
   private version(result: ObjectData) {

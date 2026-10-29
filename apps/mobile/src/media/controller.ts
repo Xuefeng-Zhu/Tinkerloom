@@ -4,7 +4,11 @@ import type {
   PickedImage,
   RuntimeTransport,
 } from "../runtime/types";
-import { RuntimeError, runtimeError } from "../runtime/errors";
+import {
+  RuntimeError,
+  runtimeError,
+  isRuntimeAccessFailure,
+} from "../runtime/errors";
 import { getCollection } from "../spec/bindings";
 import { canonicalJson } from "../spec/schema";
 import { freezeValidated } from "../runtime/immutable";
@@ -62,6 +66,14 @@ const empty = (): UploadSnapshot => ({
   error: null,
   accessDenied: false,
 });
+/** Recovery UI is based on an actual retained stage, never a generic read error. */
+export function mediaRecoveryPresentation(
+  state: UploadSnapshot,
+): "hidden" | "local_unavailable" | "retained" {
+  if (state.accessDenied) return "hidden";
+  if (state.stage !== null && state.inputBytes > 0) return "retained";
+  return !state.initialized && state.error ? "local_unavailable" : "hidden";
+}
 interface CachedImage {
   fingerprint: string;
   resource: ImageResource;
@@ -932,6 +944,27 @@ export class PrivateMediaController {
       return { ...result };
     } finally {
       bytes?.fill(0);
+    }
+  }
+  /** Base record/query failures cannot become upload errors or fake recovery state. */
+  observeRuntimeFailure(error: unknown) {
+    if (this.disposed) return;
+    const failure = runtimeError(error);
+    if (
+      !isRuntimeAccessFailure(failure) &&
+      ![
+        "definition_conflict",
+        "app_archived",
+        "disposed",
+        "session_changed",
+        "media_scope_changed",
+      ].includes(failure.code)
+    )
+      return;
+    this.invalidate();
+    if (!this.state.accessDenied) {
+      this.emit({ accessDenied: true });
+      this.options.onAccessFailure?.(failure);
     }
   }
   handleFailure(error: unknown): RuntimeError {
