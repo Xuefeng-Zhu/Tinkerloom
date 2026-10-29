@@ -19,7 +19,12 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -40,6 +45,14 @@
           "microphonePermission": false,
           "recordAudioAndroid": false,
           "barcodeScannerEnabled": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Select an image to upload privately to the mini-app you are using.",
+          "cameraPermission": "Allow Tinkerloom to use the camera permission only when you turn on a mini-app flashlight. No photos or video are captured.",
+          "microphonePermission": false
         }
       ]
     ]

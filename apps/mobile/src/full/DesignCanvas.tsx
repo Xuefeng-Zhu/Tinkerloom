@@ -1,5 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Pressable, Text, View, useWindowDimensions } from "react-native";
+import type { PreviewStaticImageAssets } from "../runtime/previewImageAssets";
 import type { AppSpec } from "../spec/types";
 import { RendererContext } from "../renderer/context";
 import { pageRows, resolveAppearance } from "../renderer/appearance";
@@ -9,14 +10,18 @@ import { PreviewSession } from "./PreviewSession";
 import { Choices, styles } from "./ui";
 export function DesignCanvas({
   spec,
+  staticImageAssets,
   onSelectView,
   onSelectPage,
 }: {
   spec: AppSpec;
+  staticImageAssets?: PreviewStaticImageAssets;
   onSelectView: (id: string) => void;
   onSelectPage: (id: string) => void;
 }) {
-  const [preview] = useState(() => new PreviewSession(spec, "design"));
+  const [preview] = useState(
+    () => new PreviewSession(spec, "design", staticImageAssets),
+  );
   const session = useSyncExternalStore(
     preview.subscribe,
     preview.getSnapshot,
@@ -31,8 +36,8 @@ export function DesignCanvas({
     theme = resolveAppearance(spec),
     dimensions = useWindowDimensions();
   useEffect(() => {
-    preview.update(spec);
-  }, [preview, spec]);
+    preview.update(spec, staticImageAssets);
+  }, [preview, spec, staticImageAssets]);
   useEffect(() => () => preview.dispose(), [preview]);
   useEffect(() => {
     void controller.refresh();

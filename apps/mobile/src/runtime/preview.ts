@@ -1,3 +1,9 @@
+import {
+  observePreviewImages,
+  snapshotPreviewImages,
+  staticPreviewImageIds,
+} from "./previewImageAssets";
+import type { PreviewStaticImageAssets } from "./previewImageAssets";
 import { ownValue } from "../spec/ownValue";
 import {
   getAction,
@@ -170,6 +176,7 @@ export interface PreviewOptions {
   role?: RuntimeRole;
   now?: Date;
   records?: Record<string, RecordValues[]>;
+  staticImageAssets?: PreviewStaticImageAssets;
 }
 export class PreviewRuntimeAdapter implements RuntimeAdapter {
   readonly appId = "preview";
@@ -186,7 +193,6 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
     "members",
     "reminders",
     "imageRead",
-    "imageUpload",
     "watch",
   ] as const);
   private rows = new Map<string, RuntimeRecord>();
@@ -198,8 +204,31 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
   private listeners = new Set<() => void>();
   private sequence = 0;
   private disposed = false;
+  private staticImageAssets?: PreviewStaticImageAssets;
+  private staticImages: ReadonlyMap<string, Readonly<ImageAsset>> = new Map();
+  private stopImages = () => {};
+  private imageEpoch = 0;
+  get imageRevision() {
+    return this.imageEpoch;
+  }
+  private replaceImages(spec: AppSpec, assets?: PreviewStaticImageAssets) {
+    const images = snapshotPreviewImages(assets, staticPreviewImageIds(spec));
+    this.stopImages();
+    this.staticImageAssets = assets;
+    this.staticImages = images;
+    this.imageEpoch++;
+    this.stopImages = observePreviewImages(assets, () => {
+      this.staticImages = new Map();
+      this.imageEpoch++;
+      if (!this.disposed) for (const listener of this.listeners) listener();
+    });
+  }
   /** Preserve this isolated sandbox only when the declaration changes presentation. */
-  applyPresentationSpec(input: AppSpec) {
+  applyPresentationSpec(
+    input: AppSpec,
+    staticImageAssets: PreviewStaticImageAssets | null = this
+      .staticImageAssets ?? null,
+  ) {
     const next = freezeValidated(decodeAppSpec(input));
     ensure(!this.disposed, "disposed", "The preview is closed.");
     ensure(
@@ -207,11 +236,13 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
       "preview_behavior_changed",
       "This change requires a new isolated preview.",
     );
+    this.replaceImages(next, staticImageAssets ?? undefined);
     this.currentSpec = next;
     for (const listener of this.listeners) listener();
   }
   constructor(spec: AppSpec, options: PreviewOptions = {}) {
     this.currentSpec = freezeValidated(decodeAppSpec(spec));
+    this.replaceImages(this.currentSpec, options.staticImageAssets);
     this.role = options.role ?? "owner";
     this.approvedRuleIds = this.spec.automationRequests.map((rule) => rule.id);
     for (const c of this.spec.collections)
@@ -596,6 +627,8 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
   }
   async readImage(assetId: string): Promise<ImageAsset> {
     this.active();
+    const owned = this.staticImages.get(assetId);
+    if (owned) return { ...owned };
     ensure(
       /^preview_image_\d+$/.test(assetId),
       "not_found",
@@ -613,10 +646,11 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
       "Native image picking in an isolated preview. Use an example image instead",
     );
   }
-  async uploadImage(image: PickedImage) {
+  async uploadImage(_image: PickedImage): Promise<string> {
     this.active();
-    ensure(image.bytes.length > 0, "invalid_input", "Choose a nonempty image.");
-    return `preview_image_${++this.sequence}`;
+    return unavailable(
+      "Byte uploads in an isolated preview. Use an example image or host-authorized static image instead",
+    );
   }
   watch(listener: () => void) {
     this.active();
@@ -627,6 +661,9 @@ export class PreviewRuntimeAdapter implements RuntimeAdapter {
   }
   dispose() {
     this.disposed = true;
+    this.stopImages();
+    this.staticImages = new Map();
+    this.staticImageAssets = undefined;
     this.listeners.clear();
     this.rows.clear();
     this.receipts.clear();

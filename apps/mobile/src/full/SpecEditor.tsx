@@ -1,3 +1,4 @@
+import type { PreviewStaticImageAssets } from "../runtime/previewImageAssets";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { Button } from "../components/Button";
@@ -179,11 +180,13 @@ function defaultView(
 }
 export function SpecEditor({
   spec,
+  staticImageAssets,
   disabled,
   onEdit,
   onReplace,
 }: {
   spec: AppSpec;
+  staticImageAssets?: PreviewStaticImageAssets;
   disabled: boolean;
   onEdit: (edit: SemanticEdit, debounce?: boolean) => void;
   onReplace: (value: unknown) => void;
@@ -275,6 +278,7 @@ export function SpecEditor({
             }
           />
           <DesignCanvas
+            staticImageAssets={staticImageAssets}
             spec={spec}
             onSelectView={(id) => {
               setView(id);

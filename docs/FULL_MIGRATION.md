@@ -392,3 +392,13 @@ built fromb542d9f is active with execute[] and no domains, a60-minute recovery
 interval and120-second timeout. Its [configuration receipt](evidence/2026-10-28/private-worker-20261028.json)
 is provisioning/build evidence, not worker/media delivery acceptance. The core
 built fromfc71fe4 is now active; full REST acceptance is running separately.
+
+
+### React Native private media host integration (2026-10-28)
+
+[MOBILE_MEDIA.md](MOBILE_MEDIA.md) records the authenticated record and saved-draft
+upload/recovery integration, encrypted child scopes, explicit banner attachment
+and revocable static image grants for isolated Try/Design previews. Integrated
+verification passed 361 tests, TypeScript, lint, formatting and all three Expo
+exports. Cloud media/worker delivery and final-source native/device proof remain
+open; this source milestone does not close M01–M06 or G04/G05 by itself.

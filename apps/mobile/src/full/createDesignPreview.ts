@@ -1,11 +1,15 @@
 import type { AppSpec } from "../spec/types";
+import type { PreviewOptions } from "../runtime/preview";
 import type { RuntimeAdapter } from "../runtime/types";
 import { RuntimeController } from "../runtime/controller";
 import { RuntimeError } from "../runtime/errors";
 import { createIsolatedPreview } from "../runtime/createPreview";
 /** The visual inspector shares semantic rendering but never permits record commands. */
-export function createDesignPreview(spec: AppSpec) {
-  const isolated = createIsolatedPreview(spec),
+export function createDesignPreview(
+  spec: AppSpec,
+  options: Pick<PreviewOptions, "staticImageAssets"> = {},
+) {
+  const isolated = createIsolatedPreview(spec, options),
     adapter = isolated.controller.adapter;
   const readOnly = new Proxy(adapter, {
     get(target, key) {

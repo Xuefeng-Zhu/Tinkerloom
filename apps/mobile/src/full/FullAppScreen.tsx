@@ -17,6 +17,9 @@ import { GenerationPanel } from "./GenerationPanel";
 import { IsolatedPreview } from "./IsolatedPreview";
 import { PublicationPanel } from "./PublicationPanel";
 import { SpecEditor } from "./SpecEditor";
+import { DraftBannerImages } from "./DraftBannerImages";
+import { PrivateMediaRecoveryPanel } from "../media/RecoveryPanel";
+import type { MediaRuntimeAdapter } from "../media/adapter";
 import { Card, Choices, styles } from "./ui";
 export interface FullAppScreenProps {
   controller: FullAppController;
@@ -224,6 +227,16 @@ export function FullAppScreen({
           {state.app?.archived && (
             <Notice text="Archived app · Existing authorized reads and exact receipt checks remain available. New record writes are disabled." />
           )}
+          {(controller.runtime?.adapter as MediaRuntimeAdapter | undefined)
+            ?.media ? (
+            <ScrollView style={{ maxHeight: 220 }}>
+              <PrivateMediaRecoveryPanel
+                controller={
+                  (controller.runtime!.adapter as MediaRuntimeAdapter).media!
+                }
+              />
+            </ScrollView>
+          ) : null}
           {controller.runtime ? (
             <RuntimeRenderer
               controller={controller.runtime}
@@ -320,7 +333,15 @@ export function FullAppScreen({
                           : "Private candidate is saved"}
                 </Text>
               </View>
+              <DraftBannerImages controller={controller} state={state} />
+              {state.previewImagesLoading ? (
+                <Notice text="Loading approved private banner images for the isolated preview…" />
+              ) : null}
+              {state.previewUnavailableAssetCount ? (
+                <Notice text="Some private banner images are unavailable. The isolated preview keeps placeholders; no image upload or record write runs there." />
+              ) : null}
               <SpecEditor
+                staticImageAssets={state.previewStaticImageAssets}
                 spec={state.candidate}
                 disabled={locked}
                 onEdit={(edit, debounce) => {
@@ -350,6 +371,7 @@ export function FullAppScreen({
           }
         >
           <IsolatedPreview
+            staticImageAssets={state.previewStaticImageAssets}
             spec={state.candidate}
             onExit={() => setMode("build")}
           />

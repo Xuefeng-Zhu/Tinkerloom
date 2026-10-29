@@ -7,13 +7,11 @@ import {
 } from "../notifications/NotificationsController";
 import { AutomationRunsController } from "../notifications/AutomationRunsController";
 import type { NotificationsServices } from "../notifications/NotificationsContext";
-import { withReminders } from "../notifications/withReminders";
-import { withInvalidation } from "../runtime/invalidation";
-import { FunctionRuntimeAdapter } from "../runtime/functionAdapter";
 import type { HostScope } from "../host/scope";
 import type { RuntimeTransport } from "../runtime/types";
 import { ensure } from "../runtime/errors";
 import { FullAppController } from "./FullAppController";
+import { createLiveRuntime } from "./createLiveRuntime";
 import { FullWorkspaceController } from "./FullWorkspaceController";
 
 export interface AccountSession {
@@ -138,37 +136,19 @@ export class FullRegistry {
         transport: this.transport(expected),
         newId: () => this.options.backend.newId(),
         adapterFactory: (manifest, transport, context) => {
-          const lifetime = new HostLifetime(context.host.lifetime.scope);
-          const stop = context.host.lifetime.onDispose(() =>
-            lifetime.dispose(),
-          );
-          lifetime.onDispose(stop);
           const current = () =>
-            lifetime.active &&
+            context.host.lifetime.active &&
             this.apps.get(appId) === app &&
             sessionKey(this.options.readSession()) === sessionKey(expected);
-          const watched = withInvalidation(
-            new FunctionRuntimeAdapter(manifest, transport),
-            transport,
-            lifetime,
-            {
-              capability: context.platform?.invalidations ?? null,
-              onManifestChange: (stamp) =>
-                current() ? app?.observeInvalidation(stamp) : undefined,
-              onAccessFailure: (error) => {
-                if (current()) app?.invalidateAccess(error);
-              },
+          return createLiveRuntime(manifest, transport, context, {
+            newId: () => this.options.backend.newId(),
+            isCurrent: current,
+            onManifestChange: (stamp) =>
+              current() ? app?.observeInvalidation(stamp) : undefined,
+            onAccessFailure: (error) => {
+              if (current()) app?.invalidateAccess(error);
             },
-          );
-          const adapter = withReminders(watched, transport, lifetime, {
-            effects: context.platform?.effects ?? [],
           });
-          const dispose = adapter.dispose.bind(adapter);
-          adapter.dispose = () => {
-            dispose();
-            lifetime.dispose();
-          };
-          return adapter;
         },
       });
       this.apps.set(appId, app);

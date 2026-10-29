@@ -1,8 +1,15 @@
-import { useEffect, useState, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  useSyncExternalStore,
+  useCallback,
+} from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
 import type { FieldSpec, FormControl } from "../spec/types";
 import type {
   ImageAsset,
+  PickedImage,
   RuntimeAdapter,
   RuntimeMember,
   RuntimeRecord,
@@ -11,6 +18,9 @@ import type {
 import { useRuntime } from "./context";
 import { Body, Button, Input, Notice, Row } from "./primitives";
 import { displayField } from "./model";
+import { PrivateMediaRecoveryPanel } from "../media/RecoveryPanel";
+import type { MediaRuntimeAdapter } from "../media/adapter";
+import { RuntimeError } from "../runtime/errors";
 
 export function PrivateImage({
   assetId,
@@ -21,26 +31,61 @@ export function PrivateImage({
 }) {
   const { controller } = useRuntime(),
     adapter = controller.adapter;
+  const getImageRevision = useCallback(
+    () =>
+      adapter.preview &&
+      "imageRevision" in adapter &&
+      typeof adapter.imageRevision === "number"
+        ? adapter.imageRevision
+        : 0,
+    [adapter],
+  );
+  const subscribeImages = useCallback(
+    (listener: () => void) =>
+      adapter.preview &&
+      "imageRevision" in adapter &&
+      typeof adapter.imageRevision === "number"
+        ? adapter.watch(listener)
+        : () => {},
+    [adapter],
+  );
+  const imageRevision = useSyncExternalStore(
+    subscribeImages,
+    getImageRevision,
+    getImageRevision,
+  );
   const [response, setResponse] = useState<{
     scope: RuntimeAdapter;
     id: string;
+    revision: number;
     asset?: ImageAsset;
     error?: string;
   } | null>(null);
   const state =
-    response?.scope === adapter && response.id === assetId ? response : null;
+    response?.scope === adapter &&
+    response.id === assetId &&
+    response.revision === imageRevision
+      ? response
+      : null;
   useEffect(() => {
     let active = true;
     if (!adapter.features.has("imageRead")) return;
     adapter.readImage(assetId).then(
       (asset) => {
-        if (active) setResponse({ scope: adapter, id: assetId, asset });
+        if (active)
+          setResponse({
+            scope: adapter,
+            id: assetId,
+            revision: imageRevision,
+            asset,
+          });
       },
       () => {
         if (active)
           setResponse({
             scope: adapter,
             id: assetId,
+            revision: imageRevision,
             error: "This private image could not be loaded.",
           });
       },
@@ -48,7 +93,7 @@ export function PrivateImage({
     return () => {
       active = false;
     };
-  }, [adapter, assetId]);
+  }, [adapter, assetId, imageRevision]);
   if (!adapter.features.has("imageRead"))
     return <Notice>Private images are unavailable in this runtime.</Notice>;
   if (state?.error) return <Notice>{state.error}</Notice>;
@@ -209,8 +254,9 @@ export function FieldInput({
     setError(null);
     setUploading(true);
     onBusyChange?.(true);
+    let picked: PickedImage | null = null;
     try {
-      const picked = await controller.adapter.pickImage();
+      picked = await controller.adapter.pickImage();
       if (!active.active) return;
       if (picked) {
         const assetId = await controller.adapter.uploadImage(
@@ -225,6 +271,7 @@ export function FieldInput({
           "The image could not be uploaded. Your other values are retained.",
         );
     } finally {
+      picked?.bytes.fill(0);
       if (active.active) {
         setUploading(false);
         onBusyChange?.(false);
@@ -303,6 +350,23 @@ export function FieldInput({
             {uploading ? "Uploading…" : "Choose image"}
           </Button>
         )}
+        {!controller.adapter.preview &&
+        uploadContext &&
+        (controller.adapter as MediaRuntimeAdapter).media ? (
+          <PrivateMediaRecoveryPanel
+            controller={(controller.adapter as MediaRuntimeAdapter).media!}
+            destination={uploadContext}
+            disabled={disabled || uploading}
+            onAttach={(assetId) => {
+              if (!lifetime.current?.active || disabled)
+                throw new RuntimeError(
+                  "media_context_changed",
+                  "This form changed.",
+                );
+              onChange(assetId);
+            }}
+          />
+        ) : null}
         {!controller.adapter.preview &&
         !controller.adapter.features.has("imageUpload") ? (
           <Notice>Private image uploads are not available yet.</Notice>

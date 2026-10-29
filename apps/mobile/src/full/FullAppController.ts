@@ -1,3 +1,17 @@
+import { StaticPreviewImagePreloader } from "../host/staticPreviewImages";
+import { staticPreviewImageIds } from "../runtime/previewImageAssets";
+import type { PreviewStaticImageAssets } from "../runtime/previewImageAssets";
+import type { PrivateMediaController } from "../media/controller";
+import type { MediaRuntimeAdapter } from "../media/adapter";
+import {
+  createDraftMediaController,
+  selectReadyDraftMedia,
+} from "../media/draft";
+import type {
+  DraftMediaController,
+  SavedDraftMediaSnapshot,
+  SavedDraftMediaContext,
+} from "../media/draft";
 import type { InvalidationStamp } from "../runtime/invalidationTypes";
 import { BackendError } from "../backend/errors";
 import type { AppSpec } from "../spec/types";
@@ -43,6 +57,15 @@ export interface FullAppOptions {
     transport: RuntimeTransport,
     context: { host: HostStorage; platform: PlatformCapabilities | null },
   ) => RuntimeAdapter;
+  draftMediaFactory?: (
+    saved: SavedDraftMediaSnapshot,
+    transport: RuntimeTransport,
+    context: {
+      host: HostStorage;
+      current: () => SavedDraftMediaSnapshot | null;
+      onAccessFailure: (error: RuntimeError) => void;
+    },
+  ) => DraftMediaController;
   deviceFactory?: typeof createDeviceBridge;
   onAccessFailure?: (code: string) => void;
 }
@@ -63,6 +86,9 @@ export interface FullAppState {
   runtimeOutdated: boolean;
   refreshRequired: boolean;
   guidance: { question: string; options: string[] }[] | null;
+  previewStaticImageAssets: PreviewStaticImageAssets | undefined;
+  previewImagesLoading: boolean;
+  previewUnavailableAssetCount: number;
 }
 /** Authenticated transport is injected by the account registry. No credentials or model keys enter this controller. */
 export class FullAppController {
@@ -83,6 +109,9 @@ export class FullAppController {
     runtimeOutdated: false,
     refreshRequired: false,
     guidance: null,
+    previewStaticImageAssets: undefined,
+    previewImagesLoading: false,
+    previewUnavailableAssetCount: 0,
   };
   private listeners = new Set<() => void>();
   private liveLeases = new Map<symbol, boolean>();
@@ -96,6 +125,12 @@ export class FullAppController {
   runtime: RuntimeController | null = null;
   timers: UtilityTimerController | null = null;
   device: ScopedDeviceBridge | null = null;
+  draftMedia: DraftMediaController | null = null;
+  private draftMediaKey: string | null = null;
+  private previewImageLoader: StaticPreviewImagePreloader | null = null;
+  private previewImageSource: PrivateMediaController | null = null;
+  private previewImageSpec: AppSpec | null = null;
+  private previewImageEpoch = 0;
   constructor(readonly options: FullAppOptions) {
     this.host = options.host ?? createHostStorage(options.scope);
     this.journal = this.createJournal();
@@ -137,7 +172,266 @@ export class FullAppController {
   private emit(change: Partial<FullAppState>) {
     if (this.closed) return;
     this.state = { ...this.state, ...change };
+    this.reconcileDraftMedia();
+    this.reconcileStaticPreviewImages();
     for (const listener of this.listeners) listener();
+  }
+  /** Uses only authoritative saved metadata, never the dirty candidate. */
+  savedDraftMediaSnapshot(): SavedDraftMediaSnapshot | null {
+    const app = this.state.app;
+    if (!app) return null;
+    return {
+      appId: app.id,
+      role: app.role,
+      archived: app.archived,
+      draft: app.draft,
+      pendingGeneration:
+        this.closed ||
+        !this.canBuild ||
+        this.state.loading ||
+        this.state.busy ||
+        !!this.state.pending ||
+        this.state.refreshRequired ||
+        this.state.conflict ||
+        ["queued", "generating", "validating"].includes(
+          app.generation?.status ?? "",
+        ),
+    };
+  }
+  private closeDraftMedia() {
+    this.draftMedia?.dispose();
+    this.draftMedia = null;
+    this.draftMediaKey = null;
+  }
+  private reconcileDraftMedia() {
+    const saved = this.savedDraftMediaSnapshot();
+    const eligible =
+      !!saved &&
+      this.state.platform?.privateMedia === true &&
+      !saved.pendingGeneration &&
+      !saved.archived &&
+      ["owner", "builder"].includes(saved.role) &&
+      saved.draft?.publishedVersionId === null;
+    const key = eligible
+      ? JSON.stringify([
+          saved!.appId,
+          saved!.role,
+          saved!.draft!.revision,
+          saved!.draft!.candidateHash,
+        ])
+      : null;
+    if (key === this.draftMediaKey && this.draftMedia?.lifetime.active) return;
+    this.closeDraftMedia();
+    if (!key || !saved) return;
+    try {
+      const context = {
+        host: this.host,
+        current: () => this.savedDraftMediaSnapshot(),
+        onAccessFailure: (error: RuntimeError) => this.invalidateAccess(error),
+      };
+      this.draftMedia =
+        this.options.draftMediaFactory?.(
+          saved,
+          this.options.transport,
+          context,
+        ) ??
+        createDraftMediaController(
+          saved,
+          this.options.transport,
+          this.host.lifetime,
+          {
+            privateMedia: true,
+            newId: this.options.newId,
+            current: context.current,
+            onAccessFailure: context.onAccessFailure,
+          },
+        );
+      this.draftMediaKey = key;
+    } catch {
+      /* Other builder features stay available when local media storage is unavailable. */
+    }
+  }
+  private staticPreviewSource(): PrivateMediaController | null {
+    if (this.draftMedia?.lifetime.active) return this.draftMedia;
+    const media = (this.runtime?.adapter as MediaRuntimeAdapter | undefined)
+      ?.media;
+    return media?.lifetime.active ? media : null;
+  }
+  private closeStaticPreviewImages() {
+    this.previewImageLoader?.dispose();
+    this.previewImageLoader = null;
+    this.previewImageSource = null;
+    this.previewImageSpec = null;
+    this.previewImageEpoch++;
+    this.state = {
+      ...this.state,
+      previewStaticImageAssets: undefined,
+      previewImagesLoading: false,
+      previewUnavailableAssetCount: 0,
+    };
+  }
+  private reconcileStaticPreviewImages() {
+    const spec = this.state.candidate,
+      source = this.staticPreviewSource();
+    if (
+      this.closed ||
+      !this.canBuild ||
+      !spec ||
+      !source ||
+      this.state.loading ||
+      this.state.busy ||
+      this.state.pending ||
+      this.state.refreshRequired ||
+      this.state.editorError ||
+      !this.state.platform?.privateMedia
+    ) {
+      this.closeStaticPreviewImages();
+      return;
+    }
+    if (
+      this.previewImageSource === source &&
+      this.previewImageSpec === spec &&
+      this.previewImageLoader
+    )
+      return;
+    this.closeStaticPreviewImages();
+    this.previewImageSource = source;
+    this.previewImageSpec = spec;
+    const identity = JSON.stringify([
+      this.options.scope.appId,
+      this.state.app?.draft?.revision ?? null,
+      this.state.app?.draft?.candidateHash ?? null,
+      this.state.app?.version?.id ?? null,
+      ++this.previewImageEpoch,
+    ]);
+    const uploaded = source.getSnapshot().asset;
+    const known = new Set([
+      ...(this.state.app?.draft
+        ? staticPreviewImageIds(this.state.app.draft.spec)
+        : []),
+      ...(this.state.app?.version
+        ? staticPreviewImageIds(this.state.app.version.spec)
+        : []),
+      ...(uploaded?.status === "ready" ? [uploaded.assetId] : []),
+    ]);
+    let loader: StaticPreviewImagePreloader;
+    const current = () =>
+      !this.closed &&
+      source.lifetime.active &&
+      this.previewImageSource === source &&
+      this.previewImageSpec === this.state.candidate &&
+      this.previewImageLoader === loader;
+    loader = new StaticPreviewImagePreloader({
+      lifetime: source.lifetime,
+      readImage: (assetId) => {
+        ensure(
+          known.has(assetId),
+          "media_not_ready",
+          "Only saved or broker-confirmed images can be preloaded.",
+        );
+        return source.read(assetId, "thumbnail");
+      },
+      ownsUri: (uri) => source.ownsUri(uri),
+      isCurrent: (requested) => requested === identity && current(),
+    });
+    this.previewImageLoader = loader;
+    this.state = {
+      ...this.state,
+      previewImagesLoading: staticPreviewImageIds(spec).length > 0,
+    };
+    void loader.load(spec, identity).then(
+      (result) => {
+        if (!current() || result.closed) return;
+        this.emit({
+          previewStaticImageAssets: result.staticImageAssets,
+          previewImagesLoading: false,
+          previewUnavailableAssetCount: result.unavailableAssetIds.length,
+        });
+      },
+      () => {
+        if (current())
+          this.emit({
+            previewImagesLoading: false,
+            previewUnavailableAssetCount: staticPreviewImageIds(spec).length,
+          });
+      },
+    );
+  }
+  /** Explicitly edit one selected existing banner; the normal Save button commits it. */
+  async applyDraftBannerImage(
+    viewId: string,
+    assetId: string,
+    expected: SavedDraftMediaContext,
+  ) {
+    this.editable();
+    const media = this.draftMedia;
+    const current = () =>
+      !this.closed &&
+      this.draftMedia === media &&
+      !!media?.lifetime.active &&
+      !this.state.dirty &&
+      !this.state.editorError &&
+      !this.state.busy &&
+      !this.state.pending &&
+      !this.state.loading &&
+      !this.state.conflict &&
+      !this.state.refreshRequired &&
+      this.canBuild;
+    ensure(
+      media && current(),
+      "media_context_changed",
+      "Save the current private candidate before choosing its image.",
+    );
+    const target = this.state.candidate?.views.find(
+      (view) => view.id === viewId,
+    );
+    ensure(
+      target?.type === "banner",
+      "invalid_input",
+      "Choose an existing banner explicitly.",
+    );
+    const fingerprint = JSON.stringify(target);
+    const selected = await selectReadyDraftMedia(
+      media,
+      expected,
+      () =>
+        current() &&
+        JSON.stringify(
+          this.state.candidate?.views.find((view) => view.id === viewId),
+        ) === fingerprint,
+      (ready) => {
+        ensure(
+          ready === assetId,
+          "media_context_changed",
+          "The selected private image changed.",
+        );
+        const { id: identity, ...view } = target;
+        ensure(
+          identity === viewId,
+          "invalid_input",
+          "The selected banner changed.",
+        );
+        this.edit({
+          type: "UpdateView",
+          viewId,
+          view: {
+            ...view,
+            options: {
+              ...view.options,
+              title: target.options!.title,
+              imageAssetId: ready,
+              imageAlt:
+                view.options?.imageAlt ?? view.options?.title ?? target.label,
+            },
+          },
+        });
+      },
+    );
+    ensure(
+      selected,
+      "media_not_ready",
+      "Check the private image status before choosing it.",
+    );
   }
   get canBuild() {
     const app = this.state.app;
@@ -205,6 +499,7 @@ export class FullAppController {
     const failure = runtimeError(error, mutation);
     if (
       isRuntimeAccessFailure(failure) ||
+      (accessRead && failure.code === "not_found") ||
       (accessRead && error instanceof BackendError && error.status === 404)
     ) {
       this.sequence++;
@@ -891,6 +1186,8 @@ export class FullAppController {
     this.sequence++;
     this.guidanceSequence++;
     this.stopAutosave();
+    this.closeStaticPreviewImages();
+    this.closeDraftMedia();
     this.disposeRuntime();
     this.journal.dispose();
     this.host.lifetime.dispose();

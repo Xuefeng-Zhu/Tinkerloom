@@ -1,0 +1,40 @@
+# React Native private media integration
+
+The authenticated full host composes polling, reminders and private media around
+one encrypted child scope. Sign-out, authority changes and runtime replacement
+close that scope, revoke ephemeral image resources and fence late responses.
+
+Record forms carry the exact version, action, field, target record and revision
+into uploads. The client persists encrypted upload intent before sending chunks;
+unknown results require explicit recovery. Only server-confirmed ready assets
+can be attached. Choosing an image does not save a record.
+
+Unpublished author drafts use their saved revision and candidate hash locally.
+An explicit existing banner selection creates an unsaved semantic edit after a
+ready-status check. The normal Save action commits it. Dirty or invalid candidates
+cannot attach a late upload, and no unsupported candidate hash enters the RPC.
+
+Preview image reads happen in the authenticated host. At most 16 known saved or
+broker-confirmed references are preloaded with three concurrent reads. The
+isolated preview receives revocable opaque image grants and has no authenticated
+transport, encrypted store, native picker or device bridge. Newly typed arbitrary
+asset IDs cannot trigger private reads. Presentation changes preserve preview
+records and navigation; behavior changes recreate the sandbox.
+
+Native selection uses the Expo image-only picker and bounded reads. Android broad
+storage and audio permissions are blocked; the existing camera permission remains
+for explicit flashlight control. Web selection checks size before copying bytes.
+Neither picker claims to sanitize originals: the private backend owns sanitization.
+
+## Verification boundary
+
+The 2026-10-28 integrated source passed 361 tests with no skips, TypeScript, Expo
+lint with zero warnings, formatting and Web/iOS/Android exports. This includes ten
+actual host integration groups and retained upload/recovery/draft/static-preview
+coverage. All 28 frozen integration and static-preview file hashes were checked
+before committing.
+
+These are local source, transport and lifecycle checks. They do not establish
+Cloud media delivery, native compilation of these changes, permission prompts or
+device UI behavior. Preview byte upload remains unavailable at this milestone
+until the separate bounded memory-only implementation is integrated.
