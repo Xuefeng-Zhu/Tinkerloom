@@ -269,6 +269,15 @@ Map<String, dynamic> creationRawRepairMetadata(
   final collectionIds = collections
       .map((collection) => collection['id'])
       .toSet();
+  final missingReferences = _undeclaredCollectionDiagnostics(
+    collections,
+    views,
+    rawActions,
+    rejected['automationRequests'],
+  );
+  if (missingReferences.isNotEmpty) {
+    return {'rawDiagnostics': missingReferences};
+  }
   final actions = <ActionSpec>[];
   try {
     for (final raw in rawActions) {
@@ -506,6 +515,73 @@ List<Map<String, dynamic>> _rawPageRoutes(
     }
   }
   return result;
+}
+
+/// Reports exact dangling collection references without rewriting the graph.
+/// Every declaration must parse independently and have a unique stable ID;
+/// malformed or ambiguous input receives no speculative repair instructions.
+List<String> _undeclaredCollectionDiagnostics(
+  List<Map> collections,
+  List<Map> views,
+  List<Map> actions,
+  Object? rawRules,
+) {
+  final rules = _strictIdentifiedMaps(rawRules, Limits.rules);
+  if (rules == null) return const [];
+  final parsedCollections = <CollectionSpec>[];
+  final parsedViews = <ViewSpec>[];
+  final parsedActions = <ActionSpec>[];
+  final parsedRules = <AutomationSpec>[];
+  try {
+    parsedCollections.addAll(
+      collections.map(
+        (v) => CollectionSpec.fromJson(Map<String, dynamic>.from(v)),
+      ),
+    );
+    parsedViews.addAll(
+      views.map((v) => ViewSpec.fromJson(Map<String, dynamic>.from(v))),
+    );
+    parsedActions.addAll(
+      actions.map((v) => ActionSpec.fromJson(Map<String, dynamic>.from(v))),
+    );
+    parsedRules.addAll(
+      rules.map((v) => AutomationSpec.fromJson(Map<String, dynamic>.from(v))),
+    );
+  } on SpecException {
+    return const [];
+  }
+  final declared = parsedCollections.map((v) => v.id).toSet();
+  final issues = <String>[];
+  for (final view in parsedViews) {
+    if (!view.contentOnly && !declared.contains(view.collectionId)) {
+      issues.add(
+        'View "${view.id}" references undeclared collection "${view.collectionId}".',
+      );
+    }
+  }
+  for (final action in parsedActions) {
+    if (!declared.contains(action.collectionId)) {
+      issues.add(
+        'Action "${action.id}" references undeclared collection "${action.collectionId}".',
+      );
+    }
+  }
+  for (final rule in parsedRules) {
+    if (!declared.contains(rule.collectionId)) {
+      issues.add(
+        'Automation "${rule.id}" references undeclared collection "${rule.collectionId}".',
+      );
+    }
+  }
+  if (issues.isEmpty) return const [];
+  return [
+    ...issues.take(8),
+    if (issues.length > 8)
+      'Additional undeclared collection references were omitted.',
+    'Use the correct explicitly declared collection IDs consistently. Add a '
+        'missing collection only when supported by the request; never infer '
+        'fields, permissions or behavior from an ID or label.',
+  ];
 }
 
 List<Map>? _strictIdentifiedMaps(Object? value, int limit) {

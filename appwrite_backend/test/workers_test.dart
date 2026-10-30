@@ -549,6 +549,44 @@ void main() {
     },
   );
   test(
+    'undeclared collection diagnostics reach an existing bounded repair without inventing a graph',
+    () async {
+      final bad = jsonDecode(ai.creationReferenceJson) as Map<String, dynamic>;
+      bad['collections'][0]['id'] = 'bookCatalog';
+      final rejected = jsonEncode(bad);
+      final provider = ScriptProvider()
+        ..answers.addAll([answer(rejected), answer(ai.creationReferenceJson)]);
+      final f = await fixture(provider: provider);
+      final job =
+          ((await f.generation(request: 'A reading list'))['generation']
+                  as Row)['id']
+              as String;
+      await f.worker.generate(job);
+      final first = f.store.rows['generation_jobs']![job]!;
+      expect(first['status'], 'queued');
+      expect(first['failureCategory'], 'spec_validation');
+      expect(
+        first['diagnostics'],
+        contains('View "bookList" references undeclared collection "books"'),
+      );
+      expect(
+        first['diagnostics'],
+        contains('never infer fields, permissions or behavior'),
+      );
+      expect(f.store.rows['spec_drafts'], isNull);
+      expect(provider.calls, hasLength(1));
+      f.clock.advance(3);
+      await f.worker.generate(job);
+      expect(provider.calls, hasLength(2));
+      expect(
+        (provider.calls.last['diagnostics'] as List).single,
+        contains('View "bookList" references undeclared collection "books"'),
+      );
+      expect(provider.calls.last['rejected'], rejected);
+      expect(f.store.rows['generation_jobs']![job]!['status'], 'preview ready');
+    },
+  );
+  test(
     'malformed response repair survives transient failure and late retries do not bypass nextAttemptAt',
     () async {
       final provider = ScriptProvider()

@@ -57,6 +57,77 @@ Map<String, Map> _bindings(Map<String, dynamic> candidate) => {
 };
 
 void main() {
+  test(
+    'undeclared collection hints report exact references without changing the definition',
+    () {
+      for (final kind in ['view', 'action', 'automation']) {
+        final candidate =
+            jsonDecode(creationReferenceJson) as Map<String, dynamic>;
+        candidate['name'] = 'PRIVATE_APP_BODY';
+        candidate['collections'][0]['label'] = 'PRIVATE_COLLECTION_LABEL';
+        if (kind == 'view') {
+          candidate['views'][0]['collectionId'] = 'missingBooks';
+        } else if (kind == 'action') {
+          candidate['actions'][0]['collectionId'] = 'missingBooks';
+        } else {
+          candidate['automationRequests'] = [
+            {
+              'id': 'reminder',
+              'trigger': {
+                'type': 'beforeTimestamp',
+                'collectionId': 'missingBooks',
+                'fieldId': 'dueAt',
+                'offsetSeconds': 0,
+              },
+              'effect': {'type': 'notifyOwner', 'channel': 'inApp'},
+            },
+          ];
+        }
+        final before = jsonEncode(candidate);
+        final notes =
+            (creationRawRepairMetadata(candidate)['rawDiagnostics'] as List)
+                .join(' ');
+        expect(
+          notes,
+          contains('references undeclared collection "missingBooks"'),
+        );
+        expect(
+          notes,
+          contains(
+            kind == 'view'
+                ? 'View "bookList"'
+                : kind == 'action'
+                ? 'Action "addBook"'
+                : 'Automation "reminder"',
+          ),
+        );
+        expect(notes, contains('never infer fields, permissions or behavior'));
+        expect(notes, isNot(contains('PRIVATE_APP_BODY')));
+        expect(notes, isNot(contains('PRIVATE_COLLECTION_LABEL')));
+        expect(jsonEncode(candidate), before);
+        expect(() => AppSpec.parse(before), throwsA(isA<SpecException>()));
+      }
+    },
+  );
+  test(
+    'undeclared collection hints fail closed on ambiguous or malformed declarations',
+    () {
+      final duplicate =
+          jsonDecode(creationReferenceJson) as Map<String, dynamic>;
+      duplicate['views'][0]['collectionId'] = 'missingBooks';
+      duplicate['collections'].add(
+        jsonDecode(jsonEncode(duplicate['collections'][0])),
+      );
+      expect(creationRawRepairMetadata(duplicate), isEmpty);
+      final malformed =
+          jsonDecode(creationReferenceJson) as Map<String, dynamic>;
+      malformed['views'][0]['collectionId'] = 'missingBooks';
+      malformed['actions'][0]['capability'] = 'unknown';
+      expect(creationRawRepairMetadata(malformed), isEmpty);
+      final valid = jsonDecode(creationReferenceJson) as Map<String, dynamic>;
+      expect(creationRawRepairMetadata(valid), isEmpty);
+    },
+  );
   test('public repair envelope bound is not definition validation', () {
     final invalid = {'formatVersion': 1, 'actions': <dynamic>[]};
     expect(isBoundedCreationRepairCandidate(invalid), isTrue);
