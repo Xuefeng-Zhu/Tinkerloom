@@ -191,7 +191,7 @@ dart test test/image_resource_test.dart test/image_sanitizer_test.dart test/medi
 dart compile exe lib/main.dart -o /private/tmp/tinkerloom-media-core
 ```
 
-Verified locally on 2026-10-28 with official Dart **3.11.0 stable, macos_arm64**.
+The recorded local verification used official Dart **3.11.0 stable, macos_arm64**.
 The SDK archive matched its published SHA-256
 `223245a42eab1b811e502e15625b867075ffe012de9eb5374a4cdde2ee087534`.
 [Official SDK metadata](https://storage.googleapis.com/dart-archive/channels/stable/release/3.11.0/VERSION),

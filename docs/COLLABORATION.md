@@ -82,7 +82,7 @@ Supported app mutations stage both workspace and app guards before rechecking me
 
 The combined backend suite has 51 check groups: the preceding 22 builder/rich-record checks and 29 collaboration checks. The latter cover the full role matrix; token hash-only persistence; recipient binding, expiry and revocation; private candidates and legacy adoption; revoked receipt hydration; issuer demotion/regrant; rolling quotas; barrier-controlled concurrent acceptance, revocation and publication; cross-app quota contention; read-only invitation review; archived access removal and exact receipt recovery; workspace admission limits and concurrent final-slot allocation; bounded revision increments; rollback; and committed-but-unconfirmed acceptance. These checks use a simulated optimistic transaction store. The separate transport check exercises actual HTTP encoding against a local fake server.
 
-The [preserved rich-record evidence](evidence/2026-10-28/README.md) predates this collaboration backend. It does not establish live Appwrite acceptance, browser use, or native-device behavior for invitations, shared roles, or private builder drafts. Those remain separate deployment and acceptance checks.
+The preserved rich-record evidence predates this collaboration backend. It does not establish live Appwrite acceptance, browser use, or native-device behavior for invitations, shared roles, or private builder drafts. Those remain separate deployment and acceptance checks.
 
 The guard design follows Appwrite's [atomic transaction and affected-row conflict semantics](https://appwrite.io/docs/products/databases/tablesdb/transactions). Empty table/row permissions follow its [default-deny permission model](https://appwrite.io/docs/products/databases/tablesdb/permissions). The workspace guard conservatively serializes supported writes across apps in one workspace; this is a bounded MVP correctness choice, not a throughput claim.
 
@@ -110,8 +110,11 @@ invitation URL sensitive; copying is an explicit user action. See the official
 [Expo 58 Crypto](https://docs.expo.dev/versions/v58.0.0/sdk/crypto/) and
 [Clipboard](https://docs.expo.dev/versions/v58.0.0/sdk/clipboard/) contracts.
 
-On October 28, 2026, root `npm run verify` passed for this client checkpoint:
+At a prior client checkpoint, root `npm run verify` passed:
 TypeScript, Expo lint, **101 client tests**, Prettier, and web/iOS/Android bundle
 exports. These exports are not native builds. Live Cloud collaboration, rendered
 browser sharing, and native execution remain separate acceptance work; the older
 rich-slice deployment does not establish those checks.
+
+
+Verification records are preserved in the [evidence directory](evidence/).

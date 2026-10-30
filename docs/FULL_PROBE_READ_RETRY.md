@@ -1,6 +1,6 @@
 # Bounded full-probe read recovery
 
-The preserved [Core43d4334 full report](evidence/2026-10-28/full-cloud-43d4334.failed.json)
+The preserved Core43d4334 full report
 remains **35 passed / 1 failed / 11 blocked / 724 assertions / 152 HTTP**. Its
 47 actual check entries remain unchanged. Failure assertion 21 was the owner's
 `spec.getApp` after two successful draft saves and a successful review. The
@@ -55,3 +55,6 @@ uses no provider/Storage/network beyond local loopback.
 
 CI adds this bridge test to the existing backend Node 24/Dart 3.11 step. The pure
 contract tests stay in the Dart-free client job. No Cloud runner is invoked by CI.
+
+
+Verification records are preserved in the [evidence directory](evidence/).

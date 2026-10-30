@@ -63,10 +63,10 @@ The script reuses unchanged `scripts/live_collaboration_contract.mjs` and `scrip
 
 ## Preserved first Cloud run and concrete probe corrections
 
-The [initial failed report](evidence/2026-10-28/full-cloud-fc71-initial.failed.json)
+The initial failed report
 remains verbatim: 45 passed, three failed, 1,844 assertions, 368 HTTP requests,
 five synthetic accounts and peak concurrency twenty with three eligible actors.
-The [diagnosis](evidence/2026-10-28/full-cloud-fc71-initial-diagnosis.md) separates
+The diagnosis separates
 the two setup/expectation errors: applying NUMBER's 1e15 limit to a valid safe
 INTEGER, and expecting an owner shortcut that the probe had never pinned.
 The fresh-session count failure is consistent with the extra accepted create.
@@ -99,7 +99,7 @@ Offline auth stubs verify this plumbing and do not prove Cloud authentication.
 
 ## Corrected full Cloud pass
 
-The [fresh passing receipt](evidence/2026-10-28/full-cloud-fc71-pooled.passed.json)
+The fresh passing receipt
 records48 passed checks, zero failures/blocked checks and1,948 assertions against
 core deployment6ae289f866af0d0d2ba7. It used382 probe HTTP requests plus five
 separately recorded normal client account creations (387 observed total). Five
@@ -112,7 +112,10 @@ and one allocation were observed. This is not a twenty-distinct-actor or server
 execution-barrier proof. Provider, media, reminders, native/device and actual
 data import retain separate acceptance gates.
 
-A prior [network-isolated harness attempt](evidence/2026-10-28/full-probe-network-isolated.failed.json)
+A prior network-isolated harness attempt
 made zero probe HTTP requests and confirmed no backend accounts. Its runtime DNS
 check returned ENOTFOUND. It was preserved and its in-memory pool closed; the
 actual passing run used the approved local Node runtime and ordinary endpoints.
+
+
+Verification records are preserved in the [evidence directory](evidence/).

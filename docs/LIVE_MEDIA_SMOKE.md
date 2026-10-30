@@ -112,7 +112,7 @@ The correction's offline suite retains all prior checks and adds idempotent diag
 
 ### Second preserved Cloud run: execution-header wire correction
 
-The [second failed report](evidence/2026-10-28/media-cloud-worker7e01.failed.json)
+The second failed report
 records twelve passed checks, one failure and nine blocked checks. Actual worker
 readiness and private anonymous/user execution denial passed; one definite
 read-only transaction conflict was counted and handled within the existing bound.
@@ -126,3 +126,6 @@ dictionaries, malformed entries, and duplicate case-insensitive cache directives
 The required `private, no-store` value is unchanged. This fixes the test wire, not
 the deployed media header policy. The failed report remains unchanged; a later
 Cloud read is still required to confirm the actual header value and all pixels.
+
+
+Verification records are preserved in the [evidence directory](evidence/).
