@@ -43,10 +43,14 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
   bool _loading = true,
       _saving = false,
       _formDirty = false,
-      _reconnecting = false;
+      _reconnecting = false,
+      _manualRefreshing = false;
   int _request = 0, _navigationAttempt = 0;
   int? _navigationGuard;
   Timer? _timer, _reconnectTimer, _searchTimer;
+  bool _foreground =
+      WidgetsBinding.instance.lifecycleState == null ||
+      WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
   StreamSubscription<void>? _subscription;
   RuntimeAdapter get adapter => widget.adapter;
   AppSpec get spec => adapter.spec;
@@ -64,7 +68,12 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
     _attach();
     WidgetsBinding.instance.addObserver(this);
     _connect();
-    _timer = Timer.periodic(const Duration(seconds: 30), (_) => _refresh());
+    // Preview is entirely local. Live Appwrite data refreshes on demand.
+    if (adapter.preview) {
+      _timer = Timer.periodic(const Duration(seconds: 30), (_) {
+        if (mounted && _foreground && adapter.preview) _refresh();
+      });
+    }
   }
 
   MiniAppLocation _validLocation(MiniAppLocation? location) =>
@@ -103,16 +112,36 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
     }
   }
 
-  void _connect() {
+  Future<void> _connect() async {
     _subscription?.cancel();
     _reconnectTimer?.cancel();
     _subscription = adapter.watch().listen(
-      (_) => _refresh(),
+      (_) {
+        if (mounted &&
+            _foreground &&
+            (ModalRoute.of(context)?.isCurrent ?? true))
+          _refresh();
+      },
       onError: (Object error) => _connectionFailed(error),
       onDone: () =>
           _connectionFailed(StateError('The connection was interrupted.')),
     );
-    _refresh();
+    await _refresh();
+  }
+
+  Future<void> _manualRefresh() async {
+    if (_manualRefreshing || _saving || _formDirty || _pendingCommand != null)
+      return;
+    setState(() => _manualRefreshing = true);
+    try {
+      if (_reconnecting) {
+        await _connect();
+      } else {
+        await _refresh();
+      }
+    } finally {
+      if (mounted) setState(() => _manualRefreshing = false);
+    }
   }
 
   void _connectionFailed(Object error) {
@@ -127,12 +156,17 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
       _loading = false;
       _reconnecting = true;
     });
-    _reconnectTimer = Timer(const Duration(seconds: 5), _connect);
+    if (adapter.preview && _foreground) {
+      _reconnectTimer = Timer(const Duration(seconds: 5), () {
+        if (mounted && _foreground && adapter.preview) _connect();
+      });
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState lifecycle) {
-    if (lifecycle == AppLifecycleState.resumed) _connect();
+    _foreground = lifecycle == AppLifecycleState.resumed;
+    if (_foreground && adapter.preview) _connect();
   }
 
   @override
@@ -568,7 +602,9 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
                   fieldIds: const [],
                   adapter: adapter,
                   record: item,
-                  onDirtyChanged: (dirty) => _formDirty = dirty,
+                  onDirtyChanged: (dirty) {
+                    if (mounted) setState(() => _formDirty = dirty);
+                  },
                   onCancel: () async {
                     if (!await _canLeave() || !dialogContext.mounted)
                       return false;
@@ -934,6 +970,20 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
                         ),
                       ],
                     ),
+                    if (!adapter.preview)
+                      IconButton(
+                        key: const ValueKey('refresh-runtime-page'),
+                        tooltip: 'Refresh page',
+                        onPressed:
+                            _manualRefreshing ||
+                                _loading ||
+                                _saving ||
+                                _formDirty ||
+                                _pendingCommand != null
+                            ? null
+                            : _manualRefresh,
+                        icon: const Icon(Icons.refresh),
+                      ),
                     if (primary != null && _permitted(primary, null))
                       FilledButton.icon(
                         onPressed: _saving || _pendingCommand != null
@@ -965,7 +1015,13 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
                           ),
                           const SizedBox(height: 12),
                           TextButton.icon(
-                            onPressed: _reconnecting ? _connect : _refresh,
+                            onPressed:
+                                _manualRefreshing ||
+                                    _saving ||
+                                    _formDirty ||
+                                    _pendingCommand != null
+                                ? null
+                                : _manualRefresh,
                             icon: const Icon(Icons.refresh),
                             label: const Text('Refresh'),
                           ),
@@ -1080,7 +1136,9 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
         adapter: adapter,
         record: _record,
         pendingCommand: _pendingCommand,
-        onDirtyChanged: (value) => _formDirty = value,
+        onDirtyChanged: (value) {
+          if (mounted) setState(() => _formDirty = value);
+        },
         onSave: (command) => _execute(
           command.action,
           command.record,

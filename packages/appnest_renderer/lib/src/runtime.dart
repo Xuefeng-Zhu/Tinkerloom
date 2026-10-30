@@ -47,6 +47,9 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
   StreamSubscription<void>? subscription;
   Timer? refreshTimer;
   Timer? reconnectTimer;
+  bool foreground =
+      WidgetsBinding.instance.lifecycleState == null ||
+      WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
   String? filterChoice;
   final filterChoices = <String, String>{};
   String search = '';
@@ -61,10 +64,12 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
     viewId = adapter.spec.views.first.id;
     WidgetsBinding.instance.addObserver(this);
     connect();
-    refreshTimer = Timer.periodic(
-      const Duration(seconds: 30),
-      (_) => refresh(),
-    );
+    // Preview is entirely local. Live Appwrite data refreshes on demand.
+    if (adapter.preview) {
+      refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+        if (mounted && foreground && adapter.preview) refresh();
+      });
+    }
   }
 
   void connect() {
@@ -73,6 +78,10 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
     subscription?.cancel();
     subscription = adapter.watch().listen(
       (_) {
+        if (!mounted ||
+            !foreground ||
+            !(ModalRoute.of(context)?.isCurrent ?? true))
+          return;
         if (fetching) {
           dirty = true;
         } else {
@@ -85,16 +94,20 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
           setState(() {
             reconnecting = true;
           });
-        reconnectTimer = Timer(const Duration(seconds: 5), () {
-          if (mounted) connect();
-        });
+        if (adapter.preview && foreground) {
+          reconnectTimer = Timer(const Duration(seconds: 5), () {
+            if (mounted && foreground && adapter.preview) connect();
+          });
+        }
       },
       onDone: () {
         _invalidate(StateError('The connection was interrupted.'));
         if (mounted) setState(() => reconnecting = true);
-        reconnectTimer = Timer(const Duration(seconds: 5), () {
-          if (mounted) connect();
-        });
+        if (adapter.preview && foreground) {
+          reconnectTimer = Timer(const Duration(seconds: 5), () {
+            if (mounted && foreground && adapter.preview) connect();
+          });
+        }
       },
     );
     refresh();
@@ -102,7 +115,8 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) connect();
+    foreground = state == AppLifecycleState.resumed;
+    if (foreground && adapter.preview) connect();
   }
 
   @override
