@@ -11,6 +11,22 @@ import '../../../appwrite_backend/lib/service.dart' as backend;
 import '../../../appwrite_backend/lib/providers/provider.dart' as ai;
 import '../../../appwrite_backend/test/memory_store.dart';
 
+Future<Map<String, dynamic>> executeFixture(
+  Fixture fixture,
+  String actor,
+  Map<String, dynamic> input,
+) async {
+  try {
+    return await fixture.service.execute(actor, input);
+  } on backend.ServiceException catch (error) {
+    throw NestError(
+      category: error.code,
+      status: error.status,
+      message: 'Draft unavailable',
+    );
+  }
+}
+
 class MemoryFiles implements backend.PrivateFileStore {
   final files = <String, Uint8List>{};
   @override
@@ -508,6 +524,8 @@ void main() {
         );
         expect(f.calls.where((v) => v['op'] == operation).length, before);
         expect(provider.calls, 0);
+        // Receipt confirmation alone does not finish the recovery snapshot.
+        await f.client.builder.getForRecovery(readback.draftId);
         final changed = await f.client.builder.patch(
           readback.draftId,
           readback.mutation,

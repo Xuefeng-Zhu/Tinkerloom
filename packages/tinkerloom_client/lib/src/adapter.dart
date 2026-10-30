@@ -362,9 +362,21 @@ extension _PresentationAdapter on Client {
       case 'builder.get':
         return _snapshot(await _load(_id(args['draftId'])));
       case 'builder.getForRecovery':
-        return _snapshot(
-          await _load(_id(args['draftId']), suppressWakeups: true),
-        );
+        final id = _id(args['draftId']);
+        final epoch = _epoch;
+        final checkpoint = _builderRecovery;
+        final app = await _load(id, suppressWakeups: true);
+        final capabilities = _mapOrNull(app['capabilities']);
+        if (capabilities?['editDefinition'] != true) {
+          throw BackendForbidden(
+            'You no longer have permission to edit this app.',
+          );
+        }
+        final snapshot = _snapshot(app);
+        if (checkpoint?.appId == id) {
+          _finishBuilderRecoveryRead(checkpoint, epoch);
+        }
+        return snapshot;
       case 'builder.suggestQuestions':
         String? workspaceId = args['workspaceId'] as String?;
         final draftId = args['draftId'] as String?;

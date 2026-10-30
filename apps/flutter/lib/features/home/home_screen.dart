@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../../client.dart';
 import '../builder/idea_guidance.dart';
 import '../builder/builder_screen.dart';
+import '../builder/recovery_banner.dart';
 import '../mini_app/mini_app_screen.dart';
 import 'home_load_failure.dart';
 import 'template_preview.dart';
@@ -35,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int page = 0;
   bool loading = true;
   bool creating = false;
+  bool checkingRetainedBuilder = false;
+  RetainedBuilderRecovery? unavailableRecovery;
   bool showComposer = false;
   Object? error;
   PlatformInfo? platform;
@@ -354,6 +357,106 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  void noteRecoveryAccessLoss(Object issue) {
+    if (!isRecoveryPermissionDenied(issue)) return;
+    final pending = client.pendingBuilderRecovery;
+    if (pending?.receiptConfirmed == true && mounted) {
+      setState(() => unavailableRecovery = pending);
+    }
+  }
+
+  Future<void> setAsideUnavailableRecovery() async {
+    final pending = unavailableRecovery;
+    if (pending == null || !identical(pending, client.pendingBuilderRecovery)) {
+      return;
+    }
+    final epoch = client.sessionEpoch;
+    if (!await confirmSetAsideRecovery(context) ||
+        !mounted ||
+        epoch != client.sessionEpoch) {
+      return;
+    }
+    try {
+      client.setAsideConfirmedBuilderRecovery(pending);
+      final local = pendingCreation;
+      setState(() {
+        unavailableRecovery = null;
+        if (local != null &&
+            local.confirmed &&
+            local.confirmedEpoch == epoch &&
+            local.draft.appId == pending.appId) {
+          pendingCreation = null;
+        }
+      });
+      showError(
+        'Saved request set aside. You can continue with your other apps.',
+      );
+    } catch (issue) {
+      if (mounted && epoch == client.sessionEpoch) showError(issue);
+    }
+  }
+
+  Future<void> checkReopenedBuilderRequest() async {
+    final pending = client.pendingBuilderRecovery;
+    if (pending == null || checkingRetainedBuilder) return;
+    final epoch = client.sessionEpoch;
+    setState(() => checkingRetainedBuilder = true);
+    try {
+      final latest = await client.checkPendingBuilderRecovery(pending);
+      if (!mounted || epoch != client.sessionEpoch) return;
+      if (latest == null) {
+        showError(
+          'The request is still unconfirmed. Check again before making another change.',
+        );
+        return;
+      }
+      final selectedWorkspace = workspaceId;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'The earlier request was saved. Open the draft to review its current state.',
+          ),
+          action: selectedWorkspace != null && latest.candidateJson.isNotEmpty
+              ? SnackBarAction(
+                  label: 'Open draft',
+                  onPressed: () => unawaited(
+                    openRecoveredDraft(pending.appId, selectedWorkspace, epoch),
+                  ),
+                )
+              : null,
+        ),
+      );
+    } catch (issue) {
+      if (mounted && epoch == client.sessionEpoch) {
+        noteRecoveryAccessLoss(issue);
+        showError(issue);
+      }
+    } finally {
+      if (mounted) setState(() => checkingRetainedBuilder = false);
+    }
+  }
+
+  Future<void> openRecoveredDraft(
+    String appId,
+    String workspace,
+    int epoch,
+  ) async {
+    if (!mounted || epoch != client.sessionEpoch) return;
+    try {
+      // A receipt proves an earlier write, not present-day access. Recheck the
+      // authenticated draft when the user chooses to open it.
+      final latest = await client.builder.getForRecovery(appId);
+      if (!mounted || epoch != client.sessionEpoch) return;
+      if (latest.candidateJson.isEmpty) {
+        showError('The draft is not ready to open yet.');
+        return;
+      }
+      await visitBuilder(latest, workspace, trackCreation: false);
+    } catch (issue) {
+      if (mounted && epoch == client.sessionEpoch) showError(issue);
+    }
+  }
+
   Future<void> builder(String templateKey, {bool generate = false}) async {
     final request = prompt.text.trim();
     if (creating || workspaceId == null) return;
@@ -505,6 +608,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
       load();
     } catch (e) {
+      noteRecoveryAccessLoss(e);
       showError(e);
     } finally {
       if (mounted) setState(() => creating = false);
@@ -1253,6 +1357,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     ),
   );
 
+  String appSubtitle(AppManifest app) {
+    if (app.archived) return 'Archived';
+    final definition = app.specJson == null
+        ? null
+        : AppSpec.parse(app.specJson!);
+    if (definition?.requires.contains('capacity.v1') == true) {
+      return '${app.availablePlaces} places available';
+    }
+    if (definition != null && definition.collections.isEmpty) {
+      return 'Personal utility';
+    }
+    return '${app.recordCount} ${app.recordCount == 1 ? 'record' : 'records'}';
+  }
+
   Widget appCard(AppManifest app) => Card(
     child: InkWell(
       borderRadius: BorderRadius.circular(12),
@@ -1273,15 +1391,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    app.archived
-                        ? 'Archived'
-                        : AppSpec.parse(app.specJson!).requires.contains(
-                            'capacity.v1',
-                          )
-                        ? '${app.availablePlaces} places available'
-                        : AppSpec.parse(app.specJson!).collections.isEmpty
-                        ? 'Personal utility'
-                        : '${app.recordCount} ${app.recordCount == 1 ? 'record' : 'records'}',
+                    appSubtitle(app),
                   ),
                 ],
               ),
@@ -1581,23 +1691,49 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   accountMenu(compact: true),
                 ],
               ),
-        body: wide
-            ? Row(
-                children: [
-                  SizedBox(width: 230, child: navigation(true)),
-                  const VerticalDivider(width: 1),
-                  Expanded(child: content()),
-                ],
-              )
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: workspacePicker(),
-                  ),
-                  Expanded(child: content()),
-                ],
-              ),
+        body: Column(
+          children: [
+            ListenableBuilder(
+              listenable: client.builderRecoveryChanges,
+              builder: (context, _) {
+                final pending = client.pendingBuilderRecovery;
+                final canSetAside =
+                    pending != null &&
+                    pending.receiptConfirmed &&
+                    identical(pending, unavailableRecovery);
+                if (pending == null ||
+                    (pendingCreation?.uncertain == true && !canSetAside)) {
+                  return const SizedBox.shrink();
+                }
+                return PendingBuilderRecoveryBanner(
+                  pending: pending,
+                  checking: checkingRetainedBuilder,
+                  onCheck: creating ? null : checkReopenedBuilderRequest,
+                  onSetAside: canSetAside ? setAsideUnavailableRecovery : null,
+                );
+              },
+            ),
+            Expanded(
+              child: wide
+                  ? Row(
+                      children: [
+                        SizedBox(width: 230, child: navigation(true)),
+                        const VerticalDivider(width: 1),
+                        Expanded(child: content()),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: workspacePicker(),
+                        ),
+                        Expanded(child: content()),
+                      ],
+                    ),
+            ),
+          ],
+        ),
         bottomNavigationBar: wide ? null : navigation(false),
       );
     },

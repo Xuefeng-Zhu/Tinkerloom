@@ -96,6 +96,23 @@ class BackendMediaProcessing extends NestError {
   final String appId, assetId;
 }
 
+/// A builder command whose outcome is being recovered during this client session.
+/// Its exact original envelope remains private and is never reconstructed by UI.
+class RetainedBuilderRecovery {
+  const RetainedBuilderRecovery._(
+    this.appId,
+    this.operation,
+    this.receiptConfirmed,
+    this._command,
+    this._epoch,
+  );
+  final String appId;
+  final String operation;
+  final bool receiptConfirmed;
+  final Map<String, dynamic> _command;
+  final int _epoch;
+}
+
 /// Compatibility at the presentation boundary, not Serverpod's wire protocol.
 /// The only live data path is authenticated Appwrite Functions.
 class Client {
@@ -265,6 +282,48 @@ class Client {
   bool _closed = false;
   bool _mutationInFlight = false;
   bool _receiptInFlight = false;
+  bool _recoveryReadInFlight = false;
+  RetainedBuilderRecovery? _builderRecovery;
+  final ValueNotifier<int> _builderRecoveryRevision = ValueNotifier<int>(0);
+
+  /// State only; listening never performs a network call or retries a command.
+  Listenable get builderRecoveryChanges => _builderRecoveryRevision;
+  RetainedBuilderRecovery? get pendingBuilderRecovery => _builderRecovery;
+
+  void _setBuilderRecovery(RetainedBuilderRecovery? value) {
+    if (identical(value, _builderRecovery)) return;
+    _builderRecovery = value;
+    _builderRecoveryRevision.value++;
+  }
+
+  void _retainBuilderRecovery(Map<String, dynamic> command) {
+    if (!{'spec.generate', 'spec.saveDraft'}.contains(command['op']) ||
+        command['appId'] is! String) {
+      _setBuilderRecovery(null);
+      return;
+    }
+    _setBuilderRecovery(
+      RetainedBuilderRecovery._(
+        command['appId'] as String,
+        command['op'] as String,
+        false,
+        command,
+        _epoch,
+      ),
+    );
+  }
+
+  void _finishBuilderRecoveryRead(
+    RetainedBuilderRecovery? checkpoint,
+    int epoch,
+  ) {
+    if (checkpoint != null &&
+        checkpoint.receiptConfirmed &&
+        identical(_builderRecovery, checkpoint) &&
+        epoch == _epoch) {
+      _setBuilderRecovery(null);
+    }
+  }
 
   /// Changes whenever this client observes an authentication-session change.
   int get sessionEpoch => _epoch;
@@ -317,6 +376,7 @@ class Client {
     _tickets.clear();
     _commandIds.clear();
     _retained = null;
+    _setBuilderRecovery(null);
     _reads.clear();
     for (final events in _events.values) {
       events.addError(
@@ -329,6 +389,7 @@ class Client {
     if (_closed) return;
     _closed = true;
     _epoch++;
+    _setBuilderRecovery(null);
     auth.removeListener(_sessionChanged);
     for (final events in _events.values) {
       await events.close();
@@ -362,6 +423,90 @@ class Client {
   }
 
   Future<void> closeStreamingMethodConnections({Object? exception}) async {}
+
+  /// Manually check an opaque, session-bound retained builder command. A null
+  /// result means no receipt was found, which does not rule out a later commit.
+  /// The original write is never replayed; failures preserve the checkpoint.
+  Future<BuilderSnapshot?> checkPendingBuilderRecovery(
+    RetainedBuilderRecovery handle,
+  ) async {
+    if (_closed ||
+        handle._epoch != _epoch ||
+        !identical(_builderRecovery, handle)) {
+      throw BackendUnauthorized(
+        'This recovery belongs to an expired session or request.',
+      );
+    }
+    if (_mutationInFlight || _receiptInFlight || _recoveryReadInFlight) {
+      throw NestError(
+        category: 'command_in_progress',
+        message:
+            'Wait for the current request to finish before checking status.',
+      );
+    }
+    _recoveryReadInFlight = true;
+    final epoch = _epoch;
+    try {
+      if (!handle.receiptConfirmed) {
+        final command = handle._command;
+        final status = await confirmRetainedBuilderCommand(
+          appId: handle.appId,
+          operation: handle.operation,
+          expectedRevision: command['expectedRevision'] as int,
+          request: command['request'] as String?,
+          startFromScratch: command['startFromScratch'] as bool?,
+          candidateHash: handle.operation == 'spec.saveDraft'
+              ? spec.AppSpec.parse(jsonEncode(command['spec'])).hash
+              : null,
+        );
+        if (status != RetainedCommandStatus.confirmed) return null;
+      }
+      final checkpoint = _builderRecovery;
+      if (_closed ||
+          epoch != _epoch ||
+          checkpoint == null ||
+          !checkpoint.receiptConfirmed ||
+          !identical(checkpoint._command, handle._command)) {
+        throw BackendUnauthorized(
+          'This recovery belongs to an expired session or request.',
+        );
+      }
+      final snapshot = await builder.getForRecovery(handle.appId);
+      if (_closed || epoch != _epoch) {
+        throw BackendUnauthorized(
+          'This recovery belongs to an expired session.',
+        );
+      }
+      return snapshot;
+    } finally {
+      _recoveryReadInFlight = false;
+    }
+  }
+
+  /// Explicitly set aside a committed builder request when its draft can no
+  /// longer be opened. This neither retries the operation nor resets a budget.
+  void setAsideConfirmedBuilderRecovery(RetainedBuilderRecovery handle) {
+    if (_closed ||
+        handle._epoch != _epoch ||
+        !identical(_builderRecovery, handle)) {
+      throw BackendUnauthorized(
+        'This recovery belongs to an expired session or request.',
+      );
+    }
+    if (_mutationInFlight || _receiptInFlight || _recoveryReadInFlight) {
+      throw NestError(
+        category: 'command_in_progress',
+        message: 'Wait for the current request to finish.',
+      );
+    }
+    if (!handle.receiptConfirmed || _retained != null) {
+      throw NestError(
+        category: 'pending_command',
+        message: 'The request has not been confirmed and cannot be set aside.',
+      );
+    }
+    _setBuilderRecovery(null);
+  }
 
   /// Explicitly check an exact retained builder command without replaying it.
   /// A missing receipt is not proof that an in-flight command will not commit.
@@ -425,6 +570,20 @@ class Client {
       }
       if (result['confirmed'] == true) {
         final id = pending['operationId'];
+        final recovery = _builderRecovery;
+        if (recovery != null &&
+            identical(recovery._command, pending) &&
+            recovery._epoch == epoch) {
+          _setBuilderRecovery(
+            RetainedBuilderRecovery._(
+              recovery.appId,
+              recovery.operation,
+              true,
+              pending,
+              epoch,
+            ),
+          );
+        }
         _retained = null;
         _commandIds.removeWhere((key, value) => value == id);
         return RetainedCommandStatus.confirmed;
@@ -453,10 +612,17 @@ class Client {
           category: 'pending_command',
           message: 'Resolve the retained operation before submitting another change.',
         );
-      if (!read && (_mutationInFlight || _receiptInFlight)) {
+      if (!read &&
+          (_mutationInFlight || _receiptInFlight || _recoveryReadInFlight)) {
         throw NestError(
           category: 'command_in_progress',
           message: 'Wait for the current change to finish before submitting another.',
+        );
+      }
+      if (!read && _builderRecovery?.receiptConfirmed == true) {
+        throw NestError(
+          category: 'pending_command',
+          message: 'Check the current draft before submitting another change.',
         );
       }
       budget?.function(!read);
@@ -469,6 +635,14 @@ class Client {
             'This response belongs to an expired session.',
           );
         if (!read) {
+          final previous = _retained;
+          final recovery = _builderRecovery;
+          if (previous != null &&
+              recovery != null &&
+              identical(recovery._command, previous) &&
+              jsonEncode(previous) == key) {
+            _setBuilderRecovery(null);
+          }
           _retained = null;
           final appId = frozen['appId'] ?? frozen['id'];
           if (appId is String)
@@ -497,6 +671,7 @@ class Client {
                 error.uncertain ||
                 error.category == 'invalid_response')) {
           _retained = frozen;
+          _retainBuilderRecovery(frozen);
           budget?.stopped = true;
           if (error is! NestError || !error.uncertain) {
             throw BackendNetworkException(

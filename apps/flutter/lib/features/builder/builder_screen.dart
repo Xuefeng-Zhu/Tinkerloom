@@ -11,6 +11,7 @@ import '../../client.dart';
 import '../media/image_upload.dart';
 import 'builder_chat.dart';
 import 'reminder_editor.dart';
+import 'recovery_banner.dart';
 import 'idea_guidance.dart';
 import 'page_editor.dart';
 import 'visual_edit_session.dart';
@@ -53,6 +54,9 @@ class BuilderScreenState extends State<BuilderScreen> {
   bool guidanceFallback = false;
   String? guidanceNotice;
   bool polling = false;
+  bool checkingRetainedBuilder = false;
+  bool recoveryAccessLost = false;
+  RetainedBuilderRecovery? unavailableRecovery;
   bool mobilePreview = false;
   bool customizing = false;
   ({int mutation, String? jobId, String request, int epoch})?
@@ -258,6 +262,74 @@ class BuilderScreenState extends State<BuilderScreen> {
     if (completed || failed) scrollConversation();
   }
 
+  void noteRecoveryAccessLoss(Object issue, {bool currentDraftOnly = false}) {
+    if (!isRecoveryPermissionDenied(issue)) return;
+    final pending = client.pendingBuilderRecovery;
+    if (pending?.receiptConfirmed == true &&
+        (!currentDraftOnly || pending!.appId == draft.appId) &&
+        mounted) {
+      setState(() => unavailableRecovery = pending);
+    }
+  }
+
+  Future<void> setAsideUnavailableRecovery() async {
+    final pending = unavailableRecovery;
+    if (pending == null || !identical(pending, client.pendingBuilderRecovery)) {
+      return;
+    }
+    final epoch = client.sessionEpoch;
+    if (!await confirmSetAsideRecovery(context) ||
+        !mounted ||
+        epoch != client.sessionEpoch) {
+      return;
+    }
+    try {
+      client.setAsideConfirmedBuilderRecovery(pending);
+      setState(() {
+        unavailableRecovery = null;
+        if (pending.appId == draft.appId &&
+            generationReceiptConfirmed &&
+            generationReceiptEpoch == epoch) {
+          uncertainGeneration = null;
+          generationReceiptConfirmed = false;
+          generationReceiptEpoch = null;
+        }
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Saved request set aside. You can continue with your other apps.',
+          ),
+        ),
+      );
+    } catch (issue) {
+      if (mounted && epoch == client.sessionEpoch) {
+        setState(() => error = issue);
+      }
+    }
+  }
+
+  bool isDraftAccessLost(Object issue) =>
+      issue is NestError &&
+      ({401, 403, 404}.contains(issue.status) ||
+          {
+            'unauthenticated',
+            'forbidden',
+            'not_found',
+          }.contains(issue.category));
+
+  Future<T> protectDraftAccess<T>(Future<T> Function() operation) async {
+    try {
+      return await operation();
+    } catch (issue) {
+      if (mounted && isDraftAccessLost(issue)) {
+        noteRecoveryAccessLoss(issue, currentDraftOnly: true);
+        setState(() => recoveryAccessLost = true);
+      }
+      rethrow;
+    }
+  }
+
   Future<void> poll() async {
     if (polling || busy) return;
     setState(() => polling = true);
@@ -273,7 +345,11 @@ class BuilderScreenState extends State<BuilderScreen> {
       setState(() => error = null);
     } catch (e) {
       if (mounted && !busy && mutation == draft.mutation) {
-        setState(() => error = e);
+        noteRecoveryAccessLoss(e, currentDraftOnly: true);
+        setState(() {
+          error = e;
+          if (isDraftAccessLost(e)) recoveryAccessLost = true;
+        });
       }
     } finally {
       if (mounted) {
@@ -281,6 +357,49 @@ class BuilderScreenState extends State<BuilderScreen> {
       } else {
         polling = false;
       }
+    }
+  }
+
+  Future<void> checkReopenedBuilderRequest() async {
+    final pending = client.pendingBuilderRecovery;
+    if (pending == null || checkingRetainedBuilder || busy || polling) return;
+    final epoch = client.sessionEpoch;
+    setState(() => checkingRetainedBuilder = true);
+    try {
+      final latest = await client.checkPendingBuilderRecovery(pending);
+      if (!mounted || epoch != client.sessionEpoch) return;
+      if (latest == null) {
+        setState(
+          () => error = BackendNetworkException(
+            'The request is still unconfirmed. Check again before making another change.',
+            uncertain: true,
+          ),
+        );
+        return;
+      }
+      if (latest.appId == draft.appId) update(latest);
+      setState(() => error = null);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            latest.appId == draft.appId
+                ? 'The earlier request was saved. Review the current draft.'
+                : 'The earlier request was saved. Return to its app to review the current draft.',
+          ),
+        ),
+      );
+    } catch (issue) {
+      if (mounted && epoch == client.sessionEpoch) {
+        noteRecoveryAccessLoss(issue);
+        setState(() {
+          error = issue;
+          if (pending.appId == draft.appId && isDraftAccessLost(issue)) {
+            recoveryAccessLost = true;
+          }
+        });
+      }
+    } finally {
+      if (mounted) setState(() => checkingRetainedBuilder = false);
     }
   }
 
@@ -554,7 +673,13 @@ class BuilderScreenState extends State<BuilderScreen> {
     try {
       await action();
     } catch (e) {
-      if (mounted) setState(() => error = e);
+      if (mounted) {
+        noteRecoveryAccessLoss(e, currentDraftOnly: true);
+        setState(() {
+          error = e;
+          if (isDraftAccessLost(e)) recoveryAccessLost = true;
+        });
+      }
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -1419,18 +1544,23 @@ class BuilderScreenState extends State<BuilderScreen> {
         if (!await previewController.canLeave() || !mounted) return;
         visualSession = VisualEditSession(
           snapshot: draft,
-          read: () => client.builder.get(draft.draftId),
-          readForRecovery: () => client.builder.getForRecovery(draft.draftId),
+          read: () =>
+              protectDraftAccess(() => client.builder.get(draft.draftId)),
+          readForRecovery: () => protectDraftAccess(
+            () => client.builder.getForRecovery(draft.draftId),
+          ),
           sessionEpoch: () => client.sessionEpoch,
-          write: (mutation, patch) =>
-              client.builder.patch(draft.draftId, mutation, patch),
-          confirmSave: (mutation, candidateHash) =>
-              client.confirmRetainedBuilderCommand(
-                appId: draft.appId,
-                operation: 'spec.saveDraft',
-                expectedRevision: mutation,
-                candidateHash: candidateHash,
-              ),
+          write: (mutation, patch) => protectDraftAccess(
+            () => client.builder.patch(draft.draftId, mutation, patch),
+          ),
+          confirmSave: (mutation, candidateHash) => protectDraftAccess(
+            () => client.confirmRetainedBuilderCommand(
+              appId: draft.appId,
+              operation: 'spec.saveDraft',
+              expectedRevision: mutation,
+              candidateHash: candidateHash,
+            ),
+          ),
           onSaved: (next, _) => update(next),
         );
       }
@@ -1747,133 +1877,203 @@ class BuilderScreenState extends State<BuilderScreen> {
   );
 
   @override
-  Widget build(BuildContext context) => PopScope(
-    canPop: allowPop || !visualEditing,
-    onPopInvokedWithResult: (didPop, _) async {
-      // Declarative draft routes own the back operation and consult canLeave.
-      if (widget.onClose != null) return;
-      if (!didPop && await finishVisualEdit() && mounted) {
-        setState(() => allowPop = true);
-        if (context.mounted) Navigator.of(context).pop();
-      }
-    },
-    child: Scaffold(
-      // The inspector sheet scrolls around the keyboard itself. Keep the
-      // underlying preview at full height while that keyboard is open.
-      resizeToAvoidBottomInset: !visualEditing,
-      appBar: AppBar(
-        leading: widget.onClose == null
-            ? null
-            : BackButton(
-                onPressed: () async {
-                  if (await canLeave() && mounted) await widget.onClose!();
-                },
-              ),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent,
-        titleSpacing: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            InkWell(
-              onTap: canEdit
-                  ? () => selectVisualTarget(
-                      const MiniAppEditTarget(MiniAppEditKind.app, 'app'),
-                    )
-                  : null,
-              child: Text(
-                hasPreview ? preview.spec.name : 'New app',
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+  Widget build(BuildContext context) => recoveryAccessLost
+      ? Scaffold(
+          appBar: AppBar(
+            title: const Text('Tinkerloom'),
+            leading: widget.onClose == null
+                ? null
+                : BackButton(onPressed: () => unawaited(widget.onClose!())),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('You no longer have access to edit this draft.'),
+                ListenableBuilder(
+                  listenable: client.builderRecoveryChanges,
+                  builder: (context, _) {
+                    final pending = client.pendingBuilderRecovery;
+                    if (pending == null ||
+                        !pending.receiptConfirmed ||
+                        !identical(pending, unavailableRecovery)) {
+                      return const SizedBox.shrink();
+                    }
+                    return PendingBuilderRecoveryBanner(
+                      pending: pending,
+                      checking: false,
+                      onCheck: null,
+                      onSetAside: setAsideUnavailableRecovery,
+                    );
+                  },
                 ),
-              ),
+              ],
             ),
-            Text(
-              draft.stage == 'preview ready'
-                  ? 'Unpublished changes'
-                  : builderStageLabel(
-                      draft.stage,
-                      failureCategory: draft.failureCategory,
+          ),
+        )
+      : PopScope(
+          canPop: allowPop || !visualEditing,
+          onPopInvokedWithResult: (didPop, _) async {
+            // Declarative draft routes own the back operation and consult canLeave.
+            if (widget.onClose != null) return;
+            if (!didPop && await finishVisualEdit() && mounted) {
+              setState(() => allowPop = true);
+              if (context.mounted) Navigator.of(context).pop();
+            }
+          },
+          child: Scaffold(
+            // The inspector sheet scrolls around the keyboard itself. Keep the
+            // underlying preview at full height while that keyboard is open.
+            resizeToAvoidBottomInset: !visualEditing,
+            appBar: AppBar(
+              leading: widget.onClose == null
+                  ? null
+                  : BackButton(
+                      onPressed: () async {
+                        if (await canLeave() && mounted) {
+                          await widget.onClose!();
+                        }
+                      },
                     ),
-              style: const TextStyle(fontSize: 11),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            tooltip: 'Refresh generation status',
-            onPressed: busy || polling ? null : poll,
-            icon: const Icon(Icons.refresh),
-          ),
-          if (MediaQuery.sizeOf(context).width < 600)
-            IconButton(
-              key: const ValueKey('customize-app'),
-              tooltip: 'Customize',
-              onPressed: canEdit ? openCustomize : null,
-              icon: const Icon(Icons.tune_outlined),
-            )
-          else
-            TextButton.icon(
-              key: const ValueKey('customize-app'),
-              onPressed: canEdit ? openCustomize : null,
-              icon: const Icon(Icons.tune_outlined, size: 18),
-              label: const Text('Customize'),
-            ),
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: FilledButton(
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 18),
-              ),
-              onPressed: canPublish ? publish : null,
-              child: Text(
-                draft.baseVersionId == null ? 'Use app' : 'Apply changes',
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 850) {
-            return DefaultTabController(
-              length: 2,
-              child: Column(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
+              titleSpacing: 0,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TabBar(
-                    tabs: [
-                      Tab(text: 'Chat'),
-                      Tab(text: 'Try'),
-                    ],
+                  InkWell(
+                    onTap: canEdit
+                        ? () => selectVisualTarget(
+                            const MiniAppEditTarget(MiniAppEditKind.app, 'app'),
+                          )
+                        : null,
+                    child: Text(
+                      hasPreview ? preview.spec.name : 'New app',
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                  Expanded(
-                    child: TabBarView(children: [chat(), previewPane()]),
+                  Text(
+                    draft.stage == 'preview ready'
+                        ? 'Unpublished changes'
+                        : builderStageLabel(
+                            draft.stage,
+                            failureCategory: draft.failureCategory,
+                          ),
+                    style: const TextStyle(fontSize: 11),
                   ),
                 ],
               ),
-            );
-          }
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                width: constraints.maxWidth < 1100 ? 330 : 380,
-                child: visualEditing
-                    ? inspector()
-                    : customizing
-                    ? customizationPanel()
-                    : chat(),
-              ),
-              const VerticalDivider(width: 1),
-              Expanded(child: previewPane()),
-            ],
-          );
-        },
-      ),
-    ),
-  );
+              actions: [
+                IconButton(
+                  tooltip: 'Refresh generation status',
+                  onPressed: busy || polling ? null : poll,
+                  icon: const Icon(Icons.refresh),
+                ),
+                if (MediaQuery.sizeOf(context).width < 600)
+                  IconButton(
+                    key: const ValueKey('customize-app'),
+                    tooltip: 'Customize',
+                    onPressed: canEdit ? openCustomize : null,
+                    icon: const Icon(Icons.tune_outlined),
+                  )
+                else
+                  TextButton.icon(
+                    key: const ValueKey('customize-app'),
+                    onPressed: canEdit ? openCustomize : null,
+                    icon: const Icon(Icons.tune_outlined, size: 18),
+                    label: const Text('Customize'),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                    ),
+                    onPressed: canPublish ? publish : null,
+                    child: Text(
+                      draft.baseVersionId == null ? 'Use app' : 'Apply changes',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            body: Column(
+              children: [
+                ListenableBuilder(
+                  listenable: client.builderRecoveryChanges,
+                  builder: (context, _) {
+                    final pending = client.pendingBuilderRecovery;
+                    final canSetAside =
+                        pending != null &&
+                        pending.receiptConfirmed &&
+                        identical(pending, unavailableRecovery);
+                    if (pending == null ||
+                        ((uncertainGeneration != null ||
+                                visualSession?.uncertain == true) &&
+                            !canSetAside)) {
+                      return const SizedBox.shrink();
+                    }
+                    return PendingBuilderRecoveryBanner(
+                      pending: pending,
+                      checking: checkingRetainedBuilder,
+                      onCheck: busy || polling
+                          ? null
+                          : checkReopenedBuilderRequest,
+                      onSetAside: canSetAside
+                          ? setAsideUnavailableRecovery
+                          : null,
+                    );
+                  },
+                ),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 850) {
+                        return DefaultTabController(
+                          length: 2,
+                          child: Column(
+                            children: [
+                              const TabBar(
+                                tabs: [
+                                  Tab(text: 'Chat'),
+                                  Tab(text: 'Try'),
+                                ],
+                              ),
+                              Expanded(
+                                child: TabBarView(
+                                  children: [chat(), previewPane()],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(
+                            width: constraints.maxWidth < 1100 ? 330 : 380,
+                            child: visualEditing
+                                ? inspector()
+                                : customizing
+                                ? customizationPanel()
+                                : chat(),
+                          ),
+                          const VerticalDivider(width: 1),
+                          Expanded(child: previewPane()),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
 
   Future<bool> canLeave() => finishVisualEdit();
 }
