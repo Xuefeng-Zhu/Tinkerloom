@@ -27,22 +27,41 @@ void main() {
   late VisualEditSession session;
   final calls = <int>[];
   Completer<void>? pause;
+  Completer<BuilderSnapshot>? pauseRecovery;
   bool failWrite = false, failRead = false, commitBeforeFailure = false;
+  bool failConfirmation = false;
+  int recoveryReads = 0;
+  int confirmationChecks = 0;
+  int sessionEpoch = 0;
   setUp(() {
     server = snapshot(starterTemplates()['planner']!, 0);
     calls.clear();
     pause = null;
+    pauseRecovery = null;
     failWrite = failRead = commitBeforeFailure = false;
+    failConfirmation = false;
+    recoveryReads = 0;
+    confirmationChecks = 0;
+    sessionEpoch = 0;
     session = VisualEditSession(
       snapshot: server,
+      sessionEpoch: () => sessionEpoch,
       read: () async {
+        if (failRead) throw StateError('offline');
+        return server;
+      },
+      readForRecovery: () async {
+        recoveryReads++;
+        if (pauseRecovery != null) return await pauseRecovery!.future;
         if (failRead) throw StateError('offline');
         return server;
       },
       write: (revision, json) async {
         calls.add(revision);
         if (pause != null) await pause!.future;
-        if (revision != server.mutation) throw StateError('conflict');
+        if (revision != server.mutation) {
+          throw NestError(category: 'revision_conflict', message: 'conflict');
+        }
         if (!failWrite || commitBeforeFailure) {
           server = snapshot(
             AppSpec.parse(server.candidateJson)
@@ -50,8 +69,17 @@ void main() {
             revision + 1,
           );
         }
-        if (failWrite) throw StateError('offline');
+        if (failWrite) {
+          throw BackendNetworkException('offline', uncertain: true);
+        }
         return server;
+      },
+      confirmSave: (_, _) async {
+        confirmationChecks++;
+        if (failConfirmation) throw StateError('offline');
+        return commitBeforeFailure
+            ? RetainedCommandStatus.confirmed
+            : RetainedCommandStatus.pending;
       },
       onSaved: (_, _) {},
     );
@@ -93,7 +121,8 @@ void main() {
     () async {
       failWrite = commitBeforeFailure = true;
       session.enqueue('name', rename('Saved remotely'));
-      expect(await session.flush(), true);
+      expect(await session.flush(), false);
+      expect(await session.flush(retry: true), true);
       expect(calls, [0]);
       expect(session.spec.name, 'Saved remotely');
     },
@@ -108,18 +137,81 @@ void main() {
     expect(calls, [0]);
   });
   test(
-    'offline retry uses the same revision only after a fresh read',
+    'a confirmed receipt is retained across a failed current-draft read',
+    () async {
+      failWrite = commitBeforeFailure = failRead = true;
+      session.enqueue('name', rename('Saved remotely'));
+      expect(await session.flush(), false);
+      expect(await session.flush(retry: true), false);
+      expect(session.uncertain, true);
+      await expectLater(session.reload(), throwsStateError);
+      failRead = false;
+      expect(await session.flush(retry: true), true);
+      expect(session.uncertain, false);
+      expect(recoveryReads, 2);
+      expect(calls, [0]);
+    },
+  );
+  test(
+    'an uncertain write cannot be confirmed after the session changes',
+    () async {
+      failWrite = commitBeforeFailure = true;
+      session.enqueue('name', rename('Saved remotely'));
+      expect(await session.flush(), false);
+      sessionEpoch++;
+      expect(await session.flush(retry: true), false);
+      expect(confirmationChecks, 0);
+      expect(recoveryReads, 0);
+      expect(session.uncertain, true);
+      expect(calls, [0]);
+    },
+  );
+
+  test('a confirmed receipt is not reused after the session changes', () async {
+    failWrite = commitBeforeFailure = failRead = true;
+    session.enqueue('name', rename('Saved remotely'));
+    expect(await session.flush(), false);
+    expect(await session.flush(retry: true), false);
+    expect(recoveryReads, 1);
+    sessionEpoch++;
+    failRead = false;
+    expect(await session.flush(retry: true), false);
+    expect(recoveryReads, 1);
+    expect(session.uncertain, true);
+    expect(session.pending, true);
+    expect(calls, [0]);
+    await expectLater(session.reload(), throwsStateError);
+  });
+  test('a late recovery read does not acknowledge a changed session', () async {
+    failWrite = commitBeforeFailure = true;
+    session.enqueue('name', rename('Saved remotely'));
+    expect(await session.flush(), false);
+    pauseRecovery = Completer<BuilderSnapshot>();
+    final checking = session.flush(retry: true);
+    await Future<void>.delayed(Duration.zero);
+    expect(recoveryReads, 1);
+    sessionEpoch++;
+    pauseRecovery!.complete(server);
+    expect(await checking, false);
+    expect(session.uncertain, true);
+    expect(session.pending, true);
+    expect(session.snapshot.mutation, 0);
+    expect(calls, [0]);
+  });
+  test(
+    'an unresolved save cannot resend or discard even when reads succeed',
     () async {
       failWrite = true;
       session.enqueue('name', rename('Pending'));
       expect(await session.flush(), false);
-      failRead = true;
-      failWrite = false;
       expect(await session.flush(retry: true), false);
       expect(calls, [0]);
-      failRead = false;
-      expect(await session.flush(retry: true), true);
-      expect(calls, [0, 0]);
+      expect(session.uncertain, true);
+      await expectLater(session.reload(), throwsStateError);
+      failConfirmation = true;
+      expect(await session.flush(retry: true), false);
+      expect(calls, [0]);
+      expect(session.pending, true);
     },
   );
   test(

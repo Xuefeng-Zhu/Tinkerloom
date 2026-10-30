@@ -249,16 +249,19 @@ class _VisualInspectorState extends State<VisualInspector> {
                         onPressed: session.saving
                             ? null
                             : () => session.flush(retry: true),
-                        child: const Text('Retry'),
+                        child: Text(
+                          session.uncertain ? 'Check save status' : 'Retry',
+                        ),
                       ),
-                    TextButton(
-                      onPressed: session.saving ? null : widget.onReload,
-                      child: Text(
-                        session.conflict
-                            ? 'Reload latest draft'
-                            : 'Discard local changes',
+                    if (!session.uncertain)
+                      TextButton(
+                        onPressed: session.saving ? null : widget.onReload,
+                        child: Text(
+                          session.conflict
+                              ? 'Reload latest draft'
+                              : 'Discard local changes',
+                        ),
                       ),
-                    ),
                   ],
                 ),
               const SizedBox(height: 24),

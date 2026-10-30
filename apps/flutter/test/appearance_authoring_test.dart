@@ -23,10 +23,14 @@ class _Harness {
     preview = PreviewRuntimeAdapter(spec);
     session = VisualEditSession(
       snapshot: server,
+      sessionEpoch: () => 0,
       read: () async => server,
+      readForRecovery: () async => server,
       write: (revision, json) async {
-        if (offline) throw StateError('offline');
-        if (revision != server.mutation) throw StateError('conflict');
+        if (offline) throw NestError(category: 'offline', message: 'offline');
+        if (revision != server.mutation) {
+          throw NestError(category: 'revision_conflict', message: 'conflict');
+        }
         server = snapshot(
           AppSpec.parse(server.candidateJson).patch(
             jsonDecode(json),
@@ -36,6 +40,7 @@ class _Harness {
         );
         return server;
       },
+      confirmSave: (_, _) async => RetainedCommandStatus.pending,
       onSaved: (next, _) =>
           preview.applyPresentationSpec(AppSpec.parse(next.candidateJson)),
     );

@@ -17,6 +17,8 @@ part 'src/endpoints.dart';
 part 'src/session.dart';
 part 'src/adapter.dart';
 
+enum RetainedCommandStatus { none, confirmed, pending }
+
 typedef FunctionTransport = Future<Map<String, dynamic>> Function(
   Map<String, dynamic> request,
 );
@@ -261,6 +263,11 @@ class Client {
   Future<void> _readTail = Future.value();
   int _epoch = 0, _eventRevision = 0;
   bool _closed = false;
+  bool _mutationInFlight = false;
+  bool _receiptInFlight = false;
+
+  /// Changes whenever this client observes an authentication-session change.
+  int get sessionEpoch => _epoch;
   static final _random = Random.secure();
   String newId() => List.generate(
     16,
@@ -273,6 +280,7 @@ class Client {
     'spec.capabilities',
     'spec.templates',
     'spec.getApp',
+    'spec.commandReceipt',
     'spec.review',
     'spec.getGeneration',
     'spec.watch',
@@ -355,6 +363,78 @@ class Client {
 
   Future<void> closeStreamingMethodConnections({Object? exception}) async {}
 
+  /// Explicitly check an exact retained builder command without replaying it.
+  /// A missing receipt is not proof that an in-flight command will not commit.
+  Future<RetainedCommandStatus> confirmRetainedBuilderCommand({
+    required String appId,
+    required String operation,
+    required int expectedRevision,
+    String? request,
+    bool? startFromScratch,
+    String? candidateHash,
+  }) async {
+    final pending = _retained;
+    if (pending == null) return RetainedCommandStatus.none;
+    final matchesBase =
+        pending['appId'] == appId &&
+        pending['op'] == operation &&
+        pending['expectedRevision'] == expectedRevision;
+    final matchesDetails = !matchesBase
+        ? false
+        : switch (operation) {
+            'spec.generate' =>
+              request != null &&
+                  startFromScratch != null &&
+                  pending['request'] == request &&
+                  pending['startFromScratch'] == startFromScratch,
+            'spec.saveDraft' =>
+              candidateHash != null &&
+                  spec.AppSpec.parse(jsonEncode(pending['spec'])).hash ==
+                      candidateHash,
+            _ => false,
+          };
+    if (!matchesBase || !matchesDetails) {
+      throw NestError(
+        category: 'pending_command',
+        message:
+            'Resolve the retained operation before submitting another change.',
+      );
+    }
+    if (_mutationInFlight || _receiptInFlight) {
+      throw NestError(
+        category: 'command_in_progress',
+        message:
+            'Wait for the current request to finish before checking status.',
+      );
+    }
+    final epoch = _epoch;
+    _receiptInFlight = true;
+    try {
+      final result = await this.request({
+        'op': 'spec.commandReceipt',
+        'command': pending,
+      });
+      if (_closed || epoch != _epoch || !identical(_retained, pending)) {
+        throw BackendUnauthorized('This result belongs to an expired session.');
+      }
+      if (result['confirmed'] is! bool) {
+        throw NestError(
+          category: 'invalid_response',
+          message: 'The operation receipt could not be confirmed.',
+        );
+      }
+      if (result['confirmed'] == true) {
+        final id = pending['operationId'];
+        _retained = null;
+        _commandIds.removeWhere((key, value) => value == id);
+        return RetainedCommandStatus.confirmed;
+      }
+      return RetainedCommandStatus.pending;
+    } finally {
+      _receiptInFlight = false;
+    }
+  }
+
   String _operation(String logical) => _commandIds.putIfAbsent(logical, newId);
   Future<Map<String, dynamic>> request(Map<String, dynamic> input) {
     final frozen = Map<String, dynamic>.from(
@@ -373,7 +453,14 @@ class Client {
           category: 'pending_command',
           message: 'Resolve the retained operation before submitting another change.',
         );
+      if (!read && (_mutationInFlight || _receiptInFlight)) {
+        throw NestError(
+          category: 'command_in_progress',
+          message: 'Wait for the current change to finish before submitting another.',
+        );
+      }
       budget?.function(!read);
+      if (!read) _mutationInFlight = true;
       try {
         final response = await _transport(frozen);
         _validateResponse(frozen, response);
@@ -419,6 +506,8 @@ class Client {
           }
         }
         rethrow;
+      } finally {
+        if (!read) _mutationInFlight = false;
       }
     }
 

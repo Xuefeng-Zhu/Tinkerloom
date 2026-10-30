@@ -106,6 +106,12 @@ class EndpointBuilder extends _Endpoint {
         'draftId': draftId,
       });
 
+  /// Fetch the current authorized snapshot without scheduling worker wakeups.
+  Future<BuilderSnapshot> getForRecovery(String draftId) =>
+      caller.callServerEndpoint<BuilderSnapshot>('builder', 'getForRecovery', {
+        'draftId': draftId,
+      });
+
   Future<List<GuidanceQuestion>> suggestQuestions(
     String idea,
     String? workspaceId,

@@ -45,7 +45,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String? guidanceWorkspace;
   bool guidanceFallback = false;
   String? guidanceNotice;
-  ({String workspaceId, BuilderSnapshot draft, String request})?
+  ({
+    String workspaceId,
+    BuilderSnapshot draft,
+    String request,
+    int epoch,
+    bool uncertain,
+    bool confirmed,
+    int? confirmedEpoch,
+  })?
   pendingCreation;
   final unfinishedCreations =
       <String, ({String workspaceId, BuilderSnapshot draft})>{};
@@ -349,7 +357,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> builder(String templateKey, {bool generate = false}) async {
     final request = prompt.text.trim();
     if (creating || workspaceId == null) return;
-    if (generate && (platform?.aiAvailable != true || request.isEmpty)) return;
+    if (generate &&
+        ((platform?.aiAvailable != true &&
+                pendingCreation?.uncertain != true) ||
+            (request.isEmpty && pendingCreation?.uncertain != true))) {
+      return;
+    }
     final selectedWorkspace = workspaceId!;
     setState(() {
       creating = true;
@@ -360,18 +373,69 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       BuilderSnapshot? d;
       var submittedRequest = request;
       var alreadyAccepted = false;
+      var latestIsAccepted = true;
+      if (pending?.uncertain == true &&
+          pending!.workspaceId != selectedWorkspace) {
+        throw NestError(
+          category: 'pending_command',
+          message:
+              'Return to the original workspace to check your pending request.',
+        );
+      }
       if (generate &&
           pending != null &&
           pending.workspaceId == selectedWorkspace) {
-        d = await client.builder.get(pending.draft.draftId);
-        // A lost response may hide a successful enqueue. Recover that request
-        // instead of creating another app or submitting the same idea twice.
-        alreadyAccepted =
-            d.jobId != null &&
-            d.jobId != pending.draft.jobId &&
-            d.mutation > pending.draft.mutation &&
-            d.latestRequest == pending.request;
-        if (alreadyAccepted) submittedRequest = pending.request;
+        var confirmationEpoch = pending.confirmedEpoch;
+        if (pending.uncertain && pending.epoch != client.sessionEpoch) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
+        if (pending.uncertain && !pending.confirmed) {
+          final epoch = client.sessionEpoch;
+          final status = await client.confirmRetainedBuilderCommand(
+            appId: pending.draft.appId,
+            operation: 'spec.generate',
+            expectedRevision: pending.draft.mutation,
+            request: pending.request,
+            startFromScratch: true,
+          );
+          if (epoch != client.sessionEpoch) {
+            throw BackendUnauthorized('Your session changed. Reopen the app.');
+          }
+          if (status != RetainedCommandStatus.confirmed) {
+            throw BackendNetworkException(
+              'The request outcome is unknown. Check again before creating another app.',
+              uncertain: true,
+            );
+          }
+          pendingCreation = (
+            workspaceId: pending.workspaceId,
+            draft: pending.draft,
+            request: pending.request,
+            epoch: pending.epoch,
+            uncertain: true,
+            confirmed: true,
+            confirmedEpoch: epoch,
+          );
+          confirmationEpoch = epoch;
+        }
+        if (pending.uncertain && confirmationEpoch != client.sessionEpoch) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
+        d = pending.uncertain
+            ? await client.builder.getForRecovery(pending.draft.draftId)
+            : await client.builder.get(pending.draft.draftId);
+        if (pending.uncertain && confirmationEpoch != client.sessionEpoch) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
+        if (pending.uncertain) {
+          alreadyAccepted = true;
+          latestIsAccepted =
+              d.jobId != null &&
+              d.jobId != pending.draft.jobId &&
+              d.mutation == pending.draft.mutation + 1 &&
+              d.latestRequest == pending.request;
+          submittedRequest = pending.request;
+        }
       }
       if (generate && !alreadyAccepted) {
         if (pending == null || pending.workspaceId != selectedWorkspace) {
@@ -383,17 +447,51 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
       if (generate && !alreadyAccepted) {
         final startingDraft = d!;
+        final startingEpoch = client.sessionEpoch;
         pendingCreation = (
           workspaceId: selectedWorkspace,
           draft: startingDraft,
           request: request,
+          epoch: startingEpoch,
+          uncertain: false,
+          confirmed: false,
+          confirmedEpoch: null,
         );
-        d = await client.builder.generate(
-          startingDraft.draftId,
-          startingDraft.mutation,
-          request,
-          startFromScratch: true,
-        );
+        try {
+          d = await client.builder.generate(
+            startingDraft.draftId,
+            startingDraft.mutation,
+            request,
+            startFromScratch: true,
+          );
+          if (startingEpoch != client.sessionEpoch) {
+            throw BackendUnauthorized('Your session changed. Reopen the app.');
+          }
+        } catch (issue) {
+          if (startingEpoch != client.sessionEpoch ||
+              issue is! NestError ||
+              issue.uncertain) {
+            pendingCreation = (
+              workspaceId: selectedWorkspace,
+              draft: startingDraft,
+              request: request,
+              epoch: startingEpoch,
+              uncertain: true,
+              confirmed: false,
+              confirmedEpoch: null,
+            );
+            if (startingEpoch != client.sessionEpoch) {
+              throw BackendUnauthorized(
+                'Your session changed. Reopen the app.',
+              );
+            }
+            throw BackendNetworkException(
+              'The request outcome is unknown. Check it before creating another app.',
+              uncertain: true,
+            );
+          }
+          rethrow;
+        }
       }
       if (mounted) {
         guidanceQuestions = null;
@@ -401,7 +499,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         await visitBuilder(
           d!,
           selectedWorkspace,
-          initialPrompt: generate ? submittedRequest : null,
+          initialPrompt: generate && latestIsAccepted ? submittedRequest : null,
           trackCreation: generate,
         );
       }
@@ -900,16 +998,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         builder: (context, constraints) {
           final compact = constraints.maxWidth < 560;
           final canGenerate = platform?.aiAvailable == true;
+          final checkingRequest = pendingCreation?.uncertain == true;
           final selectedWorkspace = workspaceId;
           final theme = Theme.of(context);
           final createButton = ValueListenableBuilder<TextEditingValue>(
             valueListenable: prompt,
             builder: (context, value, _) => FilledButton.icon(
               key: const ValueKey('create-app'),
-              onPressed: creating || (canGenerate && value.text.trim().isEmpty)
+              onPressed:
+                  creating ||
+                      (canGenerate &&
+                          !checkingRequest &&
+                          value.text.trim().isEmpty)
                   ? null
                   : () {
-                      if (canGenerate) {
+                      if (canGenerate || checkingRequest) {
                         builder('volunteer', generate: true);
                       } else {
                         setState(() => page = 1);
@@ -925,6 +1028,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               label: Text(
                 creating
                     ? 'Creating your app…'
+                    : checkingRequest
+                    ? 'Check request'
                     : canGenerate
                     ? 'Create app'
                     : 'Browse templates',

@@ -55,7 +55,10 @@ class BuilderScreenState extends State<BuilderScreen> {
   bool polling = false;
   bool mobilePreview = false;
   bool customizing = false;
-  ({int mutation, String? jobId, String request})? uncertainGeneration;
+  ({int mutation, String? jobId, String request, int epoch})?
+  uncertainGeneration;
+  bool generationReceiptConfirmed = false;
+  int? generationReceiptEpoch;
   late bool hasPreview;
   String? lastRequest;
   bool? ai;
@@ -260,9 +263,13 @@ class BuilderScreenState extends State<BuilderScreen> {
     setState(() => polling = true);
     final mutation = draft.mutation;
     try {
+      if (uncertainGeneration != null) {
+        await resolveUncertainGeneration();
+        return;
+      }
       final next = await client.builder.get(draft.draftId);
       if (!mounted || busy || mutation != draft.mutation) return;
-      if (!recoverAcceptedRequest(next)) update(next);
+      update(next);
       setState(() => error = null);
     } catch (e) {
       if (mounted && !busy && mutation == draft.mutation) {
@@ -337,18 +344,17 @@ class BuilderScreenState extends State<BuilderScreen> {
     if (!await finishVisualEdit() || !mounted) return;
     await perform(() async {
       if (uncertainGeneration != null) {
-        final recovered = await client.builder.get(draft.draftId);
-        if (!mounted || recoverAcceptedRequest(recovered)) return;
-        update(recovered);
-        uncertainGeneration = null;
-        if (generating || draft.stage == 'stale') return;
+        await resolveUncertainGeneration();
+        return;
       }
       final previousMutation = draft.mutation;
       final previousJobId = draft.jobId;
+      final previousEpoch = client.sessionEpoch;
       uncertainGeneration = (
         mutation: previousMutation,
         jobId: previousJobId,
         request: request,
+        epoch: previousEpoch,
       );
       try {
         final next = await client.builder.generate(
@@ -357,40 +363,88 @@ class BuilderScreenState extends State<BuilderScreen> {
           request,
           startFromScratch: widget.startFromScratch,
         );
+        if (previousEpoch != client.sessionEpoch) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
         acceptRequest(next, request);
       } catch (issue) {
-        // A response can be lost after the server accepts the request. Read the
-        // durable job before offering another write, including on the next send.
-        try {
-          final recovered = await client.builder.get(draft.draftId);
-          if (!mounted || recoverAcceptedRequest(recovered)) return;
-          update(recovered);
+        if (previousEpoch != client.sessionEpoch) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
+        if (issue is NestError && !issue.uncertain) {
           uncertainGeneration = null;
-        } catch (_) {
-          // Keep the uncertain submission until a later read succeeds.
+        } else {
+          throw BackendNetworkException(
+            'The request outcome is unknown. Check the request before sending another.',
+            uncertain: true,
+          );
         }
         rethrow;
       }
     });
   }
 
-  bool recoverAcceptedRequest(BuilderSnapshot next) {
+  Future<void> resolveUncertainGeneration() async {
     final uncertain = uncertainGeneration;
-    if (uncertain == null ||
-        next.mutation <= uncertain.mutation ||
-        next.latestRequest != uncertain.request ||
-        next.jobId == null ||
-        next.jobId == uncertain.jobId) {
-      return false;
+    if (uncertain == null) return;
+    if (uncertain.epoch != client.sessionEpoch) {
+      throw BackendUnauthorized('Your session changed. Reopen the app.');
     }
-    acceptRequest(next, uncertain.request);
-    return true;
+    if (!generationReceiptConfirmed) {
+      final epoch = client.sessionEpoch;
+      final status = await client.confirmRetainedBuilderCommand(
+        appId: draft.appId,
+        operation: 'spec.generate',
+        expectedRevision: uncertain.mutation,
+        request: uncertain.request,
+        startFromScratch: widget.startFromScratch,
+      );
+      if (epoch != client.sessionEpoch) {
+        throw BackendUnauthorized('Your session changed. Reopen the app.');
+      }
+      if (status != RetainedCommandStatus.confirmed) {
+        throw BackendNetworkException(
+          'The request outcome is still unknown. Check again before sending another request.',
+          uncertain: true,
+        );
+      }
+      generationReceiptConfirmed = true;
+      generationReceiptEpoch = epoch;
+    }
+    if (generationReceiptEpoch != client.sessionEpoch) {
+      throw BackendUnauthorized('Your session changed. Reopen the app.');
+    }
+    final next = await client.builder.getForRecovery(draft.draftId);
+    if (generationReceiptEpoch != client.sessionEpoch) {
+      throw BackendUnauthorized('Your session changed. Reopen the app.');
+    }
+    if (!mounted) return;
+    if (next.mutation == uncertain.mutation + 1 &&
+        next.latestRequest == uncertain.request &&
+        next.jobId != null &&
+        next.jobId != uncertain.jobId) {
+      acceptRequest(next, uncertain.request);
+      setState(() => error = null);
+    } else {
+      uncertainGeneration = null;
+      generationReceiptConfirmed = false;
+      generationReceiptEpoch = null;
+      update(next);
+      setState(
+        () => error = NestError(
+          category: 'draft_changed',
+          message: 'Your request was accepted, but the draft has since changed. Review the latest draft before continuing.',
+        ),
+      );
+    }
   }
 
   void acceptRequest(BuilderSnapshot next, String request) {
     if (!mounted) return;
     setState(() {
       uncertainGeneration = null;
+      generationReceiptConfirmed = false;
+      generationReceiptEpoch = null;
       conversation.add(BuilderMessage(text: request, fromUser: true));
       lastRequest = request;
       guidanceQuestions = null;
@@ -1206,7 +1260,7 @@ class BuilderScreenState extends State<BuilderScreen> {
           : null,
       onRefreshStatus: poll,
       onReconnect: () async {
-        await loadPlatform();
+        if (uncertainGeneration == null) await loadPlatform();
         await poll();
       },
     );
@@ -1277,12 +1331,13 @@ class BuilderScreenState extends State<BuilderScreen> {
           if (!session.conflict && session.validationError == null)
             TextButton(
               onPressed: () => Navigator.pop(context, 'retry'),
-              child: const Text('Retry'),
+              child: Text(session.uncertain ? 'Check save status' : 'Retry'),
             ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'discard'),
-            child: const Text('Discard local changes'),
-          ),
+          if (!session.uncertain)
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'discard'),
+              child: const Text('Discard local changes'),
+            ),
         ],
       ),
     );
@@ -1365,8 +1420,17 @@ class BuilderScreenState extends State<BuilderScreen> {
         visualSession = VisualEditSession(
           snapshot: draft,
           read: () => client.builder.get(draft.draftId),
+          readForRecovery: () => client.builder.getForRecovery(draft.draftId),
+          sessionEpoch: () => client.sessionEpoch,
           write: (mutation, patch) =>
               client.builder.patch(draft.draftId, mutation, patch),
+          confirmSave: (mutation, candidateHash) =>
+              client.confirmRetainedBuilderCommand(
+                appId: draft.appId,
+                operation: 'spec.saveDraft',
+                expectedRevision: mutation,
+                candidateHash: candidateHash,
+              ),
           onSaved: (next, _) => update(next),
         );
       }

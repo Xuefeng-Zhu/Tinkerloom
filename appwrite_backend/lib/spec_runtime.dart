@@ -617,6 +617,33 @@ extension _SpecRuntime on PlatformService {
         return _specGetVersion(actor, input);
       case 'spec.setPinned':
         return _specSetPinned(actor, input);
+      case 'spec.commandReceipt':
+        _inputKeys(input, {'op', 'command'});
+        final raw = input['command'];
+        if (raw is! Map<String, dynamic> ||
+            !{'spec.saveDraft', 'spec.generate'}.contains(raw['op'])) {
+          throw const ServiceException('invalid_request', 400);
+        }
+        final appId = _validId(raw['appId']);
+        final operationId = _validId(raw['operationId']);
+        final command = raw['op'] == 'spec.saveDraft'
+            ? {
+                ...raw,
+                'spec': spec.AppSpec.parse(
+                  jsonEncode(jsonObject(raw['spec'], 'invalid_spec')),
+                ).toJson(),
+              }
+            : raw;
+        final request = _request(command, maximumBytes: _specRequestBytes);
+        final receipt = await _authorizedReceipt(
+          actor,
+          appId,
+          operationId,
+          request,
+          'build',
+          authorize: (access, _) async => _specEngine(access),
+        );
+        return {'confirmed': receipt != null};
       case 'spec.saveDraft':
         return _specSave(actor, input);
       case 'spec.review':
@@ -626,7 +653,10 @@ extension _SpecRuntime on PlatformService {
       case 'spec.watch':
         return _specWatch(actor, input);
       case 'spec.getApp':
-        _inputKeys(input, {'op', 'appId'});
+        _inputKeys(input, {'op', 'appId', 'suppressWakeups'});
+        if (input.containsKey('suppressWakeups') &&
+            input['suppressWakeups'] is! bool)
+          throw const ServiceException('invalid_request', 400);
         return _specRead(actor, _validId(input['appId']), (access, tx) async {
           if (access.role != 'owner' && access.app['specVersionId'] == null)
             throw const ServiceException('not_found', 404);

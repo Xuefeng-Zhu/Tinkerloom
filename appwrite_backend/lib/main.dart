@@ -5,6 +5,12 @@ import 'service.dart';
 import 'worker_http.dart';
 import 'providers/provider.dart';
 
+/// Recovery reads must not schedule unrelated deferred work. This does not
+/// cancel any worker execution that was already scheduled independently.
+bool shouldFlushWakeups(Map<String, dynamic> input) =>
+    input['op'] != 'spec.commandReceipt' &&
+    !(input['op'] == 'spec.getApp' && input['suppressWakeups'] == true);
+
 /// Appwrite Dart Function entrypoint. Appwrite injects context and credentials.
 Future<dynamic> main(dynamic context) async {
   final headers = Map<String, dynamic>.from(context.req.headers as Map);
@@ -91,9 +97,11 @@ Future<dynamic> main(dynamic context) async {
     final result = await service.execute(actor, data);
     // Commit precedes optional delivery. A scheduling outage never fabricates
     // successful work or turns a committed command into a failed command.
-    try {
-      await WorkerEngine(service).flushWakeups(limit: 3);
-    } catch (_) {}
+    if (shouldFlushWakeups(data)) {
+      try {
+        await WorkerEngine(service).flushWakeups(limit: 3);
+      } catch (_) {}
+    }
     return context.res.json(result, 200, {
       'Cache-Control': 'private, no-store',
     });

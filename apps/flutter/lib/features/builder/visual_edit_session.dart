@@ -12,7 +12,14 @@ typedef VisualPatch = Map<String, dynamic> Function(AppSpec spec);
 class VisualEditSession extends ChangeNotifier {
   BuilderSnapshot snapshot;
   final Future<BuilderSnapshot> Function() read;
+  final Future<BuilderSnapshot> Function() readForRecovery;
+  final int Function() sessionEpoch;
   final Future<BuilderSnapshot> Function(int mutation, String patch) write;
+  final Future<RetainedCommandStatus> Function(
+    int mutation,
+    String candidateHash,
+  )
+  confirmSave;
   final void Function(BuilderSnapshot, Map<String, dynamic>) onSaved;
   final _pending = <String, VisualPatch>{};
   Timer? _debounce;
@@ -20,10 +27,13 @@ class VisualEditSession extends ChangeNotifier {
   bool _disposed = false;
   bool conflict = false;
   bool _uncertain = false;
+  bool _confirmed = false;
+  int? _confirmationEpoch;
   ({
     MapEntry<String, VisualPatch> entry,
     Map<String, dynamic> patch,
     AppSpec expected,
+    int epoch,
   })?
   _attempt;
   String? error;
@@ -31,12 +41,16 @@ class VisualEditSession extends ChangeNotifier {
   VisualEditSession({
     required this.snapshot,
     required this.read,
+    required this.readForRecovery,
+    required this.sessionEpoch,
     required this.write,
+    required this.confirmSave,
     required this.onSaved,
   });
 
   bool get pending => _pending.isNotEmpty;
   bool get saving => _flight != null;
+  bool get uncertain => _uncertain;
   String get status =>
       validationError ?? error ?? (pending || saving ? 'Saving…' : 'Saved');
   AppSpec get spec => AppSpec.parse(snapshot.candidateJson);
@@ -90,8 +104,12 @@ class VisualEditSession extends ChangeNotifier {
     _notify();
     try {
       completer.complete(await _drain());
-    } catch (_) {
-      error = 'Couldn’t save. Retry to check your draft.';
+    } catch (issue) {
+      error = issue is BackendUnauthorized
+          ? issue.message
+          : _uncertain
+          ? 'The save outcome is unknown. Check save status before continuing.'
+          : 'Couldn’t save. Your changes are kept here.';
       completer.complete(false);
     } finally {
       _flight = null;
@@ -104,8 +122,35 @@ class VisualEditSession extends ChangeNotifier {
     while (_pending.isNotEmpty && !_disposed) {
       if (validationError != null) return false;
       if (_uncertain) {
-        // A failed read must never lead directly to a second mutation.
-        final latest = await read();
+        final pendingAttempt = _attempt;
+        if (pendingAttempt == null) throw StateError('Missing pending save.');
+        if (pendingAttempt.epoch != sessionEpoch()) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
+        if (!_confirmed) {
+          final attempt = pendingAttempt;
+          final epoch = sessionEpoch();
+          final result = await confirmSave(
+            snapshot.mutation,
+            attempt.expected.hash,
+          );
+          if (epoch != sessionEpoch()) {
+            throw BackendUnauthorized('Your session changed. Reopen the app.');
+          }
+          if (result != RetainedCommandStatus.confirmed) {
+            error = 'The save outcome is unknown. Check save status before continuing.';
+            return false;
+          }
+          _confirmed = true;
+          _confirmationEpoch = epoch;
+        }
+        if (_confirmationEpoch != sessionEpoch()) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
+        final latest = await readForRecovery();
+        if (_confirmationEpoch != sessionEpoch()) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
         final attempt = _attempt;
         if (attempt != null &&
             latest.mutation == snapshot.mutation + 1 &&
@@ -115,18 +160,21 @@ class VisualEditSession extends ChangeNotifier {
             _pending.remove(attempt.entry.key);
           }
           _uncertain = false;
+          _confirmed = false;
+          _confirmationEpoch = null;
           _attempt = null;
           onSaved(latest, attempt.patch);
           _notify();
           continue;
         }
-        if (latest.mutation != snapshot.mutation ||
-            latest.candidateHash != snapshot.candidateHash) {
-          conflict = true;
-          error = 'The draft changed. Reload the latest draft to continue.';
-          return false;
-        }
+        // The receipt confirms the command, but the current draft no longer
+        // matches its result. Do not claim the latest state is this save.
         _uncertain = false;
+        _confirmed = false;
+        _confirmationEpoch = null;
+        conflict = true;
+        error = 'The save completed, but the draft has changed. Reload the latest draft to continue.';
+        return false;
       }
       final entry = _pending.entries.first;
       final base = snapshot;
@@ -142,30 +190,35 @@ class VisualEditSession extends ChangeNotifier {
         continue;
       }
       BuilderSnapshot next;
-      _attempt = (entry: entry, patch: patch, expected: expected);
+      final attemptEpoch = sessionEpoch();
+      _attempt = (
+        entry: entry,
+        patch: patch,
+        expected: expected,
+        epoch: attemptEpoch,
+      );
       try {
         next = await write(base.mutation, jsonEncode(patch));
-      } catch (_) {
-        _uncertain = true;
-        try {
-          final latest = await read();
-          if (latest.mutation == base.mutation + 1 &&
-              latest.candidateHash == expected.hash) {
-            next = latest;
-          } else {
-            if (latest.mutation != base.mutation ||
-                latest.candidateHash != base.candidateHash) {
-              conflict = true;
-              error = 'The draft changed. Reload the latest draft to continue.';
-            } else {
-              error = 'Couldn’t save. Your changes are kept here. Retry or reload the draft.';
-            }
-            return false;
-          }
-        } catch (_) {
-          error = 'Couldn’t confirm the save. Retry to check your draft.';
-          return false;
+        if (attemptEpoch != sessionEpoch()) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
         }
+      } catch (issue) {
+        if (attemptEpoch != sessionEpoch()) {
+          _uncertain = true;
+          error = 'Your session changed. Reopen the app.';
+        } else if (issue is NestError && !issue.uncertain) {
+          if (issue.category == 'revision_conflict' ||
+              issue.category == 'definition_conflict') {
+            conflict = true;
+            error = 'The draft changed. Reload the latest draft to continue.';
+          } else {
+            error = 'Couldn’t save. Your changes are kept here.';
+          }
+        } else {
+          _uncertain = true;
+          error = 'The save outcome is unknown. Check save status before continuing.';
+        }
+        return false;
       }
       if (_disposed) return false;
       if (next.mutation != base.mutation + 1 ||
@@ -189,6 +242,9 @@ class VisualEditSession extends ChangeNotifier {
   /// Reload/discard is an explicit user decision after an error or conflict.
   Future<BuilderSnapshot> reload() async {
     if (_flight != null) await _flight;
+    if (_uncertain) {
+      throw StateError('The save outcome is still unknown.');
+    }
     final latest = await read();
     _pending.clear();
     _debounce?.cancel();

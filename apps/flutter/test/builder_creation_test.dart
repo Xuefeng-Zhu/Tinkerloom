@@ -16,6 +16,7 @@ class CreationClient extends Client {
 
   final generations = <Map<String, dynamic>>[];
   final gets = <String>[];
+  final recoveryGets = <String>[];
   final abandoned = <Map<String, dynamic>>[];
   final patches = <Map<String, dynamic>>[];
   Object? getFailure;
@@ -30,6 +31,23 @@ class CreationClient extends Client {
   Completer<List<GuidanceQuestion>>? pendingQuestions;
   Object? questionFailure;
   List<GuidanceQuestion> questionResponse = const [];
+  RetainedCommandStatus receipt = RetainedCommandStatus.confirmed;
+  Object? receiptFailure;
+  int receiptChecks = 0;
+
+  @override
+  Future<RetainedCommandStatus> confirmRetainedBuilderCommand({
+    required String appId,
+    required String operation,
+    required int expectedRevision,
+    String? request,
+    bool? startFromScratch,
+    String? candidateHash,
+  }) async {
+    receiptChecks++;
+    if (receiptFailure != null) throw receiptFailure!;
+    return receipt;
+  }
 
   @override
   Future<T> callServerEndpoint<T>(
@@ -51,7 +69,11 @@ class CreationClient extends Client {
           actorId: 'synthetic-builder-test',
         );
       case 'builder.get':
+      case 'builder.getForRecovery':
         gets.add(args['draftId'] as String);
+        if (method == 'getForRecovery') {
+          recoveryGets.add(args['draftId'] as String);
+        }
         if (getFailure != null) throw getFailure!;
         result = pendingGet == null ? current : await pendingGet!.future;
       case 'builder.generate':
@@ -118,8 +140,10 @@ void main() {
   setUpAll(() => transport.client = client);
   tearDownAll(client.close);
   setUp(() {
+    client.auth.setSession(null);
     client.generations.clear();
     client.gets.clear();
+    client.recoveryGets.clear();
     client.abandoned.clear();
     client.patches.clear();
     client.getFailure = null;
@@ -127,6 +151,9 @@ void main() {
     client.pendingGet = null;
     client.pendingGeneration = null;
     client.generationFailure = null;
+    client.receipt = RetainedCommandStatus.confirmed;
+    client.receiptFailure = null;
+    client.receiptChecks = 0;
     client.platformFailure = null;
     client.platformRequests = 0;
     client.aiAvailable = true;
@@ -225,13 +252,18 @@ void main() {
     );
     client.generationFailure = BackendNetworkException(
       'response lost',
+      uncertain: true,
     );
     await tester.enterText(composer(), request);
     await tester.pump();
     await tester.tap(find.byTooltip('Send message'));
     await tester.pump();
+    await tester.tap(find.text('Refresh connection'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 250));
     expect(client.generations, hasLength(1));
     expect(client.gets, ['9']);
+    expect(client.recoveryGets, ['9']);
     expect(tester.widget<TextField>(composer()).controller!.text, isEmpty);
     expect(find.byType(MiniAppRuntime), findsOneWidget);
     await closeBuilder(tester);
@@ -240,8 +272,11 @@ void main() {
   testWidgets('an uncertain submission reads before any retry', (tester) async {
     await showBuilder(tester, initial: draft());
     const request = 'Make my notes blue';
-    client.generationFailure = BackendNetworkException('offline');
-    client.getFailure = BackendNetworkException('offline');
+    client.generationFailure = BackendNetworkException(
+      'offline',
+      uncertain: true,
+    );
+    client.getFailure = BackendNetworkException('offline', uncertain: true);
     await tester.enterText(composer(), request);
     await tester.pump();
     await tester.tap(find.byTooltip('Send message'));
@@ -260,11 +295,154 @@ void main() {
     await tester.tap(find.byTooltip('Send message'));
     await tester.pump();
     expect(client.generations, hasLength(1));
-    expect(client.gets, ['9', '9']);
+    expect(client.gets, ['9']);
     expect(
       tester.widget<TextField>(composer()).controller!.text,
       'A different unsent change',
     );
+    await closeBuilder(tester);
+  });
+
+  testWidgets('an unresolved receipt never triggers another generation', (
+    tester,
+  ) async {
+    await showBuilder(tester, initial: draft());
+    client.generationFailure = BackendNetworkException(
+      'response lost',
+      uncertain: true,
+    );
+    client.receipt = RetainedCommandStatus.pending;
+    await tester.enterText(composer(), 'Make my notes blue');
+    await tester.pump();
+    await tester.tap(find.byTooltip('Send message'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Refresh connection'));
+    await tester.pumpAndSettle();
+    expect(client.receiptChecks, 1);
+    expect(client.generations, hasLength(1));
+    expect(client.gets, isEmpty);
+    expect(client.recoveryGets, isEmpty);
+    expect(find.textContaining('outcome is still unknown'), findsOneWidget);
+    expect(find.text('Refresh connection'), findsOneWidget);
+    await closeBuilder(tester);
+  });
+
+  testWidgets(
+    'a new session for the same actor cannot confirm an earlier uncertain request',
+    (tester) async {
+      client.auth.setSession({'id': 'alice'});
+      await showBuilder(tester, initial: draft());
+      client.generationFailure = BackendNetworkException(
+        'response lost',
+        uncertain: true,
+      );
+      // A fake matching confirmation in the new session must never be consumed.
+      client.receipt = RetainedCommandStatus.confirmed;
+      await tester.enterText(composer(), 'Make my notes blue');
+      await tester.pump();
+      await tester.tap(find.byTooltip('Send message'));
+      await tester.pumpAndSettle();
+      client.auth.setSession(null);
+      client.auth.setSession({'id': 'alice'});
+      await tester.tap(find.text('Refresh connection'));
+      await tester.pumpAndSettle();
+      final state = tester.state<BuilderScreenState>(
+        find.byType(BuilderScreen),
+      );
+      expect(client.receiptChecks, 0);
+      expect(client.recoveryGets, isEmpty);
+      expect(client.generations, hasLength(1));
+      expect(state.uncertainGeneration, isNotNull);
+      expect(state.conversation.where((message) => message.fromUser), isEmpty);
+      await closeBuilder(tester);
+    },
+  );
+
+  testWidgets('a confirmed request cannot be reused after switching accounts', (
+    tester,
+  ) async {
+    client.auth.setSession({'id': 'alice'});
+    await showBuilder(tester, initial: draft());
+    const request = 'Make my notes blue';
+    client.generationFailure = BackendNetworkException(
+      'response lost',
+      uncertain: true,
+    );
+    client.getFailure = BackendNetworkException('read offline');
+    await tester.enterText(composer(), request);
+    await tester.pump();
+    await tester.tap(find.byTooltip('Send message'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Refresh connection'));
+    await tester.pumpAndSettle();
+    expect(client.receiptChecks, 1);
+    expect(client.recoveryGets, ['9']);
+    client.auth.setSession({'id': 'bob'});
+    client.getFailure = null;
+    client.current = draft(mutation: 1, jobId: '7', latestRequest: request);
+    await tester.tap(find.text('Refresh connection'));
+    await tester.pumpAndSettle();
+    final state = tester.state<BuilderScreenState>(find.byType(BuilderScreen));
+    expect(client.recoveryGets, ['9']);
+    expect(client.generations, hasLength(1));
+    expect(state.uncertainGeneration, isNotNull);
+    expect(state.conversation.where((message) => message.fromUser), isEmpty);
+    await closeBuilder(tester);
+  });
+
+  testWidgets('a late recovery read cannot update a changed session', (
+    tester,
+  ) async {
+    client.auth.setSession({'id': 'alice'});
+    await showBuilder(tester, initial: draft());
+    const request = 'Make my notes blue';
+    client.generationFailure = BackendNetworkException(
+      'response lost',
+      uncertain: true,
+    );
+    await tester.enterText(composer(), request);
+    await tester.pump();
+    await tester.tap(find.byTooltip('Send message'));
+    await tester.pumpAndSettle();
+    client.pendingGet = Completer<BuilderSnapshot>();
+    final state = tester.state<BuilderScreenState>(find.byType(BuilderScreen));
+    final checking = state.poll();
+    await tester.pump();
+    expect(client.recoveryGets, ['9']);
+    client.auth.setSession({'id': 'bob'});
+    client.pendingGet!.complete(
+      draft(mutation: 1, jobId: '7', latestRequest: request),
+    );
+    await checking;
+    await tester.pumpAndSettle();
+    expect(state.uncertainGeneration, isNotNull);
+    expect(state.conversation.where((message) => message.fromUser), isEmpty);
+    expect(state.draft.mutation, 0);
+    expect(client.generations, hasLength(1));
+    await closeBuilder(tester);
+  });
+
+  testWidgets('a confirmed request does not claim a newer same-text job', (
+    tester,
+  ) async {
+    await showBuilder(tester, initial: draft());
+    const request = 'Make my notes blue';
+    client.generationFailure = BackendNetworkException(
+      'response lost',
+      uncertain: true,
+    );
+    await tester.enterText(composer(), request);
+    await tester.pump();
+    await tester.tap(find.byTooltip('Send message'));
+    await tester.pumpAndSettle();
+    client.current = draft(mutation: 2, jobId: 'newer', latestRequest: request);
+    await tester.tap(find.text('Refresh connection'));
+    await tester.pumpAndSettle();
+    final state = tester.state<BuilderScreenState>(find.byType(BuilderScreen));
+    expect(state.draft.jobId, 'newer');
+    expect(state.conversation.where((message) => message.fromUser), isEmpty);
+    expect(find.textContaining('draft has since changed'), findsOneWidget);
+    expect(client.generations, hasLength(1));
     await closeBuilder(tester);
   });
 
@@ -286,10 +464,13 @@ void main() {
     );
     client.generationFailure = BackendNetworkException(
       'response lost',
+      uncertain: true,
     );
     await tester.enterText(composer(), request);
     await tester.pump();
     await tester.tap(find.byTooltip('Send message'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Refresh connection'));
     await tester.pumpAndSettle();
 
     expect(client.generations, hasLength(1));
@@ -325,6 +506,7 @@ void main() {
           'Your preview is ready. Try it out, or tell me what to adjust next.';
       client.generationFailure = BackendNetworkException(
         'response lost',
+        uncertain: true,
       );
       client.getFailure = BackendNetworkException(
         'still offline',
@@ -334,7 +516,7 @@ void main() {
       await tester.tap(find.byTooltip('Send message'));
       await tester.pump();
       expect(client.generations, hasLength(1));
-      expect(client.gets, ['9']);
+      expect(client.gets, isEmpty);
       expect(tester.widget<TextField>(composer()).controller!.text, request);
 
       final after = before.patch({
@@ -357,7 +539,7 @@ void main() {
         find.byType(BuilderScreen),
       );
       expect(client.generations, hasLength(1));
-      expect(client.gets, ['9', '9']);
+      expect(client.gets, ['9']);
       expect(tester.widget<TextField>(composer()).controller!.text, unsent);
       expect(state.uncertainGeneration, isNull);
       expect(state.draft.candidateHash, after.hash);
@@ -393,6 +575,7 @@ void main() {
             'Your preview is ready. Try it out, or tell me what to adjust next.';
         client.generationFailure = BackendNetworkException(
           'response lost',
+          uncertain: true,
         );
         client.getFailure = BackendNetworkException(
           'still offline',
@@ -402,7 +585,7 @@ void main() {
         await tester.tap(find.byTooltip('Send message'));
         await tester.pumpAndSettle();
         expect(client.generations, hasLength(1));
-        expect(client.gets, ['9']);
+        expect(client.gets, isEmpty);
         expect(find.text('Refresh connection'), findsOneWidget);
 
         final after = before.patch({
@@ -427,8 +610,8 @@ void main() {
           find.byType(BuilderScreen),
         );
         expect(client.generations, hasLength(1));
-        expect(client.gets, ['9', '9']);
-        expect(client.platformRequests, 2);
+        expect(client.gets, ['9']);
+        expect(client.platformRequests, 1);
         expect(state.uncertainGeneration, isNull);
         expect(state.draft.candidateHash, after.hash);
         expect(state.conversation.map((message) => message.text), [
@@ -472,6 +655,7 @@ void main() {
         'Your preview is ready. Try it out, or tell me what to adjust next.';
     client.generationFailure = BackendNetworkException(
       'response lost',
+      uncertain: true,
     );
     client.getFailure = BackendNetworkException('still offline');
     await tester.enterText(composer(), request);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:tinkerloom_client/tinkerloom_client.dart';
 import 'package:tinkerloom_flutter/features/builder/visual_edit_session.dart';
 import 'package:tinkerloom_flutter/features/builder/visual_inspector.dart';
 import 'package:appnest_renderer/appnest_renderer.dart';
@@ -18,7 +19,9 @@ void main() {
     var server = snapshot(spec, 0);
     final session = VisualEditSession(
       snapshot: server,
+      sessionEpoch: () => 0,
       read: () async => server,
+      readForRecovery: () async => server,
       write: (revision, json) async {
         expect(revision, server.mutation);
         server = snapshot(
@@ -30,6 +33,7 @@ void main() {
         );
         return server;
       },
+      confirmSave: (_, _) async => RetainedCommandStatus.pending,
       onSaved: (_, _) {},
     );
     addTearDown(session.dispose);

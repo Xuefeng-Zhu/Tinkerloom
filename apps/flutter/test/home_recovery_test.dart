@@ -30,6 +30,22 @@ class TestClient extends Client {
   Completer<List<GuidanceQuestion>>? pendingQuestions;
   Object? questionFailure;
   List<GuidanceQuestion> questionResponse = const [];
+  RetainedCommandStatus receipt = RetainedCommandStatus.confirmed;
+  int receiptChecks = 0;
+
+  @override
+  Future<RetainedCommandStatus> confirmRetainedBuilderCommand({
+    required String appId,
+    required String operation,
+    required int expectedRevision,
+    String? request,
+    bool? startFromScratch,
+    String? candidateHash,
+  }) async {
+    receiptChecks++;
+    return receipt;
+  }
+
   final manifests = <AppManifest>[];
 
   BuilderSnapshot snapshot() {
@@ -79,7 +95,9 @@ class TestClient extends Client {
       }
       if (generationFailure != null) throw generationFailure!;
     }
-    if ('$endpoint.$method' == 'builder.get' && draftFailure != null) {
+    if (endpoint == 'builder' &&
+        {'get', 'getForRecovery'}.contains(method) &&
+        draftFailure != null) {
       throw draftFailure!;
     }
     if ('$endpoint.$method' == 'builder.suggestQuestions') {
@@ -105,7 +123,10 @@ class TestClient extends Client {
       'apps.list' => manifests,
       'apps.templates' => <TemplateInfo>[],
       'runtime.inbox' => <InboxItem>[],
-      'builder.begin' || 'builder.generate' || 'builder.get' => currentDraft!,
+      'builder.begin' ||
+      'builder.generate' ||
+      'builder.get' ||
+      'builder.getForRecovery' => currentDraft!,
       _ => throw StateError('Unexpected endpoint: $endpoint.$method'),
     } as T;
   }
@@ -119,6 +140,7 @@ void main() {
   setUpAll(() => transport.client = testClient);
   tearDownAll(testClient.close);
   setUp(() {
+    testClient.auth.setSession(null);
     testClient.failure = null;
     testClient.pending = null;
     testClient.workspaceRequests = 0;
@@ -127,6 +149,8 @@ void main() {
     testClient.pendingCreation = null;
     testClient.creationFailure = null;
     testClient.generationFailure = null;
+    testClient.receipt = RetainedCommandStatus.confirmed;
+    testClient.receiptChecks = 0;
     testClient.draftFailure = null;
     testClient.acceptBeforeGenerationFailure = false;
     testClient.currentDraft = null;
@@ -552,6 +576,7 @@ void main() {
       testClient.aiAvailable = true;
       testClient.generationFailure = BackendNetworkException(
         'response lost',
+        uncertain: true,
       );
       testClient.acceptBeforeGenerationFailure = true;
       await home(tester);
@@ -569,7 +594,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(testClient.beginRequests, hasLength(1));
       expect(testClient.generationRequests, hasLength(1));
-      expect(testClient.methods.where((m) => m == 'builder.get'), hasLength(1));
+      expect(
+        testClient.methods.where((m) => m == 'builder.getForRecovery'),
+        hasLength(1),
+      );
       final builder = tester.widget<BuilderScreen>(find.byType(BuilderScreen));
       expect(builder.initialPrompt, 'A reading journal');
       expect(builder.initial.jobId, '42');
@@ -591,6 +619,110 @@ void main() {
         'A newer idea I have not submitted',
       );
       expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('an unresolved creation checks status without another write', (
+    tester,
+  ) async {
+    testClient.aiAvailable = true;
+    testClient.generationFailure = BackendNetworkException(
+      'response lost',
+      uncertain: true,
+    );
+    testClient.receipt = RetainedCommandStatus.pending;
+    await home(tester);
+    final create = find.byKey(const ValueKey('create-app'));
+    await tester.enterText(
+      find.byKey(const ValueKey('app-idea')),
+      'A reading journal',
+    );
+    await tester.pump();
+    await tester.tap(create);
+    await tester.pumpAndSettle();
+    expect(find.text('Check request'), findsOneWidget);
+    await tester.tap(create);
+    await tester.pumpAndSettle();
+    expect(testClient.generationRequests, hasLength(1));
+    expect(testClient.methods.where((m) => m == 'builder.get'), isEmpty);
+    expect(find.byType(BuilderScreen), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
+    'a confirmed creation is not recovered under a different account',
+    (tester) async {
+      testClient.auth.setSession({'id': 'alice'});
+      testClient.aiAvailable = true;
+      testClient.generationFailure = BackendNetworkException(
+        'response lost',
+        uncertain: true,
+      );
+      testClient.acceptBeforeGenerationFailure = true;
+      testClient.draftFailure = BackendNetworkException('read offline');
+      await home(tester);
+      final create = find.byKey(const ValueKey('create-app'));
+      await tester.enterText(
+        find.byKey(const ValueKey('app-idea')),
+        'A reading journal',
+      );
+      await tester.pump();
+      await tester.tap(create);
+      await tester.pumpAndSettle();
+      await tester.tap(create);
+      await tester.pumpAndSettle();
+      expect(testClient.receiptChecks, 1);
+      expect(
+        testClient.methods.where((m) => m == 'builder.getForRecovery'),
+        hasLength(1),
+      );
+      testClient.auth.setSession({'id': 'bob'});
+      testClient.draftFailure = null;
+      await tester.tap(create);
+      await tester.pumpAndSettle();
+      expect(
+        testClient.methods.where((m) => m == 'builder.getForRecovery'),
+        hasLength(1),
+      );
+      expect(testClient.generationRequests, hasLength(1));
+      expect(find.byType(BuilderScreen), findsNothing);
+      expect(find.text('Check request'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'a different account cannot confirm an earlier uncertain creation',
+    (tester) async {
+      testClient.auth.setSession({'id': 'alice'});
+      testClient.aiAvailable = true;
+      testClient.generationFailure = BackendNetworkException(
+        'response lost',
+        uncertain: true,
+      );
+      // The fake will report a matching receipt for any account, simulating a new
+      // retained command with the same visible input under the new session.
+      testClient.receipt = RetainedCommandStatus.confirmed;
+      await home(tester);
+      final create = find.byKey(const ValueKey('create-app'));
+      await tester.enterText(
+        find.byKey(const ValueKey('app-idea')),
+        'A reading journal',
+      );
+      await tester.pump();
+      await tester.tap(create);
+      await tester.pumpAndSettle();
+      testClient.auth.setSession({'id': 'bob'});
+      await tester.tap(create);
+      await tester.pumpAndSettle();
+      expect(testClient.receiptChecks, 0);
+      expect(
+        testClient.methods.where((m) => m == 'builder.getForRecovery'),
+        isEmpty,
+      );
+      expect(testClient.generationRequests, hasLength(1));
+      expect(find.byType(BuilderScreen), findsNothing);
       await tester.pumpWidget(const SizedBox());
     },
   );

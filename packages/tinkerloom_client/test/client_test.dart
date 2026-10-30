@@ -88,14 +88,25 @@ class Fixture {
   late final Client client;
   final calls = <Map<String, dynamic>>[];
   bool loseNextMutation = false;
+  String? loseNextOp;
+  String? loseBeforeOp;
   Client forActor(String actor) => Client(
     'https://offline.invalid/v1',
     auth: ClientAuth()..setSession({'id': actor}),
     transport: (input) async {
       calls.add(jsonDecode(jsonEncode(input)) as Map<String, dynamic>);
       try {
+        if (input['op'] == loseBeforeOp) {
+          loseBeforeOp = null;
+          throw BackendNetworkException(
+            'Synthetic unknown before commit',
+            uncertain: true,
+          );
+        }
         final result = await service.execute(actor, input);
-        if (loseNextMutation && input['op'] == 'spec.execute') {
+        if ((loseNextMutation && input['op'] == 'spec.execute') ||
+            input['op'] == loseNextOp) {
+          loseNextOp = null;
           loseNextMutation = false;
           throw BackendNetworkException(
             'Synthetic lost reply',
@@ -166,6 +177,556 @@ class Fixture {
 }
 
 void main() {
+  test(
+    'receipt confirmation and exact mutation retry are mutually exclusive',
+    () async {
+      final calls = <String>[];
+      final retry = Completer<Map<String, dynamic>>();
+      final receipt = Completer<Map<String, dynamic>>();
+      final auth = ClientAuth()..setSession({'id': 'alice'});
+      final client = Client(
+        'https://offline.invalid',
+        auth: auth,
+        transport: (input) {
+          final op = input['op'] as String;
+          calls.add(op);
+          if (op == 'spec.commandReceipt') return receipt.future;
+          if (op == 'spec.capabilities') return Future.value({});
+          if (calls.where((v) => v == 'spec.generate').length == 1) {
+            return Future.error(
+              BackendNetworkException('lost', uncertain: true),
+            );
+          }
+          return retry.future;
+        },
+      );
+      addTearDown(client.close);
+      final command = {
+        'op': 'spec.generate',
+        'appId': 'app',
+        'operationId': 'op1',
+        'expectedRevision': 0,
+        'request': 'idea',
+        'startFromScratch': false,
+      };
+      Future<RetainedCommandStatus> confirm() =>
+          client.confirmRetainedBuilderCommand(
+            appId: 'app',
+            operation: 'spec.generate',
+            expectedRevision: 0,
+            request: 'idea',
+            startFromScratch: false,
+          );
+      await expectLater(
+        client.request(command),
+        throwsA(isA<BackendNetworkException>()),
+      );
+      final retried = client.request(command);
+      final retryFailure = expectLater(
+        retried,
+        throwsA(isA<BackendNetworkException>()),
+      );
+      await expectLater(
+        confirm(),
+        throwsA(
+          isA<NestError>().having(
+            (e) => e.category,
+            'category',
+            'command_in_progress',
+          ),
+        ),
+      );
+      expect(calls, ['spec.generate', 'spec.generate']);
+      retry.completeError(
+        BackendNetworkException('lost again', uncertain: true),
+      );
+      await retryFailure;
+      final checking = confirm();
+      await expectLater(
+        client.request(command),
+        throwsA(
+          isA<NestError>().having(
+            (e) => e.category,
+            'category',
+            'command_in_progress',
+          ),
+        ),
+      );
+      final capabilities = client.request({'op': 'spec.capabilities'});
+      expect(calls, ['spec.generate', 'spec.generate', 'spec.commandReceipt']);
+      receipt.complete({'confirmed': true});
+      expect(await checking, RetainedCommandStatus.confirmed);
+      await capabilities;
+      expect(calls, [
+        'spec.generate',
+        'spec.generate',
+        'spec.commandReceipt',
+        'spec.capabilities',
+      ]);
+    },
+  );
+  for (final lose in [false, true]) {
+    test(
+      'mutation admission rejects concurrent dispatch after ${lose ? 'uncertain' : 'successful'} first result',
+      () async {
+        final first = Completer<Map<String, dynamic>>();
+        final calls = <Map<String, dynamic>>[];
+        final auth = ClientAuth()..setSession({'id': 'alice'});
+        final client = Client(
+          'https://offline.invalid',
+          auth: auth,
+          transport: (input) {
+            calls.add(input);
+            if (input['op'] == 'spec.capabilities') return Future.value({});
+            if (calls.where((v) => v['op'] == 'createWorkspace').length == 1) {
+              return first.future;
+            }
+            return Future.value({
+              'workspace': {'id': input['id'], 'name': input['name']},
+            });
+          },
+        );
+        addTearDown(client.close);
+        final command = {'op': 'createWorkspace', 'id': 'one', 'name': 'One'};
+        final inFlight = client.request(command);
+        final assertion = lose
+            ? expectLater(inFlight, throwsA(isA<BackendNetworkException>()))
+            : expectLater(inFlight, completion(isA<Map<String, dynamic>>()));
+        for (final other in [
+          command,
+          {'op': 'createWorkspace', 'id': 'two', 'name': 'Two'},
+        ]) {
+          await expectLater(
+            client.request(other),
+            throwsA(
+              isA<NestError>().having(
+                (e) => e.category,
+                'category',
+                'command_in_progress',
+              ),
+            ),
+          );
+        }
+        await client.request({'op': 'spec.capabilities'});
+        expect(calls.where((v) => v['op'] == 'createWorkspace'), hasLength(1));
+        if (lose) {
+          first.completeError(BackendNetworkException('lost', uncertain: true));
+        } else {
+          first.complete({
+            'workspace': {'id': 'one', 'name': 'One'},
+          });
+        }
+        await assertion;
+        if (lose) {
+          await expectLater(
+            client.request({
+              'op': 'createWorkspace',
+              'id': 'two',
+              'name': 'Two',
+            }),
+            throwsA(
+              isA<NestError>().having(
+                (e) => e.category,
+                'category',
+                'pending_command',
+              ),
+            ),
+          );
+          await client.request(
+            command,
+          ); // Explicit exact-envelope retry after settlement.
+        } else {
+          await client.request({
+            'op': 'createWorkspace',
+            'id': 'two',
+            'name': 'Two',
+          });
+        }
+        expect(calls.where((v) => v['op'] == 'createWorkspace'), hasLength(2));
+      },
+    );
+  }
+
+  test(
+    'mutation admission survives session change until transport settles',
+    () async {
+      final first = Completer<Map<String, dynamic>>();
+      final calls = <Map<String, dynamic>>[];
+      final auth = ClientAuth()..setSession({'id': 'alice'});
+      final client = Client(
+        'https://offline.invalid',
+        auth: auth,
+        transport: (input) {
+          calls.add(input);
+          if (calls.length == 1) return first.future;
+          return Future.value({
+            'workspace': {'id': input['id'], 'name': input['name']},
+          });
+        },
+      );
+      addTearDown(client.close);
+      final previous = client.request({
+        'op': 'createWorkspace',
+        'id': 'one',
+        'name': 'One',
+      });
+      final rejected = expectLater(
+        previous,
+        throwsA(isA<BackendUnauthorized>()),
+      );
+      auth.setSession({'id': 'bob'});
+      await expectLater(
+        client.request({'op': 'createWorkspace', 'id': 'two', 'name': 'Two'}),
+        throwsA(
+          isA<NestError>().having(
+            (e) => e.category,
+            'category',
+            'command_in_progress',
+          ),
+        ),
+      );
+      expect(calls, hasLength(1));
+      first.complete({
+        'workspace': {'id': 'one', 'name': 'One'},
+      });
+      await rejected;
+      await client.request({
+        'op': 'createWorkspace',
+        'id': 'two',
+        'name': 'Two',
+      });
+      expect(calls, hasLength(2));
+    },
+  );
+  for (final operation in ['spec.saveDraft', 'spec.generate']) {
+    test(
+      'confirmed $operation receipt unlocks without replay or wake',
+      () async {
+        final provider = OfflineRejectedProvider();
+        final f = Fixture(provider: provider);
+        addTearDown(f.client.close);
+        final (_, draft) = await f.draft();
+        f.loseNextOp = operation;
+        Future<BuilderSnapshot> send() => operation == 'spec.saveDraft'
+            ? f.client.builder.patch(
+                draft.draftId,
+                draft.mutation,
+                jsonEncode({
+                  'type': 'RenameLabel',
+                  'targetId': 'title',
+                  'label': 'Book title',
+                }),
+              )
+            : f.client.builder.generate(
+                draft.draftId,
+                draft.mutation,
+                'Offline edit',
+                startFromScratch: false,
+              );
+        await expectLater(send(), throwsA(isA<BackendNetworkException>()));
+        final readback = await f.client.builder.get(draft.draftId);
+        expect(readback.mutation, draft.mutation + 1);
+        await expectLater(
+          f.client.builder.patch(
+            readback.draftId,
+            readback.mutation,
+            jsonEncode({
+              'type': 'RenameLabel',
+              'targetId': 'title',
+              'label': 'Second',
+            }),
+          ),
+          throwsA(
+            isA<NestError>().having(
+              (e) => e.category,
+              'category',
+              'pending_command',
+            ),
+          ),
+        );
+        final command = f.calls.lastWhere((v) => v['op'] == operation);
+        final mismatched = {...command, 'expectedRevision': 999};
+        await expectLater(
+          f.service.execute('alice', {
+            'op': 'spec.commandReceipt',
+            'command': mismatched,
+          }),
+          throwsA(
+            isA<backend.ServiceException>().having(
+              (e) => e.code,
+              'code',
+              'operation_conflict',
+            ),
+          ),
+        );
+        await expectLater(
+          f.service.execute('bob', {
+            'op': 'spec.commandReceipt',
+            'command': command,
+          }),
+          throwsA(isA<backend.ServiceException>()),
+        );
+        final before = f.calls.where((v) => v['op'] == operation).length;
+        final beforeReceipts = f.calls
+            .where((v) => v['op'] == 'spec.commandReceipt')
+            .length;
+        await expectLater(
+          f.client.confirmRetainedBuilderCommand(
+            appId: 'wrong-app',
+            operation: operation,
+            expectedRevision: draft.mutation,
+            request: operation == 'spec.generate' ? 'Offline edit' : null,
+            startFromScratch: operation == 'spec.generate' ? false : null,
+            candidateHash: operation == 'spec.saveDraft'
+                ? readback.candidateHash
+                : null,
+          ),
+          throwsA(
+            isA<NestError>().having(
+              (e) => e.category,
+              'category',
+              'pending_command',
+            ),
+          ),
+        );
+        expect(
+          f.calls.where((v) => v['op'] == 'spec.commandReceipt').length,
+          beforeReceipts,
+        );
+        expect(
+          await f.client.confirmRetainedBuilderCommand(
+            appId: draft.draftId,
+            operation: operation,
+            expectedRevision: draft.mutation,
+            request: operation == 'spec.generate' ? 'Offline edit' : null,
+            startFromScratch: operation == 'spec.generate' ? false : null,
+            candidateHash: operation == 'spec.saveDraft'
+                ? readback.candidateHash
+                : null,
+          ),
+          RetainedCommandStatus.confirmed,
+        );
+        expect(f.calls.where((v) => v['op'] == operation).length, before);
+        expect(provider.calls, 0);
+        final changed = await f.client.builder.patch(
+          readback.draftId,
+          readback.mutation,
+          jsonEncode({
+            'type': 'RenameLabel',
+            'targetId': 'title',
+            'label': 'Second',
+          }),
+        );
+        expect(changed.mutation, readback.mutation + 1);
+      },
+    );
+  }
+
+  test('missing receipt keeps uncertain command locked', () async {
+    final f = Fixture();
+    addTearDown(f.client.close);
+    final (_, draft) = await f.draft();
+    f.loseBeforeOp = 'spec.saveDraft';
+    await expectLater(
+      f.client.builder.patch(
+        draft.draftId,
+        draft.mutation,
+        jsonEncode({
+          'type': 'RenameLabel',
+          'targetId': 'title',
+          'label': 'One',
+        }),
+      ),
+      throwsA(isA<BackendNetworkException>()),
+    );
+    final expected = spec.AppSpec.parse(draft.candidateJson).patch({
+      'type': 'RenameLabel',
+      'targetId': 'title',
+      'label': 'One',
+    }, () => 'unused');
+    expect(
+      await f.client.confirmRetainedBuilderCommand(
+        appId: draft.draftId,
+        operation: 'spec.saveDraft',
+        expectedRevision: draft.mutation,
+        candidateHash: expected.hash,
+      ),
+      RetainedCommandStatus.pending,
+    );
+    await expectLater(
+      f.client.builder.patch(
+        draft.draftId,
+        draft.mutation,
+        jsonEncode({
+          'type': 'RenameLabel',
+          'targetId': 'title',
+          'label': 'Two',
+        }),
+      ),
+      throwsA(
+        isA<NestError>().having(
+          (e) => e.category,
+          'category',
+          'pending_command',
+        ),
+      ),
+    );
+  });
+
+  test(
+    'receipt lookup rejects malformed confirmation and wrong operation',
+    () async {
+      final seen = <String>[];
+      final auth = ClientAuth()..setSession({'id': 'alice'});
+      final client = Client(
+        'https://offline.invalid',
+        auth: auth,
+        transport: (input) async {
+          seen.add(input['op'] as String);
+          if (input['op'] == 'spec.commandReceipt') return {'confirmed': 'yes'};
+          throw BackendNetworkException('uncertain', uncertain: true);
+        },
+      );
+      addTearDown(client.close);
+      await expectLater(
+        client.request({
+          'op': 'spec.generate',
+          'appId': 'app',
+          'operationId': 'someid',
+          'expectedRevision': 0,
+          'request': 'original',
+          'startFromScratch': false,
+        }),
+        throwsA(isA<BackendNetworkException>()),
+      );
+      await expectLater(
+        client.confirmRetainedBuilderCommand(
+          appId: 'app',
+          operation: 'spec.saveDraft',
+          expectedRevision: 0,
+          candidateHash: 'irrelevant',
+        ),
+        throwsA(
+          isA<NestError>().having(
+            (e) => e.category,
+            'category',
+            'pending_command',
+          ),
+        ),
+      );
+      expect(seen, ['spec.generate']);
+      await expectLater(
+        client.confirmRetainedBuilderCommand(
+          appId: 'app',
+          operation: 'spec.generate',
+          expectedRevision: 0,
+          request: 'original',
+          startFromScratch: false,
+        ),
+        throwsA(
+          isA<NestError>().having(
+            (e) => e.category,
+            'category',
+            'invalid_response',
+          ),
+        ),
+      );
+      await expectLater(
+        client.request({
+          'op': 'spec.saveDraft',
+          'appId': 'app',
+          'operationId': 'different',
+        }),
+        throwsA(
+          isA<NestError>().having(
+            (e) => e.category,
+            'category',
+            'pending_command',
+          ),
+        ),
+      );
+    },
+  );
+
+  test('receipt lookup fails after builder access is revoked', () async {
+    final f = Fixture();
+    addTearDown(f.client.close);
+    final (app, _) = await f.published();
+    final workspace = (await f.client.apps.manifest(app)).workspaceId;
+    final bob = f.forActor('bob');
+    addTearDown(bob.close);
+    final token = await f.client.apps.invite(app, 'builder', 'bob');
+    await bob.apps.acceptInvitation(token);
+    final draft = await bob.builder.begin(workspace, 'reading', app);
+    final patch = {
+      'type': 'RenameLabel',
+      'targetId': 'title',
+      'label': 'Private',
+    };
+    final expected = spec.AppSpec.parse(draft.candidateJson)
+        .patch(patch, () => 'unused');
+    f.loseNextOp = 'spec.saveDraft';
+    await expectLater(
+      bob.builder.patch(draft.draftId, draft.mutation, jsonEncode(patch)),
+      throwsA(isA<BackendNetworkException>()),
+    );
+    await f.client.apps.members(app);
+    await f.client.apps.setGrant(app, 'bob', null);
+    await expectLater(
+      bob.confirmRetainedBuilderCommand(
+        appId: draft.draftId,
+        operation: 'spec.saveDraft',
+        expectedRevision: draft.mutation,
+        candidateHash: expected.hash,
+      ),
+      throwsA(isA<NestError>()),
+    );
+  });
+
+  test('session change fences a delayed receipt result', () async {
+    final auth = ClientAuth()..setSession({'id': 'alice'});
+    final reply = Completer<Map<String, dynamic>>();
+    final started = Completer<void>();
+    final client = Client(
+      'https://offline.invalid',
+      auth: auth,
+      transport: (input) async {
+        if (input['op'] == 'spec.commandReceipt') {
+          started.complete();
+          return reply.future;
+        }
+        throw BackendNetworkException('uncertain', uncertain: true);
+      },
+    );
+    addTearDown(client.close);
+    await expectLater(
+      client.request({
+        'op': 'spec.generate',
+        'appId': 'app',
+        'operationId': 'someid',
+        'expectedRevision': 0,
+        'request': 'original',
+        'startFromScratch': false,
+      }),
+      throwsA(isA<BackendNetworkException>()),
+    );
+    final confirmation = client.confirmRetainedBuilderCommand(
+      appId: 'app',
+      operation: 'spec.generate',
+      expectedRevision: 0,
+      request: 'original',
+      startFromScratch: false,
+    );
+    final assertion = expectLater(
+      confirmation,
+      throwsA(isA<BackendUnauthorized>()),
+    );
+    await started.future;
+    auth.setSession({'id': 'bob'});
+    reply.complete({'confirmed': true});
+    await assertion;
+  });
+
   test(
     'real service: original draft patch publication and record transport',
     () async {

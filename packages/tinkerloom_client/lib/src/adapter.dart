@@ -47,8 +47,16 @@ extension _PresentationAdapter on Client {
     );
   }
 
-  Future<Map<String, dynamic>> _load(String id) async =>
-      _remember((await request({'op': 'spec.getApp', 'appId': id}))['app']);
+  Future<Map<String, dynamic>> _load(
+    String id, {
+    bool suppressWakeups = false,
+  }) async => _remember(
+    (await request({
+      'op': 'spec.getApp',
+      'appId': id,
+      if (suppressWakeups) 'suppressWakeups': true,
+    }))['app'],
+  );
   Future<Map<String, dynamic>> _current(String id) async =>
       _apps[id] ?? await _load(id);
   Future<String> _version(String appId) async {
@@ -353,6 +361,10 @@ extension _PresentationAdapter on Client {
         return _begin(args, logical);
       case 'builder.get':
         return _snapshot(await _load(_id(args['draftId'])));
+      case 'builder.getForRecovery':
+        return _snapshot(
+          await _load(_id(args['draftId']), suppressWakeups: true),
+        );
       case 'builder.suggestQuestions':
         String? workspaceId = args['workspaceId'] as String?;
         final draftId = args['draftId'] as String?;

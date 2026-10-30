@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:tinkerloom_client/tinkerloom_client.dart';
 import 'package:tinkerloom_flutter/client.dart' as transport;
 import 'package:tinkerloom_flutter/features/builder/builder_screen.dart';
 import 'package:appnest_renderer/appnest_renderer.dart';
@@ -14,6 +15,7 @@ class VisualClient extends CreationClient {
   final writes = <Map<String, dynamic>>[];
   Completer<void>? pause;
   bool failWrite = false;
+  bool uncertainWrite = false;
   @override
   Future<T> callServerEndpoint<T>(
     String endpoint,
@@ -31,7 +33,14 @@ class VisualClient extends CreationClient {
     }
     expectSync(authenticated, true);
     writes.add(args);
-    if (failWrite) throw StateError('offline');
+    if (failWrite) {
+      if (uncertainWrite) {
+        throw BackendNetworkException('response lost', uncertain: true);
+      }
+      // This fixture fails before touching the synthetic server, so the
+      // rejection is definite and the user can safely discard local edits.
+      throw NestError(category: 'rejected', message: 'Save was rejected.');
+    }
     if (pause != null) await pause!.future;
     expectSync(args['mutation'], current.mutation);
     final spec = AppSpec.parse(current.candidateJson)
@@ -50,6 +59,8 @@ void main() {
     client.writes.clear();
     client.pause = null;
     client.failWrite = false;
+    client.uncertainWrite = false;
+    client.receipt = RetainedCommandStatus.confirmed;
     client.pendingGeneration = null;
   });
   Future<void> mount(WidgetTester tester, {bool mobile = false}) async {
@@ -183,6 +194,31 @@ void main() {
     expect(input.controller!.text, 'Reading Journal');
     expect(find.text('Saved'), findsOneWidget);
     expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('an uncertain app rename cannot be discarded or resent', (
+    tester,
+  ) async {
+    await mount(tester);
+    await tester.tap(find.widgetWithText(TextButton, 'Edit'));
+    await tester.pumpAndSettle();
+    client.failWrite = true;
+    client.uncertainWrite = true;
+    client.receipt = RetainedCommandStatus.pending;
+    await tester.enterText(
+      find.byKey(const ValueKey('visual-label')),
+      'Unconfirmed name',
+    );
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pumpAndSettle();
+    expect(find.text('Discard local changes'), findsNothing);
+    expect(find.text('Check save status'), findsOneWidget);
+    expect(client.writes, hasLength(1));
+    await tester.tap(find.text('Check save status'));
+    await tester.pumpAndSettle();
+    expect(find.text('Discard local changes'), findsNothing);
+    expect(client.writes, hasLength(1));
     await tester.pumpWidget(const SizedBox());
   });
 
