@@ -13,7 +13,53 @@ bool canOfferBuiltInGuidance(Object error) =>
     error is BackendNetworkException ||
     error is TimeoutException ||
     (error is NestError &&
-        {'providerUnavailable', 'quotaExceeded'}.contains(error.category));
+        {
+          'providerUnavailable',
+          'quotaExceeded',
+          'provider_unavailable',
+          'quota_exceeded',
+        }.contains(error.category));
+
+/// No action is taken until the user explicitly sets aside this result.
+class UncertainGuidanceNotice extends StatelessWidget {
+  final VoidCallback? onAcknowledge;
+  final bool canUseBuiltIn;
+  const UncertainGuidanceNotice({
+    super.key,
+    required this.onAcknowledge,
+    required this.canUseBuiltIn,
+  });
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: const Color(0xfffff8e9),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: const Color(0xffe9d3a6)),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'The AI questions did not arrive. The request may still consume Appwrite or AI quota. Setting it aside will not resend it.',
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            key: const ValueKey('acknowledge-uncertain-guidance'),
+            onPressed: onAcknowledge,
+            child: Text(
+              canUseBuiltIn
+                  ? 'Set aside and use built-in questions'
+                  : 'Set aside request',
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
 final builtInGuidanceQuestions = <GuidanceQuestion>[
   GuidanceQuestion(

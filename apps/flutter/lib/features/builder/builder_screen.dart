@@ -53,6 +53,8 @@ class BuilderScreenState extends State<BuilderScreen> {
   String? guidanceContextId;
   bool guidanceFallback = false;
   String? guidanceNotice;
+  PendingGuidanceAcknowledgement? get uncertainGuidance =>
+      client.pendingGuidanceAcknowledgement;
   bool polling = false;
   bool checkingRetainedBuilder = false;
   bool recoveryAccessLost = false;
@@ -134,6 +136,7 @@ class BuilderScreenState extends State<BuilderScreen> {
       {'queued', 'generating', 'validating'}.contains(draft.stage);
   bool get canEdit =>
       !busy &&
+      uncertainGuidance == null &&
       !generating &&
       hasPreview &&
       draft.stage != 'stale' &&
@@ -147,6 +150,7 @@ class BuilderScreenState extends State<BuilderScreen> {
   @override
   void initState() {
     super.initState();
+    client.guidanceRecoveryChanges.addListener(onGuidanceRecoveryChanged);
     draft = widget.initial;
     enabled.addAll(draft.enabledRuleIds);
     preview = newPreview(AppSpec.parse(draft.candidateJson));
@@ -180,6 +184,10 @@ class BuilderScreenState extends State<BuilderScreen> {
     }
     loadPlatform();
     // Generation is refreshed explicitly to protect the development quota.
+  }
+
+  void onGuidanceRecoveryChanged() {
+    if (mounted) setState(() {});
   }
 
   Future<void> loadPlatform() async {
@@ -419,8 +427,13 @@ class BuilderScreenState extends State<BuilderScreen> {
       '${draft.draftId}:${draft.mutation}:${draft.candidateHash}';
 
   void onPromptChanged() {
-    if (guidanceQuestions != null && prompt.text.trim() != guidanceSource) {
-      setState(() => guidanceQuestions = null);
+    if (uncertainGuidance != null ||
+        guidanceQuestions != null && prompt.text.trim() != guidanceSource) {
+      setState(() {
+        if (guidanceQuestions != null && prompt.text.trim() != guidanceSource) {
+          guidanceQuestions = null;
+        }
+      });
     }
   }
 
@@ -454,6 +467,7 @@ class BuilderScreenState extends State<BuilderScreen> {
     final request = (retry ?? prompt.text).trim();
     if (busy ||
         assessing ||
+        uncertainGuidance != null ||
         generating ||
         draft.stage == 'stale' ||
         ai != true ||
@@ -575,13 +589,19 @@ class BuilderScreenState extends State<BuilderScreen> {
 
   Future<void> shapeIdea() async {
     final request = prompt.text.trim();
-    if (busy || assessing || generating || request.isEmpty || ai != true) {
+    if (busy ||
+        assessing ||
+        uncertainGuidance != null ||
+        generating ||
+        request.isEmpty ||
+        ai != true) {
       return;
     }
     setState(() => assessing = true);
     try {
       if (!await finishVisualEdit() || !mounted) return;
       final contextId = currentGuidanceContext();
+      final epoch = client.sessionEpoch;
       try {
         final questions = canAssessIdea(request)
             ? cleanGuidanceQuestions(
@@ -592,6 +612,9 @@ class BuilderScreenState extends State<BuilderScreen> {
                 ),
               )
             : null;
+        if (epoch != client.sessionEpoch) {
+          throw BackendUnauthorized('Your session changed. Reopen the app.');
+        }
         if (!mounted ||
             currentGuidanceContext() != contextId ||
             prompt.text.trim() != request) {
@@ -611,6 +634,23 @@ class BuilderScreenState extends State<BuilderScreen> {
               : null,
         );
       } catch (issue) {
+        if (!mounted) return;
+        if (epoch != client.sessionEpoch) {
+          setState(
+            () => error = BackendUnauthorized(
+              'Your session changed. Reopen the app.',
+            ),
+          );
+          return;
+        }
+        if (issue is NestError && issue.uncertain) {
+          if (uncertainGuidance == null) {
+            setState(() => error = issue);
+          } else {
+            setState(() => guidanceQuestions = null);
+          }
+          return;
+        }
         if (!mounted ||
             currentGuidanceContext() != contextId ||
             prompt.text.trim() != request) {
@@ -630,6 +670,27 @@ class BuilderScreenState extends State<BuilderScreen> {
       }
     } finally {
       if (mounted) setState(() => assessing = false);
+    }
+  }
+
+  void acknowledgeUncertainGuidance() {
+    final pending = uncertainGuidance;
+    if (pending == null || busy || assessing) return;
+    try {
+      client.acknowledgePendingGuidance(pending);
+      if (pending.appId == draft.draftId &&
+          prompt.text.trim() == pending.request) {
+        showGuidance(
+          builtInEditGuidanceQuestions,
+          pending.request,
+          currentGuidanceContext(),
+          fallback: true,
+          notice:
+              'The earlier request was set aside. It may still consume quota.',
+        );
+      }
+    } catch (issue) {
+      setState(() => error = issue);
     }
   }
 
@@ -654,6 +715,7 @@ class BuilderScreenState extends State<BuilderScreen> {
 
   @override
   void dispose() {
+    client.guidanceRecoveryChanges.removeListener(onGuidanceRecoveryChanged);
     inspectorRevision.dispose();
     visualSession?.dispose();
     previewController.dispose();
@@ -1358,6 +1420,7 @@ class BuilderScreenState extends State<BuilderScreen> {
       guidanceContextId: guidanceContextId,
       guidanceFallback: guidanceFallback,
       guidanceNotice: guidanceNotice,
+      guidancePending: uncertainGuidance != null,
       guidanceContext: currentGuidanceContext,
       onUseGuidanceAnswers: (combined) {
         setState(() {
@@ -2001,75 +2064,98 @@ class BuilderScreenState extends State<BuilderScreen> {
                 ),
               ],
             ),
-            body: Column(
+            body: Stack(
+              fit: StackFit.expand,
               children: [
-                ListenableBuilder(
-                  listenable: client.builderRecoveryChanges,
-                  builder: (context, _) {
-                    final pending = client.pendingBuilderRecovery;
-                    final canSetAside =
-                        pending != null &&
-                        pending.receiptConfirmed &&
-                        identical(pending, unavailableRecovery);
-                    if (pending == null ||
-                        ((uncertainGeneration != null ||
-                                visualSession?.uncertain == true) &&
-                            !canSetAside)) {
-                      return const SizedBox.shrink();
-                    }
-                    return PendingBuilderRecoveryBanner(
-                      pending: pending,
-                      checking: checkingRetainedBuilder,
-                      onCheck: busy || polling
-                          ? null
-                          : checkReopenedBuilderRequest,
-                      onSetAside: canSetAside
-                          ? setAsideUnavailableRecovery
-                          : null,
-                    );
-                  },
-                ),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      if (constraints.maxWidth < 850) {
-                        return DefaultTabController(
-                          length: 2,
-                          child: Column(
-                            children: [
-                              const TabBar(
-                                tabs: [
-                                  Tab(text: 'Chat'),
-                                  Tab(text: 'Try'),
+                Column(
+                  children: [
+                    ListenableBuilder(
+                      listenable: client.builderRecoveryChanges,
+                      builder: (context, _) {
+                        final pending = client.pendingBuilderRecovery;
+                        final canSetAside =
+                            pending != null &&
+                            pending.receiptConfirmed &&
+                            identical(pending, unavailableRecovery);
+                        if (pending == null ||
+                            ((uncertainGeneration != null ||
+                                    visualSession?.uncertain == true) &&
+                                !canSetAside)) {
+                          return const SizedBox.shrink();
+                        }
+                        return PendingBuilderRecoveryBanner(
+                          pending: pending,
+                          checking: checkingRetainedBuilder,
+                          onCheck: busy || polling
+                              ? null
+                              : checkReopenedBuilderRequest,
+                          onSetAside: canSetAside
+                              ? setAsideUnavailableRecovery
+                              : null,
+                        );
+                      },
+                    ),
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.maxWidth < 850) {
+                            return DefaultTabController(
+                              length: 2,
+                              child: Column(
+                                children: [
+                                  const TabBar(
+                                    tabs: [
+                                      Tab(text: 'Chat'),
+                                      Tab(text: 'Try'),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: TabBarView(
+                                      children: [chat(), previewPane()],
+                                    ),
+                                  ),
                                 ],
                               ),
-                              Expanded(
-                                child: TabBarView(
-                                  children: [chat(), previewPane()],
-                                ),
+                            );
+                          }
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              SizedBox(
+                                width: constraints.maxWidth < 1100 ? 330 : 380,
+                                child: visualEditing
+                                    ? inspector()
+                                    : customizing
+                                    ? customizationPanel()
+                                    : chat(),
                               ),
+                              const VerticalDivider(width: 1),
+                              Expanded(child: previewPane()),
                             ],
-                          ),
-                        );
-                      }
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          SizedBox(
-                            width: constraints.maxWidth < 1100 ? 330 : 380,
-                            child: visualEditing
-                                ? inspector()
-                                : customizing
-                                ? customizationPanel()
-                                : chat(),
-                          ),
-                          const VerticalDivider(width: 1),
-                          Expanded(child: previewPane()),
-                        ],
-                      );
-                    },
-                  ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
+                if (uncertainGuidance != null)
+                  Positioned(
+                    left: 12,
+                    right: 12,
+                    bottom: 12,
+                    child: Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(12),
+                      child: UncertainGuidanceNotice(
+                        canUseBuiltIn:
+                            uncertainGuidance!.appId == draft.draftId &&
+                            uncertainGuidance!.request == prompt.text.trim(),
+                        onAcknowledge: busy || assessing
+                            ? null
+                            : acknowledgeUncertainGuidance,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

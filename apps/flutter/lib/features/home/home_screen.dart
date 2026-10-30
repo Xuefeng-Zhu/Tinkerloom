@@ -48,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String? guidanceWorkspace;
   bool guidanceFallback = false;
   String? guidanceNotice;
+  PendingGuidanceAcknowledgement? get uncertainGuidance =>
+      client.pendingGuidanceAcknowledgement;
   ({
     String workspaceId,
     BuilderSnapshot draft,
@@ -161,13 +163,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    client.guidanceRecoveryChanges.addListener(onGuidanceRecoveryChanged);
     prompt.addListener(onPromptChanged);
     load();
   }
 
+  void onGuidanceRecoveryChanged() {
+    if (mounted) setState(() {});
+  }
+
   void onPromptChanged() {
-    if (guidanceQuestions != null && prompt.text.trim() != guidanceSource) {
-      setState(() => guidanceQuestions = null);
+    if (uncertainGuidance != null ||
+        guidanceQuestions != null && prompt.text.trim() != guidanceSource) {
+      setState(() {
+        if (guidanceQuestions != null && prompt.text.trim() != guidanceSource) {
+          guidanceQuestions = null;
+        }
+      });
     }
   }
 
@@ -199,6 +211,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    client.guidanceRecoveryChanges.removeListener(onGuidanceRecoveryChanged);
     inboxGeneration++;
     loadGeneration++;
     inboxTimer?.cancel();
@@ -305,7 +318,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Future<void> shapeIdea() async {
     final request = prompt.text.trim();
     final selectedWorkspace = workspaceId;
-    if (creating || selectedWorkspace == null || request.isEmpty) return;
+    if (creating ||
+        uncertainGuidance != null ||
+        selectedWorkspace == null ||
+        request.isEmpty) {
+      return;
+    }
+    final epoch = client.sessionEpoch;
     setState(() => creating = true);
     try {
       final questions = canAssessIdea(request)
@@ -317,6 +336,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               ),
             )
           : null;
+      if (epoch != client.sessionEpoch) {
+        throw BackendUnauthorized('Your session changed. Reopen the app.');
+      }
       if (!mounted ||
           workspaceId != selectedWorkspace ||
           prompt.text.trim() != request) {
@@ -336,6 +358,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             : null,
       );
     } catch (e) {
+      if (!mounted) return;
+      if (epoch != client.sessionEpoch) {
+        showError(BackendUnauthorized('Your session changed. Reopen the app.'));
+        return;
+      }
+      if (e is NestError && e.uncertain) {
+        if (uncertainGuidance == null) {
+          showError(e);
+        } else {
+          setState(() => guidanceQuestions = null);
+        }
+        return;
+      }
       if (!mounted ||
           workspaceId != selectedWorkspace ||
           prompt.text.trim() != request) {
@@ -457,9 +492,32 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  void acknowledgeUncertainGuidance() {
+    final pending = uncertainGuidance;
+    if (pending == null || creating) return;
+    try {
+      client.acknowledgePendingGuidance(pending);
+      if (pending.workspaceId != null &&
+          pending.appId == null &&
+          workspaceId == pending.workspaceId &&
+          prompt.text.trim() == pending.request) {
+        showGuidance(
+          builtInGuidanceQuestions,
+          pending.request,
+          pending.workspaceId!,
+          fallback: true,
+          notice:
+              'The earlier request was set aside. It may still consume quota.',
+        );
+      }
+    } catch (issue) {
+      showError(issue);
+    }
+  }
+
   Future<void> builder(String templateKey, {bool generate = false}) async {
     final request = prompt.text.trim();
-    if (creating || workspaceId == null) return;
+    if (creating || workspaceId == null || uncertainGuidance != null) return;
     if (generate &&
         ((platform?.aiAvailable != true &&
                 pendingCreation?.uncertain != true) ||
@@ -1111,6 +1169,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               key: const ValueKey('create-app'),
               onPressed:
                   creating ||
+                      uncertainGuidance != null ||
                       (canGenerate &&
                           !checkingRequest &&
                           value.text.trim().isEmpty)
@@ -1249,7 +1308,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             valueListenable: prompt,
                             builder: (context, value, _) => TextButton.icon(
                               key: const ValueKey('shape-idea'),
-                              onPressed: creating || value.text.trim().isEmpty
+                              onPressed:
+                                  creating ||
+                                      uncertainGuidance != null ||
+                                      value.text.trim().isEmpty
                                   ? null
                                   : shapeIdea,
                               icon: const Icon(
@@ -1574,105 +1636,130 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return '$date, $time';
   }
 
-  Widget content() => loading
-      ? const Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Connecting to Tinkerloom…'),
-            ],
-          ),
-        )
-      : error != null
-      ? HomeLoadFailure(error: error!, onRetry: load)
-      : SingleChildScrollView(
-          padding: EdgeInsets.all(
-            MediaQuery.sizeOf(context).width < 700 ? 20 : 48,
-          ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1250),
-              child: switch (page) {
-                0 => home(),
-                1 => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    sectionHeading(
-                      'Templates',
-                      style: Theme.of(context).textTheme.displaySmall,
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'A template creates an empty app. Review its structure and permissions before publishing.',
-                    ),
-                    const SizedBox(height: 32),
-                    templateList(),
-                  ],
-                ),
-                _ => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    sectionHeading(
-                      'Inbox',
-                      style: Theme.of(context).textTheme.displaySmall,
-                    ),
-                    const SizedBox(height: 12),
-                    TextButton.icon(
-                      onPressed: inboxRefreshing ? null : refreshInbox,
-                      icon: inboxRefreshing
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.refresh),
-                      label: Text(
-                        inboxRefreshing ? 'Refreshing…' : 'Refresh inbox',
-                      ),
-                    ),
-                    if (inboxError != null)
-                      Semantics(
-                        liveRegion: true,
-                        child: const Text(
-                          'Couldn’t refresh your Inbox. Check your connection or account access and try again.',
+  Widget content() => Stack(
+    fit: StackFit.expand,
+    children: [
+      loading
+          ? const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Connecting to Tinkerloom…'),
+                ],
+              ),
+            )
+          : error != null
+          ? HomeLoadFailure(error: error!, onRetry: load)
+          : SingleChildScrollView(
+              padding: EdgeInsets.all(
+                MediaQuery.sizeOf(context).width < 700 ? 20 : 48,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1250),
+                  child: switch (page) {
+                    0 => home(),
+                    1 => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        sectionHeading(
+                          'Templates',
+                          style: Theme.of(context).textTheme.displaySmall,
                         ),
-                      ),
-                    const SizedBox(height: 24),
-                    if (inbox.isEmpty && inboxError == null)
-                      const Text(
-                        'All quiet. Approved reminders will appear here.',
-                      ),
-                    ...inbox.map(
-                      (n) => Card(
-                        child: ListTile(
-                          leading: Icon(
-                            n.isRead
-                                ? Icons.drafts_outlined
-                                : Icons.mark_email_unread_outlined,
-                            semanticLabel: n.isRead
-                                ? 'Read reminder'
-                                : 'Unread reminder',
-                          ),
-                          title: Text(n.title),
-                          isThreeLine: true,
-                          subtitle: Text(
-                            '${n.body}\n${inboxTime(n.createdAt)}',
-                          ),
-                          onTap: () async {
-                            await client.runtime.readNotification(n.id);
-                            open(n.appId, recordId: n.recordId);
-                          },
+                        const SizedBox(height: 12),
+                        const Text(
+                          'A template creates an empty app. Review its structure and permissions before publishing.',
                         ),
-                      ),
+                        const SizedBox(height: 32),
+                        templateList(),
+                      ],
                     ),
-                  ],
+                    _ => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        sectionHeading(
+                          'Inbox',
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
+                        const SizedBox(height: 12),
+                        TextButton.icon(
+                          onPressed: inboxRefreshing ? null : refreshInbox,
+                          icon: inboxRefreshing
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.refresh),
+                          label: Text(
+                            inboxRefreshing ? 'Refreshing…' : 'Refresh inbox',
+                          ),
+                        ),
+                        if (inboxError != null)
+                          Semantics(
+                            liveRegion: true,
+                            child: const Text(
+                              'Couldn’t refresh your Inbox. Check your connection or account access and try again.',
+                            ),
+                          ),
+                        const SizedBox(height: 24),
+                        if (inbox.isEmpty && inboxError == null)
+                          const Text(
+                            'All quiet. Approved reminders will appear here.',
+                          ),
+                        ...inbox.map(
+                          (n) => Card(
+                            child: ListTile(
+                              leading: Icon(
+                                n.isRead
+                                    ? Icons.drafts_outlined
+                                    : Icons.mark_email_unread_outlined,
+                                semanticLabel: n.isRead
+                                    ? 'Read reminder'
+                                    : 'Unread reminder',
+                              ),
+                              title: Text(n.title),
+                              isThreeLine: true,
+                              subtitle: Text(
+                                '${n.body}\n${inboxTime(n.createdAt)}',
+                              ),
+                              onTap: () async {
+                                await client.runtime.readNotification(n.id);
+                                open(n.appId, recordId: n.recordId);
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  },
                 ),
-              },
+              ),
+            ),
+      if (uncertainGuidance != null)
+        Positioned(
+          left: 12,
+          right: 12,
+          bottom: 12,
+          child: Material(
+            elevation: 4,
+            borderRadius: BorderRadius.circular(12),
+            child: UncertainGuidanceNotice(
+              canUseBuiltIn:
+                  uncertainGuidance!.appId == null &&
+                  uncertainGuidance!.workspaceId != null &&
+                  uncertainGuidance!.workspaceId == workspaceId &&
+                  uncertainGuidance!.request == prompt.text.trim(),
+              onAcknowledge: creating ? null : acknowledgeUncertainGuidance,
             ),
           ),
-        );
+        ),
+    ],
+  );
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, c) {

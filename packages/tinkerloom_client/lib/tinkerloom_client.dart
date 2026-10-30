@@ -23,6 +23,17 @@ typedef FunctionTransport = Future<Map<String, dynamic>> Function(
   Map<String, dynamic> request,
 );
 
+/// Opaque evidence of one uncertain guidance request in one client session.
+/// It does not prove whether the provider completed or consumed quota.
+class PendingGuidanceAcknowledgement {
+  PendingGuidanceAcknowledgement._(this._envelope, this._epoch);
+  final Map<String, dynamic> _envelope;
+  final int _epoch;
+  String get request => _envelope['request'] as String;
+  String? get workspaceId => _envelope['workspaceId'] as String?;
+  String? get appId => _envelope['appId'] as String?;
+}
+
 /// Counts actual dispatches, including failed requests. Function calls are not
 /// database-operation counts: a trusted function can perform several DB reads.
 class RequestBudget {
@@ -285,6 +296,19 @@ class Client {
   bool _recoveryReadInFlight = false;
   RetainedBuilderRecovery? _builderRecovery;
   final ValueNotifier<int> _builderRecoveryRevision = ValueNotifier<int>(0);
+  PendingGuidanceAcknowledgement? _pendingGuidance;
+  final ValueNotifier<int> _guidanceRevision = ValueNotifier<int>(0);
+
+  /// Local state only: subscribing never checks a server or repeats a request.
+  Listenable get guidanceRecoveryChanges => _guidanceRevision;
+  PendingGuidanceAcknowledgement? get pendingGuidanceAcknowledgement =>
+      _pendingGuidance;
+
+  void _setPendingGuidance(PendingGuidanceAcknowledgement? value) {
+    if (identical(_pendingGuidance, value)) return;
+    _pendingGuidance = value;
+    _guidanceRevision.value++;
+  }
 
   /// State only; listening never performs a network call or retries a command.
   Listenable get builderRecoveryChanges => _builderRecoveryRevision;
@@ -377,6 +401,7 @@ class Client {
     _commandIds.clear();
     _retained = null;
     _setBuilderRecovery(null);
+    _setPendingGuidance(null);
     _reads.clear();
     for (final events in _events.values) {
       events.addError(
@@ -390,6 +415,7 @@ class Client {
     _closed = true;
     _epoch++;
     _setBuilderRecovery(null);
+    _setPendingGuidance(null);
     auth.removeListener(_sessionChanged);
     for (final events in _events.values) {
       await events.close();
@@ -423,6 +449,67 @@ class Client {
   }
 
   Future<void> closeStreamingMethodConnections({Object? exception}) async {}
+
+  /// Capture only the exact guidance operation initiated by this screen.
+  /// This does not perform network I/O or clear any pending operation.
+  PendingGuidanceAcknowledgement? capturePendingGuidance({
+    required int sessionEpoch,
+    required String request,
+    String? workspaceId,
+    String? appId,
+  }) {
+    if (_closed || sessionEpoch != _epoch) {
+      throw BackendUnauthorized('Your session changed. Reopen the app.');
+    }
+    if (_mutationInFlight ||
+        _receiptInFlight ||
+        _recoveryReadInFlight ||
+        _builderRecovery?.receiptConfirmed == true) {
+      throw NestError(
+        category: 'command_in_progress',
+        message: 'Wait for the current request to finish.',
+      );
+    }
+    final pending = _retained;
+    if (pending == null || pending['op'] != 'spec.guidance') return null;
+    final workspace = pending['workspaceId'];
+    final matchesScope = appId == null
+        ? workspaceId != null &&
+              workspace == workspaceId &&
+              pending['appId'] == null
+        : pending['appId'] == appId &&
+              workspace is String &&
+              workspace.isNotEmpty &&
+              (workspaceId == null || workspace == workspaceId);
+    if (!matchesScope || pending['request'] != request) return null;
+    return PendingGuidanceAcknowledgement._(pending, _epoch);
+  }
+
+  /// After explicit user acknowledgment, abandon only this retained guidance
+  /// result. The request may still consume provider or Appwrite quota.
+  void acknowledgePendingGuidance(PendingGuidanceAcknowledgement token) {
+    if (_closed || token._epoch != _epoch) {
+      throw BackendUnauthorized('Your session changed. Reopen the app.');
+    }
+    if (_mutationInFlight ||
+        _receiptInFlight ||
+        _recoveryReadInFlight ||
+        _builderRecovery?.receiptConfirmed == true) {
+      throw NestError(
+        category: 'command_in_progress',
+        message: 'Wait for the current request to finish.',
+      );
+    }
+    if (!identical(token._envelope, _retained) ||
+        token._envelope['op'] != 'spec.guidance') {
+      throw NestError(
+        category: 'pending_command',
+        message: 'This guidance request is no longer the pending operation.',
+      );
+    }
+    _retained = null;
+    _setPendingGuidance(null);
+  }
 
   /// Manually check an opaque, session-bound retained builder command. A null
   /// result means no receipt was found, which does not rule out a later commit.
@@ -635,6 +722,9 @@ class Client {
             'This response belongs to an expired session.',
           );
         if (!read) {
+          if (_retained?['op'] == 'spec.guidance') {
+            _setPendingGuidance(null);
+          }
           final previous = _retained;
           final recovery = _builderRecovery;
           if (previous != null &&
@@ -672,6 +762,15 @@ class Client {
                 error.category == 'invalid_response')) {
           _retained = frozen;
           _retainBuilderRecovery(frozen);
+          if (frozen['op'] == 'spec.guidance' &&
+              frozen['request'] is String &&
+              (frozen['workspaceId'] == null ||
+                  frozen['workspaceId'] is String) &&
+              (frozen['appId'] == null || frozen['appId'] is String)) {
+            _setPendingGuidance(
+              PendingGuidanceAcknowledgement._(frozen, _epoch),
+            );
+          }
           budget?.stopped = true;
           if (error is! NestError || !error.uncertain) {
             throw BackendNetworkException(

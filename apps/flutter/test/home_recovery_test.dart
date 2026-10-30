@@ -11,8 +11,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Test-only transport. Production HomeScreen still uses authenticated endpoints.
+Completer<void>? guidanceResponseGate;
+
 class TestClient extends Client {
-  TestClient() : super('http://localhost:8180/');
+  TestClient()
+    : super(
+        'http://localhost:8180/',
+        transport: (_) async {
+          await guidanceResponseGate?.future;
+          throw BackendNetworkException('unknown', uncertain: true);
+        },
+      );
   Object? failure;
   Completer<void>? pending;
   int workspaceRequests = 0;
@@ -29,6 +38,8 @@ class TestClient extends Client {
   final questionRequests = <Map<String, dynamic>>[];
   Completer<List<GuidanceQuestion>>? pendingQuestions;
   Object? questionFailure;
+  bool retainedQuestionFailure = false;
+  Completer<void>? retainedQuestionGate;
   List<GuidanceQuestion> questionResponse = const [];
   RetainedCommandStatus receipt = RetainedCommandStatus.confirmed;
   int receiptChecks = 0;
@@ -102,6 +113,15 @@ class TestClient extends Client {
     }
     if ('$endpoint.$method' == 'builder.suggestQuestions') {
       questionRequests.add(Map<String, dynamic>.from(args));
+      if (retainedQuestionFailure) {
+        await retainedQuestionGate?.future;
+        await request({
+          'op': 'spec.guidance',
+          'workspaceId': args['workspaceId'],
+          'appId': args['draftId'],
+          'request': args['idea'],
+        });
+      }
       if (questionFailure != null) throw questionFailure!;
       return (pendingQuestions == null
               ? questionResponse
@@ -159,6 +179,9 @@ void main() {
     testClient.questionRequests.clear();
     testClient.pendingQuestions = null;
     testClient.questionFailure = null;
+    testClient.retainedQuestionFailure = false;
+    testClient.retainedQuestionGate = null;
+    guidanceResponseGate = null;
     testClient.questionResponse = const [];
     testClient.manifests.clear();
   });
@@ -379,6 +402,220 @@ void main() {
       contains('We meet monthly.'),
     );
     expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('lost guidance requires explicit acknowledgment without replay', (
+    tester,
+  ) async {
+    testClient.auth.setSession({'id': 'alice'});
+    testClient.aiAvailable = true;
+    testClient.retainedQuestionFailure = true;
+    await home(tester);
+    await tester.enterText(
+      find.byKey(const ValueKey('app-idea')),
+      'A club app',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('shape-idea')));
+    await tester.pumpAndSettle();
+    expect(testClient.questionRequests, hasLength(1));
+    expect(
+      find.textContaining('may still consume Appwrite or AI quota'),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('create-app')))
+          .onPressed,
+      isNull,
+    );
+    final acknowledgment = find.byKey(
+      const ValueKey('acknowledge-uncertain-guidance'),
+    );
+    await tester.ensureVisible(acknowledgment);
+    await tester.tap(acknowledgment);
+    await tester.pumpAndSettle();
+    expect(find.text('Built-in questions'), findsOneWidget);
+    expect(testClient.questionRequests, hasLength(1));
+    expect(testClient.beginRequests, isEmpty);
+    expect(testClient.generationRequests, isEmpty);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('session change prevents acknowledgment of old guidance', (
+    tester,
+  ) async {
+    testClient.auth.setSession({'id': 'alice'});
+    testClient.aiAvailable = true;
+    testClient.retainedQuestionFailure = true;
+    await home(tester);
+    await tester.enterText(
+      find.byKey(const ValueKey('app-idea')),
+      'A club app',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('shape-idea')));
+    await tester.pumpAndSettle();
+    final old = testClient.pendingGuidanceAcknowledgement!;
+    testClient.auth.setSession({'id': 'bob'});
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('acknowledge-uncertain-guidance')),
+      findsNothing,
+    );
+    expect(
+      () => testClient.acknowledgePendingGuidance(old),
+      throwsA(isA<BackendUnauthorized>()),
+    );
+    expect(find.text('Built-in questions'), findsNothing);
+    expect(testClient.questionRequests, hasLength(1));
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('guidance acknowledgment stays visible when Home cannot load', (
+    tester,
+  ) async {
+    testClient.auth.setSession({'id': 'alice'});
+    await expectLater(
+      testClient.request({
+        'op': 'spec.guidance',
+        'workspaceId': '1',
+        'appId': null,
+        'request': 'A club app',
+      }),
+      throwsA(isA<BackendNetworkException>()),
+    );
+    testClient.failure = StateError('offline');
+    await home(tester);
+    final acknowledgment = find.byKey(
+      const ValueKey('acknowledge-uncertain-guidance'),
+    );
+    expect(acknowledgment, findsOneWidget);
+    await tester.tap(acknowledgment);
+    await tester.pump();
+    expect(testClient.pendingGuidanceAcknowledgement, isNull);
+    expect(testClient.questionRequests, isEmpty);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
+    'lost guidance remains visible after its screen is disposed and reopened',
+    (tester) async {
+      testClient.auth.setSession({'id': 'alice'});
+      testClient.aiAvailable = true;
+      testClient.retainedQuestionFailure = true;
+      guidanceResponseGate = Completer<void>();
+      await home(tester);
+      await tester.enterText(
+        find.byKey(const ValueKey('app-idea')),
+        'A club app',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('shape-idea')));
+      await tester.pump();
+      expect(testClient.questionRequests, hasLength(1));
+      await tester.pumpWidget(const SizedBox());
+      guidanceResponseGate!.complete();
+      await tester.pump();
+      await tester.pump();
+      expect(testClient.pendingGuidanceAcknowledgement, isNotNull);
+      testClient.manifests.add(
+        AppManifest(
+          appId: 'saved',
+          workspaceId: '1',
+          name: 'Saved planner',
+          versionId: '1',
+          specJson: dailyPlannerTemplate().canonical,
+          role: 'owner',
+          archived: false,
+          pinned: true,
+          recordCount: 0,
+          availablePlaces: 0,
+        ),
+      );
+      await home(tester);
+      expect(find.byKey(const ValueKey('app-idea')), findsNothing);
+      final acknowledgment = find.byKey(
+        const ValueKey('acknowledge-uncertain-guidance'),
+      );
+      expect(acknowledgment, findsOneWidget);
+      expect(find.text('Set aside request'), findsOneWidget);
+      expect(testClient.questionRequests, hasLength(1));
+      await tester.ensureVisible(acknowledgment);
+      await tester.tap(acknowledgment);
+      await tester.pumpAndSettle();
+      expect(testClient.pendingGuidanceAcknowledgement, isNull);
+      expect(find.text('Built-in questions'), findsNothing);
+      expect(testClient.questionRequests, hasLength(1));
+      expect(testClient.beginRequests, isEmpty);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('guidance action is reachable at 320px and 150 percent text', (
+    tester,
+  ) async {
+    testClient.auth.setSession({'id': 'alice'});
+    await expectLater(
+      testClient.request({
+        'op': 'spec.guidance',
+        'workspaceId': '1',
+        'appId': null,
+        'request': 'A club app',
+      }),
+      throwsA(isA<BackendNetworkException>()),
+    );
+    tester.view.physicalSize = const Size(320, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(1.5)),
+          child: child!,
+        ),
+        home: const HomeScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final action = find.byKey(const ValueKey('acknowledge-uncertain-guidance'));
+    expect(action.hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.tap(action);
+    await tester.pumpAndSettle();
+    expect(testClient.pendingGuidanceAcknowledgement, isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('a changed idea still shows the unresolved request', (
+    tester,
+  ) async {
+    testClient.auth.setSession({'id': 'alice'});
+    testClient.aiAvailable = true;
+    testClient.retainedQuestionFailure = true;
+    testClient.retainedQuestionGate = Completer<void>();
+    await home(tester);
+    final idea = find.byKey(const ValueKey('app-idea'));
+    await tester.enterText(idea, 'An old club app');
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('shape-idea')));
+    await tester.pump();
+    tester.widget<TextField>(idea).controller!.text = 'A different idea';
+    testClient.retainedQuestionGate!.complete();
+    await tester.pumpAndSettle();
+    final acknowledgment = find.byKey(
+      const ValueKey('acknowledge-uncertain-guidance'),
+    );
+    expect(acknowledgment, findsOneWidget);
+    await tester.ensureVisible(acknowledgment);
+    await tester.tap(acknowledgment);
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(idea).controller!.text, 'A different idea');
+    expect(find.text('Built-in questions'), findsNothing);
+    expect(testClient.questionRequests, hasLength(1));
     await tester.pumpWidget(const SizedBox());
   });
 

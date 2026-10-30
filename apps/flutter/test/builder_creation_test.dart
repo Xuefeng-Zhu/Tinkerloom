@@ -11,8 +11,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// Synthetic authenticated transport. The production builder uses the generated
 /// Serverpod client and its normal authentication checks.
+Completer<void>? _guidanceResponseGate;
+
 class CreationClient extends Client {
-  CreationClient() : super('http://localhost:8180/');
+  CreationClient()
+    : super(
+        'http://localhost:8180/',
+        transport: (_) async {
+          await _guidanceResponseGate?.future;
+          throw BackendNetworkException('unknown', uncertain: true);
+        },
+      );
 
   final generations = <Map<String, dynamic>>[];
   final gets = <String>[];
@@ -30,6 +39,7 @@ class CreationClient extends Client {
   final questionRequests = <Map<String, dynamic>>[];
   Completer<List<GuidanceQuestion>>? pendingQuestions;
   Object? questionFailure;
+  bool retainedQuestionFailure = false;
   List<GuidanceQuestion> questionResponse = const [];
   RetainedCommandStatus receipt = RetainedCommandStatus.confirmed;
   Object? receiptFailure;
@@ -94,6 +104,14 @@ class CreationClient extends Client {
         result = current;
       case 'builder.suggestQuestions':
         questionRequests.add(Map<String, dynamic>.from(args));
+        if (retainedQuestionFailure) {
+          await request({
+            'op': 'spec.guidance',
+            'workspaceId': 'ws',
+            'appId': args['draftId'],
+            'request': args['idea'],
+          });
+        }
         if (questionFailure != null) throw questionFailure!;
         result = pendingQuestions == null
             ? questionResponse
@@ -160,6 +178,8 @@ void main() {
     client.questionRequests.clear();
     client.pendingQuestions = null;
     client.questionFailure = null;
+    client.retainedQuestionFailure = false;
+    _guidanceResponseGate = null;
     client.questionResponse = const [];
   });
 
@@ -989,6 +1009,109 @@ void main() {
     await tester.pump();
     await closeBuilder(tester);
   });
+
+  testWidgets('lost builder guidance requires explicit acknowledgment', (
+    tester,
+  ) async {
+    client.auth.setSession({'id': 'alice'});
+    client.retainedQuestionFailure = true;
+    await showBuilder(tester, initial: draft());
+    await tester.enterText(composer(), 'Make a simpler app');
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('shape-idea')));
+    await tester.pumpAndSettle();
+    expect(client.questionRequests, hasLength(1));
+    expect(
+      find.textContaining('may still consume Appwrite or AI quota'),
+      findsOneWidget,
+    );
+    expect(client.generations, isEmpty);
+    final acknowledgment = find.byKey(
+      const ValueKey('acknowledge-uncertain-guidance'),
+    );
+    await tester.ensureVisible(acknowledgment);
+    await tester.tap(acknowledgment);
+    await tester.pumpAndSettle();
+    expect(find.text('Built-in questions'), findsOneWidget);
+    expect(client.questionRequests, hasLength(1));
+    expect(client.generations, isEmpty);
+    await closeBuilder(tester);
+  });
+
+  testWidgets(
+    'lost builder guidance remains recoverable after screen disposal',
+    (tester) async {
+      client.auth.setSession({'id': 'alice'});
+      client.retainedQuestionFailure = true;
+      _guidanceResponseGate = Completer<void>();
+      await showBuilder(tester, initial: draft());
+      await tester.enterText(composer(), 'Make a simpler app');
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('shape-idea')));
+      await tester.pump();
+      expect(client.questionRequests, hasLength(1));
+      await closeBuilder(tester);
+      _guidanceResponseGate!.complete();
+      await tester.pump();
+      await tester.pump();
+      expect(client.pendingGuidanceAcknowledgement, isNotNull);
+      await showBuilder(
+        tester,
+        initial: draft(),
+        size: const Size(390, 844),
+        textScale: 1.5,
+      );
+      expect(tester.takeException(), isNull, reason: 'initial narrow layout');
+      await tester.tap(find.text('Try'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'narrow preview layout');
+      final acknowledgment = find.byKey(
+        const ValueKey('acknowledge-uncertain-guidance'),
+      );
+      expect(acknowledgment, findsOneWidget);
+      expect(acknowledgment.hitTestable(), findsOneWidget);
+      expect(find.text('Set aside request'), findsOneWidget);
+      await tester.ensureVisible(acknowledgment);
+      await tester.tap(acknowledgment);
+      await tester.pumpAndSettle();
+      expect(client.pendingGuidanceAcknowledgement, isNull);
+      expect(find.text('Built-in questions'), findsNothing);
+      expect(client.questionRequests, hasLength(1));
+      expect(client.generations, isEmpty);
+      await closeBuilder(tester);
+    },
+  );
+
+  testWidgets(
+    'guidance acknowledgment is reachable at 320px and 150 percent text',
+    (tester) async {
+      client.auth.setSession({'id': 'alice'});
+      await expectLater(
+        client.request({
+          'op': 'spec.guidance',
+          'workspaceId': 'ws',
+          'appId': '9',
+          'request': 'A change',
+        }),
+        throwsA(isA<BackendNetworkException>()),
+      );
+      await showBuilder(
+        tester,
+        initial: draft(),
+        size: const Size(320, 720),
+        textScale: 1.5,
+      );
+      final acknowledgment = find.byKey(
+        const ValueKey('acknowledge-uncertain-guidance'),
+      );
+      expect(acknowledgment.hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.tap(acknowledgment);
+      await tester.pump();
+      expect(client.pendingGuidanceAcknowledgement, isNull);
+      await closeBuilder(tester);
+    },
+  );
 
   testWidgets('late questions for a changed request cannot generate', (
     tester,

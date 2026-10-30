@@ -115,6 +115,7 @@ class BuilderChat extends StatelessWidget {
   final String? guidanceContextId;
   final bool guidanceFallback;
   final String? guidanceNotice;
+  final bool guidancePending;
   final String Function() guidanceContext;
   final ValueChanged<String> onUseGuidanceAnswers;
   final VoidCallback onContinueOriginal;
@@ -149,6 +150,7 @@ class BuilderChat extends StatelessWidget {
     required this.guidanceContextId,
     required this.guidanceFallback,
     required this.guidanceNotice,
+    this.guidancePending = false,
     required this.guidanceContext,
     required this.onUseGuidanceAnswers,
     required this.onContinueOriginal,
@@ -461,6 +463,7 @@ class BuilderChat extends StatelessWidget {
                                 key: const ValueKey('shape-idea'),
                                 onPressed:
                                     busy ||
+                                        guidancePending ||
                                         generating ||
                                         aiAvailable != true ||
                                         stage == 'stale' ||
@@ -502,6 +505,7 @@ class BuilderChat extends StatelessWidget {
                                               assessing ||
                                               generating ||
                                               aiAvailable != true ||
+                                              guidancePending ||
                                               value.text.trim().isEmpty ||
                                               stage == 'stale'
                                           ? null
