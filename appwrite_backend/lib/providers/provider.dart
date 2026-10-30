@@ -2392,6 +2392,29 @@ class ChatCompletionProvider implements AiProvider, GuidanceProvider {
           retryable: false,
         );
       }
+      // Only an explicit stop establishes that the provider completed its
+      // response. Do not repair or retry a partial or unrecognized outcome.
+      if (reason != 'stop') {
+        throw const AiResponseException(
+          'indeterminate',
+          'The AI provider did not confirm that its response finished. Its outcome is unknown.',
+          retryable: false,
+        );
+      }
+      final completionMessage = choice['message'];
+      if (completionMessage is Map) {
+        final refusal = completionMessage['refusal'];
+        final tools = completionMessage['tool_calls'];
+        if ((refusal != null && (refusal is! String || refusal.isNotEmpty)) ||
+            (tools != null && (tools is! List || tools.isNotEmpty)) ||
+            completionMessage['function_call'] != null) {
+          throw const AiResponseException(
+            'indeterminate',
+            'The AI provider returned conflicting completion metadata. Its outcome is unknown.',
+            retryable: false,
+          );
+        }
+      }
       if (text is! String || text.trim().isEmpty) {
         throw const AiResponseException(
           'content_missing',

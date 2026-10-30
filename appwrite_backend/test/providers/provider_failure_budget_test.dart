@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:appnest_spec/appnest_spec.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:test/test.dart';
@@ -40,6 +41,16 @@ void main() {
         'envelope429',
         'envelope503',
         'finish_error',
+        'finish_missing_malformed',
+        'finish_missing_valid',
+        'finish_null_malformed',
+        'finish_null_valid',
+        'finish_unknown_malformed',
+        'finish_unknown_valid',
+        'finish_nonstring_valid',
+        'conflict_refusal',
+        'conflict_tool_calls',
+        'conflict_function_call',
         'oversize',
         'invalid_envelope',
         'empty_envelope',
@@ -84,6 +95,52 @@ void main() {
                 }),
                 200,
               );
+            if (scenario.startsWith('finish_')) {
+              final reason = scenario.startsWith('finish_null')
+                  ? null
+                  : scenario.startsWith('finish_nonstring')
+                  ? 123
+                  : 'future_provider_value';
+              return http.Response(
+                jsonEncode({
+                  'choices': [
+                    {
+                      if (!scenario.startsWith('finish_missing'))
+                        'finish_reason': reason,
+                      'message': {
+                        'content': scenario.endsWith('_malformed')
+                            ? '{"collections":'
+                            : creationReferenceJson,
+                      },
+                    },
+                  ],
+                }),
+                200,
+              );
+            }
+            if (scenario.startsWith('conflict_')) {
+              return http.Response(
+                jsonEncode({
+                  'choices': [
+                    {
+                      'finish_reason': 'stop',
+                      'message': {
+                        'content': creationReferenceJson,
+                        if (scenario == 'conflict_refusal')
+                          'refusal': 'private details',
+                        if (scenario == 'conflict_tool_calls')
+                          'tool_calls': [
+                            {'private': 'private details'},
+                          ],
+                        if (scenario == 'conflict_function_call')
+                          'function_call': {'private': 'private details'},
+                      },
+                    },
+                  ],
+                }),
+                200,
+              );
+            }
             if (scenario == 'oversize') return http.Response('x' * 400000, 200);
             if (scenario == 'invalid_envelope')
               return http.Response('not-json', 200);
@@ -112,7 +169,12 @@ void main() {
           }),
         );
         final memory = MemoryStore();
-        final service = PlatformService(memory, aiProvider: provider);
+        var now = DateTime.utc(2030);
+        final service = PlatformService(
+          memory,
+          aiProvider: provider,
+          clock: () => now,
+        );
         await service.execute('alice', {
           'op': 'createWorkspace',
           'id': 'ws',
@@ -135,6 +197,7 @@ void main() {
           'startFromScratch': true,
         });
         final jobId = (queued['generation'] as Row)['id'] as String;
+        final originalDispatches = memory.rows['worker_dispatches']!.length;
         final worker = WorkerEngine(service);
         await worker.generate(jobId);
         final job = memory.rows['generation_jobs']![jobId]!;
@@ -148,10 +211,16 @@ void main() {
         expect(job['failureCategory'], category, reason: scenario);
         expect(job['attempts'], 1, reason: scenario);
         expect(
+          memory.rows['worker_dispatches']!.length,
+          originalDispatches,
+          reason: 'No repair dispatch: $scenario',
+        );
+        expect(
           job['diagnostics'],
           isNot(contains('private details')),
           reason: scenario,
         );
+        now = now.add(const Duration(hours: 1));
         await worker.generate(jobId);
         expect(sends, 1, reason: scenario);
         expect(
@@ -162,4 +231,41 @@ void main() {
       }
     },
   );
+
+  test('explicit stop accepts harmless absent or empty metadata', () async {
+    for (final metadata in [
+      <String, dynamic>{},
+      <String, dynamic>{
+        'refusal': null,
+        'tool_calls': null,
+        'function_call': null,
+      },
+      <String, dynamic>{'refusal': '', 'tool_calls': <dynamic>[]},
+    ]) {
+      final provider = ChatCompletionProvider(
+        Uri.parse('https://provider.invalid/v1'),
+        'fixture-model',
+        'fixture-only',
+        clientFactory: () => MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'choices': [
+                {
+                  'finish_reason': 'stop',
+                  'message': {'content': creationReferenceJson, ...metadata},
+                },
+              ],
+            }),
+            200,
+          ),
+        ),
+      );
+      final result = await provider.generate(
+        'A reading list',
+        AppSpec.parse(creationReferenceJson),
+        editing: false,
+      );
+      expect(result.text, creationReferenceJson);
+    }
+  });
 }
