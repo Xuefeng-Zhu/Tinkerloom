@@ -78,6 +78,7 @@ class BuilderChat extends StatelessWidget {
   final bool generating;
   final bool busy;
   final bool assessing;
+  final bool refreshing;
   final bool? aiAvailable;
   final bool hasPreview;
   final String? error;
@@ -99,6 +100,7 @@ class BuilderChat extends StatelessWidget {
   final VoidCallback onEditIdea;
   final VoidCallback? onRetry;
   final VoidCallback onReconnect;
+  final VoidCallback onRefreshStatus;
 
   const BuilderChat({
     super.key,
@@ -109,6 +111,7 @@ class BuilderChat extends StatelessWidget {
     required this.generating,
     required this.busy,
     required this.assessing,
+    required this.refreshing,
     required this.aiAvailable,
     required this.hasPreview,
     required this.error,
@@ -130,6 +133,7 @@ class BuilderChat extends StatelessWidget {
     required this.onEditIdea,
     required this.onRetry,
     required this.onReconnect,
+    required this.onRefreshStatus,
   });
 
   @override
@@ -255,8 +259,8 @@ class BuilderChat extends StatelessWidget {
                               builderStageLabel(stage),
                               style: Theme.of(context).textTheme.titleSmall,
                             ),
-                            if (jobAttempts > 1)
-                              Text('Attempt $jobAttempts of 3'),
+                            if (jobAttempts > 0)
+                              Text('Attempts so far: $jobAttempts'),
                             if (jobCreatedAt != null)
                               Text(
                                 '${DateTime.now().difference(jobCreatedAt!).inSeconds.clamp(0, 3600)} seconds since your request was saved',
@@ -264,11 +268,30 @@ class BuilderChat extends StatelessWidget {
                               ),
                             const SizedBox(height: 6),
                             Text(switch (stage) {
-                              'queued' =>
-                                'Your request is saved and waiting to start.',
+                              'queued'
+                                  when jobAttempts > 0 &&
+                                      diagnostics.isNotEmpty =>
+                                'The last attempt did not finish. The request is queued and waiting for backend scheduling.',
+                              'queued' => 'Your request is saved and waiting for backend scheduling.',
                               'validating' => 'Checking the pages, data and actions before updating your preview.',
                               _ => 'Turning your request into pages, data and actions. This can take a minute.',
                             }),
+                            const SizedBox(height: 8),
+                            TextButton.icon(
+                              key: const ValueKey('check-generation-status'),
+                              onPressed: busy || refreshing
+                                  ? null
+                                  : onRefreshStatus,
+                              icon: const Icon(Icons.refresh, size: 18),
+                              label: Text(
+                                refreshing
+                                    ? 'Checking status…'
+                                    : 'Check status',
+                              ),
+                            ),
+                            const Text(
+                              'Status updates when you check it. Checking can resume scheduled work, including AI attempts.',
+                            ),
                           ],
                         ),
                       ),
@@ -306,11 +329,13 @@ class BuilderChat extends StatelessWidget {
                         ),
                       ),
                   ],
-                  if (diagnostics.isNotEmpty && !generating)
+                  if (diagnostics.isNotEmpty)
                     ExpansionTile(
                       tilePadding: EdgeInsets.zero,
-                      title: const Text(
-                        'Build details',
+                      title: Text(
+                        generating
+                            ? 'Previous attempt details'
+                            : 'Build details',
                         style: TextStyle(fontSize: 13),
                       ),
                       children: diagnostics.map((d) => Text(d)).toList(),

@@ -981,6 +981,69 @@ void main() {
     },
   );
 
+  testWidgets('queued failed attempt is visible and refresh stays manual', (
+    tester,
+  ) async {
+    const diagnostic = 'Unknown collection books';
+    final queued = draft(
+      stage: 'queued',
+      mutation: 1,
+      jobId: '7',
+      diagnostics: const [diagnostic],
+    ).copyWith(jobAttempts: 1, failureCategory: 'spec_validation');
+    client.current = queued;
+    await showBuilder(tester, initial: queued, startFromScratch: true);
+    expect(
+      find.text(
+        'The last attempt did not finish. The request is queued and waiting for backend scheduling.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Attempts so far: 1'), findsOneWidget);
+    expect(
+      find.text(
+        'Status updates when you check it. Checking can resume scheduled work, including AI attempts.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Previous attempt details'), findsOneWidget);
+    await tester.tap(find.text('Previous attempt details'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text(diagnostic), findsOneWidget);
+    await tester.pump(const Duration(seconds: 30));
+    expect(client.gets, isEmpty);
+    expect(client.generations, isEmpty);
+
+    client.pendingGet = Completer<BuilderSnapshot>();
+    await tester.tap(find.byKey(const ValueKey('check-generation-status')));
+    await tester.pump();
+    expect(client.gets, ['9']);
+    expect(
+      tester
+          .widget<TextButton>(
+            find.byKey(const ValueKey('check-generation-status')),
+          )
+          .onPressed,
+      isNull,
+    );
+    client.pendingGet!.complete(
+      draft(
+        stage: 'failed',
+        mutation: 1,
+        jobId: '7',
+        diagnostics: const [diagnostic],
+      ).copyWith(jobAttempts: 1, failureCategory: 'spec_validation'),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Let’s try that again'), findsWidgets);
+    expect(find.text('Build details'), findsOneWidget);
+    expect(find.byKey(const ValueKey('check-generation-status')), findsNothing);
+    expect(client.gets, ['9']);
+    expect(client.generations, isEmpty);
+    await closeBuilder(tester);
+  });
+
   testWidgets(
     'a fresh creation accepts a follow-up and preserves preview data',
     (tester) async {

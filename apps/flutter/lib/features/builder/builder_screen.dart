@@ -1155,6 +1155,7 @@ class BuilderScreenState extends State<BuilderScreen> {
       generating: generating,
       busy: busy || assessing,
       assessing: assessing,
+      refreshing: polling,
       aiAvailable: ai,
       hasPreview: hasPreview,
       error: errorMessage,
@@ -1196,6 +1197,7 @@ class BuilderScreenState extends State<BuilderScreen> {
               lastRequest != null
           ? () => send(retry: lastRequest)
           : null,
+      onRefreshStatus: poll,
       onReconnect: () async {
         await loadPlatform();
         await poll();
