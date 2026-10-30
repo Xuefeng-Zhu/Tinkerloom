@@ -6,7 +6,7 @@ The active client is `apps/flutter`, restored from the original AppNest Flutter 
 
 The React Native checkpoint was pushed as commit `3a9fe4a` on `codex/react-native-backup-20261029` before removing it from the active frontend. Its historical verification results are retained with their original meaning. The Flutter port must have its own verification receipts; 730 React Native tests and earlier native artifacts do not establish Flutter results.
 
-Appwrite remains the backend. No original users, records, passwords or media are imported: the user selected fresh development data. Existing trusted Core Function and private worker deployments remain unchanged unless an independently demonstrated wire incompatibility requires a scoped follow-up. AI-provider setup and production release are outside this restoration.
+Appwrite remains the backend. No original users, records, passwords or media are imported: the user selected fresh development data. The original trusted Core Function and private worker deployments remain preserved. The separately authorized fresh-account follow-up below provisions the same backend contract in a new project. AI-provider setup and production release are outside this restoration.
 
 ## Integration contract
 
@@ -24,9 +24,9 @@ Run `scripts/verify.sh --client-only` for analysis, formatting checks, shared sp
 
 The Flutter acceptance matrix covers opaque ID/deep-link handling, startup and session switches, access loss, stale revisions, duplicate commands, uncertain replies, private-image attachment and preview isolation. Original template layout tests include narrow and desktop widths and 150% text. Native builds are recorded separately from native installation/UI/permission/hardware checks.
 
-## Bounded final Cloud check
+## Original bounded Cloud check
 
-Only one final Cloud smoke is authorized for this restoration. It reuses an existing account and app and has a central hard cap of 12 Function executions, 2 Account requests and one text-record creation. It may sign in, open the existing app, create one labelled synthetic text record, then reload/read it. No new accounts, workspaces or apps, no uploads, no AI and no reminder scheduling are part of this check. Automatic polling and automatic retries are disabled. Quota errors, cap exhaustion or an uncertain write stop the run, preserving the uncertain operation identity rather than submitting another command.
+The original restoration authorized one final Cloud smoke under the following existing-account policy. This is historical scope; use the separately authorized fresh-project check below for the current setup, without running both. That check reuses an existing account and app and has a central hard cap of 12 Function executions, 2 Account requests and one text-record creation. It may sign in, open the existing app, create one labelled synthetic text record, then reload/read it. No new accounts, workspaces or apps, no uploads, no AI and no reminder scheduling are part of this check. Automatic polling and automatic retries are disabled. Quota errors, cap exhaustion or an uncertain write stop the run, preserving the uncertain operation identity rather than submitting another command.
 
 Count all Function requests, including reads used for startup/reload, against the same budget. The result must report actual counts and whether the optional creation occurred. A Function execution can issue multiple underlying database operations; do not label its request count as the number of database operations. If the quota is already exhausted, retain the blocked result rather than extending the budget or repeating broad probes.
 
@@ -39,7 +39,25 @@ TINKERLOOM_LIVE_SMOKE=1 flutter test --no-pub \
 
 Without the explicit enable flag this test is skipped. Its server-state reload is an SDK/service persistence check, separate from rendered Flutter UI, browser cold reopen and native device acceptance. Do not automatically rerun it after a failure or exhausted quota.
 
-## Current verification record
+## Fresh-account development follow-up
+
+After the old SFO account exhausted its quota, the user separately authorized a fresh Free development setup using the new account. The target is FRA project `6ae4175600137449b25e` at `https://fra.cloud.appwrite.io/v1`. Provisioning is in progress and the fresh-project Cloud smoke is pending; this is not a readiness or live-persistence result. Preserve the old project and its data. Normal tests and CI retain the zero-Cloud policy, but the manual provisioning and eventual smoke are Cloud activity and need a separate receipt.
+
+This exception permits at most one new synthetic application account, one workspace, one published Notes app and one synthetic text record. The Notes template must have no existing records, collection effects or automation requests. The runner creates only the required text fields, then verifies the saved record by reading and reloading it. Image uploads, AI calls and reminder-rule scheduling are excluded.
+
+The expected successful flow uses **8 Core Function dispatches, 3 Account requests and 3 business mutations**. The central client caps are **10 Core dispatch attempts, 3 Account attempts and 3 mutations**. With reminders enabled, two private worker reconcile deliveries are expected as a consequence of app instantiation and record creation. Worker dispatch retries and hourly recovery are outside this client budget; verify actual private Function executions separately in Console. These caps do not bound all backend executions or database operations. Report actual request counts, and stop on quota errors or uncertain writes without automatic retries or cleanup requests.
+
+The separate opt-in runner is `packages/tinkerloom_client/live_smoke/new_project_smoke.dart`. It requires `TINKERLOOM_NEW_PROJECT_SMOKE=1` and `TINKERLOOM_ALLOW_ACCOUNT_CREATION=1`, plus the runtime endpoint/project/Function/email/password variables listed above; it does not use `TINKERLOOM_SMOKE_APP_ID`. Never package credentials in Dart defines, logs, committed files or build artifacts.
+
+```sh
+TINKERLOOM_NEW_PROJECT_SMOKE=1 TINKERLOOM_ALLOW_ACCOUNT_CREATION=1 \
+  flutter test --no-pub \
+  packages/tinkerloom_client/live_smoke/new_project_smoke.dart
+```
+
+`TINKERLOOM_NEW_PROJECT_RECOVERY` optionally selects the durable recovery directory. Before any account or business write, the runner exclusively creates its journal and freezes the workspace/app identities and operation envelopes. Existing recovery state blocks another bootstrap, including after an uncertain reply; inspect the retained identities rather than creating replacements. The journal excludes credentials and session tokens. `TINKERLOOM_SMOKE_REPORT` optionally names an exclusive sanitized result file. SDK cookies remain isolated and temporary. This proves only the SDK/service path if it passes; rendered UI and native device acceptance remain separate.
+
+## 2026-10-29 restoration verification (historical)
 
 Final runtime source: `6c57a753d338c13303362953750024cca3e04203`. The Dart/Android code is unchanged from the passing `1b87197` checkpoint; the final source additionally records the iOS plugin integration used by the successful build.
 
@@ -47,7 +65,7 @@ Final runtime source: `6c57a753d338c13303362953750024cca3e04203`. The Dart/Andro
 - The unchanged backend passed **405 standard tests**, **118 service checks**, and **17 local service-bridge tests**. Backend and Flutter GitHub jobs both passed for `1b87197`; [CI receipt](evidence/2026-10-29/flutter-ci-1b87197.passed.json).
 - Release web and the standalone offline preview built successfully. A browser check opened the original Project Hub form and saved one synthetic task in memory. [Browser receipt](evidence/2026-10-29/flutter-offline-browser.json).
 - Android Release APK and unsigned iOS arm64 Release compiled successfully. All **274 tracked inputs** and both artifacts were independently rehashed. Android uses a development debug certificate; iOS requires signing before installation. [Native receipt](evidence/2026-10-29/flutter-native-6c57a75.passed.json), [independent rehash](evidence/2026-10-29/flutter-native-root-rehash.json).
-- **Zero Appwrite Cloud requests** were made during this restoration. The one authorized capped live smoke is prepared but awaits existing credentials; it has not run. [Pending receipt](evidence/2026-10-29/flutter-cloud-smoke.pending.json).
+- **Zero Appwrite Cloud requests** were made in the restoration verification recorded on 2026-10-29. At that checkpoint the existing-account smoke was prepared but had not run because credentials were unavailable. This historical receipt does not describe the later manual fresh-project provisioning. [Historical pending receipt](evidence/2026-10-29/flutter-cloud-smoke.pending.json).
 - The original AppNest source remains unchanged across all 187 imported source-file hashes. Existing users, records, credentials and database directories were not imported or modified. [Preservation receipt](evidence/2026-10-29/original-appnest-preserved.json).
 
 The first Android build failed because the new SDK dependency required Java library desugaring; that failure is preserved and the corrected build passed. One extra local widget invocation from the workspace root could not find app font assets; the required app-directory rerun passed all 233 tests. Neither failure was hidden by removing tests.
