@@ -72,3 +72,7 @@ The backend checks require a separate Dart 3.11 SDK and Node.js. Release builds 
 - AI-provider setup is not configured in the development deployment.
 - Refresh is manual by default to protect the Appwrite Free quota. The current deployment has periodic worker scans disabled, so time-based reminder delivery and scheduled recovery are deferred.
 - The connected app uses live backend resources; avoid running Cloud probes or creating test data unnecessarily. The offline preview and normal test suite are the recommended ways to explore and verify changes.
+
+## License
+
+Tinkerloom is available under the [MIT License](LICENSE). Third-party assets and dependencies retain their own licenses, including the [Lora font license](apps/flutter/assets/fonts/Lora-LICENSE.txt).
