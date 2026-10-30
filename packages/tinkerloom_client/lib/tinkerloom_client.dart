@@ -398,7 +398,10 @@ class Client {
     'spec.media.usage',
   };
   Never _accountFailure(aw.AppwriteException e) {
-    if (e.code == 429 || e.code == 402) budget?.stopped = true;
+    // The SDK can lose the status while decoding an invalid gateway body.
+    // A bounded smoke must stop if a quota response cannot be ruled out.
+    if (e.code == null || e.code == 429 || e.code == 402)
+      budget?.stopped = true;
     throw _failure(
       e.code == 401 ? 'unauthenticated' : 'account_unavailable',
       e.code ?? 503,
