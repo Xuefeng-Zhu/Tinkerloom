@@ -6,7 +6,7 @@ Tinkerloom contains a server-side chat-completions adapter for NVIDIA Nemotron m
 
 The Flutter client requests generation through the authenticated Core Function. Generation work is handled by the private Worker; guidance also uses the configured provider through the backend. Provider credentials stay on the server. Generated responses are parsed and validated against the app definition and its semantic constraints before they can become a private draft. Publishing remains an explicit action, and model-generated executable code is not run.
 
-For NVIDIA routes, the adapter places the generation schema in the model's instructions instead of relying on provider-side JSON-schema enforcement. Local validation remains authoritative; successful HTTP responses alone do not establish a valid app. The current transport applies the model's registered settings, including its baseline thinking-off profile for Nemotron. Experimental profiles described in the AppNest studies do not automatically change the Tinkerloom application's configured transport.
+For the direct NVIDIA-hosted route, the adapter places the generation schema in the model's instructions instead of relying on provider-side JSON-schema enforcement. Local validation remains authoritative; successful HTTP responses alone do not establish a valid app. The current transport applies the model's registered settings, including its baseline thinking-off profile for Nemotron. Experimental profiles described in the AppNest studies do not automatically change the Tinkerloom application's configured transport.
 
 ## Server configuration
 
@@ -28,6 +28,20 @@ The adapter requires a nonempty model and credential and an HTTPS base. NVIDIA c
 | Nano Omni | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` |
 
 The source registry establishes accepted configuration, not current model availability, account access, price, or quota. Check those separately with the provider before authorizing any live use. The NVIDIA application route also supports the separate comparison model `z-ai/glm-5.3-flash`; other comparison models in the evaluation registry are not necessarily accepted by application configuration.
+
+## Nebius Token Factory configuration
+
+Tinkerloom also has a generic chat-completions adapter that can be configured to target Nebius Token Factory. The endpoint follows the [Nebius Token Factory API documentation](https://docs.tokenfactory.nebius.com/fine-tuning/deploy-custom-model). The following values identify the intended endpoint and model; they do not configure or deploy a Function, establish model availability, or demonstrate a successful live integration.
+
+| Variable | Example or purpose |
+| --- | --- |
+| `AI_BASE_URL` | `https://api.tokenfactory.nebius.com/v1`; the adapter appends `/chat/completions` |
+| `AI_MODEL` | `nvidia/nemotron-3-super-120b-a12b` |
+| `AI_API_KEY` | A Nebius Token Factory credential stored only in protected server-side configuration |
+
+Configure Core for guidance and the private Worker for generation. The Nebius host uses `AI_API_KEY`, not the direct NVIDIA route's `NVIDIA_API_KEY`. Never place either key in the Flutter client, build defines, source, logs, or documentation. Review request and spending limits before enabling the provider: guidance and generation are separate operations, and generation can make multiple attempts.
+
+Unlike the direct NVIDIA-hosted route described above, the generic transport requests `json_object` output for guidance and `json_schema` output for generation. Offline mock tests check the request shape, but they do not establish Nebius support for that schema, model availability, successful output, deployment, or a complete app workflow. Tinkerloom's current development deployment is not configured for Nebius; verify actual provider compatibility and the connected application separately before relying on either.
 
 ## Evidence and limitations
 
