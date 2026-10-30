@@ -12,9 +12,12 @@ class OfflineLiveAdapter extends PreviewRuntimeAdapter {
   @override
   bool get preview => false;
   int reads = 0;
+  final queries = <Map<String, dynamic>>[];
   int imageReads = 0;
   bool failGet = false;
   Completer<void>? queryGate;
+  Completer<void>? executeGate;
+  int writes = 0;
   int subscriptions = 0;
   StreamController<void>? events;
   @override
@@ -30,8 +33,21 @@ class OfflineLiveAdapter extends PreviewRuntimeAdapter {
     Map<String, dynamic> query,
   ) async {
     reads++;
+    queries.add(Map<String, dynamic>.from(query));
     if (queryGate != null) await queryGate!.future;
     return super.query(collectionId, query);
+  }
+
+  @override
+  Future<void> execute(
+    ActionSpec action,
+    RuntimeItem? record,
+    Map<String, dynamic> input,
+    String key,
+  ) async {
+    writes++;
+    if (executeGate != null) await executeGate!.future;
+    return super.execute(action, record, input, key);
   }
 
   @override
@@ -66,6 +82,25 @@ class OfflineLiveAdapter extends PreviewRuntimeAdapter {
     imageReads++;
     return base64Decode(
       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==',
+    );
+  }
+}
+
+class OfflinePagingAdapter extends OfflineLiveAdapter {
+  OfflinePagingAdapter(super.spec);
+
+  @override
+  Future<RuntimePage> query(
+    String collectionId,
+    Map<String, dynamic> query,
+  ) async {
+    final withoutCursor = Map<String, dynamic>.from(query)..remove('cursor');
+    final result = await super.query(collectionId, withoutCursor);
+    if (query['cursor'] != null) queries.last['cursor'] = query['cursor'];
+    return RuntimePage(
+      result.items,
+      result.total,
+      query['cursor'] == null ? 'next-page' : null,
     );
   }
 }
@@ -501,4 +536,331 @@ void main() {
       adapter.dispose();
     },
   );
+  testWidgets('legacy queued search does not read after app backgrounds', (
+    tester,
+  ) async {
+    final adapter = OfflineLiveAdapter(starterTemplates()['reading']!);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    adapter.queryGate = Completer<void>();
+    await tester.tap(find.byTooltip('Refresh records'));
+    await tester.pump();
+    final readsBeforeSearch = adapter.reads;
+    await tester.enterText(find.byType(TextField).first, 'reading');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+    expect(adapter.reads, readsBeforeSearch);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    adapter.queryGate!.complete();
+    await tester.pumpAndSettle();
+    expect(
+      adapter.reads,
+      readsBeforeSearch,
+      reason: 'queued search must not dispatch while paused',
+    );
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+    expect(
+      adapter.reads,
+      readsBeforeSearch,
+      reason: 'resume must not dispatch automatically',
+    );
+    adapter.events!.add(null);
+    await tester.pumpAndSettle();
+    expect(
+      adapter.reads,
+      readsBeforeSearch,
+      reason: 'an invalidation must not apply deferred input automatically',
+    );
+    expect(
+      find.text('Refresh records to apply pending updates.'),
+      findsOneWidget,
+    );
+    await tester.tap(find.byTooltip('Refresh records'));
+    await tester.pumpAndSettle();
+    expect(adapter.reads, readsBeforeSearch + 1);
+    expect(
+      adapter.queries.last['filters'],
+      contains(containsPair('value', 'reading')),
+    );
+    expect(
+      find.text('Refresh records to apply pending updates.'),
+      findsNothing,
+    );
+    await tester.pumpWidget(const SizedBox());
+    await adapter.events?.close();
+    adapter.dispose();
+  });
+
+  testWidgets('legacy queued search does not read under a covered route', (
+    tester,
+  ) async {
+    final adapter = OfflineLiveAdapter(starterTemplates()['reading']!);
+    final navigator = GlobalKey<NavigatorState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        navigatorKey: navigator,
+        home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    adapter.queryGate = Completer<void>();
+    await tester.tap(find.byTooltip('Refresh records'));
+    await tester.pump();
+    final readsBeforeSearch = adapter.reads;
+    await tester.enterText(find.byType(TextField).first, 'covered');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+    navigator.currentState!.push(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(body: Text('Cover')),
+      ),
+    );
+    await tester.pumpAndSettle();
+    adapter.queryGate!.complete();
+    await tester.pumpAndSettle();
+    expect(
+      adapter.reads,
+      readsBeforeSearch,
+      reason: 'covered route must not dispatch queued search',
+    );
+    navigator.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(
+      adapter.reads,
+      readsBeforeSearch,
+      reason: 'returning must not dispatch automatically',
+    );
+    adapter.events!.add(null);
+    await tester.pumpAndSettle();
+    expect(
+      adapter.reads,
+      readsBeforeSearch,
+      reason: 'an invalidation must not apply deferred input automatically',
+    );
+    expect(
+      find.text('Refresh records to apply pending updates.'),
+      findsOneWidget,
+    );
+    await tester.tap(find.byTooltip('Refresh records'));
+    await tester.pumpAndSettle();
+    expect(adapter.reads, readsBeforeSearch + 1);
+    expect(
+      adapter.queries.last['filters'],
+      contains(containsPair('value', 'covered')),
+    );
+    await tester.pumpWidget(const SizedBox());
+    await adapter.events?.close();
+    adapter.dispose();
+  });
+
+  testWidgets('legacy queued search refreshes once while visible', (
+    tester,
+  ) async {
+    final adapter = OfflineLiveAdapter(starterTemplates()['reading']!);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    adapter.queryGate = Completer<void>();
+    await tester.tap(find.byTooltip('Refresh records'));
+    await tester.pump();
+    final readsBeforeSearch = adapter.reads;
+    await tester.enterText(find.byType(TextField).first, 'visible');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+    expect(adapter.reads, readsBeforeSearch);
+    adapter.queryGate!.complete();
+    await tester.pumpAndSettle();
+    expect(adapter.reads, readsBeforeSearch + 1);
+    expect(
+      adapter.queries.last['filters'],
+      contains(containsPair('value', 'visible')),
+    );
+    await tester.pumpWidget(const SizedBox());
+    await adapter.events?.close();
+    adapter.dispose();
+  });
+  testWidgets(
+    'legacy initial load queued search does not stay loading while paused',
+    (tester) async {
+      final adapter = OfflineLiveAdapter(starterTemplates()['reading']!);
+      adapter.queryGate = Completer<void>();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(adapter.reads, 1);
+      await tester.enterText(find.byType(TextField).first, 'initial');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      adapter.queryGate!.complete();
+      await tester.pumpAndSettle();
+      expect(adapter.reads, 1);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Refresh records to apply pending updates.'),
+        findsOneWidget,
+      );
+      expect(find.text('Loading…'), findsNothing);
+      await tester.tap(find.byTooltip('Refresh records'));
+      await tester.pumpAndSettle();
+      expect(adapter.reads, 2);
+      expect(
+        adapter.queries.last['filters'],
+        contains(containsPair('value', 'initial')),
+      );
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+    },
+  );
+  testWidgets(
+    'legacy pagination cannot queue another request during a refresh',
+    (tester) async {
+      final adapter = OfflinePagingAdapter(starterTemplates()['reading']!);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Next page'), findsOneWidget);
+      adapter.queryGate = Completer<void>();
+      await tester.tap(find.byTooltip('Refresh records'));
+      await tester.pump();
+      final before = adapter.reads;
+      expect(
+        tester
+            .widget<TextButton>(find.widgetWithText(TextButton, 'Next page'))
+            .onPressed,
+        isNull,
+      );
+      await tester.tap(find.text('Next page'), warnIfMissed: false);
+      await tester.pump();
+      expect(adapter.reads, before);
+      adapter.queryGate!.complete();
+      await tester.pumpAndSettle();
+      expect(
+        adapter.reads,
+        before,
+        reason: 'disabled next page must not queue a replacement read',
+      );
+      await tester.ensureVisible(find.text('Next page'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Next page'));
+      await tester.pumpAndSettle();
+      expect(adapter.reads, before + 1);
+      expect(adapter.queries.last['cursor'], 'next-page');
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+    },
+  );
+
+  testWidgets(
+    'legacy choice change invalidates old results before hidden refresh settles',
+    (tester) async {
+      final adapter = OfflineLiveAdapter(starterTemplates()['reading']!);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      adapter.queryGate = Completer<void>();
+      await tester.tap(find.byTooltip('Refresh records'));
+      await tester.pump();
+      final before = adapter.reads;
+      await tester.tap(
+        find.byKey(const ValueKey('legacy-choice-filter-status')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Reading').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Refresh to try again.'), findsOneWidget);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      adapter.queryGate!.complete();
+      await tester.pumpAndSettle();
+      expect(adapter.reads, before);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Refresh records to apply pending updates.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Refresh to try again.'),
+        findsOneWidget,
+        reason: 'the stale response must not replace the changed choice',
+      );
+      await tester.tap(find.byTooltip('Refresh records'));
+      await tester.pumpAndSettle();
+      expect(adapter.reads, before + 1);
+      expect(
+        adapter.queries.last['filters'],
+        contains(containsPair('value', 'Reading')),
+      );
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+    },
+  );
+  testWidgets('late legacy save after disposal does not refresh', (
+    tester,
+  ) async {
+    final adapter = OfflineLiveAdapter(starterTemplates()['reading']!);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    adapter.executeGate = Completer<void>();
+    await tester.tap(find.widgetWithText(FilledButton, 'Add book'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Title *'),
+      'Pending save',
+    );
+    await tester.tap(find.text('Save').last);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(adapter.writes, 1);
+    final before = adapter.reads;
+    await tester.pumpWidget(const SizedBox());
+    adapter.executeGate!.complete();
+    await tester.pumpAndSettle();
+    expect(
+      adapter.reads,
+      before,
+      reason: 'disposed runtime must not issue a late refresh',
+    );
+    expect(tester.takeException(), isNull);
+    await adapter.events?.close();
+    adapter.dispose();
+  });
 }

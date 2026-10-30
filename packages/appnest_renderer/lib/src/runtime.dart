@@ -94,6 +94,7 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
       (ModalRoute.of(context)?.isCurrent ?? true) &&
       !loading &&
       !fetching &&
+      !dirty &&
       _pendingCommand == null;
 
   void connect() {
@@ -149,11 +150,12 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
   }
 
   Future<void> refresh({bool next = false}) async {
+    if (!mounted) return;
     if (fetching) {
       dirty = true;
       return;
     }
-    fetching = true;
+    setState(() => fetching = true);
     final request = ++_request;
     try {
       dirty = false;
@@ -192,8 +194,20 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
     } catch (e) {
       if (mounted && request == _request) _invalidate(e);
     } finally {
-      fetching = false;
-      if (dirty && mounted) refresh();
+      if (mounted) {
+        setState(() => fetching = false);
+      } else {
+        fetching = false;
+      }
+      if (dirty && mounted) {
+        if (_routeVisible) {
+          refresh();
+        } else {
+          // Do not dispatch a queued update while the app is hidden.
+          // Leave it pending so the next explicit refresh applies it.
+          setState(() => loading = false);
+        }
+      }
     }
   }
 
@@ -506,9 +520,11 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
                                   ),
                                 ],
                                 onChanged: (v) {
-                                  setState(
-                                    () => filterChoice = v == '' ? null : v,
-                                  );
+                                  setState(() {
+                                    filterChoice = v == '' ? null : v;
+                                    page = null;
+                                    _request++;
+                                  });
                                   refresh();
                                 },
                               ),
@@ -596,6 +612,13 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
                         ),
                       ),
                     if (loading) const LinearProgressIndicator(),
+                    if (dirty && !fetching)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Refresh records to apply pending updates.',
+                        ),
+                      ),
                     if (error != null)
                       Padding(
                         padding: EdgeInsets.all(_space(context, 16)),
@@ -685,7 +708,13 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
                               Text('${page!.total} records'),
                               if (page!.cursor != null)
                                 TextButton(
-                                  onPressed: () => refresh(next: true),
+                                  onPressed: fetching
+                                      ? null
+                                      : () {
+                                          // Ignore a second tap before the
+                                          // disabled state has been rendered.
+                                          if (!fetching) refresh(next: true);
+                                        },
                                   child: const Text('Next page'),
                                 ),
                             ],
