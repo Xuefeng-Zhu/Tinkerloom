@@ -193,8 +193,7 @@ extension _RichComponents on _RichMiniAppRuntimeState {
             onChanged: (value) {
               stored.search = value;
               stored.records = null;
-              _searchTimer?.cancel();
-              _searchTimer = Timer(const Duration(milliseconds: 250), _refresh);
+              _scheduleSearchRefresh();
             },
           ),
           const SizedBox(height: 12),
@@ -1412,23 +1411,83 @@ class _ImageLoad {
   const _ImageLoad(this.bytes);
 }
 
-class _PrivateImageState extends State<_PrivateImage> {
+class _PrivateImageState extends State<_PrivateImage>
+    with WidgetsBindingObserver {
   Future<_ImageLoad>? _bytes;
   bool _failed = false;
   MemoryImage? _image;
   StreamSubscription<void>? _subscription;
+  bool _deferredInitialRead = false;
+  bool get _foreground {
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    return lifecycle == null || lifecycle == AppLifecycleState.resumed;
+  }
+
   @override
   void initState() {
     super.initState();
-    _read();
+    WidgetsBinding.instance.addObserver(this);
+    _deferredInitialRead = true;
     _subscribe();
+    widget.adapter.manualRefreshes.addListener(_manualRefresh);
+  }
+
+  bool get _visible =>
+      mounted && _foreground && (ModalRoute.of(context)?.isCurrent ?? true);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (_deferredInitialRead && _foreground && (route?.isCurrent ?? true)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_visible && _deferredInitialRead) {
+          setState(() {
+            _deferredInitialRead = false;
+            _read();
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed &&
+        _deferredInitialRead &&
+        _visible) {
+      setState(() {
+        _deferredInitialRead = false;
+        _read();
+      });
+    }
+  }
+
+  void _manualRefresh() {
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    if (mounted &&
+        (lifecycle == null || lifecycle == AppLifecycleState.resumed) &&
+        (ModalRoute.of(context)?.isCurrent ?? true)) {
+      setState(() {
+        _deferredInitialRead = false;
+        _read();
+      });
+    }
   }
 
   void _subscribe() {
     _subscription?.cancel();
     _subscription = widget.adapter.watch().listen(
       (_) {
-        if (mounted) setState(_read);
+        final lifecycle = WidgetsBinding.instance.lifecycleState;
+        if (mounted &&
+            (lifecycle == null || lifecycle == AppLifecycleState.resumed) &&
+            (ModalRoute.of(context)?.isCurrent ?? true)) {
+          setState(() {
+            _deferredInitialRead = false;
+            _read();
+          });
+        }
       },
       onError: (Object error) {
         if (mounted)
@@ -1436,6 +1495,7 @@ class _PrivateImageState extends State<_PrivateImage> {
             _clear();
             _failed = true;
             _bytes = null;
+            _deferredInitialRead = false;
           });
       },
       onDone: () {
@@ -1444,6 +1504,7 @@ class _PrivateImageState extends State<_PrivateImage> {
             _clear();
             _failed = true;
             _bytes = null;
+            _deferredInitialRead = false;
           });
       },
     );
@@ -1475,13 +1536,27 @@ class _PrivateImageState extends State<_PrivateImage> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.assetId != widget.assetId ||
         oldWidget.adapter != widget.adapter ||
-        oldWidget.thumbnail != widget.thumbnail)
-      _read();
-    if (oldWidget.adapter != widget.adapter) _subscribe();
+        oldWidget.thumbnail != widget.thumbnail) {
+      if (_visible) {
+        _deferredInitialRead = false;
+        _read();
+      } else {
+        _clear();
+        _bytes = null;
+        _deferredInitialRead = true;
+      }
+    }
+    if (oldWidget.adapter != widget.adapter) {
+      oldWidget.adapter.manualRefreshes.removeListener(_manualRefresh);
+      widget.adapter.manualRefreshes.addListener(_manualRefresh);
+      _subscribe();
+    }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    widget.adapter.manualRefreshes.removeListener(_manualRefresh);
     _subscription?.cancel();
     _clear();
     super.dispose();

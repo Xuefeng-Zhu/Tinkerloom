@@ -46,8 +46,11 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
       _reconnecting = false,
       _manualRefreshing = false;
   int _request = 0, _navigationAttempt = 0;
+  int _refreshFlights = 0;
+  int _watchGeneration = 0;
   int? _navigationGuard;
   Timer? _timer, _reconnectTimer, _searchTimer;
+  bool _connected = false;
   bool _foreground =
       WidgetsBinding.instance.lifecycleState == null ||
       WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
@@ -67,7 +70,6 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
     _location = _validLocation(widget.initialLocation);
     _attach();
     WidgetsBinding.instance.addObserver(this);
-    _connect();
     // Preview is entirely local. Live Appwrite data refreshes on demand.
     if (adapter.preview) {
       _timer = Timer.periodic(const Duration(seconds: 30), (_) {
@@ -100,6 +102,11 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
       _attach();
     }
     if (oldWidget.adapter != adapter || oldWidget.adapter.spec != spec) {
+      oldWidget.adapter.setAutomaticReadGuard(null);
+      _watchGeneration++;
+      _subscription?.cancel();
+      _subscription = null;
+      _reconnectTimer?.cancel();
       _pendingCommand = null;
       _request++;
       _views.clear();
@@ -108,25 +115,73 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
       _formDirty = false;
       _location = _validLocation(_location);
       _attach();
-      _connect();
+      _connected = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _startWhenVisible());
     }
   }
 
+  bool get _routeVisible =>
+      mounted && _foreground && (ModalRoute.of(context)?.isCurrent ?? true);
+
+  void _startWhenVisible() {
+    if (_routeVisible && !_connected) _connect();
+  }
+
+  bool _allowAutomaticRead() =>
+      mounted &&
+      _foreground &&
+      (adapter.preview ||
+          ((ModalRoute.of(context)?.isCurrent ?? true) &&
+              !_saving &&
+              !_formDirty &&
+              _pendingCommand == null &&
+              !_manualRefreshing &&
+              _refreshFlights == 0));
+
   Future<void> _connect() async {
+    _connected = true;
+    adapter.setAutomaticReadGuard(_allowAutomaticRead);
     _subscription?.cancel();
     _reconnectTimer?.cancel();
+    final generation = ++_watchGeneration;
     _subscription = adapter.watch().listen(
       (_) {
-        if (mounted &&
-            _foreground &&
-            (ModalRoute.of(context)?.isCurrent ?? true))
+        if (generation != _watchGeneration) return;
+        if (_allowAutomaticRead()) {
           _refresh();
+        } else if (mounted &&
+            _foreground &&
+            (ModalRoute.of(context)?.isCurrent ?? true) &&
+            (_formDirty || _pendingCommand != null || _saving)) {
+          // Reflect locally known access changes without reading while an edit
+          // or receipt-bound write is unresolved.
+          setState(() {});
+        }
       },
-      onError: (Object error) => _connectionFailed(error),
-      onDone: () =>
-          _connectionFailed(StateError('The connection was interrupted.')),
+      onError: (Object error) {
+        if (generation == _watchGeneration) _connectionFailed(error);
+      },
+      onDone: () {
+        if (generation == _watchGeneration) {
+          _connectionFailed(StateError('The connection was interrupted.'));
+        }
+      },
     );
     await _refresh();
+  }
+
+  void _scheduleSearchRefresh() {
+    _searchTimer?.cancel();
+    _searchTimer = Timer(const Duration(milliseconds: 250), () {
+      if (mounted &&
+          _foreground &&
+          (ModalRoute.of(context)?.isCurrent ?? true) &&
+          !_saving &&
+          !_formDirty &&
+          _pendingCommand == null) {
+        _refresh();
+      }
+    });
   }
 
   Future<void> _manualRefresh() async {
@@ -139,6 +194,7 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
       } else {
         await _refresh();
       }
+      if (mounted && _error == null) adapter.notifyManualRefresh();
     } finally {
       if (mounted) setState(() => _manualRefreshing = false);
     }
@@ -166,12 +222,15 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
   @override
   void didChangeAppLifecycleState(AppLifecycleState lifecycle) {
     _foreground = lifecycle == AppLifecycleState.resumed;
-    if (_foreground && adapter.preview) _connect();
+    if (!_foreground) _searchTimer?.cancel();
+    if (_routeVisible && (!_connected || adapter.preview)) _connect();
   }
 
   @override
   void dispose() {
     widget.controller?._detach();
+    _watchGeneration++;
+    adapter.setAutomaticReadGuard(null);
     _subscription?.cancel();
     _timer?.cancel();
     _reconnectTimer?.cancel();
@@ -198,6 +257,10 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (_foreground && !_connected && (route?.isCurrent ?? true)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _startWhenVisible());
+    }
     final editing = _VisualEditScope.of(context) != null;
     // The host guards entry through controller.canLeave(). Once the record
     // editor is replaced, do not retain a phantom unsaved-form flag.
@@ -367,6 +430,7 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
 
   Future<void> _refresh({String? nextView}) async {
     if (!mounted || _saving) return;
+    _refreshFlights++;
     final request = ++_request, location = _location;
     try {
       if (_editorRecordId != null) await adapter.get(_editorRecordId!);
@@ -472,6 +536,8 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
         _views.clear();
         _loading = false;
       });
+    } finally {
+      _refreshFlights--;
     }
   }
 
@@ -1239,11 +1305,7 @@ class _RichMiniAppRuntimeState extends State<_RichMiniAppRuntime>
               onChanged: (value) {
                 stored.search = value;
                 stored.records = null;
-                _searchTimer?.cancel();
-                _searchTimer = Timer(
-                  const Duration(milliseconds: 250),
-                  _refresh,
-                );
+                _scheduleSearchRefresh();
               },
             ),
             const SizedBox(height: 12),

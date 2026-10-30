@@ -133,6 +133,15 @@ abstract class RuntimeAdapter {
   );
   Future<List<String>> members();
   Stream<void> watch();
+
+  /// Host-provided gate for optional invalidation reads. Implementations that
+  /// perform work before emitting watch events must check it before dispatch.
+  void setAutomaticReadGuard(bool Function()? allowed) {}
+  final ValueNotifier<int> _manualRefreshSignal = ValueNotifier<int>(0);
+  Listenable get manualRefreshes => _manualRefreshSignal;
+
+  /// Called only for an explicit user refresh, so mounted images can reload.
+  void notifyManualRefresh() => _manualRefreshSignal.value++;
   bool permits(ActionSpec action);
   List<String> get approvedRuleIds => const [];
   Future<RuntimeItem> get(String recordId) =>

@@ -52,6 +52,7 @@ void main() {
           availablePlaces: 0,
         ),
       );
+      adapter.setAutomaticReadGuard(() => true);
       var received = 0;
       final subscriptions = List.generate(
         51,

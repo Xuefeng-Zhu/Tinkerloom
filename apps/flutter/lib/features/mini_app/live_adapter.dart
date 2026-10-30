@@ -18,6 +18,7 @@ class LiveRuntimeAdapter extends RuntimeAdapter {
   @override
   final DeviceCapabilitiesAdapter deviceCapabilities;
   Stream<void>? _events;
+  bool Function()? _automaticReadAllowed;
   LiveRuntimeAdapter(
     this.client,
     this.manifest, {
@@ -243,23 +244,52 @@ class LiveRuntimeAdapter extends RuntimeAdapter {
     manifest.appId,
   )).map((m) => m.actorId).toList();
   @override
+  void setAutomaticReadGuard(bool Function()? allowed) {
+    _automaticReadAllowed = allowed;
+  }
+
+  @override
   Stream<void> watch() {
     final existing = _events;
     if (existing != null) return existing;
     late final Stream<void> events;
     events = client.runtime
         .events(manifest.appId)
-        .asyncMap<void>((event) async {
-          if (requestedDeviceCapabilities(spec).isNotEmpty) {
-            await _checkDefinition();
-            if (manifest.archived) {
-              throw NestError(
-                category: 'staleDefinition',
-                message: 'This app was archived. Reopen it to refresh.',
-              );
+        .where((_) => _automaticReadAllowed?.call() ?? false)
+        .asyncMap<bool>((event) async {
+          // A prior event may have delayed this one until the view went away.
+          if (!(_automaticReadAllowed?.call() ?? false)) return false;
+          try {
+            if (requestedDeviceCapabilities(spec).isNotEmpty) {
+              await _checkDefinition();
+              if (manifest.archived) {
+                throw NestError(
+                  category: 'staleDefinition',
+                  message: 'This app was archived. Reopen it to refresh.',
+                );
+              }
             }
+          } catch (issue) {
+            // Definite access loss must invalidate private/device views even
+            // if the screen becomes dirty or hidden during the check.
+            if (issue is NestError &&
+                ({401, 403, 404}.contains(issue.status) ||
+                    {
+                      'unauthenticated',
+                      'forbidden',
+                      'not_found',
+                      'staleDefinition',
+                    }.contains(issue.category))) {
+              rethrow;
+            }
+            // A transient late failure must not discard newly dirty edits.
+            if (!(_automaticReadAllowed?.call() ?? false)) return false;
+            rethrow;
           }
+          return _automaticReadAllowed?.call() ?? false;
         })
+        .where((allowed) => allowed)
+        .map<void>((_) {})
         .asBroadcastStream(
           onCancel: (subscription) {
             // Images and the page share one authorized upstream subscription.

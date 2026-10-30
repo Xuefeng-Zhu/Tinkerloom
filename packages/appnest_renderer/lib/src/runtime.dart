@@ -47,6 +47,7 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
   StreamSubscription<void>? subscription;
   Timer? refreshTimer;
   Timer? reconnectTimer;
+  bool connected = false;
   bool foreground =
       WidgetsBinding.instance.lifecycleState == null ||
       WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
@@ -63,7 +64,6 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
     super.initState();
     viewId = adapter.spec.views.first.id;
     WidgetsBinding.instance.addObserver(this);
-    connect();
     // Preview is entirely local. Live Appwrite data refreshes on demand.
     if (adapter.preview) {
       refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
@@ -72,21 +72,39 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
     }
   }
 
+  bool get _routeVisible =>
+      mounted && foreground && (ModalRoute.of(context)?.isCurrent ?? true);
+
+  void _startWhenVisible() {
+    if (_routeVisible && !connected) connect();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (foreground && !connected && (route?.isCurrent ?? true)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _startWhenVisible());
+    }
+  }
+
+  bool allowAutomaticRead() =>
+      mounted &&
+      foreground &&
+      (ModalRoute.of(context)?.isCurrent ?? true) &&
+      !loading &&
+      !fetching &&
+      _pendingCommand == null;
+
   void connect() {
+    connected = true;
+    adapter.setAutomaticReadGuard(allowAutomaticRead);
     _request++;
     reconnectTimer?.cancel();
     subscription?.cancel();
     subscription = adapter.watch().listen(
       (_) {
-        if (!mounted ||
-            !foreground ||
-            !(ModalRoute.of(context)?.isCurrent ?? true))
-          return;
-        if (fetching) {
-          dirty = true;
-        } else {
-          refresh();
-        }
+        if (allowAutomaticRead()) refresh();
       },
       onError: (Object e) {
         _invalidate(e);
@@ -116,12 +134,13 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     foreground = state == AppLifecycleState.resumed;
-    if (foreground && adapter.preview) connect();
+    if (_routeVisible && (!connected || adapter.preview)) connect();
   }
 
   @override
   void dispose() {
     _dismissEditor();
+    adapter.setAutomaticReadGuard(null);
     subscription?.cancel();
     refreshTimer?.cancel();
     reconnectTimer?.cancel();
@@ -347,7 +366,10 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
           ),
         if (reconnecting)
           TextButton.icon(
-            onPressed: connect,
+            onPressed: () {
+              adapter.notifyManualRefresh();
+              connect();
+            },
             icon: const Icon(Icons.sync),
             label: const Text('Reconnecting — refresh connection'),
           ),
@@ -437,7 +459,10 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
                   ),
               IconButton(
                 tooltip: 'Refresh records',
-                onPressed: () => refresh(),
+                onPressed: () {
+                  adapter.notifyManualRefresh();
+                  refresh();
+                },
                 icon: const Icon(Icons.refresh),
               ),
             ],

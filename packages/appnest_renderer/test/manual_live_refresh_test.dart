@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:appnest_renderer/appnest_renderer.dart';
 import 'package:appnest_spec/appnest_spec.dart';
@@ -10,6 +12,9 @@ class OfflineLiveAdapter extends PreviewRuntimeAdapter {
   @override
   bool get preview => false;
   int reads = 0;
+  int imageReads = 0;
+  bool failGet = false;
+  Completer<void>? queryGate;
   int subscriptions = 0;
   StreamController<void>? events;
   @override
@@ -20,8 +25,12 @@ class OfflineLiveAdapter extends PreviewRuntimeAdapter {
   }
 
   @override
-  Future<RuntimePage> query(String collectionId, Map<String, dynamic> query) {
+  Future<RuntimePage> query(
+    String collectionId,
+    Map<String, dynamic> query,
+  ) async {
     reads++;
+    if (queryGate != null) await queryGate!.future;
     return super.query(collectionId, query);
   }
 
@@ -48,7 +57,16 @@ class OfflineLiveAdapter extends PreviewRuntimeAdapter {
   @override
   Future<RuntimeItem> get(String recordId) {
     reads++;
+    if (failGet) return Future.error(StateError('synthetic read failure'));
     return super.get(recordId);
+  }
+
+  @override
+  Future<Uint8List> readImage(String assetId, {bool thumbnail = true}) async {
+    imageReads++;
+    return base64Decode(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==',
+    );
   }
 }
 
@@ -57,6 +75,115 @@ void main() {
     'legacy': starterTemplates()['reading']!,
     'rich': dailyPlannerTemplate(),
   }.entries) {
+    testWidgets('${entry.key} covered initial mount loads when visible', (
+      tester,
+    ) async {
+      final adapter = OfflineLiveAdapter(entry.value);
+      final show = ValueNotifier<bool>(false);
+      final navigator = GlobalKey<NavigatorState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navigator,
+          home: Scaffold(
+            body: ValueListenableBuilder<bool>(
+              valueListenable: show,
+              builder: (_, enabled, __) =>
+                  enabled ? MiniAppRuntime(adapter: adapter) : const SizedBox(),
+            ),
+          ),
+        ),
+      );
+      navigator.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('Cover')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      show.value = true;
+      await tester.pumpAndSettle();
+      expect(adapter.reads, 0);
+      expect(adapter.subscriptions, 0);
+      navigator.currentState!.pop();
+      await tester.pumpAndSettle();
+      expect(adapter.reads, greaterThan(0));
+      expect(adapter.subscriptions, 1);
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+      show.dispose();
+    });
+    if (entry.key == 'rich') {
+      testWidgets(
+        '${entry.key} covered adapter change waits for visible route',
+        (tester) async {
+          final first = OfflineLiveAdapter(entry.value);
+          final second = OfflineLiveAdapter(entry.value);
+          final current = ValueNotifier<RuntimeAdapter>(first);
+          final navigator = GlobalKey<NavigatorState>();
+          await tester.pumpWidget(
+            MaterialApp(
+              navigatorKey: navigator,
+              home: Scaffold(
+                body: ValueListenableBuilder<RuntimeAdapter>(
+                  valueListenable: current,
+                  builder: (_, adapter, __) => MiniAppRuntime(adapter: adapter),
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(first.reads, greaterThan(0));
+          navigator.currentState!.push(
+            MaterialPageRoute<void>(
+              builder: (_) => const Scaffold(body: Text('Cover')),
+            ),
+          );
+          await tester.pumpAndSettle();
+          current.value = second;
+          await tester.pumpAndSettle();
+          expect(second.reads, 0);
+          expect(second.subscriptions, 0);
+          first.events!.addError(StateError('old adapter revoked'));
+          await tester.pump();
+          navigator.currentState!.pop();
+          await tester.pumpAndSettle();
+          expect(second.reads, greaterThan(0));
+          expect(second.subscriptions, 1);
+          expect(find.text('This page is unavailable'), findsNothing);
+          await tester.pumpWidget(const SizedBox());
+          await first.events?.close();
+          await second.events?.close();
+          first.dispose();
+          second.dispose();
+          current.dispose();
+        },
+      );
+    }
+    testWidgets('${entry.key} first read waits until foreground', (
+      tester,
+    ) async {
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      final adapter = OfflineLiveAdapter(entry.value);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+        ),
+      );
+      await tester.pump();
+      expect(adapter.reads, 0);
+      expect(adapter.subscriptions, 0);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(adapter.reads, greaterThan(0));
+      expect(adapter.subscriptions, 1);
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+    });
     testWidgets('${entry.key} closed live stream does not auto-reconnect', (
       tester,
     ) async {
@@ -179,4 +306,199 @@ void main() {
     await adapter.events?.close();
     adapter.dispose();
   });
+
+  testWidgets(
+    'dirty rich form ignores automatic invalidations and preserves input',
+    (tester) async {
+      final adapter = OfflineLiveAdapter(dailyPlannerTemplate());
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MiniAppRuntime(
+              adapter: adapter,
+              initialLocation: const MiniAppLocation(
+                'taskEditorPage',
+                recordId: '2',
+                editing: true,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byType(TextField).first,
+        'Unsaved local edit',
+      );
+      await tester.pump();
+      final before = adapter.reads;
+      adapter.failGet = true;
+      adapter.events!.add(null);
+      await tester.pumpAndSettle();
+      expect(adapter.reads, before);
+      expect(find.text('Unsaved local edit'), findsOneWidget);
+      expect(find.text('This page is unavailable'), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+    },
+  );
+
+  testWidgets(
+    'private images ignore background events and reload on explicit refresh',
+    (tester) async {
+      final adapter = OfflineLiveAdapter(photoJournalTemplate());
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(adapter.imageReads, greaterThan(0));
+      final before = adapter.imageReads;
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      adapter.events!.add(null);
+      await tester.pumpAndSettle();
+      expect(adapter.imageReads, before);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(adapter.imageReads, before);
+      await tester.tap(find.byTooltip('Refresh page'));
+      await tester.pumpAndSettle();
+      expect(adapter.imageReads, greaterThan(before));
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+    },
+  );
+
+  testWidgets('debounced search does not dispatch after backgrounding', (
+    tester,
+  ) async {
+    final adapter = OfflineLiveAdapter(projectHubTemplate());
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsWidgets);
+    final before = adapter.reads;
+    await tester.enterText(find.byType(TextField).first, 'pending search');
+    await tester.pump(const Duration(milliseconds: 100));
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    await tester.pump(const Duration(seconds: 1));
+    expect(adapter.reads, before);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+    expect(adapter.reads, before);
+    await tester.tap(find.byTooltip('Refresh page'));
+    await tester.pumpAndSettle();
+    expect(adapter.reads, greaterThan(before));
+    await tester.pumpWidget(const SizedBox());
+    await adapter.events?.close();
+    adapter.dispose();
+  });
+
+  testWidgets('rich live invalidation bursts share the in-flight refresh', (
+    tester,
+  ) async {
+    final adapter = OfflineLiveAdapter(projectHubTemplate());
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final before = adapter.reads;
+    adapter.queryGate = Completer<void>();
+    adapter.events!.add(null);
+    await tester.pump();
+    expect(adapter.reads, greaterThan(before));
+    final afterFirst = adapter.reads;
+    adapter.events!
+      ..add(null)
+      ..add(null)
+      ..add(null);
+    await tester.pump();
+    expect(
+      adapter.reads,
+      afterFirst,
+      reason: 'no overlapping refresh for burst',
+    );
+    adapter.queryGate!.complete();
+    await tester.pumpAndSettle();
+    expect(adapter.reads, afterFirst);
+    await tester.pumpWidget(const SizedBox());
+    await adapter.events?.close();
+    adapter.dispose();
+  });
+  testWidgets(
+    'visible user search still dispatches while an older refresh is in flight',
+    (tester) async {
+      final adapter = OfflineLiveAdapter(projectHubTemplate());
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      adapter.queryGate = Completer<void>();
+      await tester.tap(find.byTooltip('Refresh page'));
+      await tester.pump();
+      final beforeSearch = adapter.reads;
+      await tester.enterText(find.byType(TextField).first, 'new search');
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(adapter.reads, greaterThan(beforeSearch));
+      adapter.queryGate!.complete();
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+    },
+  );
+  testWidgets(
+    'rich media search does not dispatch after its route is covered',
+    (tester) async {
+      final adapter = OfflineLiveAdapter(photoJournalTemplate());
+      final navigator = GlobalKey<NavigatorState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          navigatorKey: navigator,
+          home: Scaffold(body: MiniAppRuntime(adapter: adapter)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final search = find.byKey(const ValueKey('search-photoCards'));
+      expect(search, findsOneWidget);
+      final before = adapter.reads;
+      await tester.enterText(search, 'pending search');
+      await tester.pump(const Duration(milliseconds: 100));
+      navigator.currentState!.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('Cover')),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(adapter.reads, before);
+      navigator.currentState!.pop();
+      await tester.pumpAndSettle();
+      expect(adapter.reads, before);
+      await tester.tap(find.byTooltip('Refresh page'));
+      await tester.pumpAndSettle();
+      expect(adapter.reads, greaterThan(before));
+      await tester.pumpWidget(const SizedBox());
+      await adapter.events?.close();
+      adapter.dispose();
+    },
+  );
 }
