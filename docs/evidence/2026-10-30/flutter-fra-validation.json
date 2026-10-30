@@ -48,7 +48,7 @@
     "cloudCalls": 0,
     "priorRestorationTests": 589,
     "priorBackendTests": 405,
-    "qualification": "Previous full-suite results are dated evidence; this follow-up reran the13 new guards. GitHub CI independently runs full offline checks."
+    "qualification": "Prior restoration counts remain dated evidence. The13 new guards passed locally, then both full offline GitHub jobs passed for final code."
   },
   "builds": {
     "sourceCommit": "733439f3f3fc75500c1b843eb36ad4d8ad74ea24",
@@ -84,5 +84,15 @@
     "SDK/service persistence is separate from rendered Flutter UI and native-device acceptance.",
     "Periodic worker recovery and time-based reminder triggering are deferred to avoid idle scans.",
     "AI provider setup and production/store distribution remain deferred."
-  ]
+  ],
+  "ci": {
+    "sourceCommit": "7f5606f90941a6d4801a799d6547cc47cffeb6cd",
+    "url": "https://github.com/Xuefeng-Zhu/Tinkerloom/actions/runs/41021966806",
+    "conclusion": "success",
+    "jobs": [
+      "Flutter client and shared renderer (offline)",
+      "Appwrite service and contract (offline)"
+    ],
+    "qualification": "Both full offline jobs passed for final code; later completion-documentation commits do not change runtime or tests."
+  }
 }
