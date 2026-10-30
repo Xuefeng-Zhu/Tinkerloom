@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:tinkerloom_client/tinkerloom_client.dart';
 import 'package:tinkerloom_flutter/client.dart' as transport;
@@ -7,6 +8,7 @@ import 'package:tinkerloom_flutter/features/builder/builder_chat.dart';
 import 'package:appnest_renderer/appnest_renderer.dart';
 import 'package:appnest_spec/appnest_spec.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Synthetic authenticated transport. The production builder uses the generated
@@ -221,6 +223,161 @@ void main() {
   }
 
   Finder composer() => find.byKey(const ValueKey('builder-prompt'));
+
+  testWidgets(
+    'original volunteer preview fits narrow viewport and large text',
+    (tester) async {
+      await showBuilder(
+        tester,
+        initial: draft(),
+        size: const Size(320, 720),
+        textScale: 1.5,
+      );
+      await tester.tap(find.text('Try'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(
+        find.byKey(const ValueKey('legacy-runtime-controls')),
+        findsOneWidget,
+      );
+      expect(tester.getSize(find.byType(RecordList)).height, greaterThan(40));
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'narrow preview keeps legacy controls and records usable at 150 percent text',
+    (tester) async {
+      await showBuilder(
+        tester,
+        initial: draft(spec: starterTemplates()['reading']),
+        size: const Size(320, 720),
+        textScale: 1.5,
+      );
+      await tester.tap(find.text('Try'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final controls = find.byKey(const ValueKey('legacy-runtime-controls'));
+      expect(controls, findsOneWidget);
+      final records = find.byType(RecordList);
+      expect(records, findsOneWidget);
+      expect(tester.getSize(records).height, greaterThan(40));
+      final add = find.text('Add book');
+      await tester.ensureVisible(add);
+      await tester.pumpAndSettle();
+      expect(add.hitTestable(), findsOneWidget);
+      await tester.tap(add);
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(TextField, 'Title *'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Title *'),
+        'A new book',
+      );
+      final status = find.byType(DropdownButtonFormField<String>);
+      await tester.ensureVisible(status);
+      await tester.tap(status);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Reading').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Save').last);
+      await tester.pumpAndSettle();
+      expect(find.text('A new book'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('desktop toolbar keeps short dropdowns at their natural width', (
+    tester,
+  ) async {
+    await showBuilder(
+      tester,
+      initial: draft(spec: starterTemplates()['reading']),
+    );
+    await tester.pumpAndSettle();
+    final filter = find.byKey(const ValueKey('legacy-choice-filter-status'));
+    expect(tester.getSize(filter).width, lessThan(240));
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  for (final size in [const Size(320, 720), const Size(1440, 1000)]) {
+    testWidgets(
+      'long choice labels remain readable in menus at ${size.width}',
+      (
+        tester,
+      ) async {
+        const first =
+            'A shared reading list with a long descriptive category ALPHA';
+        const second =
+            'A shared reading list with a long descriptive category BETA';
+        final json = starterTemplates()['reading']!.toJson();
+        final collection = (json['collections'] as List)
+            .cast<Map<String, dynamic>>()
+            .firstWhere((collection) => collection['id'] == 'books');
+        final field = (collection['fields'] as List)
+            .cast<Map<String, dynamic>>()
+            .firstWhere((field) => field['id'] == 'status');
+        field['choices'] = [first, second];
+        await showBuilder(
+          tester,
+          initial: draft(spec: AppSpec.parse(jsonEncode(json))),
+          size: size,
+          textScale: 1.5,
+        );
+        if (size.width < 600) {
+          await tester.tap(find.text('Try'));
+          await tester.pumpAndSettle();
+        }
+        final filter = find.byKey(
+          const ValueKey('legacy-choice-filter-status'),
+        );
+        await tester.ensureVisible(filter);
+        await tester.pumpAndSettle();
+        await tester.tap(filter);
+        await tester.pumpAndSettle();
+        for (final label in [first, second]) {
+          final text = find.text(label).last;
+          await tester.ensureVisible(text);
+          await tester.pumpAndSettle();
+          final widget = tester.widget<Text>(text);
+          expect(widget.maxLines, isNull);
+          expect(widget.overflow, isNot(TextOverflow.ellipsis));
+          expect(
+            tester.renderObject<RenderParagraph>(text).didExceedMaxLines,
+            isFalse,
+          );
+        }
+        await tester.tap(find.text(second).last);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final add = find.text('Add book');
+        await tester.ensureVisible(add);
+        await tester.pumpAndSettle();
+        await tester.tap(add);
+        await tester.pumpAndSettle();
+        final formChoice = find.byType(DropdownButtonFormField<String>);
+        await tester.ensureVisible(formChoice);
+        await tester.tap(formChoice);
+        await tester.pumpAndSettle();
+        for (final label in [first, second]) {
+          final text = find.text(label).last;
+          await tester.ensureVisible(text);
+          await tester.pumpAndSettle();
+          final widget = tester.widget<Text>(text);
+          expect(widget.maxLines, isNull);
+          expect(widget.overflow, isNot(TextOverflow.ellipsis));
+          expect(
+            tester.renderObject<RenderParagraph>(text).didExceedMaxLines,
+            isFalse,
+          );
+        }
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
+  }
 
   testWidgets('send creates directly without optional guidance', (
     tester,

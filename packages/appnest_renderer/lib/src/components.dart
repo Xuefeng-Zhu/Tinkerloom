@@ -431,17 +431,26 @@ class _RecordFormState extends State<RecordForm> {
                   FieldType.image => _imageField(f),
                   FieldType.choice ||
                   FieldType.member => DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    itemHeight: null,
+                    selectedItemBuilder: (context) => [
+                      for (final value
+                          in (f.type == FieldType.choice ? f.choices : members))
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            value,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
                     initialValue: values[f.id] as String?,
                     decoration: InputDecoration(
                       labelText: '${f.label}${f.required ? ' *' : ''}',
                     ),
                     items: (f.type == FieldType.choice ? f.choices : members)
-                        .map(
-                          (v) => DropdownMenuItem(
-                            value: v,
-                            child: Text(v, overflow: TextOverflow.ellipsis),
-                          ),
-                        )
+                        .map((v) => DropdownMenuItem(value: v, child: Text(v)))
                         .toList(),
                     onChanged: (v) => values[f.id] = v,
                   ),

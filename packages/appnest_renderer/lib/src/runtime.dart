@@ -334,247 +334,369 @@ class __LegacyMiniAppRuntimeState extends State<_LegacyMiniAppRuntime>
               adapter.permits(a),
         )
         .firstOrNull;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (_pendingCommand case final command?)
-          MaterialBanner(
-            content: Semantics(
-              liveRegion: true,
-              child: const Text(
-                'Save outcome unconfirmed. Retry the original request to check whether it was saved.',
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: loading ? null : () => _execute(command),
-                child: Text(loading ? 'Checking save…' : 'Retry save'),
-              ),
-            ],
-          ),
-        if (adapter.preview && _VisualEditScope.of(context) == null)
-          const MaterialBanner(
-            content: Text(
-              'Preview · Synthetic records. Actions stay in this preview.',
-            ),
-            actions: [SizedBox.shrink()],
-          ),
-        if (adapter.readOnly)
-          MaterialBanner(
-            content: Text(adapter.readOnlyMessage),
-            actions: const [SizedBox.shrink()],
-          ),
-        if (reconnecting)
-          TextButton.icon(
-            onPressed: () {
-              adapter.notifyManualRefresh();
-              connect();
-            },
-            icon: const Icon(Icons.sync),
-            label: const Text('Reconnecting — refresh connection'),
-          ),
-        Padding(
-          padding: EdgeInsets.all(_space(context, 16)),
-          child: Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              DropdownButton<String>(
-                value: viewId,
-                items: adapter.spec.views
-                    .map(
-                      (v) => DropdownMenuItem(
-                        value: v.id,
-                        child: Text(_recordSectionLabel(adapter.spec, v)),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (id) {
-                  if (id != null)
-                    setState(() {
-                      viewId = id;
-                      _request++;
-                      page = null;
-                      filterChoice = null;
-                      filterChoices.clear();
-                      search = '';
-                    });
-                  refresh();
-                },
-              ),
-              if (create != null)
-                FilledButton.icon(
-                  onPressed: loading || _pendingCommand != null
-                      ? null
-                      : () => run(create, null),
-                  icon: const Icon(Icons.add),
-                  label: Text(create.label),
-                ),
-              if (!view.configured &&
-                  choice != null &&
-                  _VisualEditScope.of(context) == null)
-                DropdownButton<String>(
-                  hint: const Text('All statuses'),
-                  value: filterChoice,
-                  items: [
-                    const DropdownMenuItem(
-                      value: '',
-                      child: Text('All statuses'),
-                    ),
-                    ...choice.choices.map(
-                      (c) => DropdownMenuItem(value: c, child: Text(c)),
-                    ),
-                  ],
-                  onChanged: (v) {
-                    setState(() => filterChoice = v == '' ? null : v);
-                    refresh();
-                  },
-                ),
-              if (view.configured && _VisualEditScope.of(context) == null)
-                for (final id in view.filterFieldIds)
-                  DropdownButton<String>(
-                    key: ValueKey('filter-${view.id}-$id'),
-                    hint: Text('All ${col.field(id).label.toLowerCase()}'),
-                    value: filterChoices[id] ?? '',
-                    items: [
-                      DropdownMenuItem(
-                        value: '',
-                        child: Text('All ${col.field(id).label.toLowerCase()}'),
-                      ),
-                      for (final value in col.field(id).choices)
-                        DropdownMenuItem(value: value, child: Text(value)),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        if (value == null || value.isEmpty)
-                          filterChoices.remove(id);
-                        else
-                          filterChoices[id] = value;
-                        page = null;
-                        _request++;
-                      });
-                      refresh();
-                    },
-                  ),
-              IconButton(
-                tooltip: 'Refresh records',
-                onPressed: () {
-                  adapter.notifyManualRefresh();
-                  refresh();
-                },
-                icon: const Icon(Icons.refresh),
-              ),
-            ],
-          ),
-        ),
-        if (_VisualEditScope.of(context) == null && _searchAllowed)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Filter records…',
-              ),
-              onSubmitted: (v) {
-                search = v;
-                page = null;
-                _request++;
-                refresh();
-              },
-            ),
-          ),
-        if (loading) const LinearProgressIndicator(),
-        if (error != null)
-          Padding(
-            padding: EdgeInsets.all(_space(context, 16)),
-            child: Text(
-              adapter.errorMessage(error!),
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ),
-        Expanded(
-          child: _EditTarget(
-            target: MiniAppEditTarget(MiniAppEditKind.section, view.id),
-            child: _VisualEditScope.of(context) != null && view.type == 'form'
-                ? SingleChildScrollView(
-                    padding: EdgeInsets.all(_space(context, 16)),
-                    child: _editForm(adapter.spec, view),
-                  )
-                : page == null
-                ? Center(
-                    child: Text(loading ? 'Loading…' : 'Refresh to try again.'),
-                  )
-                : view.type == 'form'
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _recordSectionLabel(adapter.spec, view),
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: 16),
-                        for (final a
-                            in view.actionIds
-                                .map(adapter.spec.action)
-                                .where(
-                                  (a) =>
-                                      a.capability == 'records.create.v1' &&
-                                      adapter.permits(a),
-                                ))
-                          ActionButton(
-                            action: a,
-                            onPressed: loading ? null : () => run(a, null),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Keep the record area usable when banners and controls wrap at large
+        // text sizes. The controls remain reachable by scrolling independently.
+        final maximumControlsHeight = constraints.hasBoundedHeight
+            ? constraints.maxHeight * 0.55
+            : 320.0;
+        final maximumDropdownWidth = constraints.hasBoundedWidth
+            ? math.min(
+                240.0,
+                math.max(0.0, constraints.maxWidth - 2 * _space(context, 16)),
+              )
+            : 240.0;
+        final compactControls =
+            constraints.hasBoundedWidth && constraints.maxWidth < 600;
+        Widget boundedDropdown(Widget dropdown) {
+          if (compactControls) {
+            return SizedBox(width: maximumDropdownWidth, child: dropdown);
+          }
+          return ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maximumDropdownWidth),
+            child: IntrinsicWidth(child: dropdown),
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maximumControlsHeight),
+              child: SingleChildScrollView(
+                key: const ValueKey('legacy-runtime-controls'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (_pendingCommand case final command?)
+                      MaterialBanner(
+                        content: Semantics(
+                          liveRegion: true,
+                          child: const Text(
+                            'Save outcome unconfirmed. Retry the original request to check whether it was saved.',
                           ),
-                      ],
-                    ),
-                  )
-                : page!.items.isEmpty
-                ? const Center(
-                    child: Text('A fresh start. Add the first record.'),
-                  )
-                : AbsorbPointer(
-                    absorbing: loading || _pendingCommand != null,
-                    child: SingleChildScrollView(
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: loading ? null : () => _execute(command),
+                            child: Text(
+                              loading ? 'Checking save…' : 'Retry save',
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (adapter.preview && _VisualEditScope.of(context) == null)
+                      const MaterialBanner(
+                        content: Text(
+                          'Preview · Synthetic records. Actions stay in this preview.',
+                        ),
+                        actions: [SizedBox.shrink()],
+                      ),
+                    if (adapter.readOnly)
+                      MaterialBanner(
+                        content: Text(adapter.readOnlyMessage),
+                        actions: const [SizedBox.shrink()],
+                      ),
+                    if (reconnecting)
+                      TextButton.icon(
+                        onPressed: () {
+                          adapter.notifyManualRefresh();
+                          connect();
+                        },
+                        icon: const Icon(Icons.sync),
+                        label: const Text('Reconnecting — refresh connection'),
+                      ),
+                    Padding(
                       padding: EdgeInsets.all(_space(context, 16)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                      child: Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          if (view.type == 'summary')
-                            Summary(
-                              items: page!.items,
-                              total: page!.total,
-                              groupField: view.groupByFieldId,
-                            )
-                          else if (view.type == 'board')
-                            StatusBoard(
-                              spec: adapter.spec,
-                              view: view,
-                              items: page!.items,
-                              onAction: run,
-                            )
-                          else
-                            RecordList(
-                              spec: adapter.spec,
-                              view: view,
-                              items: page!.items,
-                              onAction: run,
+                          boundedDropdown(
+                            DropdownButton<String>(
+                              isExpanded: true,
+                              itemHeight: null,
+                              selectedItemBuilder: (context) => [
+                                for (final view in adapter.spec.views)
+                                  Align(
+                                    alignment: AlignmentDirectional.centerStart,
+                                    child: Text(
+                                      _recordSectionLabel(adapter.spec, view),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                              ],
+                              value: viewId,
+                              items: adapter.spec.views
+                                  .map(
+                                    (v) => DropdownMenuItem(
+                                      value: v.id,
+                                      child: Text(
+                                        _recordSectionLabel(adapter.spec, v),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (id) {
+                                if (id != null)
+                                  setState(() {
+                                    viewId = id;
+                                    _request++;
+                                    page = null;
+                                    filterChoice = null;
+                                    filterChoices.clear();
+                                    search = '';
+                                  });
+                                refresh();
+                              },
                             ),
-                          const SizedBox(height: 12),
-                          Text('${page!.total} records'),
-                          if (page!.cursor != null)
-                            TextButton(
-                              onPressed: () => refresh(next: true),
-                              child: const Text('Next page'),
+                          ),
+                          if (create != null)
+                            FilledButton.icon(
+                              onPressed: loading || _pendingCommand != null
+                                  ? null
+                                  : () => run(create, null),
+                              icon: const Icon(Icons.add),
+                              label: Text(create.label),
                             ),
+                          if (!view.configured &&
+                              choice != null &&
+                              _VisualEditScope.of(context) == null)
+                            boundedDropdown(
+                              DropdownButton<String>(
+                                key: ValueKey(
+                                  'legacy-choice-filter-${choice.id}',
+                                ),
+                                isExpanded: true,
+                                itemHeight: null,
+                                selectedItemBuilder: (context) => [
+                                  for (final label in [
+                                    'All statuses',
+                                    ...choice.choices,
+                                  ])
+                                    Align(
+                                      alignment:
+                                          AlignmentDirectional.centerStart,
+                                      child: Text(
+                                        label,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                ],
+                                hint: const Text(
+                                  'All statuses',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                value: filterChoice,
+                                items: [
+                                  const DropdownMenuItem(
+                                    value: '',
+                                    child: Text('All statuses'),
+                                  ),
+                                  ...choice.choices.map(
+                                    (c) => DropdownMenuItem(
+                                      value: c,
+                                      child: Text(c),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (v) {
+                                  setState(
+                                    () => filterChoice = v == '' ? null : v,
+                                  );
+                                  refresh();
+                                },
+                              ),
+                            ),
+                          if (view.configured &&
+                              _VisualEditScope.of(context) == null)
+                            for (final id in view.filterFieldIds)
+                              boundedDropdown(
+                                DropdownButton<String>(
+                                  isExpanded: true,
+                                  itemHeight: null,
+                                  selectedItemBuilder: (context) => [
+                                    for (final label in [
+                                      'All ${col.field(id).label.toLowerCase()}',
+                                      ...col.field(id).choices,
+                                    ])
+                                      Align(
+                                        alignment:
+                                            AlignmentDirectional.centerStart,
+                                        child: Text(
+                                          label,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                  ],
+                                  key: ValueKey('filter-${view.id}-$id'),
+                                  hint: Text(
+                                    'All ${col.field(id).label.toLowerCase()}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  value: filterChoices[id] ?? '',
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: '',
+                                      child: Text(
+                                        'All ${col.field(id).label.toLowerCase()}',
+                                      ),
+                                    ),
+                                    for (final value in col.field(id).choices)
+                                      DropdownMenuItem(
+                                        value: value,
+                                        child: Text(value),
+                                      ),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value == null || value.isEmpty)
+                                        filterChoices.remove(id);
+                                      else
+                                        filterChoices[id] = value;
+                                      page = null;
+                                      _request++;
+                                    });
+                                    refresh();
+                                  },
+                                ),
+                              ),
+                          IconButton(
+                            tooltip: 'Refresh records',
+                            onPressed: () {
+                              adapter.notifyManualRefresh();
+                              refresh();
+                            },
+                            icon: const Icon(Icons.refresh),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-          ),
-        ),
-      ],
+                    if (_VisualEditScope.of(context) == null && _searchAllowed)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.search),
+                            hintText: 'Filter records…',
+                          ),
+                          onSubmitted: (v) {
+                            search = v;
+                            page = null;
+                            _request++;
+                            refresh();
+                          },
+                        ),
+                      ),
+                    if (loading) const LinearProgressIndicator(),
+                    if (error != null)
+                      Padding(
+                        padding: EdgeInsets.all(_space(context, 16)),
+                        child: Text(
+                          adapter.errorMessage(error!),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: _EditTarget(
+                target: MiniAppEditTarget(MiniAppEditKind.section, view.id),
+                child:
+                    _VisualEditScope.of(context) != null && view.type == 'form'
+                    ? SingleChildScrollView(
+                        padding: EdgeInsets.all(_space(context, 16)),
+                        child: _editForm(adapter.spec, view),
+                      )
+                    : page == null
+                    ? Center(
+                        child: Text(
+                          loading ? 'Loading…' : 'Refresh to try again.',
+                        ),
+                      )
+                    : view.type == 'form'
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _recordSectionLabel(adapter.spec, view),
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                            const SizedBox(height: 16),
+                            for (final a
+                                in view.actionIds
+                                    .map(adapter.spec.action)
+                                    .where(
+                                      (a) =>
+                                          a.capability == 'records.create.v1' &&
+                                          adapter.permits(a),
+                                    ))
+                              ActionButton(
+                                action: a,
+                                onPressed: loading ? null : () => run(a, null),
+                              ),
+                          ],
+                        ),
+                      )
+                    : page!.items.isEmpty
+                    ? const Center(
+                        child: Text('A fresh start. Add the first record.'),
+                      )
+                    : AbsorbPointer(
+                        absorbing: loading || _pendingCommand != null,
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.all(_space(context, 16)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (view.type == 'summary')
+                                Summary(
+                                  items: page!.items,
+                                  total: page!.total,
+                                  groupField: view.groupByFieldId,
+                                )
+                              else if (view.type == 'board')
+                                StatusBoard(
+                                  spec: adapter.spec,
+                                  view: view,
+                                  items: page!.items,
+                                  onAction: run,
+                                )
+                              else
+                                RecordList(
+                                  spec: adapter.spec,
+                                  view: view,
+                                  items: page!.items,
+                                  onAction: run,
+                                ),
+                              const SizedBox(height: 12),
+                              Text('${page!.total} records'),
+                              if (page!.cursor != null)
+                                TextButton(
+                                  onPressed: () => refresh(next: true),
+                                  child: const Text('Next page'),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
