@@ -53,7 +53,7 @@ You can also run the connected web client with `npm run dev` from the repository
 - **Appwrite client** (`packages/tinkerloom_client`) — authentication, typed operations, and session-aware request handling.
 - **Backend** (`appwrite_backend`) — trusted Core Function and private worker for authorization, app definitions, records, media, and background work.
 
-Apps are represented as data, rather than generated executable app code. Server-side operations enforce access, revisions, and command identity. See the [backend guide](appwrite_backend/README.md) for implementation details.
+Apps are represented as data, rather than generated executable app code. Server-side operations enforce access, revisions, and command identity. See the [backend guide](appwrite_backend/README.md) for implementation details and the [Nemotron guide](docs/NEMOTRON.md) for AI configuration and evaluation context.
 
 ## Verify and build
 
