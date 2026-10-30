@@ -1,6 +1,6 @@
 # AppSpec runtime foundation: API version 1
 
-This checkpoint implements the original AppSpec parser, private definition persistence, immutable publication, seven trusted action handlers, typed record projections, complete collection queries, and database-wide aggregates on the private Appwrite row store. It is isolated from the existing bounded Tinkerloom runtime. It does not complete the full migration matrix.
+This document describes the AppSpec parser, definition persistence, publication, action handlers, record projections, queries, and aggregates on the Appwrite row store. AppSpec and bounded definitions use separate runtime paths.
 
 No Appwrite resources, credentials, deployments, or Git state were changed while building this checkpoint. Local results below use a simulated transaction store; actual Cloud transport, capacity contention, authorization, rollback, and latency acceptance remain required.
 
@@ -87,7 +87,7 @@ The first Appwrite query adapter reads complete paginated record metadata and th
 
 Date buckets use explicitly supplied, ordered, nonoverlapping UTC intervals, up to 366. Each interval is inclusive at start and exclusive at end. The backend never substitutes the Cloud machine's local day. The client resolves each local midnight independently, including 23/25-hour DST days.
 
-This implementation is complete but uses linear projection-page scans per queried field and sequential page hydration. Shared workspace/app read guards make a concurrent supported mutation conflict at commit rather than return a mixed snapshot. It is a correctness foundation, not indexed-query throughput proof. Actual synchronous Cloud timeout/latency measurements and further query planning are required before declaring the migration's performance/scale gates complete.
+This implementation is complete but uses linear projection-page scans per queried field and sequential page hydration. Shared workspace/app read guards make a concurrent supported mutation conflict at commit rather than return a mixed snapshot. It is a correctness foundation, not indexed-query throughput proof. Actual synchronous Cloud timeout/latency measurements and further query planning are required before making performance or scale claims.
 
 ## Parser and transport boundaries
 
@@ -99,9 +99,9 @@ The parser definition bound remains 128 KiB. Bounded operations retain their ear
 
 ## Additive schema
 
-`schema.json` is the exact descriptive provisioning contract: seventeen private tables total. Existing apps gain optional `engine`, `specVersionId`, `specVersionNumber`, and `controlRevision`; bounded rows retain their defaults and IDs. Eight new tables are `spec_drafts`, `spec_versions`, `spec_records`, `spec_values`, `spec_pools`, `spec_claims`, `audit`, and `outbox`. JSON/text fields use off-page mediumtext; scalar projections are typed. Unique indexes protect author drafts, per-app version numbers, record/field projections, record/behavior pools, and pool/actor claims. Service checks validate repeated tenant/parent IDs on every path.
+`schema.json` is the descriptive provisioning contract for the current private tables. Existing apps gain optional `engine`, `specVersionId`, `specVersionNumber`, and `controlRevision`; bounded rows retain their defaults and IDs. Eight new tables are `spec_drafts`, `spec_versions`, `spec_records`, `spec_values`, `spec_pools`, `spec_claims`, `audit`, and `outbox`. JSON/text fields use off-page mediumtext; scalar projections are typed. Unique indexes protect author drafts, per-app version numbers, record/field projections, record/behavior pools, and pool/actor claims. Service checks validate repeated tenant/parent IDs on every path.
 
-The outbox stores durable event planning/invalidation state; nothing marks an effect delivered. AI generation jobs/providers, reminder enrollment/reconciliation/delivery/inbox/run state, private-media validation/storage/cleanup, version-history UI/APIs, remix, and continued author-draft discovery remain unfinished migration work. They remain in scope. Parser acceptance is never advertised as an available worker, storage implementation, or renderer. Until those handlers are installed, nonempty reminder approval or non-null private-media references fail definitively with `capability_unavailable` before commit.
+The outbox stores durable event planning and invalidation state. Worker-backed capabilities depend on their runtime configuration and execution; parser acceptance alone does not establish that a provider, reminder, or media operation is available or delivered.
 
 ## Verification checkpoint
 
@@ -116,4 +116,4 @@ dart test
 
 Seventy-one backend groups pass: all previous fifty-one bounded/collaboration checks plus twenty full-engine groups. The new checks cover every original template, immutable/private publication and review, role/protected-field semantics, repeat-safe capacity operations, twenty contended final-place transactions, rollback and lost-response recovery, 115-row ranked queries, 105-row global summaries/aggregates, stale cursors, DST intervals, strict timestamp/number boundaries, cross-tenant/version rejection, failed effects, large definitions/records, and exact large archive receipts. The local HTTP transport probe also asserts Appwrite metadata-select encoding. The retained AppSpec package's 87 tests pass, including canonical golden hashes.
 
-These are simulated-store and local HTTP/parser results. They do not establish a deployed engine, actual Cloud contention/rollback, Free gateway payload support, provider/media/reminder execution, renderer integration, native builds or device behavior, or completion of `docs/FULL_MIGRATION.md`.
+These are simulated-store and local HTTP/parser results. They do not establish a deployed engine, actual Cloud contention/rollback, Free gateway payload support, provider/media/reminder execution, renderer integration, native builds or device behavior.

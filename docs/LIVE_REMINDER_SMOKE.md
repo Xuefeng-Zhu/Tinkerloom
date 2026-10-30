@@ -121,11 +121,8 @@ deliberate receipt checks repeat commands only after their success was confirmed
 An unobserved delivery or insufficient remaining time produces
 `observation_pending`. It does not turn hourly recovery into a five-minute claim.
 
-This targets portions of migration D02, D04, D05, D07 and original acceptance 11.
-It does not establish D01 atomic rollback, D03 interrupted scheduling recovery,
-D06 backoff, D08 reconnect behavior, or D09 provider isolation. Original acceptance
-10 (interrupted scheduling recovery) and 12 (reconnect behavior) need separate
-evidence. Private worker restart, durable retry/backoff exhaustion,
+It does not establish atomic rollback, interrupted scheduling recovery, backoff,
+reconnect behavior, or provider isolation. Private worker restart, durable retry/backoff exhaustion,
 provider starvation, 500-claimant fanout, hourly timing, scheduling causality,
 external delivery, native permission prompts, and device UI are unverified here.
 

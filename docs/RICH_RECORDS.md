@@ -1,6 +1,6 @@
 # Rich records: numbers, civil dates, and views
 
-Tinkerloom's bounded declarative model now supports numeric and civil-date records and optional list, table, or agenda presentation. The same field definitions are used in the local preview, builder, client validation, trusted Appwrite Function, and published records. This is a progressive migration of AppNest behavior, not full AppSpec or renderer parity.
+Tinkerloom's bounded declarative model now supports numeric and civil-date records and optional list, table, or agenda presentation. The same field definitions are used in the local preview, builder, client validation, trusted Appwrite Function, and published records. This document describes the bounded engine rather than the full AppSpec runtime.
 
 ## Define and use a small planner
 
