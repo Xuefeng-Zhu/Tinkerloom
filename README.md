@@ -1,46 +1,63 @@
 # Tinkerloom
 
-Tinkerloom restores the original **Flutter** mini-app interface with the existing **Appwrite** backend. The shared declarative renderer powers templates, live records, isolated previews, the visual builder, explicit publication, sharing and native device capabilities. The Flutter port replaces the Serverpod transport; it does not generate or execute per-app code.
+Tinkerloom is a platform for building and sharing small apps. Start from a template or use the visual builder, preview changes in isolation, and publish when the app is ready. The Flutter client runs on web, Android, and iOS; Appwrite provides accounts, private data, and trusted backend functions.
 
-The previous React Native implementation is preserved on [`codex/react-native-backup-20261029`](https://github.com/Xuefeng-Zhu/Tinkerloom/tree/codex/react-native-backup-20261029). Its 730-test, native-build and Cloud receipts remain historical, source-specific evidence and are not Flutter acceptance results. See [Flutter migration and verification](docs/FLUTTER_MIGRATION.md) for the new client’s checks and remaining gates.
+## What you can do
 
-Current development setup now uses the new Appwrite Free account in FRA. One synthetic Notes app passed SDK/service save-and-reload verification after a manually continued read conflict: **12 total Function executions (10 Core + 2 private Worker), 3 Account requests, and one text record**. The original 589 offline Flutter/spec and 405 backend checks remain dated evidence; this follow-up added and passed **13 offline guard tests** and rebuilt web, Android and unsigned iOS with the new configuration. [Current results](docs/evidence/2026-10-30/flutter-fra-validation.json).
+- Explore templates such as Notes, Project Hub, Habit Tracker, and Photo Journal.
+- Edit an app's pages, fields, and appearance; save drafts and publish explicitly.
+- Use published apps to create and manage records.
+- Share apps with other people using invitations and role-based access.
+- Use supported device integrations and private image attachments.
 
-Tinkerloom uses **fresh Appwrite development data**. The original AppNest checkout, users, records and credentials remain preserved. AI-provider configuration and production release are deferred.
+The offline preview is a useful place to explore the interface: it uses temporary in-memory data and does not require an account or contact Appwrite.
 
-## Run Flutter
+## Get started
 
-Use **Flutter 3.47.0 / Dart 3.13.0**. Resolve the workspace from the repository root:
+### Requirements
+
+- Flutter **3.47** with Dart **3.13**.
+- Chrome for the web commands below. Android and iOS builds also need the relevant platform toolchains.
+- An Appwrite account and configured project only if you want to use the connected app.
+
+From the repository root, resolve dependencies:
 
 ```sh
 flutter pub get
-cd apps/flutter
-flutter run -d chrome --web-hostname localhost --web-port 8426 \
-  --dart-define-from-file=config/appwrite.dev.json
 ```
 
-`npm run dev` runs the same configured web client. Open it at <http://localhost:8426>; `localhost` is the registered web hostname. Android and iOS applications use `com.tinkerloom.app`.
-
-The checked-in development configuration contains only public endpoint/project/Function identifiers and keeps automatic refresh off. Server API keys, passwords and AI credentials do not belong in application configuration.
-
-To explore the original templates without any Appwrite calls:
+To explore the offline preview:
 
 ```sh
 cd apps/flutter
 flutter run -t lib/preview.dart -d chrome --web-hostname localhost --web-port 8426
 ```
 
-Preview records are synthetic and memory-only. They are never copied into live storage. The live client shows a configuration/startup screen when its public Appwrite configuration is absent.
+Open <http://localhost:8426>. Preview data is lost when the app is restarted.
 
-The restored interface retains the original theme, fonts, launcher, authoring tools, navigation and native capability bridges. Appwrite Account owns sign-in sessions; authenticated Functions enforce current access, definitions, revisions and command receipts. Private uploads use the existing bounded image protocol.
+To run the connected app instead, from `apps/flutter`:
 
-## Protect the Free development quota
+```sh
+flutter run -d chrome --web-hostname localhost --web-port 8426 \
+  --dart-define-from-file=config/appwrite.dev.json
+```
 
-Normal tests and CI are **offline**. Development uses manual refresh by default; do not leave old React Native or Flutter polling sessions running against Cloud. Optional automatic refresh must share requests, honor the negotiated minimum interval, and stop when the app is hidden, disposed or signed out.
+The repository's development config identifies the existing Appwrite project; it does not provision a project or create a login for you. To use your own project, configure the public endpoint, project ID, and Function ID in `apps/flutter/config/appwrite.dev.json` and register the appropriate app platforms. Never put passwords, API keys, or AI-provider credentials in Flutter configuration or build defines.
 
-The explicitly authorized fresh-account setup is complete. Do not rerun its bootstrap or the historical broad Cloud suites. It created one synthetic account, one workspace, one Notes app and one text record. Client requests were cumulatively capped at 10 Core, 3 Account and 3 mutations; the separately observed two private Worker deliveries brought the total to 12 Function executions. The first read was definitively rejected with a transaction conflict; one manual continuation reused the same identities and remaining budget. There were no automatic retries, image uploads, AI calls or reminder-rule scheduling. Function counts are not database-operation counts. Internal provisioning manifests and private credentials/recovery remain in ignored local files. Periodic worker scans are off; time-based reminder triggering/recovery is deferred. Synthetic server sessions may remain because the final Account slot was used for sign-in; temporary local cookies were removed.
+You can also run the connected web client with `npm run dev` from the repository root. See the [development guide](docs/DEVELOPMENT.md) for configuration, platform builds, and troubleshooting.
+
+## How it works
+
+- **Flutter app** (`apps/flutter`) — screens, builder, app runtime, and device integrations.
+- **Shared packages** (`packages/appnest_spec`, `packages/appnest_renderer`) — the declarative app definition and renderer used by previews and published apps.
+- **Appwrite client** (`packages/tinkerloom_client`) — authentication, typed operations, and session-aware request handling.
+- **Backend** (`appwrite_backend`) — trusted Core Function and private worker for authorization, app definitions, records, media, and background work.
+
+Apps are represented as data, rather than generated executable app code. Server-side operations enforce access, revisions, and command identity. See the [backend guide](appwrite_backend/README.md) for implementation details.
 
 ## Verify and build
+
+Tests and CI use fixtures and local in-memory services; they do not call Appwrite Cloud. From the repository root:
 
 ```sh
 bash scripts/verify.sh --client-only
@@ -48,27 +65,10 @@ TINKERLOOM_BACKEND_DART=/path/to/dart-3.11 \
   bash scripts/verify.sh --backend-only
 ```
 
-Client verification analyzes the restored application and shared packages, checks formatting, runs spec/renderer/adapter/widget tests, and builds release web assets. Backend verification uses its separate Dart 3.11 toolchain, in-memory services and local transport bridges, checks the shared wire fixture, and compiles both Function entry points. Neither command deploys or calls Appwrite Cloud. `npm run verify` is a convenience wrapper for both checks and needs the backend Dart path when the default `dart` is 3.13.
+The backend checks require a separate Dart 3.11 SDK and Node.js. Release builds for web, Android, and unsigned iOS are described in the [development guide](docs/DEVELOPMENT.md). A successful build does not establish native device, hardware-permission, or store-signing acceptance.
 
-```sh
-cd apps/flutter
-flutter build web --release --dart-define-from-file=config/appwrite.dev.json
-flutter build apk --release --dart-define-from-file=config/appwrite.dev.json
-flutter build ios --release --no-codesign \
-  --dart-define-from-file=config/appwrite.dev.json
-```
+## Current limitations
 
-`npm run build:web`, `npm run build:android`, and `npm run build:ios` use the same public development configuration. To run on a connected native device, use `flutter run --dart-define-from-file=config/appwrite.dev.json` from `apps/flutter`.
-
-Compilation does not establish installation, native UI, permission handling or hardware acceptance. Signed distribution and production operations remain separate work.
-
-## Repository layout
-
-- `apps/flutter/` — active Flutter application, original assets and native bridges.
-- `packages/tinkerloom_client/` — injectable Appwrite client, typed DTOs and transport tests.
-- `packages/appnest_spec/` and `packages/appnest_renderer/` — declarative definition language and shared Flutter widgets with opaque string entity IDs.
-- `appwrite_backend/` — trusted Dart Core Function and private worker. [Full engine contract](appwrite_backend/SPEC_ENGINE.md).
-- `appwrite_backend/test/fixtures/client_wire.json` — shared wire fixture exported by the real local service.
-- `scripts/` — offline verification plus preserved, separately gated historical Cloud probes.
-- `legacy_appnest/` — preserved original implementation for reference.
-- `docs/evidence/` — dated results with explicit source and verification-layer boundaries.
+- AI-provider setup is not configured in the development deployment.
+- Refresh is manual by default to protect the Appwrite Free quota. The current deployment has periodic worker scans disabled, so time-based reminder delivery and scheduled recovery are deferred.
+- The connected app uses live backend resources; avoid running Cloud probes or creating test data unnecessarily. The offline preview and normal test suite are the recommended ways to explore and verify changes.
