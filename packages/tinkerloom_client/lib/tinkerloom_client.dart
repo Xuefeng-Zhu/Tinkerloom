@@ -221,6 +221,10 @@ class Client {
               xasync: false,
               headers: {'content-type': 'application/json'},
             );
+            // Quota can be reported even when the Function body is empty,
+            // malformed, or the execution did not complete normally.
+            final status = execution.responseStatusCode;
+            if (status == 429 || status == 402) budget?.stopped = true;
             if (execution.status != awe.ExecutionStatus.completed)
               throw BackendNetworkException(
                 'The server result is unknown. Retain this operation before retrying.',
@@ -242,13 +246,11 @@ class Client {
               );
             if (execution.responseStatusCode < 200 ||
                 execution.responseStatusCode >= 300) {
-              final status = execution.responseStatusCode;
               final code = body['error'] is String
                   ? body['error'] as String
                   : 'backend_unavailable';
-              if (status == 429 || status == 402 || code == 'quota_exceeded')
-                budget?.stopped = true;
-              if (status >= 500)
+              if (code == 'quota_exceeded') budget?.stopped = true;
+              if (status == 408 || status == 425 || status >= 500)
                 throw BackendNetworkException(
                   'The server could not confirm this request.',
                   uncertain: mutation,
@@ -257,7 +259,18 @@ class Client {
             }
             return body;
           } on aw.AppwriteException catch (e) {
-            if (e.code == 429 || e.code == 402) budget?.stopped = true;
+            // The SDK can lose the HTTP status while decoding a malformed
+            // gateway response. A bounded smoke must stop when quota cannot be
+            // ruled out; ordinary clients have no budget to reset or stop.
+            if (e.code == null || e.code == 429 || e.code == 402)
+              budget?.stopped = true;
+            // Gateway timeout and too-early responses cannot prove that a
+            // submitted mutation did not reach or commit in the Function.
+            if (e.code == 408 || e.code == 425)
+              throw BackendNetworkException(
+                'The server could not confirm this request.',
+                uncertain: mutation,
+              );
             if (e.code != null && e.code! >= 400 && e.code! < 500)
               throw _failure('appwrite_${e.code}', e.code!);
             throw BackendNetworkException(
