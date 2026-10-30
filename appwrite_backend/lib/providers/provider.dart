@@ -2249,10 +2249,10 @@ class ChatCompletionProvider implements AiProvider, GuidanceProvider {
       );
       retryAfter = _boundedRetryAfter(response.headers['retry-after']);
       if (response.statusCode != 200) {
-        if (nvidiaEvaluation && response.statusCode == 202) {
+        if (response.statusCode == 202) {
           throw const AiResponseException(
             'indeterminate',
-            'NVIDIA accepted asynchronous work; its completion outcome is unknown. Do not resubmit this request.',
+            'The AI provider accepted asynchronous work; its completion outcome is unknown. Do not resubmit this request automatically.',
             statusCode: 202,
             retryable: false,
           );
