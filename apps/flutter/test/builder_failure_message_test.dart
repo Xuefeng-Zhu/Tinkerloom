@@ -78,6 +78,21 @@ void main() {
     );
   });
 
+  test('rate limits explain recovery without suggesting a retry', () {
+    expect(
+      builderFailureMessage(
+        ['Provider rate limit exceeded.'],
+        hasPreview: true,
+        failureCategory: 'rate_limited',
+      ),
+      'The AI provider’s rate or usage limit was reached. Your last preview is still here. Check the provider’s limits before sending another request.',
+    );
+    expect(
+      builderStageLabel('failed', failureCategory: 'rate_limited'),
+      'AI limit reached',
+    );
+  });
+
   test('failed edits explicitly preserve the last preview', () {
     expect(
       builderFailureMessage([

@@ -53,6 +53,13 @@ class ScriptProvider implements ai.AiProvider, ai.GuidanceProvider {
   ];
 }
 
+class UnexpectedResult extends ai.AiResult {
+  UnexpectedResult() : super('', 'fixture', 'fixture', {});
+
+  @override
+  String get text => throw StateError('private post-response failure');
+}
+
 class Wakeups implements WorkerWakeups {
   final calls = <Row>[];
   bool fail = false;
@@ -587,7 +594,7 @@ void main() {
     },
   );
   test(
-    'malformed response repair survives transient failure and late retries do not bypass nextAttemptAt',
+    'transport loss during a semantic repair is terminal and does not dispatch again',
     () async {
       final provider = ScriptProvider()
         ..answers.addAll([
@@ -602,18 +609,18 @@ void main() {
       final f = await fixture(provider: provider);
       final job = ((await f.generation())['generation'] as Row)['id'] as String;
       await f.worker.generate(job);
-      final repair = f.store.rows['generation_jobs']![job]!['repairJson'];
-      expect(repair, isNotNull);
-      await f.worker.generate(job);
-      expect(provider.calls.length, 1);
+      expect(f.store.rows['generation_jobs']![job]!['repairJson'], isNotNull);
       f.clock.advance(3);
       await f.worker.generate(job);
-      expect(f.store.rows['generation_jobs']![job]!['repairJson'], repair);
+      expect(f.store.rows['generation_jobs']![job]!['status'], 'failed');
+      expect(
+        f.store.rows['generation_jobs']![job]!['failureCategory'],
+        'indeterminate',
+      );
       expect(provider.calls.last['rejected'], '{bad');
       f.clock.advance(5);
       await f.worker.generate(job);
-      expect(provider.calls.last['rejected'], '{bad');
-      expect(f.store.rows['generation_jobs']![job]!['status'], 'preview ready');
+      expect(provider.calls.length, 2);
       expect(f.store.rows['generation_jobs']![job]!['repairJson'], isNull);
     },
   );
@@ -664,28 +671,85 @@ void main() {
     },
   );
   test(
-    'expired lease rejects old provider completion and a restarted runner can finish the next attempt',
+    'unexpected failure after provider result does not dispatch twice',
     () async {
-      final gate = Completer<ai.AiResult>(), started = Completer<void>();
-      final provider = ScriptProvider()
-        ..paused = () {
-          started.complete();
-          return gate.future;
-        };
+      final provider = ScriptProvider()..answers.add(UnexpectedResult());
       final f = await fixture(provider: provider);
       final job = ((await f.generation())['generation'] as Row)['id'] as String;
-      final old = f.worker.generate(job);
-      await started.future;
-      f.clock.advance(121);
-      provider.paused = null;
-      provider.answers.add(answer(ai.creationReferenceJson));
-      await WorkerEngine(
-        PlatformService(f.store, clock: f.clock.call, aiProvider: provider),
-      ).generate(job);
-      gate.complete(answer('{}'));
-      await old;
-      expect(f.store.rows['generation_jobs']![job]!['status'], 'preview ready');
-      expect(provider.calls.length, 2);
+      await f.worker.generate(job);
+      f.clock.advance();
+      await f.worker.generate(job);
+      final stored = f.store.rows['generation_jobs']![job]!;
+      expect(stored['status'], 'failed');
+      expect(stored['failureCategory'], 'unexpected');
+      expect(
+        stored['diagnostics'],
+        isNot(contains('private post-response failure')),
+      );
+      expect(provider.calls.length, 1);
+    },
+  );
+  test('unclassified provider exceptions do not dispatch twice', () async {
+    for (final error in [
+      StateError('private provider text'),
+      const FormatException('private provider text'),
+      const spec.SpecException('private provider text'),
+    ]) {
+      final provider = ScriptProvider()..answers.add(error);
+      final f = await fixture(provider: provider);
+      final job = ((await f.generation())['generation'] as Row)['id'] as String;
+      await f.worker.generate(job);
+      f.clock.advance();
+      await f.worker.generate(job);
+      final stored = f.store.rows['generation_jobs']![job]!;
+      expect(stored['status'], 'failed');
+      expect(stored['failureCategory'], 'indeterminate');
+      expect(stored['diagnostics'], isNot(contains('private provider text')));
+      expect(provider.calls.length, 1);
+    }
+  });
+  test(
+    'expired in-flight leases fail unknown without a second provider request',
+    () async {
+      for (final stage in ['generating', 'validating']) {
+        final gate = Completer<ai.AiResult>(), started = Completer<void>();
+        final provider = ScriptProvider()
+          ..paused = () {
+            started.complete();
+            return gate.future;
+          };
+        final f = await fixture(provider: provider);
+        final job =
+            ((await f.generation())['generation'] as Row)['id'] as String;
+        final old = f.worker.generate(job);
+        await started.future;
+        f.store.rows['generation_jobs']![job]!['status'] = stage;
+        f.clock.advance(121);
+        provider.paused = null;
+        provider.answers.add(answer(ai.creationReferenceJson));
+        final dispatchCount = f.store.rows['worker_dispatches']?.length ?? 0;
+        Future<void> recover() => WorkerEngine(
+          PlatformService(f.store, clock: f.clock.call, aiProvider: provider),
+        ).generate(job);
+        await Future.wait([recover(), recover()]);
+        expect(
+          f.store.rows['worker_dispatches']?.length ?? 0,
+          dispatchCount,
+          reason: stage,
+        );
+        gate.complete(answer('{}'));
+        await old;
+        final stored = f.store.rows['generation_jobs']![job]!;
+        expect(stored['status'], 'failed', reason: stage);
+        expect(stored['failureCategory'], 'indeterminate', reason: stage);
+        expect(stored['leaseUntil'], isNull, reason: stage);
+        expect(provider.calls.length, 1, reason: stage);
+        expect(
+          f.store.rows['actor_limits']!.values.single['activeGenerationJobId'],
+          isNull,
+          reason: stage,
+        );
+      }
     },
   );
   test(

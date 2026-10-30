@@ -1754,12 +1754,19 @@ int? _providerErrorCode(Object? code) =>
     ? code
     : null;
 
-bool _providerRetryable(int? code, String? type) =>
-    !_terminalProviderTypes.contains(type) &&
-    !(code != null &&
-        code >= 400 &&
-        code < 500 &&
-        !{408, 409, 425, 429}.contains(code));
+String _providerFailureKind(int? code, String? type) {
+  if (code == 429 || type == 'rate_limit_exceeded') return 'rate_limited';
+  if (code == 408 ||
+      code == 425 ||
+      (code != null && code >= 500) ||
+      type == 'provider_overloaded' ||
+      type == 'provider_unavailable' ||
+      type == 'timeout' ||
+      (code == null && !_terminalProviderTypes.contains(type))) {
+    return 'indeterminate';
+  }
+  return 'http_error';
+}
 
 Duration? _boundedRetryAfter(String? raw) {
   if (raw == null || raw.length > 64) return null;
@@ -2259,11 +2266,11 @@ class ChatCompletionProvider implements AiProvider, GuidanceProvider {
         }
         providerCode = _providerErrorCode(status);
         throw AiResponseException(
-          'http_error',
+          _providerFailureKind(status, null),
           'AI provider could not complete the request (HTTP ${response.statusCode}).',
           statusCode: status,
           retryAfter: retryAfter,
-          retryable: _providerRetryable(status, null),
+          retryable: false,
         );
       }
       final bytes = <int>[];
@@ -2320,12 +2327,12 @@ class ChatCompletionProvider implements AiProvider, GuidanceProvider {
             error is Map ? error['code'] : null,
           );
           throw AiResponseException(
-            'http_error',
+            _providerFailureKind(providerCode, providerType),
             'AI provider reported a completion failure${providerCode == null ? '' : ' (code $providerCode)'}.',
             statusCode: providerCode,
             providerErrorType: providerType,
             retryAfter: retryAfter,
-            retryable: _providerRetryable(providerCode, providerType),
+            retryable: false,
           );
         }
       }
@@ -2380,9 +2387,9 @@ class ChatCompletionProvider implements AiProvider, GuidanceProvider {
       }
       if (reason == 'error') {
         throw const AiResponseException(
-          'http_error',
-          'AI provider reported an interrupted completion.',
-          retryable: true,
+          'indeterminate',
+          'The AI provider reported an interrupted completion. Its outcome is unknown.',
+          retryable: false,
         );
       }
       if (text is! String || text.trim().isEmpty) {
@@ -2396,9 +2403,9 @@ class ChatCompletionProvider implements AiProvider, GuidanceProvider {
     } on TimeoutException {
       outcome = 'timeout';
       throw const AiResponseException(
-        'timeout',
-        'The AI provider did not finish within the bounded response deadline. Try again later.',
-        retryable: true,
+        'indeterminate',
+        'The AI provider did not finish within the bounded response deadline. Its outcome is unknown.',
+        retryable: false,
       );
     } on AiResponseException catch (e) {
       outcome = e.kind;
@@ -2419,8 +2426,16 @@ class ChatCompletionProvider implements AiProvider, GuidanceProvider {
     } on http.ClientException {
       outcome = 'transport_error';
       throw const AiResponseException(
-        'transport_error',
-        'Could not receive a response from the AI provider.',
+        'indeterminate',
+        'Could not receive a response from the AI provider. Its outcome is unknown.',
+        retryable: false,
+      );
+    } catch (_) {
+      outcome = 'indeterminate';
+      throw const AiResponseException(
+        'indeterminate',
+        'The AI provider request did not complete normally. Its outcome is unknown.',
+        retryable: false,
       );
     } finally {
       client.close();

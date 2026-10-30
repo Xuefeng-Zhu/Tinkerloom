@@ -1142,6 +1142,42 @@ void main() {
     await closeBuilder(tester);
   });
 
+  testWidgets('manual refresh shows a rate limit without retrying', (
+    tester,
+  ) async {
+    const request = 'Build a reading list';
+    final queued = draft(
+      stage: 'queued',
+      mutation: 1,
+      jobId: '7',
+      latestRequest: request,
+      candidateReady: true,
+    );
+    client.current = queued;
+    await showBuilder(tester, initial: queued, initialPrompt: request);
+    client.current = draft(
+      stage: 'failed',
+      mutation: 1,
+      jobId: '7',
+      latestRequest: request,
+      candidateReady: true,
+      diagnostics: const ['Provider rate limit exceeded.'],
+    ).copyWith(jobAttempts: 1, failureCategory: 'rate_limited');
+    await tester.tap(find.byKey(const ValueKey('check-generation-status')));
+    await tester.pumpAndSettle();
+    expect(client.gets, ['9']);
+    expect(find.text('AI limit reached'), findsWidgets);
+    expect(find.text('Let’s try that again'), findsNothing);
+    expect(find.text('Try again'), findsNothing);
+    expect(find.textContaining('Check the provider’s limits'), findsWidgets);
+    expect(find.text('Keep previous preview'), findsOneWidget);
+    expect(tester.widget<TextField>(composer()).enabled, isNot(false));
+    await tester.pump(const Duration(seconds: 30));
+    expect(client.gets, ['9']);
+    expect(client.generations, isEmpty);
+    await closeBuilder(tester);
+  });
+
   testWidgets(
     'a fresh creation accepts a follow-up and preserves preview data',
     (tester) async {

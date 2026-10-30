@@ -3429,7 +3429,13 @@ void main() {
                   .having(
                     (error) => error.kind,
                     'kind',
-                    guidance ? 'guidance_http' : 'http_error',
+                    guidance
+                        ? 'guidance_http'
+                        : status == 429
+                        ? 'rate_limited'
+                        : status >= 500
+                        ? 'indeterminate'
+                        : 'http_error',
                   )
                   .having(
                     (error) => error.message,
@@ -3463,7 +3469,7 @@ void main() {
         ),
         (
           body: jsonEncode(completion('error', creationReferenceJson)),
-          kind: 'http_error',
+          kind: 'indeterminate',
         ),
         (body: 'private-invalid-envelope', kind: 'envelope_json'),
         (
@@ -3519,8 +3525,8 @@ void main() {
     () async {
       for (final nested in [false, true]) {
         for (final scenario in [
-          (code: 429, type: 'rate_limit_exceeded', retry: true),
-          (code: 503, type: 'provider_overloaded', retry: true),
+          (code: 429, type: 'rate_limit_exceeded', retry: false),
+          (code: 503, type: 'provider_overloaded', retry: false),
           (code: 401, type: 'authentication', retry: false),
           (code: 400, type: 'invalid_request', retry: false),
           (code: 503, type: 'permission_denied', retry: false),
@@ -3566,7 +3572,15 @@ void main() {
             provider.generate('private-request', current, editing: false),
             throwsA(
               isA<AiResponseException>()
-                  .having((e) => e.kind, 'kind', 'http_error')
+                  .having(
+                    (e) => e.kind,
+                    'kind',
+                    scenario.code == 429
+                        ? 'rate_limited'
+                        : scenario.code >= 500
+                        ? 'indeterminate'
+                        : 'http_error',
+                  )
                   .having((e) => e.statusCode, 'code', scenario.code)
                   .having((e) => e.providerErrorType, 'type', scenario.type)
                   .having((e) => e.retryable, 'retryable', scenario.retry)
@@ -3625,7 +3639,15 @@ void main() {
           provider.generate('private-request', current, editing: false),
           throwsA(
             isA<AiResponseException>()
-                .having((e) => e.kind, 'kind', 'http_error')
+                .having(
+                  (e) => e.kind,
+                  'kind',
+                  status == 429
+                      ? 'rate_limited'
+                      : status == 200 || status >= 500
+                      ? 'indeterminate'
+                      : 'http_error',
+                )
                 .having(
                   (e) => e.statusCode,
                   'code',
@@ -3637,11 +3659,7 @@ void main() {
                   isNull,
                 )
                 .having((e) => e.retryAfter, 'invalid delay omitted', isNull)
-                .having(
-                  (e) => e.retryable,
-                  'retryable',
-                  {200, 429, 503}.contains(status),
-                ),
+                .having((e) => e.retryable, 'retryable', false),
           ),
         );
         expect(logs.single, isNot(contains('private')));
@@ -3743,8 +3761,8 @@ void main() {
           provider.generate('private-request', current, editing: false),
           throwsA(
             isA<AiResponseException>()
-                .having((e) => e.kind, 'kind', 'timeout')
-                .having((e) => e.retryable, 'retryable', true),
+                .having((e) => e.kind, 'kind', 'indeterminate')
+                .having((e) => e.retryable, 'retryable', false),
           ),
         );
         expect(logs.single, contains('http_status=200'));
@@ -3777,7 +3795,7 @@ void main() {
       );
       await expectLater(
         provider.generate('request', current, editing: false),
-        throwsA(failure('timeout')),
+        throwsA(failure('indeterminate')),
       );
       expect(logs.single, contains('phase=headers'));
       expect(logs.single, contains('http_status=none'));
@@ -3902,7 +3920,7 @@ void main() {
       );
       await expectLater(
         respond({'private': 'body'}, status: 429),
-        throwsA(failure('http_error')),
+        throwsA(failure('rate_limited')),
       );
       await expectLater(
         respond({'choices': []}),
@@ -3934,7 +3952,7 @@ void main() {
         );
         await expectLater(
           provider.generate('request', current, editing: false),
-          throwsA(failure(timeout ? 'timeout' : 'envelope_json')),
+          throwsA(failure(timeout ? 'indeterminate' : 'envelope_json')),
         );
       }
     },

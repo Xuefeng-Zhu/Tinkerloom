@@ -272,6 +272,21 @@ extension _GenerationRuntime on PlatformService {
           job['leaseUntil'] != null &&
               _time(job['leaseUntil']).isAfter(clock().toUtc()))
         return null;
+      if ({'generating', 'validating'}.contains(job['status'])) {
+        // A crashed or timed-out worker may already have sent its request.
+        // Without provider idempotency evidence, reclaiming it risks duplicate spend.
+        await store.update('generation_jobs', jobId, {
+          'status': 'failed',
+          'failureCategory': 'indeterminate',
+          'diagnostics':
+              'The previous AI request did not finish before its worker lease expired. Its outcome is unknown.',
+          'repairJson': null,
+          'leaseUntil': null,
+          'updatedAt': _now(),
+        }, transactionId: tx);
+        await _clearActorGeneration(job, tx);
+        return null;
+      }
       if (!await _generationCurrent(job, access, tx) ||
           (job['attempts'] as int) >= 3) {
         await store.update('generation_jobs', jobId, {
@@ -304,6 +319,7 @@ extension _GenerationRuntime on PlatformService {
     compiler.CompiledGeneratedCreation? compilation;
     String? failure, category;
     bool? retryable;
+    var providerCallStarted = false;
     Duration? retryAfter;
     Row? priorRepair;
     try {
@@ -329,6 +345,7 @@ extension _GenerationRuntime on PlatformService {
           storedRepair['baseVersionId'] == job['baseVersionId'] &&
           storedRepair['mode'] == job['mode'])
         priorRepair = storedRepair;
+      providerCallStarted = true;
       result = await aiProvider!.generate(
         job['requestText'] as String,
         base,
@@ -422,15 +439,68 @@ extension _GenerationRuntime on PlatformService {
       category = error.kind;
       retryable = error.retryable;
       retryAfter = error.retryAfter;
+      if (providerCallStarted &&
+          {
+            'indeterminate',
+            'timeout',
+            'transport_error',
+            'http_error',
+            'rate_limited',
+          }.contains(category)) {
+        if (error.statusCode == 429 ||
+            error.providerErrorType == 'rate_limit_exceeded' ||
+            category == 'rate_limited') {
+          category = 'rate_limited';
+        } else if (category != 'http_error' ||
+            error.statusCode == null ||
+            error.statusCode == 408 ||
+            error.statusCode == 425 ||
+            error.statusCode! >= 500) {
+          category = 'indeterminate';
+        }
+        retryable = false;
+      }
+      // A missing provider result may have consumed a paid request, even when
+      // the error itself describes a malformed or incomplete response.
+      if (providerCallStarted && result == null) {
+        if ({
+          'response_size',
+          'envelope_json',
+          'envelope_shape',
+          'content_missing',
+        }.contains(category)) {
+          category = 'indeterminate';
+        }
+        retryable = false;
+      }
     } on spec.SpecException catch (error) {
-      failure = error.message;
-      category = 'spec_validation';
+      if (providerCallStarted && result == null) {
+        failure =
+            'The AI request did not complete normally. Its outcome is unknown.';
+        category = 'indeterminate';
+        retryable = false;
+      } else {
+        failure = error.message;
+        category = 'spec_validation';
+      }
     } on FormatException {
-      failure = 'The generated definition contains an invalid value format.';
-      category = 'value_format';
+      if (providerCallStarted && result == null) {
+        failure =
+            'The AI request did not complete normally. Its outcome is unknown.';
+        category = 'indeterminate';
+        retryable = false;
+      } else {
+        failure = 'The generated definition contains an invalid value format.';
+        category = 'value_format';
+      }
     } catch (_) {
-      failure = 'Generation could not validate the response.';
-      category = 'unexpected';
+      failure = providerCallStarted && result == null
+          ? 'The AI request did not complete normally. Its outcome is unknown.'
+          : 'Generation could not validate the response.';
+      category = providerCallStarted && result == null
+          ? 'indeterminate'
+          : 'unexpected';
+      retryable = false;
     } finally {
       await _releaseGenerationSlot(slot);
     }

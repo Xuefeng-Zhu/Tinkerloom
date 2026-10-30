@@ -17,6 +17,8 @@ class BuilderMessage {
 String builderStageLabel(String stage, {String? failureCategory}) =>
     stage == 'failed' && failureCategory == 'indeterminate'
     ? 'Outcome unknown'
+    : stage == 'failed' && failureCategory == 'rate_limited'
+    ? 'AI limit reached'
     : switch (stage) {
         'queued' => 'Getting started',
         'generating' => 'Building your app',
@@ -40,6 +42,13 @@ String builderFailureMessage(
       'The AI request’s outcome is unknown.',
       if (hasPreview) 'Your last preview is still here.',
       'A new request may duplicate work and incur charges. Check the provider before sending another request.',
+    ].join(' ');
+  }
+  if (failureCategory == 'rate_limited') {
+    return [
+      'The AI provider’s rate or usage limit was reached.',
+      if (hasPreview) 'Your last preview is still here.',
+      'Check the provider’s limits before sending another request.',
     ].join(' ');
   }
   final details = diagnostics.join(' ').toLowerCase();
@@ -331,7 +340,9 @@ class BuilderChat extends StatelessWidget {
                               failureCategory: failureCategory,
                             ),
                     ),
-                    if (onRetry != null && failureCategory != 'indeterminate')
+                    if (onRetry != null &&
+                        failureCategory != 'indeterminate' &&
+                        failureCategory != 'rate_limited')
                       Align(
                         alignment: Alignment.centerLeft,
                         child: TextButton.icon(
