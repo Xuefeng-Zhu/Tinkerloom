@@ -5,13 +5,13 @@
   "description": "Flutter frontend and offline Appwrite backend tooling",
   "scripts": {
     "setup": "flutter pub get",
-    "dev": "cd apps/flutter && flutter run -d chrome --web-hostname localhost --web-port 8426",
+    "dev": "cd apps/flutter && flutter run -d chrome --web-hostname localhost --web-port 8426 --dart-define-from-file=config/appwrite.dev.json",
     "web": "npm run dev",
     "verify": "bash scripts/verify.sh",
     "verify:client": "bash scripts/verify.sh --client-only",
     "verify:backend": "bash scripts/verify.sh --backend-only",
-    "build:web": "cd apps/flutter && flutter build web --release",
-    "build:android": "cd apps/flutter && flutter build apk --release",
-    "build:ios": "cd apps/flutter && flutter build ios --release --no-codesign"
+    "build:web": "cd apps/flutter && flutter build web --release --dart-define-from-file=config/appwrite.dev.json",
+    "build:android": "cd apps/flutter && flutter build apk --release --dart-define-from-file=config/appwrite.dev.json",
+    "build:ios": "cd apps/flutter && flutter build ios --release --no-codesign --dart-define-from-file=config/appwrite.dev.json"
   }
 }

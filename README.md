@@ -19,13 +19,15 @@ flutter run -d chrome --web-hostname localhost --web-port 8426 \
   --dart-define-from-file=config/appwrite.dev.json
 ```
 
-The checked-in development configuration contains only public endpoint/project/Function identifiers. It targets the existing SFO Appwrite Free development project and keeps automatic refresh off. Native applications use `com.tinkerloom.app`. Server API keys, passwords and AI credentials do not belong in application configuration.
+`npm run dev` runs the same configured web client. Open it at <http://localhost:8426>; `localhost` is the registered web hostname. Android and iOS applications use `com.tinkerloom.app`.
+
+The checked-in development configuration contains only public endpoint/project/Function identifiers and keeps automatic refresh off. Server API keys, passwords and AI credentials do not belong in application configuration.
 
 To explore the original templates without any Appwrite calls:
 
 ```sh
 cd apps/flutter
-flutter run -t lib/preview.dart -d chrome --web-port 8426
+flutter run -t lib/preview.dart -d chrome --web-hostname localhost --web-port 8426
 ```
 
 Preview records are synthetic and memory-only. They are never copied into live storage. The live client shows a configuration/startup screen when its public Appwrite configuration is absent.
@@ -50,9 +52,13 @@ Client verification analyzes the restored application and shared packages, check
 
 ```sh
 cd apps/flutter
-flutter build apk --release
-flutter build ios --release --no-codesign
+flutter build web --release --dart-define-from-file=config/appwrite.dev.json
+flutter build apk --release --dart-define-from-file=config/appwrite.dev.json
+flutter build ios --release --no-codesign \
+  --dart-define-from-file=config/appwrite.dev.json
 ```
+
+`npm run build:web`, `npm run build:android`, and `npm run build:ios` use the same public development configuration. To run on a connected native device, use `flutter run --dart-define-from-file=config/appwrite.dev.json` from `apps/flutter`.
 
 Compilation does not establish installation, native UI, permission handling or hardware acceptance. Signed distribution and production operations remain separate work.
 
