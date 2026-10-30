@@ -4,7 +4,7 @@ Tinkerloom restores the original **Flutter** mini-app interface with the existin
 
 The previous React Native implementation is preserved on [`codex/react-native-backup-20261029`](https://github.com/Xuefeng-Zhu/Tinkerloom/tree/codex/react-native-backup-20261029). Its 730-test, native-build and Cloud receipts remain historical, source-specific evidence and are not Flutter acceptance results. See [Flutter migration and verification](docs/FLUTTER_MIGRATION.md) for the new client’s checks and remaining gates.
 
-Current verification: **589 offline Flutter/spec tests**, 405 backend tests, and successful web, Android Release and unsigned iOS Release builds. The capped Cloud smoke awaits existing credentials; this restoration has made **zero Appwrite Cloud requests**.
+Current development setup now uses the new Appwrite Free account in FRA. One synthetic Notes app passed SDK/service save-and-reload verification after a manually continued read conflict: **12 total Function executions (10 Core + 2 private Worker), 3 Account requests, and one text record**. The original 589 offline Flutter/spec and 405 backend checks remain dated evidence; this follow-up added and passed **13 offline guard tests** and rebuilt web, Android and unsigned iOS with the new configuration. [Current results](docs/evidence/2026-10-30/flutter-fra-validation.json).
 
 Tinkerloom uses **fresh Appwrite development data**. The original AppNest checkout, users, records and credentials remain preserved. AI-provider configuration and production release are deferred.
 
@@ -38,7 +38,7 @@ The restored interface retains the original theme, fonts, launcher, authoring to
 
 Normal tests and CI are **offline**. Development uses manual refresh by default; do not leave old React Native or Flutter polling sessions running against Cloud. Optional automatic refresh must share requests, honor the negotiated minimum interval, and stop when the app is hidden, disposed or signed out.
 
-A single final Cloud smoke is separate from normal verification. Its hard cap is **12 Function executions, 2 authentication requests, and at most one synthetic text-record creation** using an existing account and app. It excludes uploads, AI, new accounts/apps and reminder scheduling; quota errors or uncertain writes stop the run without automatic retries. A Function execution may perform multiple database operations, so the request cap is not a database-operation count. Existing broad Cloud probe suites are retained for their historical contracts and are not part of the Flutter port’s live acceptance run.
+The explicitly authorized fresh-account setup is complete. Do not rerun its bootstrap or the historical broad Cloud suites. It created one synthetic account, one workspace, one Notes app and one text record. Client requests were cumulatively capped at 10 Core, 3 Account and 3 mutations; the separately observed two private Worker deliveries brought the total to 12 Function executions. The first read was definitively rejected with a transaction conflict; one manual continuation reused the same identities and remaining budget. There were no automatic retries, image uploads, AI calls or reminder-rule scheduling. Function counts are not database-operation counts. Internal provisioning manifests and private credentials/recovery remain in ignored local files. Periodic worker scans are off; time-based reminder triggering/recovery is deferred. Synthetic server sessions may remain because the final Account slot was used for sign-in; temporary local cookies were removed.
 
 ## Verify and build
 

@@ -41,7 +41,7 @@ Without the explicit enable flag this test is skipped. Its server-state reload i
 
 ## Fresh-account development follow-up
 
-After the old SFO account exhausted its quota, the user separately authorized a fresh Free development setup using the new account. The target is FRA project `6ae4175600137449b25e` at `https://fra.cloud.appwrite.io/v1`. Provisioning is in progress and the fresh-project Cloud smoke is pending; this is not a readiness or live-persistence result. Preserve the old project and its data. Normal tests and CI retain the zero-Cloud policy, but the manual provisioning and eventual smoke are Cloud activity and need a separate receipt.
+After the old SFO account exhausted its quota, the user separately authorized a fresh Free development setup using the new account. The target is FRA project `6ae4175600137449b25e` at `https://fra.cloud.appwrite.io/v1`. Provisioning and the bounded SDK/service persistence check are complete. See the separate [2026-10-30 public validation summary](evidence/2026-10-30/flutter-fra-validation.json); internal deployment manifests remain local and ignored. Preserve the old project and its data. Normal tests and CI retain the zero-Cloud policy, but the completed manual provisioning and smoke are Cloud activity recorded separately.
 
 This exception permits at most one new synthetic application account, one workspace, one published Notes app and one synthetic text record. The Notes template must have no existing records, collection effects or automation requests. The runner creates only the required text fields, then verifies the saved record by reading and reloading it. Image uploads, AI calls and reminder-rule scheduling are excluded.
 
@@ -73,3 +73,11 @@ The first Android build failed because the new SDK dependency required Java libr
 Existing reminder approvals are not exposed by the unchanged Appwrite wire contract. The publication review labels selections for the next publication and requires explicit acknowledgement before editing an existing app with reminders; it does not pretend that unavailable approval state is known. Upload processing uses manual Check/Discard recovery, with no status polling.
 
 Compilation and offline tests do not establish native UI, hardware permissions, live account persistence or production readiness. Native device checks, AI-provider setup and store/production release remain separate work.
+
+## 2026-10-30 fresh-account result
+
+The initial run created the sole synthetic account, workspace and Notes app, then stopped on a definitive `transaction_conflict` during the first record query (4 Core / 2 Account / 2 mutations). The completed worker and local guard-write paths support a concurrency explanation, without proving the exact cause. A single explicit continuation preserved those identities and receipt hashes, exclusively reserved its recovery journal, used the remaining budget, created one text record and verified two reads across a manifest reload. It passed with cumulative **10 Core / 3 Account / 3 mutations**; Console separately showed **2 private Worker executions**, for **12 total Functions**. No automatic retries or additional account/app creation occurred.
+
+The continuation tool rejects uncertain/quota outcomes and any prior record attempt, and cannot restart with its retained journal. All **13 new offline guard tests**, analysis and formatting passed. It made no signout request because the final Account slot was used for sign-in; temporary local cookies were removed, while synthetic server sessions may remain. No further Cloud verification is needed for this setup.
+
+Worker execution is on demand, with **no periodic schedule**. This avoids idle database scans; time-based reminder triggering and periodic recovery remain deferred. Reminder-rule scheduling, uploads and AI were excluded from this smoke. Web, Android Release and unsigned iOS Release were rebuilt from `733439f` with the new public config; each compiled payload contains the new FRA target and no old SFO target. These are compilation results, separate from native-device/UI and store-signing acceptance. Old SFO artifacts remain historical.

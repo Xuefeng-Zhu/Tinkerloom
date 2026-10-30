@@ -49,7 +49,7 @@ it in addition to the fresh-project check below.
 
 The user separately authorized a fresh Free development setup in FRA project
 `6ae4175600137449b25e` after the old SFO account exhausted its quota. Provisioning
-is in progress; its Cloud smoke is pending. Preserve the old project and data.
+and its bounded Cloud smoke completed on 2026-10-30. Do not rerun either Cloud tool. Preserve the old project and data.
 `live_smoke/new_project_smoke.dart` permits at most one new synthetic account, one
 workspace, one published Notes app and one synthetic text record. It requires
 both `TINKERLOOM_NEW_PROJECT_SMOKE=1` and
@@ -77,3 +77,5 @@ only through the runtime environment. `TINKERLOOM_SMOKE_REPORT` can name an
 exclusive sanitized result file. Normal tests and CI never enable either Cloud
 runner; the manual setup and smoke must be reported separately from earlier
 zero-Cloud verification.
+
+The fresh-project check completed on 2026-10-30 after a definitive initial-read transaction conflict. Its one-shot continuation is `live_smoke/resume_initial_read_smoke.dart`, guarded by `TINKERLOOM_INITIAL_READ_RESUME=1` and `TINKERLOOM_RESUME_CONFIRMED_ERROR=transaction_conflict`. It requires the retained original report and recovery directory through `TINKERLOOM_SMOKE_ORIGINAL_REPORT` and `TINKERLOOM_NEW_PROJECT_RECOVERY`; it refuses any second start, uncertain result, exhausted/mismatched original budget or previous record attempt. It never creates another account/workspace/app. Cumulative requests reached 10 Core / 3 Account / 3 mutations, with exactly one record. The two private Worker executions were verified separately. Do not rerun either Cloud tool for routine verification. No signout slot remained; local cookies were deleted, while server sessions may remain.

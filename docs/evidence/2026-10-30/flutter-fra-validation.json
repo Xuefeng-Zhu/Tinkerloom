@@ -1,0 +1,88 @@
+{
+  "scope": "Public validation summary only; internal provisioning manifests and private login/recovery files remain ignored locally",
+  "result": "completed_after_one_manual_read_conflict_continuation",
+  "oldProjectDataPreserved": true,
+  "cloud": {
+    "sdkServiceSmokePassed": true,
+    "renderedUiTested": false,
+    "initialAttempt": {
+      "passed": false,
+      "stage": "initial-read",
+      "error": "transaction_conflict",
+      "coreRequests": 4,
+      "accountRequests": 2,
+      "mutations": 2
+    },
+    "continuation": {
+      "passed": true,
+      "coreRequestsAdded": 6,
+      "accountRequestsAdded": 1,
+      "mutationsAdded": 1,
+      "automaticRetries": 0
+    },
+    "cumulative": {
+      "coreExecutions": 10,
+      "privateWorkerExecutions": 2,
+      "totalFunctionExecutions": 12,
+      "accountRequests": 3,
+      "businessMutations": 3
+    },
+    "workerCountMethod": "Console Function cards after both attempts; fresh project had no prior executions",
+    "created": {
+      "syntheticAccounts": 1,
+      "workspaces": 1,
+      "notesApps": 1,
+      "textRecords": 1
+    },
+    "imageUploads": 0,
+    "aiCalls": 0,
+    "reminderRulesEnabled": 0,
+    "periodicWorkerSchedule": "none",
+    "qualification": "Function executions are not database-operation counts. Metadata provisioning requests are separate. Private worker retries are outside the client cap; the observed total was12.",
+    "sessionQualification": "No Account slot remained for signout after manual continuation. Local cookies were deleted; synthetic server sessions may remain."
+  },
+  "offline": {
+    "newFocusedTestsPassed": 13,
+    "analysis": "passed",
+    "format": "passed",
+    "cloudCalls": 0,
+    "priorRestorationTests": 589,
+    "priorBackendTests": 405,
+    "qualification": "Previous full-suite results are dated evidence; this follow-up reran the13 new guards. GitHub CI independently runs full offline checks."
+  },
+  "builds": {
+    "sourceCommit": "733439f3f3fc75500c1b843eb36ad4d8ad74ea24",
+    "configSha256": "9b352cda632635f2a642d100f8052a99f368586b629d7c8281728de2b00309d8",
+    "allPassed": true,
+    "cloudCalls": 0,
+    "configuredRegion": "FRA",
+    "compiledConfigurationVerified": true,
+    "artifacts": [
+      {
+        "target": "web",
+        "path": "output/flutter/2026-10-30/Tinkerloom-web-release-fra-733439f.zip",
+        "sizeBytes": 14529398,
+        "sha256": "75a84031d8ef05def80b286a24d2082dd18f504881771dbf5a29dc135e454546"
+      },
+      {
+        "target": "android",
+        "path": "output/flutter/2026-10-30/Tinkerloom-android-release-fra-733439f.apk",
+        "sizeBytes": 62947672,
+        "sha256": "990928ef0940bac7a2a4eea32d382005a1ba11fa7bce6a08f06950b41de64c22",
+        "signing": "Development debug certificate; not store release signing"
+      },
+      {
+        "target": "ios",
+        "path": "output/flutter/2026-10-30/Tinkerloom-ios-unsigned-release-fra-733439f.zip",
+        "sizeBytes": 8923340,
+        "sha256": "35cae47b54e8c148604efd30d6b149b0d9533ff46d5ff7a3a6d49ebf69ee148d",
+        "signing": "Unsigned; requires signing before device installation"
+      }
+    ]
+  },
+  "limitations": [
+    "SDK/service persistence is separate from rendered Flutter UI and native-device acceptance.",
+    "Periodic worker recovery and time-based reminder triggering are deferred to avoid idle scans.",
+    "AI provider setup and production/store distribution remain deferred."
+  ]
+}
