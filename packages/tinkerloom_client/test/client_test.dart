@@ -51,6 +51,26 @@ class OfflineRejectedProvider implements ai.AiProvider {
   }
 }
 
+class OfflineIndeterminateProvider implements ai.AiProvider {
+  int calls = 0;
+  @override
+  Future<ai.AiResult> generate(
+    String request,
+    spec.AppSpec current, {
+    required bool editing,
+    List<String> diagnostics = const [],
+    String? rejectedOutput,
+  }) async {
+    calls++;
+    throw const ai.AiResponseException(
+      'indeterminate',
+      'Synthetic outcome unknown',
+      statusCode: 202,
+      retryable: false,
+    );
+  }
+}
+
 class Fixture {
   Fixture({ai.AiProvider? provider}) {
     service = backend.PlatformService(
@@ -515,8 +535,10 @@ void main() {
       draft.draftId,
       draft.mutation,
       'Synthetic bounded request',
+      startFromScratch: true,
     );
     expect(queued.stage, 'queued');
+    expect(queued.candidateReady, isFalse);
     expect(queued.diagnostics, isEmpty);
     expect(queued.latestRequest, 'Synthetic bounded request');
     expect(queued.jobId, isNotNull);
@@ -532,6 +554,34 @@ void main() {
     expect(provider.calls, 1);
     expect(failed.candidateHash, draft.candidateHash);
   });
+  test(
+    'failed edit retains its validated preview when outcome is indeterminate',
+    () async {
+      final provider = OfflineIndeterminateProvider(),
+          f = Fixture(provider: provider);
+      addTearDown(f.client.close);
+      final (_, draft) = await f.draft();
+      expect(draft.candidateReady, isTrue);
+      final queued = await f.client.builder.generate(
+        draft.draftId,
+        draft.mutation,
+        'Synthetic edit request',
+        startFromScratch: false,
+      );
+      expect(queued.jobId, isNotNull);
+      expect(queued.candidateReady, isTrue);
+      expect(queued.candidateHash, draft.candidateHash);
+      await backend.WorkerEngine(f.service).generate(queued.jobId!);
+      final failed = await f.client.builder.get(draft.draftId);
+      expect(failed.stage, 'failed');
+      expect(failed.failureCategory, 'indeterminate');
+      expect(failed.candidateReady, isTrue);
+      expect(failed.candidateHash, draft.candidateHash);
+      expect(failed.candidateJson, draft.candidateJson);
+      expect(provider.calls, 1);
+    },
+  );
+
   test(
     'FIFO coalesces identical reads and cancels queued prior-session work',
     () async {

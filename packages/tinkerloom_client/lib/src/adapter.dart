@@ -95,7 +95,16 @@ extension _PresentationAdapter on Client {
       enabledRuleIds: [],
       publishedVersionId: draft?['publishedVersionId'] as String?,
       candidateReady:
-          candidate != null && (generation == null || stage == 'preview ready'),
+          candidate != null &&
+          (generation == null ||
+              stage == 'preview ready' ||
+              (generation['mode'] == 'edit' &&
+                  {
+                    'queued',
+                    'generating',
+                    'validating',
+                    'failed',
+                  }.contains(stage))),
       latestRequest: generation?['requestText'] as String?,
       jobAttempts: generation?['attempts'] as int? ?? 0,
       jobCreatedAt: DateTime.tryParse(

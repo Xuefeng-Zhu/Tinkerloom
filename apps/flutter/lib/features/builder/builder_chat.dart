@@ -14,15 +14,18 @@ class BuilderMessage {
   });
 }
 
-String builderStageLabel(String stage) => switch (stage) {
-  'queued' => 'Getting started',
-  'generating' => 'Building your app',
-  'validating' => 'Checking your app',
-  'preview ready' => 'Preview ready',
-  'failed' => 'Let’s try that again',
-  'stale' => 'This draft has changed',
-  _ => 'Draft saved',
-};
+String builderStageLabel(String stage, {String? failureCategory}) =>
+    stage == 'failed' && failureCategory == 'indeterminate'
+    ? 'Outcome unknown'
+    : switch (stage) {
+        'queued' => 'Getting started',
+        'generating' => 'Building your app',
+        'validating' => 'Checking your app',
+        'preview ready' => 'Preview ready',
+        'failed' => 'Let’s try that again',
+        'stale' => 'This draft has changed',
+        _ => 'Draft saved',
+      };
 
 /// Diagnostics also contain instructions for an AI repair attempt. Translate
 /// recognized failures into user guidance; do not promote raw diagnostics or
@@ -30,7 +33,15 @@ String builderStageLabel(String stage) => switch (stage) {
 String builderFailureMessage(
   List<String> diagnostics, {
   required bool hasPreview,
+  String? failureCategory,
 }) {
+  if (failureCategory == 'indeterminate') {
+    return [
+      'The AI request’s outcome is unknown.',
+      if (hasPreview) 'Your last preview is still here.',
+      'A new request may duplicate work and incur charges. Check the provider before sending another request.',
+    ].join(' ');
+  }
   final details = diagnostics.join(' ').toLowerCase();
   final requestedUnsupported = details.contains(
     'requested capability is unavailable',
@@ -83,6 +94,7 @@ class BuilderChat extends StatelessWidget {
   final bool hasPreview;
   final String? error;
   final List<String> diagnostics;
+  final String? failureCategory;
   final VoidCallback onSend;
   final VoidCallback? onShapeIdea;
   final VoidCallback? onKeepPreview;
@@ -116,6 +128,7 @@ class BuilderChat extends StatelessWidget {
     required this.hasPreview,
     required this.error,
     required this.diagnostics,
+    this.failureCategory,
     required this.onSend,
     this.onShapeIdea,
     this.onKeepPreview,
@@ -256,7 +269,10 @@ class BuilderChat extends StatelessWidget {
                             const LinearProgressIndicator(minHeight: 2),
                             const SizedBox(height: 16),
                             Text(
-                              builderStageLabel(stage),
+                              builderStageLabel(
+                                stage,
+                                failureCategory: failureCategory,
+                              ),
                               style: Theme.of(context).textTheme.titleSmall,
                             ),
                             if (jobAttempts > 0)
@@ -299,7 +315,10 @@ class BuilderChat extends StatelessWidget {
                   if (!generating &&
                       (stage == 'failed' || stage == 'stale')) ...[
                     Text(
-                      builderStageLabel(stage),
+                      builderStageLabel(
+                        stage,
+                        failureCategory: failureCategory,
+                      ),
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
@@ -309,9 +328,10 @@ class BuilderChat extends StatelessWidget {
                           : builderFailureMessage(
                               diagnostics,
                               hasPreview: hasPreview,
+                              failureCategory: failureCategory,
                             ),
                     ),
-                    if (onRetry != null)
+                    if (onRetry != null && failureCategory != 'indeterminate')
                       Align(
                         alignment: Alignment.centerLeft,
                         child: TextButton.icon(

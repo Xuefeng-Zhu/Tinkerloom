@@ -1045,6 +1045,104 @@ void main() {
   });
 
   testWidgets(
+    'in-progress edit keeps preview visible with edit and publish disabled',
+    (
+      tester,
+    ) async {
+      final queued = draft(
+        stage: 'queued',
+        mutation: 1,
+        jobId: '7',
+        candidateReady: true,
+        latestRequest: 'Update the app',
+      );
+      client.current = queued;
+      await showBuilder(tester, initial: queued);
+      expect(find.byType(MiniAppRuntime), findsOneWidget);
+      expect(
+        tester
+            .widget<TextButton>(find.byKey(const ValueKey('customize-app')))
+            .onPressed,
+        isNull,
+      );
+      expect(
+        tester
+            .widget<FilledButton>(find.widgetWithText(FilledButton, 'Use app'))
+            .onPressed,
+        isNull,
+      );
+      expect(tester.widget<TextField>(composer()).enabled, isFalse);
+      expect(client.gets, isEmpty);
+      await closeBuilder(tester);
+    },
+  );
+
+  testWidgets('indeterminate provider outcome is not offered as retry', (
+    tester,
+  ) async {
+    const request = 'Build a reading list';
+    final unknown = draft(
+      stage: 'failed',
+      mutation: 1,
+      jobId: '7',
+      latestRequest: request,
+      diagnostics: const ['Provider accepted without a final result.'],
+      candidateReady: true,
+    ).copyWith(jobAttempts: 1, failureCategory: 'indeterminate');
+    client.current = unknown;
+    await showBuilder(tester, initial: unknown, initialPrompt: request);
+    expect(find.text('Outcome unknown'), findsWidgets);
+    expect(find.text('Let’s try that again'), findsNothing);
+    expect(find.text('Try again'), findsNothing);
+    expect(
+      find.textContaining(
+        'A new request may duplicate work and incur charges.',
+      ),
+      findsWidgets,
+    );
+    expect(find.text('Keep previous preview'), findsOneWidget);
+    expect(find.byType(MiniAppRuntime), findsOneWidget);
+    await tester.pump(const Duration(seconds: 30));
+    expect(client.gets, isEmpty);
+    expect(client.generations, isEmpty);
+    await closeBuilder(tester);
+  });
+
+  testWidgets('manual refresh shows an indeterminate result without retry', (
+    tester,
+  ) async {
+    const request = 'Build a reading list';
+    final queued = draft(
+      stage: 'queued',
+      mutation: 1,
+      jobId: '7',
+      latestRequest: request,
+    );
+    client.current = queued;
+    await showBuilder(tester, initial: queued, initialPrompt: request);
+    client.current = draft(
+      stage: 'failed',
+      mutation: 1,
+      jobId: '7',
+      latestRequest: request,
+      diagnostics: const ['Provider accepted without a final result.'],
+    ).copyWith(jobAttempts: 1, failureCategory: 'indeterminate');
+    await tester.tap(find.byKey(const ValueKey('check-generation-status')));
+    await tester.pumpAndSettle();
+    expect(client.gets, ['9']);
+    expect(find.text('Outcome unknown'), findsWidgets);
+    expect(find.text('Try again'), findsNothing);
+    expect(
+      find.textContaining(
+        'A new request may duplicate work and incur charges.',
+      ),
+      findsWidgets,
+    );
+    expect(client.generations, isEmpty);
+    await closeBuilder(tester);
+  });
+
+  testWidgets(
     'a fresh creation accepts a follow-up and preserves preview data',
     (tester) async {
       const creationRequest = 'Make a planner for our volunteer team';

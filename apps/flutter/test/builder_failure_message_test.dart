@@ -63,6 +63,21 @@ void main() {
     );
   });
 
+  test('indeterminate outcomes do not advise retry and preserve a preview', () {
+    expect(
+      builderFailureMessage(
+        ['Provider accepted the request without a final result.'],
+        hasPreview: true,
+        failureCategory: 'indeterminate',
+      ),
+      'The AI request’s outcome is unknown. Your last preview is still here. A new request may duplicate work and incur charges. Check the provider before sending another request.',
+    );
+    expect(
+      builderStageLabel('failed', failureCategory: 'indeterminate'),
+      'Outcome unknown',
+    );
+  });
+
   test('failed edits explicitly preserve the last preview', () {
     expect(
       builderFailureMessage([

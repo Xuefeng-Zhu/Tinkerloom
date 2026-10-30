@@ -155,6 +155,7 @@ class BuilderScreenState extends State<BuilderScreen> {
           text: builderFailureMessage(
             draft.diagnostics,
             hasPreview: hasPreview,
+            failureCategory: draft.failureCategory,
           ),
         ),
       );
@@ -242,7 +243,11 @@ class BuilderScreenState extends State<BuilderScreen> {
       } else if (failed) {
         conversation.add(
           BuilderMessage(
-            text: builderFailureMessage(d.diagnostics, hasPreview: hasPreview),
+            text: builderFailureMessage(
+              d.diagnostics,
+              hasPreview: hasPreview,
+              failureCategory: d.failureCategory,
+            ),
           ),
         );
       }
@@ -1160,6 +1165,7 @@ class BuilderScreenState extends State<BuilderScreen> {
       hasPreview: hasPreview,
       error: errorMessage,
       diagnostics: draft.diagnostics,
+      failureCategory: draft.failureCategory,
       onSend: send,
       onShapeIdea: shapeIdea,
       onKeepPreview: hasPreview && draft.stage == 'failed'
@@ -1193,6 +1199,7 @@ class BuilderScreenState extends State<BuilderScreen> {
       onRetry:
           !generating &&
               draft.stage != 'stale' &&
+              draft.failureCategory != 'indeterminate' &&
               ai == true &&
               lastRequest != null
           ? () => send(retry: lastRequest)
@@ -1722,7 +1729,10 @@ class BuilderScreenState extends State<BuilderScreen> {
             Text(
               draft.stage == 'preview ready'
                   ? 'Unpublished changes'
-                  : builderStageLabel(draft.stage),
+                  : builderStageLabel(
+                      draft.stage,
+                      failureCategory: draft.failureCategory,
+                    ),
               style: const TextStyle(fontSize: 11),
             ),
           ],
