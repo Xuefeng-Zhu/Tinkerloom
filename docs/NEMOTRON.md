@@ -1,6 +1,6 @@
 # Nemotron and AI generation
 
-Tinkerloom contains a server-side chat-completions adapter for NVIDIA Nemotron models. The adapter can support idea guidance and generation of declarative app definitions. The development deployment has Nebius configuration in its protected Function variables. A complete live Nemotron workflow in Tinkerloom has not been verified. Manual building, templates, and the offline preview do not require an AI provider.
+Tinkerloom contains a server-side chat-completions adapter for NVIDIA Nemotron models. The adapter can support idea guidance and generation of declarative app definitions. The development deployment is configured for GLM 5.3 Flash on NVIDIA NIM, using protected Function variables. A complete live Nemotron workflow in Tinkerloom has not been verified. Manual building, templates, and the offline preview do not require an AI provider.
 
 ## How generation works
 

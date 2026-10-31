@@ -38,7 +38,7 @@ Appwrite supplies `APPWRITE_FUNCTION_API_ENDPOINT`, `APPWRITE_FUNCTION_PROJECT_I
 | `PLATFORM_REMINDERS_ENABLED` | Set to `true` to enable reminder handling |
 | `PLATFORM_TRANSACTION_DIAGNOSTICS` | Set to `true` to enable Core transaction diagnostic logging |
 
-The required Function scopes are recorded in `schema.json`. Scope and storage permissions should match the features enabled. Keep provider credentials and service keys out of the Flutter app, version control and logs. Provider setup is separate from the default development configuration. See the [Nemotron guide](../docs/NEMOTRON.md) for NVIDIA-specific configuration and evidence boundaries.
+The required Function scopes are recorded in `schema.json`. Scope and storage permissions should match the features enabled. Keep provider credentials and service keys out of the Flutter app, version control and logs. Provider configuration is server-side and specific to each deployment. See the [Nemotron guide](../docs/NEMOTRON.md) for NVIDIA-specific configuration and evidence boundaries.
 
 The current development project uses on-demand Worker executions and has no periodic Worker schedule. Time-based reminder triggering and periodic recovery are deferred while the schedule is disabled. The client uses manual refresh by default to limit free-tier usage.
 
