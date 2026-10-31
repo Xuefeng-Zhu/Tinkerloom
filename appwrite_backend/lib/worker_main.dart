@@ -47,7 +47,18 @@ Future<dynamic> main(dynamic context) async {
         backend,
         media: files,
         mediaProjectBytes: mediaCap,
-        aiProvider: ChatCompletionProvider.configured(env),
+        aiProvider: ChatCompletionProvider.configured(
+          env,
+          // Provider emits only allowlisted phase/timing/status metadata, never
+          // request content, response content, credentials, or raw errors.
+          log: (message) {
+            try {
+              context.log(message);
+            } catch (_) {
+              // Diagnostics must never alter generation outcomes.
+            }
+          },
+        ),
         remindersEnabled: env['PLATFORM_REMINDERS_ENABLED'] == 'true',
         wakeups: wakeups,
       ),

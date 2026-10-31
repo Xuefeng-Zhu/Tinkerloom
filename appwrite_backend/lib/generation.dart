@@ -224,7 +224,11 @@ extension _GenerationRuntime on PlatformService {
         'generation': ((old?['generation'] as int?) ?? 0) + 1,
         'leaseUntil': clock()
             .toUtc()
-            .add(const Duration(seconds: 120))
+            .add(
+              _extendedGlmGeneration
+                  ? limits.glmGenerationLease
+                  : const Duration(seconds: 120),
+            )
             .toIso8601String(),
         'guard': _nonce(),
       };

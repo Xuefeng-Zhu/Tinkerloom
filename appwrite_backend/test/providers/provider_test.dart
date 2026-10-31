@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import '../../lib/providers/provider.dart';
+import '../../lib/providers/runtime_limits.dart' as limits;
 import 'package:appnest_spec/appnest_spec.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -3726,6 +3727,71 @@ void main() {
           expect(provider.generationDeadline, Duration(seconds: route.seconds));
         }
       }
+    },
+  );
+
+  test(
+    'NVIDIA GLM Flash deadline is bounded and coordinated with worker leases',
+    () {
+      final glm = ChatCompletionProvider(
+        Uri.parse('https://integrate.api.nvidia.com/v1'),
+        limits.glmModelId,
+        'fixture-key',
+        nvidiaModelEvaluation: true,
+        generationTimeout: const Duration(hours: 1),
+      );
+      expect(glm.usesExtendedGlmDeadline, isTrue);
+      expect(glm.generationDeadline, limits.glmProviderDeadline);
+      expect(limits.glmProviderDeadline, const Duration(seconds: 210));
+      expect(limits.glmWorkerRuntime, greaterThan(limits.glmProviderDeadline));
+      expect(limits.glmGenerationLease, greaterThan(limits.glmWorkerRuntime));
+      expect(limits.glmDispatchLease, greaterThan(limits.glmGenerationLease));
+      final nemotron = ChatCompletionProvider(
+        Uri.parse('https://integrate.api.nvidia.com/v1'),
+        'nvidia/nemotron-3-super-120b-a12b',
+        'fixture-key',
+        nvidiaNemotronEvaluation: true,
+      );
+      expect(nemotron.usesExtendedGlmDeadline, isFalse);
+      expect(nemotron.generationDeadline, const Duration(seconds: 90));
+      final lookalike = ChatCompletionProvider(
+        Uri.parse('https://example.test/v1'),
+        limits.glmModelId,
+        'fixture-key',
+      );
+      expect(lookalike.usesExtendedGlmDeadline, isFalse);
+      expect(lookalike.generationDeadline, const Duration(seconds: 45));
+    },
+  );
+
+  test(
+    'GLM timeout remains indeterminate and phase logs exclude private content',
+    () async {
+      final logs = <String>[];
+      final provider = ChatCompletionProvider(
+        Uri.parse('https://integrate.api.nvidia.com/v1'),
+        limits.glmModelId,
+        'private-api-key',
+        nvidiaModelEvaluation: true,
+        generationTimeout: const Duration(milliseconds: 30),
+        log: logs.add,
+        clientFactory: () => MockClient.streaming((_, stream) async {
+          await stream.drain<void>();
+          await Future<void>.delayed(const Duration(milliseconds: 60));
+          return http.StreamedResponse(const Stream<List<int>>.empty(), 200);
+        }),
+      );
+      await expectLater(
+        provider.generate('private-user-request', current, editing: false),
+        throwsA(
+          isA<AiResponseException>()
+              .having((e) => e.kind, 'kind', 'indeterminate')
+              .having((e) => e.retryable, 'retryable', false),
+        ),
+      );
+      expect(logs.single, contains('outcome=timeout'));
+      expect(logs.single, contains('phase=headers'));
+      expect(logs.single, isNot(contains('private')));
     },
   );
 

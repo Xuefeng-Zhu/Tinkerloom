@@ -1,3 +1,4 @@
+import 'runtime_limits.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show HttpDate;
@@ -1883,11 +1884,15 @@ class ChatCompletionProvider implements AiProvider, GuidanceProvider {
       ? 'openrouter-ultra-instruction-schema-v1'
       : 'standard-chat-completions-v1';
 
+  /// Only the exact configured NVIDIA GLM Flash route uses extended bounds.
+  bool get usesExtendedGlmDeadline =>
+      nvidiaModelEvaluation && model == glmModelId;
+
   /// A test may shorten, but never extend, the provider's bounded deadline.
   Duration get generationDeadline {
-    final maximum = Duration(
-      seconds: nemotronEvaluation || _freeUltra ? 90 : 45,
-    );
+    final maximum = usesExtendedGlmDeadline
+        ? glmProviderDeadline
+        : Duration(seconds: nemotronEvaluation || _freeUltra ? 90 : 45);
     return Duration(
       microseconds: (generationTimeout ?? maximum).inMicroseconds.clamp(
         1,

@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:appnest_spec/appnest_spec.dart' as spec;
 import 'package:test/test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import '../lib/providers/runtime_limits.dart' as limits;
 import 'package:crypto/crypto.dart';
 import '../lib/service.dart';
 import '../lib/worker_http.dart';
@@ -203,7 +206,7 @@ class Fixture {
 Future<Fixture> fixture({
   MemoryStore? store,
   Clock? clock,
-  ScriptProvider? provider,
+  ai.AiProvider? provider,
   Wakeups? wakeups,
   bool reminders = true,
 }) async {
@@ -905,6 +908,84 @@ void main() {
       );
     },
   );
+  test(
+    'GLM generation and dispatch leases fence expired requests without replay',
+    () async {
+      final response = Completer<http.Response>();
+      final started = Completer<void>();
+      var requests = 0;
+      final provider = ai.ChatCompletionProvider(
+        Uri.parse('https://integrate.api.nvidia.com/v1'),
+        limits.glmModelId,
+        'fixture-key',
+        nvidiaModelEvaluation: true,
+        clientFactory: () => MockClient((_) {
+          requests++;
+          started.complete();
+          return response.future;
+        }),
+      );
+      final wakeups = Wakeups();
+      final f = await fixture(provider: provider, wakeups: wakeups);
+      final job = ((await f.generation())['generation'] as Row)['id'] as String;
+      final call = wakeups.calls.singleWhere(
+        (c) => f.store.rows['worker_dispatches']![c['id']]!['targetId'] == job,
+      );
+      final work = f.worker.dispatch(
+        call['id'] as String,
+        call['proof'] as String,
+      );
+      await started.future;
+      final running = f.store.rows['generation_jobs']![job]!;
+      final dispatch = f.store.rows['worker_dispatches']![call['id']]!;
+      expect(
+        DateTime.parse(
+          running['leaseUntil'] as String,
+        ).difference(f.clock.call()),
+        limits.glmGenerationLease,
+      );
+      expect(
+        DateTime.parse(
+          dispatch['leaseUntil'] as String,
+        ).difference(f.clock.call()),
+        limits.glmDispatchLease,
+      );
+      f.clock.advance(121);
+      expect(
+        (await f.worker.dispatch(
+          call['id'] as String,
+          call['proof'] as String,
+        ))['duplicate'],
+        isTrue,
+      );
+      await f.worker.generate(job);
+      expect(requests, 1);
+      f.clock.advance(160);
+      await f.worker.generate(job);
+      expect(
+        f.store.rows['generation_jobs']![job]!['failureCategory'],
+        'indeterminate',
+      );
+      response.complete(
+        http.Response(
+          jsonEncode({
+            'choices': [
+              {
+                'finish_reason': 'stop',
+                'message': {'content': ai.creationReferenceJson},
+              },
+            ],
+          }),
+          200,
+        ),
+      );
+      await work;
+      expect(requests, 1);
+      expect(f.store.rows['generation_jobs']![job]!['status'], 'failed');
+      expect(f.store.rows['spec_drafts'], isNull);
+    },
+  );
+
   test(
     'hourly recovery plans/schedules jobs without awaiting a provider and preserves future reminders',
     () async {

@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:appnest_spec/appnest_spec.dart' as spec;
 import 'providers/provider.dart' as ai;
+import 'providers/runtime_limits.dart' as limits;
 import 'providers/creation_compiler.dart' as compiler;
 import 'providers/generation_quality.dart' as quality;
 import 'providers/generation_requirements.dart' as requirements;

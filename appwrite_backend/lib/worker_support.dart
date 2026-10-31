@@ -24,6 +24,10 @@ class WorkerEngine {
 }
 
 extension _WorkerSupport on PlatformService {
+  bool get _extendedGlmGeneration =>
+      aiProvider is ai.ChatCompletionProvider &&
+      (aiProvider as ai.ChatCompletionProvider).usesExtendedGlmDeadline;
+
   /// Retry only optimistic DB conflicts while preserving the same already
   /// computed provider response. No network/provider call belongs in action.
   Future<T> _workerTransaction<T>(Future<T> Function(String) action) async {

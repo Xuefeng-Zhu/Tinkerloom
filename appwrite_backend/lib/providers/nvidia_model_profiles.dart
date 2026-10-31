@@ -1,3 +1,5 @@
+import 'runtime_limits.dart';
+
 import 'dart:convert';
 
 /// Default/application NVIDIA selection remains the previously evaluated set.
@@ -134,7 +136,9 @@ class NvidiaEvaluationProfile {
       },
     },
     'responseContract': 'complete JSON schema supplied as instructions',
-    'generationDeadlineSeconds': 90,
+    'generationDeadlineSeconds': model == glmModelId
+        ? glmProviderDeadline.inSeconds
+        : 90,
     'guidanceDeadlineSeconds': 20,
     'generationMaxTokens': {
       'initial': 8000,

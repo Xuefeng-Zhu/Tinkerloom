@@ -168,7 +168,11 @@ extension _WorkerDispatch on PlatformService {
         'status': 'running',
         'leaseUntil': clock()
             .toUtc()
-            .add(const Duration(seconds: 130))
+            .add(
+              row['mode'] == 'generation' && _extendedGlmGeneration
+                  ? limits.glmDispatchLease
+                  : const Duration(seconds: 130),
+            )
             .toIso8601String(),
       }, transactionId: tx);
     });
