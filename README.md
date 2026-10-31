@@ -69,7 +69,7 @@ The backend checks require a separate Dart 3.11 SDK and Node.js. Release builds 
 
 ## Current limitations
 
-- The development deployment is configured for NVIDIA GLM 5.3 Flash; live generation through the deployed Functions has not been verified.
+- The development deployment uses NVIDIA GLM 5.3 Flash. One deployed edit produced a validated private draft; publication and live record operations for that generated change have not been verified.
 - Refresh is manual by default to protect the Appwrite Free quota. The current deployment has periodic worker scans disabled, so time-based reminder delivery and scheduled recovery are deferred.
 - The connected app uses live backend resources; avoid running Cloud probes or creating test data unnecessarily. The offline preview and normal test suite are the recommended ways to explore and verify changes.
 
