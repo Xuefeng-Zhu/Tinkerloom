@@ -1,6 +1,6 @@
 # Nemotron and AI generation
 
-Tinkerloom contains a server-side chat-completions adapter for NVIDIA Nemotron models. The adapter can support idea guidance and generation of declarative app definitions. Provider configuration is not present in the current development deployment, and a successful live Nemotron workflow in Tinkerloom has not been verified. Manual building, templates, and the offline preview do not require an AI provider.
+Tinkerloom contains a server-side chat-completions adapter for NVIDIA Nemotron models. The adapter can support idea guidance and generation of declarative app definitions. The development deployment has Nebius configuration in its protected Function variables. A complete live Nemotron workflow in Tinkerloom has not been verified. Manual building, templates, and the offline preview do not require an AI provider.
 
 ## How generation works
 
@@ -41,7 +41,7 @@ Tinkerloom also has a generic chat-completions adapter that can be configured to
 
 Configure Core for guidance and the private Worker for generation. The Nebius host uses `AI_API_KEY`, not the direct NVIDIA route's `NVIDIA_API_KEY`. Never place either key in the Flutter client, build defines, source, logs, or documentation. Review request and spending limits before enabling the provider: guidance and generation are separate operations, and generation can make multiple attempts.
 
-Unlike the direct NVIDIA-hosted route described above, the generic transport requests `json_object` output for guidance and `json_schema` output for generation. Offline mock tests check the request shape, but they do not establish Nebius support for that schema, model availability, successful output, deployment, or a complete app workflow. Tinkerloom's current development deployment is not configured for Nebius; verify actual provider compatibility and the connected application separately before relying on either.
+Unlike the direct NVIDIA-hosted route described above, the generic transport requests `json_object` output for guidance and `json_schema` output for generation. Offline mock tests check the request shape. One bounded local guidance request received HTTP 200 with the expected provider-reported model and an accepted response containing no follow-up questions. This does not verify generation, the deployed Functions, or a complete app workflow; verify those separately before relying on them.
 
 ## Evidence and limitations
 
