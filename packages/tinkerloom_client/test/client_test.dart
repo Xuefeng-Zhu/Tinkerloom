@@ -106,6 +106,7 @@ class Fixture {
   bool loseNextMutation = false;
   String? loseNextOp;
   String? loseBeforeOp;
+  String? conflictAfterOp;
   Client forActor(String actor) => Client(
     'https://offline.invalid/v1',
     auth: ClientAuth()..setSession({'id': actor}),
@@ -120,6 +121,14 @@ class Fixture {
           );
         }
         final result = await service.execute(actor, input);
+        if (input['op'] == conflictAfterOp) {
+          conflictAfterOp = null;
+          throw NestError(
+            category: 'transaction_conflict',
+            message: 'Synthetic ambiguous conflict after commit',
+            status: 409,
+          );
+        }
         if ((loseNextMutation && input['op'] == 'spec.execute') ||
             input['op'] == loseNextOp) {
           loseNextOp = null;

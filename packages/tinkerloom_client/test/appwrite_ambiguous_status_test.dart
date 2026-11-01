@@ -92,6 +92,36 @@ Map<String, dynamic> _command(String operationId) => {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test(
+    'real SDK function 409 conflict retains a generation without replay',
+    () async {
+      await _withFixture(
+        status: 409,
+        gateway: false,
+        rawBody: jsonEncode({'error': 'transaction_conflict'}),
+        verify: (client, dispatches) async {
+          await expectLater(
+            client.request(_command('one')),
+            throwsA(
+              isA<NestError>().having((e) => e.uncertain, 'uncertain', isTrue),
+            ),
+          );
+          expect(client.pendingBuilderRecovery?.operation, 'spec.generate');
+          await expectLater(
+            client.request(_command('two')),
+            throwsA(
+              isA<NestError>().having(
+                (e) => e.category,
+                'category',
+                'pending_command',
+              ),
+            ),
+          );
+          expect(dispatches(), 1);
+        },
+      );
+    },
+  );
   for (final gateway in [true, false]) {
     for (final status in [408, 425]) {
       final source = gateway ? 'gateway' : 'function';

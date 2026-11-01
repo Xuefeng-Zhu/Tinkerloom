@@ -775,7 +775,8 @@ class Client {
         if (!read &&
             (error is! NestError ||
                 error.uncertain ||
-                error.category == 'invalid_response')) {
+                error.category == 'invalid_response' ||
+                error.category == 'transaction_conflict')) {
           _retained = frozen;
           _retainBuilderRecovery(frozen);
           if (frozen['op'] == 'spec.guidance' &&

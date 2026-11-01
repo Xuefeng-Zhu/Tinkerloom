@@ -10,6 +10,62 @@ import 'client_test.dart' show Fixture, OfflineRejectedProvider;
 void main() {
   for (final operation in ['spec.saveDraft', 'spec.generate']) {
     test(
+      'post-commit $operation conflict recovers receipt without replay',
+      () async {
+        final provider = OfflineRejectedProvider();
+        final fixture = Fixture(provider: provider);
+        final client = fixture.client;
+        addTearDown(client.close);
+        final (_, initial) = await fixture.draft();
+        fixture.conflictAfterOp = operation;
+        await expectLater(
+          operation == 'spec.saveDraft'
+              ? client.builder.patch(
+                  initial.draftId,
+                  initial.mutation,
+                  jsonEncode({
+                    'type': 'RenameLabel',
+                    'targetId': 'title',
+                    'label': 'Trip title',
+                  }),
+                )
+              : client.builder.generate(
+                  initial.draftId,
+                  initial.mutation,
+                  'Offline trip',
+                  startFromScratch: false,
+                ),
+          throwsA(
+            isA<NestError>().having((e) => e.uncertain, 'uncertain', true),
+          ),
+        );
+        final original = fixture.calls.lastWhere((v) => v['op'] == operation);
+        final before = fixture.calls.length;
+        final latest = await client.checkPendingBuilderRecovery(
+          client.pendingBuilderRecovery!,
+        );
+        expect(latest?.mutation, initial.mutation + 1);
+        final sent = fixture.calls.skip(before).toList();
+        expect(sent.map((v) => v['op']), [
+          'spec.commandReceipt',
+          'spec.getApp',
+        ]);
+        expect(sent.first['command'], original);
+        expect(sent.last['suppressWakeups'], true);
+        expect(
+          fixture.calls.where(
+            (v) =>
+                v['operationId'] == original['operationId'] &&
+                v['op'] == operation,
+          ),
+          hasLength(1),
+        );
+        expect(provider.calls, 0);
+      },
+    );
+  }
+  for (final operation in ['spec.saveDraft', 'spec.generate']) {
+    test(
       'reopened $operation recovers exact receipt and quiet snapshot',
       () async {
         final provider = OfflineRejectedProvider();
