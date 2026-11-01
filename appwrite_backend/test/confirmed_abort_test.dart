@@ -162,6 +162,8 @@ class LocalDatabase {
   int forcedAborts = 0;
   bool ambiguous = false;
   bool loseCommitReply = false;
+  bool failStagedWorkspaceUpdate = false;
+  String? terminalStatusOverride;
   Future<void> Function()? afterAbort;
   Future<void> close() async {
     rest.close();
@@ -185,7 +187,7 @@ class LocalDatabase {
         final tx = path[3];
         if (request.method == 'GET') {
           getStates.add(tx);
-          output = {r'$id': tx, 'status': states[tx]};
+          output = {r'$id': tx, 'status': terminalStatusOverride ?? states[tx]};
         } else if (body?['rollback'] == true) {
           if (states[tx] != 'pending') throw const RestException(409);
           await memory.finishTransaction(tx, commit: false);
@@ -232,6 +234,12 @@ class LocalDatabase {
             transactionId: tx,
           );
         } else if (request.method == 'PATCH') {
+          if (failStagedWorkspaceUpdate &&
+              table == 'workspaces' &&
+              tx != null) {
+            failStagedWorkspaceUpdate = false;
+            throw const RestException(409);
+          }
           output = await memory.update(
             table,
             rowId!,
@@ -924,38 +932,28 @@ void main() {
       );
     },
   );
-  test(
-    'remix and reads remain opted out despite typed confirmed abort',
-    () async {
-      for (final op in ['spec.getApp', 'spec.remix']) {
-        final f = await LocalDatabase.create();
-        addTearDown(f.close);
-        await f.setup();
-        final version = f.memory.rows['spec_versions']!.values.firstWhere(
-          (row) => row['appId'] == 'app-one',
-        )[r'$id'];
-        final before = f.commits.length;
-        f.forcedAborts = 1;
-        await expectLater(
-          f.service.execute(
-            'alice',
-            op == 'spec.getApp'
-                ? {'op': op, 'appId': 'app-one'}
-                : {
-                    'op': op,
-                    'id': 'remix',
-                    'workspaceId': 'ws',
-                    'sourceAppId': 'app-one',
-                    'sourceVersionId': version,
-                    'operationId': 'remix',
-                  },
-          ),
-          throwsA(isA<ServiceException>()),
-        );
-        expect(f.commits.length - before, 1);
-        expect(f.memory.rows['apps']?['remix'], isNull);
-        expect(f.memory.rows['apps']!['app-one']!['archived'], false);
-      }
-    },
-  );
+  test('remix remains opted out despite typed confirmed abort', () async {
+    final f = await LocalDatabase.create();
+    addTearDown(f.close);
+    await f.setup();
+    final version = f.memory.rows['spec_versions']!.values.firstWhere(
+      (row) => row['appId'] == 'app-one',
+    )[r'$id'];
+    final before = f.commits.length;
+    f.forcedAborts = 1;
+    await expectLater(
+      f.service.execute('alice', {
+        'op': 'spec.remix',
+        'id': 'remix',
+        'workspaceId': 'ws',
+        'sourceAppId': 'app-one',
+        'sourceVersionId': version,
+        'operationId': 'remix',
+      }),
+      throwsA(isA<ServiceException>()),
+    );
+    expect(f.commits.length - before, 1);
+    expect(f.memory.rows['apps']?['remix'], isNull);
+    expect(f.memory.rows['apps']!['app-one']!['archived'], false);
+  });
 }

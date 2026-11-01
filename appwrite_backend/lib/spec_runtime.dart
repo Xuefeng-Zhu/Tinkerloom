@@ -189,6 +189,9 @@ extension _SpecRuntime on PlatformService {
     _specEngine(initial);
     // A committed guard update makes multi-page reads conflict rather than
     // return a mixed authorized snapshot after a concurrent supported write.
+    // All read callbacks must stay transaction-local: no provider, Storage,
+    // wakeup or other external side effects may run inside this closure. Only
+    // a verified terminal abort can start a fresh authorized snapshot.
     return _transaction((tx) async {
       final access = await _stageAccess(actor, initial, tx);
       _specEngine(access);
@@ -196,7 +199,7 @@ extension _SpecRuntime on PlatformService {
       if (utf8.encode(jsonEncode(response)).length > _specResponseBytes)
         throw const ServiceException('response_too_large', 413);
       return response;
-    });
+    }, retryConfirmedAborts: true);
   }
 
   List<String> _selected(Object? value, int maximum, {bool records = false}) {
