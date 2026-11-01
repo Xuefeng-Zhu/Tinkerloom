@@ -8,6 +8,7 @@ import 'package:crypto/crypto.dart';
 import 'package:image/image.dart' as image;
 
 import '../lib/service.dart';
+import '../lib/providers/runtime_limits.dart' as limits;
 import 'memory_store.dart';
 import 'spec_engine_check.dart' as engine;
 
@@ -54,6 +55,23 @@ class Files implements PrivateFileStore {
 
 /// Counts physical staged creates/updates, including repeated writes to one row.
 /// This models the Free 100-operation budget; it is not an Appwrite receipt.
+/// Local optimistic version conflicts are known to abort in this simulator.
+/// Do not equate an arbitrary live 409 with a confirmed Appwrite abort.
+class TerminalMediaStore extends MemoryStore {
+  @override
+  Future<void> finishTransaction(String id, {required bool commit}) async {
+    try {
+      await super.finishTransaction(id, commit: commit);
+    } on RestException catch (error) {
+      if (commit && error.status == 409 && transactions.containsKey(id)) {
+        await super.finishTransaction(id, commit: false);
+        throw const ConfirmedTransactionAbort();
+      }
+      rethrow;
+    }
+  }
+}
+
 class BudgetStore extends MemoryStore {
   final operations = <String, int>{};
   int peak = 0;
@@ -634,7 +652,7 @@ Future<int> runMediaChecks() async {
   await test(
     'distributed image admission permits two actors but only one concurrent decode per actor',
     () async {
-      final f = Fixture();
+      final f = Fixture(memory: TerminalMediaStore());
       await f.setup();
       await engine.join(f.api, 'bob', 2, role: 'builder');
       await engine.join(f.api, 'carol', 3, role: 'builder');
@@ -1215,7 +1233,7 @@ Future<int> runMediaChecks() async {
       await f.complete(id);
       f.files.beforePut = (_) async {
         f.files.beforePut = null;
-        f.now = f.now.add(const Duration(minutes: 3));
+        f.now = f.now.add(limits.workerMediaLease + const Duration(seconds: 1));
       };
       await engine.error(() => f.api.processMedia(id), 'media_state_conflict');
       check(

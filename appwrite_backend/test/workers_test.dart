@@ -78,6 +78,85 @@ class Wakeups implements WorkerWakeups {
   }
 }
 
+class EarlyWakeups extends Wakeups {
+  late WorkerEngine worker;
+  late MemoryStore store;
+  late Future<void> started;
+  Future<Row>? running;
+  bool failAfterStart = false;
+  @override
+  Future<String> schedule({
+    required String dispatchId,
+    required String proof,
+    required DateTime at,
+  }) async {
+    calls.add({'id': dispatchId, 'proof': proof, 'at': at.toIso8601String()});
+    if (store.rows['worker_dispatches']![dispatchId]!['mode'] != 'generation') {
+      return 'other-execution';
+    }
+    running ??= worker.dispatch(dispatchId, proof);
+    await started;
+    if (failAfterStart) throw StateError('Synthetic lost scheduler reply');
+    return 'synthetic-execution';
+  }
+}
+
+/// This in-memory store can prove a version conflict aborted, unlike a
+/// status-only Appwrite 409. Promote only that locally confirmed failure.
+class TerminalConflictStore extends MemoryStore {
+  @override
+  Future<void> finishTransaction(String id, {required bool commit}) async {
+    try {
+      await super.finishTransaction(id, commit: commit);
+    } on RestException catch (error) {
+      if (commit && error.status == 409 && transactions.containsKey(id)) {
+        await super.finishTransaction(id, commit: false);
+        throw const ConfirmedTransactionAbort();
+      }
+      rethrow;
+    }
+  }
+}
+
+/// Injects a response-loss-style conflict after a worker dispatch claim was
+/// committed, or a terminal confirmed abort before commit. This is offline.
+class DispatchClaimOutcomeStore extends MemoryStore {
+  bool armed = false;
+  bool confirmedAbort = false;
+  int claimCommits = 0;
+  final claimTransactions = <String>{};
+  @override
+  Future<Row> update(
+    String table,
+    String id,
+    Row data, {
+    String? transactionId,
+  }) async {
+    if (armed &&
+        table == 'worker_dispatches' &&
+        data['status'] == 'running' &&
+        transactionId != null) {
+      claimTransactions.add(transactionId);
+    }
+    return super.update(table, id, data, transactionId: transactionId);
+  }
+
+  @override
+  Future<void> finishTransaction(String id, {required bool commit}) async {
+    if (commit && claimTransactions.remove(id)) {
+      claimCommits++;
+      armed = false;
+      if (confirmedAbort) {
+        await super.finishTransaction(id, commit: false);
+        throw const ConfirmedTransactionAbort();
+      }
+      await super.finishTransaction(id, commit: true);
+      throw const RestException(409);
+    }
+    return super.finishTransaction(id, commit: commit);
+  }
+}
+
 class CountingStore extends MemoryStore {
   final counts = <String, int>{};
   int largest = 0;
@@ -721,13 +800,16 @@ void main() {
             started.complete();
             return gate.future;
           };
-        final f = await fixture(provider: provider);
+        final f = await fixture(
+          store: TerminalConflictStore(),
+          provider: provider,
+        );
         final job =
             ((await f.generation())['generation'] as Row)['id'] as String;
         final old = f.worker.generate(job);
         await started.future;
         f.store.rows['generation_jobs']![job]!['status'] = stage;
-        f.clock.advance(121);
+        f.clock.advance(limits.workerGenerationLease.inSeconds + 1);
         provider.paused = null;
         provider.answers.add(answer(ai.creationReferenceJson));
         final dispatchCount = f.store.rows['worker_dispatches']?.length ?? 0;
@@ -963,6 +1045,148 @@ void main() {
     },
   );
   test(
+    'early running claim cannot be overwritten by scheduler completion',
+    () async {
+      for (final failScheduler in [false, true]) {
+        final gate = Completer<ai.AiResult>();
+        final started = Completer<void>();
+        final provider = ScriptProvider()
+          ..paused = () {
+            started.complete();
+            return gate.future;
+          };
+        final wakeups = EarlyWakeups()
+          ..started = started.future
+          ..failAfterStart = failScheduler;
+        final f = await fixture(provider: provider, wakeups: wakeups);
+        wakeups.worker = f.worker;
+        wakeups.store = f.store;
+        await f.generation().timeout(const Duration(seconds: 3));
+        final call = wakeups.calls.firstWhere(
+          (c) =>
+              f.store.rows['worker_dispatches']![c['id']]!['mode'] ==
+              'generation',
+        );
+        expect(
+          f.store.rows['worker_dispatches']![call['id']]!['status'],
+          'running',
+        );
+        gate.complete(answer(ai.creationReferenceJson));
+        await wakeups.running!.timeout(const Duration(seconds: 3));
+        expect(
+          f.store.rows['worker_dispatches']![call['id']]!['status'],
+          'delivered',
+        );
+        expect(provider.calls.length, 1);
+      }
+    },
+  );
+  test(
+    'all provider configurations use the runtime-sized generation lease',
+    () async {
+      final gate = Completer<ai.AiResult>();
+      final started = Completer<void>();
+      final provider = ScriptProvider()
+        ..paused = () {
+          started.complete();
+          return gate.future;
+        };
+      final f = await fixture(provider: provider);
+      final job = ((await f.generation())['generation'] as Row)['id'] as String;
+      final first = f.worker.generate(job);
+      await started.future;
+      expect(
+        DateTime.parse(
+          f.store.rows['generation_jobs']![job]!['leaseUntil'] as String,
+        ).difference(f.clock.value),
+        limits.workerGenerationLease,
+      );
+      gate.complete(answer(ai.creationReferenceJson));
+      await first;
+      // Enqueue with a configured provider, then emulate a worker whose provider
+      // configuration has been removed before it claims the queued work.
+      final other = await fixture(provider: ScriptProvider());
+      final otherJob =
+          ((await other.generation())['generation'] as Row)['id'] as String;
+      await WorkerEngine(
+        PlatformService(other.store, clock: other.clock.call),
+      ).generate(otherJob);
+      final lease = other.store.rows['worker_leases']!.values.single;
+      expect(
+        DateTime.parse(
+          lease['leaseUntil'] as String,
+        ).difference(other.clock.value),
+        limits.workerGenerationLease,
+      );
+      expect(
+        other.store.rows['generation_jobs']![otherJob]!['failureCategory'],
+        'provider_unavailable',
+      );
+    },
+  );
+  test(
+    'unknown committed dispatch claim is never retried as an abort',
+    () async {
+      final store = DispatchClaimOutcomeStore();
+      final provider = ScriptProvider()
+        ..answers.add(answer(ai.creationReferenceJson));
+      final wakeups = Wakeups();
+      final f = await fixture(
+        store: store,
+        provider: provider,
+        wakeups: wakeups,
+      );
+      final job = ((await f.generation())['generation'] as Row)['id'] as String;
+      final call = wakeups.calls.singleWhere(
+        (c) => f.store.rows['worker_dispatches']![c['id']]!['targetId'] == job,
+      );
+      store.armed = true;
+      await expectLater(
+        f.worker.dispatch(call['id'] as String, call['proof'] as String),
+        throwsA(
+          isA<ServiceException>().having(
+            (e) => e.code,
+            'code',
+            'transaction_conflict',
+          ),
+        ),
+      );
+      expect(store.claimCommits, 1);
+      expect(provider.calls, isEmpty);
+      expect(
+        store.rows['worker_dispatches']![call['id']]!['status'],
+        'running',
+      );
+      expect(store.rows['generation_jobs']![job]!['status'], 'queued');
+    },
+  );
+  test(
+    'a confirmed terminal dispatch abort may retry its DB-only claim',
+    () async {
+      final store = DispatchClaimOutcomeStore()..confirmedAbort = true;
+      final provider = ScriptProvider()
+        ..answers.add(answer(ai.creationReferenceJson));
+      final wakeups = Wakeups();
+      final f = await fixture(
+        store: store,
+        provider: provider,
+        wakeups: wakeups,
+      );
+      final job = ((await f.generation())['generation'] as Row)['id'] as String;
+      final call = wakeups.calls.singleWhere(
+        (c) => f.store.rows['worker_dispatches']![c['id']]!['targetId'] == job,
+      );
+      store.armed = true;
+      await f.worker.dispatch(call['id'] as String, call['proof'] as String);
+      expect(store.claimCommits, 1);
+      expect(provider.calls.length, 1);
+      expect(
+        store.rows['worker_dispatches']![call['id']]!['status'],
+        'delivered',
+      );
+    },
+  );
+  test(
     'GLM generation and dispatch leases fence expired requests without replay',
     () async {
       final response = Completer<http.Response>();
@@ -1014,7 +1238,15 @@ void main() {
       );
       await f.worker.generate(job);
       expect(requests, 1);
+      // A request that outlives the previous 280-second lease is still
+      // protected by the extended GLM lease. It must not be replayed.
       f.clock.advance(160);
+      await f.worker.generate(job);
+      expect(requests, 1);
+      expect(f.store.rows['generation_jobs']![job]!['status'], 'generating');
+      // Once the coordinated 550-second lease has actually expired, fail
+      // closed with an indeterminate outcome instead of starting another call.
+      f.clock.advance(270);
       await f.worker.generate(job);
       expect(
         f.store.rows['generation_jobs']![job]!['failureCategory'],
@@ -1394,7 +1626,10 @@ void main() {
           signals[gates.length - 1].complete();
           return gate.future;
         };
-      final f = await fixture(provider: provider);
+      final f = await fixture(
+        store: TerminalConflictStore(),
+        provider: provider,
+      );
       await f.save(spec.starterTemplates()['reading']!, 0, null, 'd');
       final v = await f.publish(1, null, 'p');
       await base.join(f.service, 'bob', 41, role: 'builder');

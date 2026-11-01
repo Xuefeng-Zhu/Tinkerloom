@@ -15,7 +15,7 @@ const config = {
   origin: "http://localhost:8426",
   timeoutMs: 1000,
 };
-async function harness(t, { race = false, revoke = false } = {}) {
+async function harness(t, { race = false, revoke = false, unconfirmed = true } = {}) {
   const child = spawn(
     process.env.TINKERLOOM_TEST_DART ?? "dart",
     ["--suppress-analytics", "run", "test/full_read_retry_bridge.dart"],
@@ -79,7 +79,7 @@ async function harness(t, { race = false, revoke = false } = {}) {
         const result = await rpc({
           actor,
           input,
-          ...(arm ? { raceRead: true, revokeAfterRace: revoke } : {}),
+          ...(arm ? { raceRead: true, revokeAfterRace: revoke, unconfirmedRead: unconfirmed } : {}),
         });
         evidence.push({ op: input.op, ...result.localEvidence });
         return new Response(
@@ -102,8 +102,8 @@ async function harness(t, { race = false, revoke = false } = {}) {
     builder: client("bob"),
   };
 }
-async function phase(t, { race, recover }) {
-  const f = await harness(t, { race });
+async function phase(t, { race, recover, unconfirmed = true }) {
+  const f = await harness(t, { race, unconfirmed });
   let assertions = 0,
     conflicts = 0,
     retries = 0;
@@ -192,7 +192,7 @@ async function phase(t, { race, recover }) {
   return { f, assertions, conflicts, retries, failure };
 }
 test(
-  "actual worker versus private-author read recreates failure at logical assertion21 without client read recovery",
+  "unconfirmed worker-versus-read conflict recreates assertion21 failure without client read recovery",
   { timeout: 60000 },
   async (t) => {
     const observed = await phase(t, { race: true, recover: false });
@@ -202,11 +202,13 @@ test(
     const read = observed.f.evidence.at(-1);
     assert.equal(read.op, "spec.getApp");
     assert.equal(read.newFailedTransactions, 1);
+    assert.equal(read.newCommitAttempts, 1);
+    assert.equal(read.newTerminalLookups, 1);
     assert.deepEqual(read.businessAfter, read.businessBefore);
   },
 );
 test(
-  "same actual worker race recovers one identical read with healthy logical assertions/privacy and no new business receipt/audit/outbox",
+  "unconfirmed worker race recovers one identical client read with privacy and no duplicate business state",
   { timeout: 90000 },
   async (t) => {
     const healthy = await phase(t, { race: false, recover: true });
@@ -227,6 +229,31 @@ test(
       (e) => e.op === "spec.getApp",
     ))
       assert.deepEqual(read.businessAfter, read.businessBefore);
+    const conflicted = recovered.f.evidence.find((e) => e.op === "spec.getApp");
+    assert.equal(conflicted.newFailedTransactions, 1);
+    assert.equal(conflicted.newCommitAttempts, 1);
+    assert.equal(conflicted.newTerminalLookups, 1);
+  },
+);
+test(
+  "confirmed worker-versus-read abort recovers server-side without a client retry",
+  { timeout: 90000 },
+  async (t) => {
+    const healthy = await phase(t, { race: false, recover: true });
+    const recovered = await phase(t, { race: true, recover: true, unconfirmed: false });
+    assert.equal(healthy.failure, null);
+    assert.equal(recovered.failure, null);
+    assert.equal(healthy.assertions, 29);
+    assert.equal(recovered.assertions, 29);
+    assert.equal(recovered.conflicts, 0);
+    assert.equal(recovered.retries, 0);
+    assert.equal(recovered.f.budget.used, healthy.f.budget.used);
+    assert.equal(recovered.f.calls.filter((c) => c.actor === "alice" && c.input.op === "spec.getApp").length, 1);
+    const read = recovered.f.evidence.find((e) => e.op === "spec.getApp");
+    assert.equal(read.newFailedTransactions, 1);
+    assert.equal(read.newCommitAttempts, 2);
+    assert.equal(read.newTerminalLookups, 1);
+    assert.deepEqual(read.businessAfter, read.businessBefore);
   },
 );
 test(
@@ -252,5 +279,9 @@ test(
     assert.equal(retries, 1);
     assert.equal(f.budget.used, 2);
     assert.equal(f.calls.length, 2);
+    assert.equal(f.calls[0].body, f.calls[1].body);
+    assert.equal(f.evidence[0].newFailedTransactions, 1);
+    assert.equal(f.evidence[0].newCommitAttempts, 1);
+    assert.equal(f.evidence[0].newTerminalLookups, 1);
   },
 );

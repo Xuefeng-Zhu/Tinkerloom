@@ -106,12 +106,12 @@ downsampling to edge 384. Alpha uses PNG; opaque output uses JPEG quality 85,
 with further bounded shrinking when encoded output exceeds its limit.
 
 Durable processing admission allows at most two active image jobs project-wide
-and one per actor, independent of containers. Two-minute tokenized leases renew
-around I/O and processing. The final transaction checks the exact lease token,
+and one per actor, independent of containers. Client chunk-upload leases last two minutes. Worker tokenized leases last 550
+seconds and renew around I/O and processing. The final transaction checks the exact lease token,
 deadline and current upload authority before committing dimensions, hashes,
 charged bytes, `ready`, and atomic audit/outbox data. A stale execution can leave
 only unreachable deterministic output for cleanup. Trusted maintenance retries
-only confirmed optimistic transaction conflicts, at most four attempts; unknown
+only confirmed terminal transaction aborts, at most three attempts; unknown
 commit/transport results and external I/O are not automatically replayed there.
 
 Each private candidate, immutable version, or record owns one atomic set of

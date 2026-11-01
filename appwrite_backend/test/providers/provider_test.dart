@@ -3742,7 +3742,14 @@ void main() {
       );
       expect(glm.usesExtendedGlmDeadline, isTrue);
       expect(glm.generationDeadline, limits.glmProviderDeadline);
-      expect(limits.glmProviderDeadline, const Duration(seconds: 210));
+      expect(limits.glmProviderDeadline, const Duration(seconds: 480));
+      expect(limits.glmWorkerRuntime, const Duration(seconds: 540));
+      expect(limits.glmGenerationLease, const Duration(seconds: 550));
+      expect(limits.glmDispatchLease, const Duration(seconds: 560));
+      expect(
+        limits.glmWorkerRuntime,
+        lessThanOrEqualTo(const Duration(seconds: 900)),
+      );
       expect(limits.glmWorkerRuntime, greaterThan(limits.glmProviderDeadline));
       expect(limits.glmGenerationLease, greaterThan(limits.glmWorkerRuntime));
       expect(limits.glmDispatchLease, greaterThan(limits.glmGenerationLease));

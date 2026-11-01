@@ -642,15 +642,8 @@ extension PrivateMedia on PlatformService {
 
   // Trusted maintenance may retry a confirmed optimistic conflict. Never retry
   // an unknown transport/commit result or replay external Storage work here.
-  Future<T> _mediaTransaction<T>(Future<T> Function(String) action) async {
-    for (var attempt = 0; ; attempt++) {
-      try {
-        return await _transaction(action);
-      } on ServiceException catch (error) {
-        if (error.code != 'transaction_conflict' || attempt >= 3) rethrow;
-      }
-    }
-  }
+  Future<T> _mediaTransaction<T>(Future<T> Function(String) action) =>
+      _transaction(action, retryConfirmedAborts: true);
 
   Future<void> _mediaRelease(String assetId, String token) async {
     try {
@@ -703,7 +696,7 @@ extension PrivateMedia on PlatformService {
       final token = _nonce(),
           until = clock()
               .toUtc()
-              .add(MediaLimits.leaseLifetime)
+              .add(limits.workerMediaLease)
               .toIso8601String();
       slots.add({
         'actorId': actor,
@@ -754,7 +747,7 @@ extension PrivateMedia on PlatformService {
         throw const ServiceException('media_state_conflict', 409);
       final until = clock()
           .toUtc()
-          .add(MediaLimits.leaseLifetime)
+          .add(limits.workerMediaLease)
           .toIso8601String();
       slot['until'] = until;
       await store.update('media_quotas', 'global', {
@@ -903,7 +896,9 @@ extension PrivateMedia on PlatformService {
         );
         if (row == null ||
             row['status'] != 'processing' ||
-            row['leaseToken'] != lease['leaseToken'])
+            row['leaseToken'] != lease['leaseToken'] ||
+            row['leaseUntil'] == null ||
+            !_mediaDate(row['leaseUntil']).isAfter(clock().toUtc()))
           return;
         await store.update('media_assets', row[r'$id'] as String, {
           'status': 'failed',
@@ -1059,7 +1054,7 @@ extension PrivateMedia on PlatformService {
           'leaseToken': token,
           'leaseUntil': clock()
               .toUtc()
-              .add(MediaLimits.leaseLifetime)
+              .add(limits.workerMediaLease)
               .toIso8601String(),
         }, transactionId: tx);
       });
@@ -1078,15 +1073,17 @@ extension PrivateMedia on PlatformService {
           await _mediaRelease(id, token);
           continue;
         }
-        await _mediaTransaction((tx) async {
+        final finalized = await _mediaTransaction<bool>((tx) async {
           await store.update('apps', deleting['appId'] as String, {
             'guard': _nonce(),
           }, transactionId: tx);
           final row = await store.get('media_assets', id, transactionId: tx);
           if (row == null ||
               row['status'] != 'deleting' ||
-              row['leaseToken'] != token)
-            return;
+              row['leaseToken'] != token ||
+              row['leaseUntil'] == null ||
+              !_mediaDate(row['leaseUntil']).isAfter(clock().toUtc()))
+            return false;
           if ((row['storedBytes'] as int) > 0)
             await _mediaUsage(
               row['appId'] as String,
@@ -1101,8 +1098,9 @@ extension PrivateMedia on PlatformService {
             'leaseUntil': null,
             'updatedAt': _mediaTime(),
           }, transactionId: tx);
+          return true;
         });
-        removed++;
+        if (finalized) removed++;
       } catch (_) {
         await _mediaRelease(id, token);
       }

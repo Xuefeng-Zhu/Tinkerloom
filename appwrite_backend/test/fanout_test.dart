@@ -93,8 +93,9 @@ class RpcStore implements RowStore {
 Future<(workers.Fixture, RpcStore, String)> fixture(
   int participants, {
   bool otherOwner = false,
+  MemoryStore? memory,
 }) async {
-  final store = MemoryStore(), clock = workers.Clock();
+  final store = memory ?? MemoryStore(), clock = workers.Clock();
   final rpc = RpcStore(store);
   final service = PlatformService(
     rpc,
@@ -403,7 +404,10 @@ void main() {
   test(
     'a grant revocation during batch insertion conflicts, retries authorization and cannot deliver to revoked actor',
     () async {
-      final (f, rpc, _) = await fixture(16);
+      final (f, rpc, _) = await fixture(
+        16,
+        memory: workers.TerminalConflictStore(),
+      );
       final started = Completer<void>(), release = Completer<void>();
       var blocked = false;
       rpc.beforeBatch = () async {

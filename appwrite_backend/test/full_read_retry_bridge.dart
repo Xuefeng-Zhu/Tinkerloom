@@ -110,6 +110,10 @@ Future<void> main() async {
         };
         final failedBefore = f.states.values.where((s) => s == 'failed').length;
         Row result;
+        int? readCommitStart,
+            readLookupStart,
+            readCommitAttempts,
+            readTerminalLookups;
         if (envelope['raceRead'] == true) {
           if (input['op'] != 'spec.getApp') throw const FormatException();
           f.memory.arm();
@@ -118,9 +122,24 @@ Future<void> main() async {
           try {
             await WorkerEngine(api).reminders();
           } finally {
+            // Observe only the raced read after the Worker has finished, so
+            // the counts exclude the Worker's own committed transactions.
+            readCommitStart = f.commits.length;
+            readLookupStart = f.getStates.length;
+            if (envelope['unconfirmedRead'] == true) {
+              // The provider's terminal lookup cannot confirm that the 409
+              // aborted. The server must return it to the client unchanged.
+              f.terminalStatusOverride = 'pending';
+            }
             f.memory.resume!.complete();
           }
-          result = await pending;
+          try {
+            result = await pending;
+          } finally {
+            f.terminalStatusOverride = null;
+            readCommitAttempts = f.commits.length - readCommitStart;
+            readTerminalLookups = f.getStates.length - readLookupStart;
+          }
           if (envelope['revokeAfterRace'] == true) {
             final grant = f.memory.rows['grants']!.values.singleWhere(
               (g) => g['actorId'] == actor,
@@ -150,6 +169,10 @@ Future<void> main() async {
               'newFailedTransactions':
                   f.states.values.where((s) => s == 'failed').length -
                   failedBefore,
+              if (readCommitAttempts != null)
+                'newCommitAttempts': readCommitAttempts,
+              if (readTerminalLookups != null)
+                'newTerminalLookups': readTerminalLookups,
             },
           }),
         );

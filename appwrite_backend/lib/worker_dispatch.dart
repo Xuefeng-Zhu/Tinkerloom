@@ -166,13 +166,12 @@ extension _WorkerDispatch on PlatformService {
         return null;
       return store.update('worker_dispatches', id, {
         'status': 'running',
+        // A reclaimed dispatch needs a distinct owner even when the scheduled
+        // proof remains the same; an older execution must not finalize it.
+        'generation': (row['generation'] as int) + 1,
         'leaseUntil': clock()
             .toUtc()
-            .add(
-              row['mode'] == 'generation' && _extendedGlmGeneration
-                  ? limits.glmDispatchLease
-                  : const Duration(seconds: 130),
-            )
+            .add(limits.workerDispatchLease)
             .toIso8601String(),
       }, transactionId: tx);
     });
@@ -248,6 +247,7 @@ extension _WorkerDispatch on PlatformService {
         );
         if (current == null ||
             current['proofHash'] != hash ||
+            current['generation'] != claim['generation'] ||
             current['status'] != 'running')
           return;
         await store.update('worker_dispatches', id, {
