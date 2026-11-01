@@ -851,6 +851,7 @@ NestError _failure(String code, int status) {
         'AI is not configured. Use templates or manual editing.',
       'generation_pending' =>
         'Finish or resolve the current generation before publishing.',
+      'creation_intent_mismatch' => 'Refresh Tinkerloom to load the latest version, then reopen this new-app draft.',
       'invalid_values' => 'Check the submitted field values.',
       _ => 'The request could not be completed ($code).',
     },

@@ -73,6 +73,12 @@ extension _SpecRuntime on PlatformService {
         ? null
         : await _specVersion(access, currentId, tx);
     final draft = access.builder ? await _specDraft(actor, access, tx) : null;
+    final generationState = await _generationStateForApp(
+      actor,
+      access,
+      tx,
+      draft: draft,
+    );
     final allowedActions =
         version?.definition.actions
             .where((action) => _specAllowed(access, version.definition, action))
@@ -86,7 +92,7 @@ extension _SpecRuntime on PlatformService {
         'writeRecords': allowedActions.isNotEmpty,
       },
       'allowedActions': allowedActions,
-      'generation': await _generationForApp(actor, access, tx),
+      'generation': generationState.generation,
       'controlRevision': _storedRevision(access.app, 'controlRevision'),
       'version': version == null
           ? null
@@ -103,6 +109,7 @@ extension _SpecRuntime on PlatformService {
               'baseVersionId': draft['baseVersionId'],
               'candidateHash': draft['candidateHash'],
               'publishedVersionId': draft['publishedVersionId'],
+              'creationIntent': generationState.creationIntent,
               'spec': spec.AppSpec.parse(draft['specJson'] as String).toJson(),
             },
     };
@@ -326,7 +333,13 @@ extension _SpecRuntime on PlatformService {
       'expectedRevision',
       'expectedVersionId',
       'spec',
+      'creationIntent',
     });
+    if (input.containsKey('creationIntent') &&
+        input['creationIntent'] != true) {
+      throw const ServiceException('invalid_request', 400);
+    }
+    final creationIntent = input['creationIntent'] == true;
     final revision = _revision(input['expectedRevision']);
     if (!input.containsKey('expectedVersionId'))
       throw const ServiceException('invalid_request', 400);
@@ -348,6 +361,10 @@ extension _SpecRuntime on PlatformService {
           throw const ServiceException('revision_conflict', 409);
         if (access.app['specVersionId'] != base)
           throw const ServiceException('definition_conflict', 409);
+        if (creationIntent &&
+            (draft != null || revision != 0 || base != null)) {
+          throw const ServiceException('invalid_request', 400);
+        }
         await _manualSupersede(actor, access, tx);
         final id = _identity('s', [access.app[r'$id'] as String, actor]);
         final data = <String, dynamic>{
@@ -355,6 +372,10 @@ extension _SpecRuntime on PlatformService {
           'appId': access.app[r'$id'],
           'actorId': actor,
           'revision': revision + 1,
+          // Tied to the exact placeholder revision. Older Core deployments
+          // ignore this optional column; their manual saves advance revision,
+          // making the old intent harmless when the new Core returns.
+          'creationIntentRevision': creationIntent ? revision + 1 : null,
           'baseVersionId': base,
           'candidateHash': candidate.hash,
           'publishedVersionId': null,
@@ -411,8 +432,15 @@ extension _SpecRuntime on PlatformService {
         throw const ServiceException('revision_conflict', 409);
       if (draft['publishedVersionId'] != null)
         throw const ServiceException('definition_conflict', 409);
-      final generation = await _generationForApp(actor, access, tx);
-      if (generation != null && generation['status'] != 'preview ready')
+      final generationState = await _generationStateForApp(
+        actor,
+        access,
+        tx,
+        draft: draft,
+      );
+      final generation = generationState.generation;
+      if (generationState.creationIntent ||
+          generation != null && generation['status'] != 'preview ready')
         throw const ServiceException('generation_pending', 409);
       final candidate = spec.AppSpec.parse(draft['specJson'] as String);
       await _validateMedia(actor, access, _definitionImages(candidate), tx);
@@ -476,8 +504,15 @@ extension _SpecRuntime on PlatformService {
           throw const ServiceException('revision_conflict', 409);
         if (draft['publishedVersionId'] != null)
           throw const ServiceException('definition_conflict', 409);
-        final generation = await _generationForApp(actor, access, tx);
-        if (generation != null && generation['status'] != 'preview ready')
+        final generationState = await _generationStateForApp(
+          actor,
+          access,
+          tx,
+          draft: draft,
+        );
+        final generation = generationState.generation;
+        if (generationState.creationIntent ||
+            generation != null && generation['status'] != 'preview ready')
           throw const ServiceException('generation_pending', 409);
         if (access.app['specVersionId'] != base ||
             draft['baseVersionId'] != base ||

@@ -17,6 +17,8 @@ The backend is written in Dart. The Function runtime and backend checks use **Da
 
 `schema.json` describes the required schema; it does not create or update Appwrite resources by itself. Its tables are configured with row security and empty client permissions. Keep direct table and private-file access restricted to the backend, and use the trusted service for application operations.
 
+The optional `spec_drafts.creationIntentRevision` column preserves creation intent when a new AI draft is reopened. Add this column before deploying the updated Worker and Core Functions, then deploy the updated client. Keep the column during rollback: older Functions ignore it, and a later manual save advances the draft revision so stale intent does not apply when the updated Core returns. Older Core deployments cannot enforce the new generation or publication guards and can publish a pending placeholder. Do not route clients to an older Core while marked creations are pending; reconcile those drafts first. Coordinate client rollback, and do not assume older Core preserves creation intent. Legacy drafts without the column value resume as edits.
+
 ## Security and consistency
 
 The Core Function requires an Appwrite user JWT and verifies the account before dispatching an operation. Workspace membership, app grants and action permissions are checked server-side. Deploy the Worker with no public execute permission or public domain. It validates its trigger and execution identity before processing private work.

@@ -600,7 +600,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       }
       if (generate && !alreadyAccepted) {
         if (pending == null || pending.workspaceId != selectedWorkspace) {
-          d = await client.builder.begin(selectedWorkspace, templateKey, null);
+          d = await client.builder.begin(
+            selectedWorkspace,
+            templateKey,
+            null,
+            creationIntent: true,
+          );
         }
       }
       if (!generate) {
@@ -723,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         draft,
         app.workspaceId,
         initialPrompt: draft.latestRequest,
-        trackCreation: draft.latestRequest != null,
+        trackCreation: draft.creationIntent,
       );
       await load();
     } catch (e) {

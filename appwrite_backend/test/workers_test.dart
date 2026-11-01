@@ -756,6 +756,60 @@ void main() {
     },
   );
   test(
+    'unsupported outcomes give safe mode-aware guidance without retaining provider text',
+    () async {
+      const secret =
+          'private-model-reason https://example.test/key?token=secret';
+      for (final editing in [false, true]) {
+        final provider = ScriptProvider()
+          ..answers.add(answer(jsonEncode({'unsupported': secret})));
+        final f = await fixture(provider: provider);
+        final previous = spec.starterTemplates()['reading']!;
+        if (editing) await f.save(previous, 0, null, 'draft');
+        final queued = await f.generation(
+          revision: editing ? 1 : 0,
+          fresh: !editing,
+        );
+        final job = (queued['generation'] as Row)['id'] as String;
+        await f.worker.generate(job);
+        final stored = f.store.rows['generation_jobs']![job]!;
+        expect(stored['status'], 'failed');
+        expect(stored['mode'], editing ? 'edit' : 'create');
+        expect(stored['failureCategory'], 'unsupported');
+        expect(stored['attempts'], 1);
+        expect(stored['repairJson'], isNull);
+        expect(
+          stored['diagnostics'],
+          editing
+              ? 'The AI reported that it could not complete this request. Edits preserve existing collections and fields. To build a different app, start a new app.'
+              : 'The AI reported that it could not complete this request.',
+        );
+        expect(jsonEncode(stored), isNot(contains(secret)));
+        final public = await f.service.execute('alice', {
+          'op': 'spec.getGeneration',
+          'appId': 'app',
+          'jobId': job,
+        });
+        expect(jsonEncode(public), isNot(contains(secret)));
+        expect(
+          (public['generation'] as Row)['diagnostics'],
+          stored['diagnostics'],
+        );
+        if (editing) {
+          expect(
+            f.store.rows['spec_drafts']!.values.single['candidateHash'],
+            previous.hash,
+          );
+        } else {
+          expect(f.store.rows['spec_drafts'], isNull);
+        }
+        f.clock.advance();
+        await f.worker.generate(job);
+        expect(provider.calls, hasLength(1));
+      }
+    },
+  );
+  test(
     'failed edit can retain its last valid candidate but cannot be published before explicit keepPrevious',
     () async {
       final provider = ScriptProvider()

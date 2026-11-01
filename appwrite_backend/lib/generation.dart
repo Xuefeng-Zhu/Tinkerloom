@@ -49,6 +49,18 @@ extension _GenerationRuntime on PlatformService {
           sessionId,
           transactionId: tx,
         );
+        final generationState = await _generationStateForApp(
+          actor,
+          access,
+          tx,
+          draft: prior,
+          loadedSession: session,
+          sessionWasLoaded: true,
+        );
+        if (generationState.creationIntent &&
+            input['startFromScratch'] != true) {
+          throw const ServiceException('creation_intent_mismatch', 409);
+        }
         final editing =
             baseId != null ||
             input['startFromScratch'] == false ||
@@ -382,9 +394,11 @@ extension _GenerationRuntime on PlatformService {
       if (!validLease) return;
       final output = ai.parseAiOutput(result.text);
       if (output['unsupported'] is String)
-        throw const ai.AiResponseException(
+        throw ai.AiResponseException(
           'unsupported',
-          'Requested capability is unavailable. Choose supported features.',
+          job['mode'] == 'edit'
+              ? 'The AI reported that it could not complete this request. Edits preserve existing collections and fields. To build a different app, start a new app.'
+              : 'The AI reported that it could not complete this request.',
           retryable: false,
         );
       if (job['mode'] == 'edit') {

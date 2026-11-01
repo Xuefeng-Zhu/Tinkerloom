@@ -39,16 +39,62 @@ void main() {
   }
 
   test(
-    'unsupported feature asks to adjust features without blaming complexity',
+    'model-declared unsupported does not assert a platform limitation',
     () {
       expect(
         builderFailureMessage([
           'This requested capability is unavailable.',
         ], hasPreview: false),
-        'This request needs a feature Tinkerloom doesn’t support yet. Adjust the requested features, then try again.',
+        'The AI reported that it could not complete this request. Try adjusting the request.',
       );
     },
   );
+
+  test('unsupported edit shows only fixed safe preservation guidance', () {
+    expect(
+      builderFailureMessage(
+        [
+          'Requested capability is unavailable. Edits preserve existing collections and fields. To build a different app, start a new app.',
+          'Untrusted model text must never appear.',
+        ],
+        hasPreview: true,
+      ),
+      'The AI reported that it could not complete this request. Your last preview is still here. Edits preserve existing collections and fields. To build a different app, start a new app.',
+    );
+  });
+
+  test(
+    'new unsupported creation diagnostic is recognized without category',
+    () {
+      expect(
+        builderFailureMessage([
+          'The AI reported that it could not complete this request.',
+        ], hasPreview: false),
+        'The AI reported that it could not complete this request. Try adjusting the request.',
+      );
+    },
+  );
+
+  test('new unsupported edit diagnostic is recognized without category', () {
+    expect(
+      builderFailureMessage([
+        'The AI reported that it could not complete this request. Edits preserve existing collections and fields. To build a different app, start a new app.',
+        'Untrusted model text must never appear.',
+      ], hasPreview: true),
+      'The AI reported that it could not complete this request. Your last preview is still here. Edits preserve existing collections and fields. To build a different app, start a new app.',
+    );
+  });
+
+  test('unsupported category without details avoids an unsupported claim', () {
+    expect(
+      builderFailureMessage(
+        [],
+        hasPreview: false,
+        failureCategory: 'unsupported',
+      ),
+      'The AI reported that it could not complete this request. Try adjusting the request.',
+    );
+  });
 
   test('unknown details are not reflected into the main message', () {
     expect(

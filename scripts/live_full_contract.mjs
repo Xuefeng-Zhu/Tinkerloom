@@ -291,13 +291,17 @@ export function validFullApp(app) {
     return false;
   if (
     draft !== null &&
-    (!exactKeys(draft, [
-      "revision",
-      "baseVersionId",
-      "candidateHash",
-      "publishedVersionId",
-      "spec",
-    ]) ||
+    (!object(draft) ||
+      !exactKeys(draft, [
+        "revision",
+        "baseVersionId",
+        "candidateHash",
+        "publishedVersionId",
+        "spec",
+        ...(Object.hasOwn(draft, "creationIntent") ? ["creationIntent"] : []),
+      ]) ||
+      (Object.hasOwn(draft, "creationIntent") &&
+        typeof draft.creationIntent !== "boolean") ||
       !revision(draft.revision) ||
       draft.revision < 1 ||
       !nullableId(draft.baseVersionId) ||

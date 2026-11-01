@@ -121,32 +121,59 @@ extension _WorkerSupport on PlatformService {
     }
   }
 
-  Future<Row?> _generationForApp(
+  Future<({Row? generation, bool creationIntent})> _generationStateForApp(
     String actor,
     AppAccess access,
-    String? tx,
-  ) async {
-    if (!access.builder) return null;
-    final session = await store.get(
-      'generation_sessions',
-      _identity('g', [access.app[r'$id'] as String, actor]),
-      transactionId: tx,
-    );
-    if (session == null || session['latestJobId'] == null) return null;
+    String? tx, {
+    Row? draft,
+    Row? loadedSession,
+    bool sessionWasLoaded = false,
+  }) async {
+    if (!access.builder) return (generation: null, creationIntent: false);
+    final session = sessionWasLoaded
+        ? loadedSession
+        : await store.get(
+            'generation_sessions',
+            _identity('g', [access.app[r'$id'] as String, actor]),
+            transactionId: tx,
+          );
+    final markedCreation =
+        draft != null &&
+        draft['creationIntentRevision'] != null &&
+        draft['creationIntentRevision'] == draft['revision'] &&
+        draft['baseVersionId'] == null &&
+        draft['publishedVersionId'] == null &&
+        access.app['specVersionId'] == null &&
+        session?['generationEstablished'] != true;
+    if (session == null) {
+      return (generation: null, creationIntent: markedCreation);
+    }
     if (session['appId'] != access.app[r'$id'] ||
         session['actorId'] != actor ||
         session['workspaceId'] != access.app['workspaceId'])
       throw const ServiceException('integrity_error', 500);
+    final latest = session['latestJobId'];
+    if (latest == null) {
+      return (generation: null, creationIntent: markedCreation);
+    }
     final job = await store.get(
       'generation_jobs',
-      session['latestJobId'] as String,
+      latest as String,
       transactionId: tx,
     );
     if (job == null ||
         job['appId'] != access.app[r'$id'] ||
         job['actorId'] != actor)
       throw const ServiceException('integrity_error', 500);
-    return _publicGeneration(job);
+    return (
+      generation: _publicGeneration(job),
+      creationIntent:
+          session['generationEstablished'] == false &&
+          access.app['specVersionId'] == null &&
+          draft?['baseVersionId'] == null &&
+          draft?['publishedVersionId'] == null &&
+          job['mode'] == 'create',
+    );
   }
 
   Row _publicGeneration(Row job) => {

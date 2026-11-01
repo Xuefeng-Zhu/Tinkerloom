@@ -211,6 +211,7 @@ class BuilderSnapshot {
     required this.enabledRuleIds,
     this.publishedVersionId,
     this.candidateReady = false,
+    this.creationIntent = false,
     this.latestRequest,
     this.jobAttempts = 0,
     this.jobCreatedAt,
@@ -231,6 +232,7 @@ class BuilderSnapshot {
   List<String> enabledRuleIds;
   String? publishedVersionId;
   bool candidateReady;
+  bool creationIntent;
   String? latestRequest;
   int jobAttempts;
   DateTime? jobCreatedAt;
@@ -252,6 +254,7 @@ class BuilderSnapshot {
     List<String>? enabledRuleIds,
     Object? publishedVersionId = _unchanged,
     bool? candidateReady,
+    bool? creationIntent,
     Object? latestRequest = _unchanged,
     int? jobAttempts,
     Object? jobCreatedAt = _unchanged,
@@ -276,6 +279,7 @@ class BuilderSnapshot {
         ? this.publishedVersionId
         : publishedVersionId as String?,
     candidateReady: candidateReady ?? this.candidateReady,
+    creationIntent: creationIntent ?? this.creationIntent,
     latestRequest: identical(latestRequest, _unchanged)
         ? this.latestRequest
         : latestRequest as String?,
@@ -305,6 +309,7 @@ class BuilderSnapshot {
     'enabledRuleIds': enabledRuleIds,
     'publishedVersionId': publishedVersionId,
     'candidateReady': candidateReady,
+    'creationIntent': creationIntent,
     'latestRequest': latestRequest,
     'jobAttempts': jobAttempts,
     'jobCreatedAt': jobCreatedAt?.toUtc().toIso8601String(),

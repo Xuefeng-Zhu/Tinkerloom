@@ -87,7 +87,7 @@ class DraftLoaderState extends State<DraftLoader> {
       return BuilderScreen(
         key: _builderKey,
         initial: draft,
-        startFromScratch: !draft.candidateReady && draft.baseVersionId == null,
+        startFromScratch: draft.creationIntent && draft.baseVersionId == null,
         onClose: widget.onClose,
         onPublished: widget.onPublished,
       );

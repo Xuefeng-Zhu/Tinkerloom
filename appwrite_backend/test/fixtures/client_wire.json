@@ -111,6 +111,7 @@
         "baseVersionId": null,
         "candidateHash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
         "publishedVersionId": null,
+        "creationIntent": false,
         "spec": {
           "formatVersion": 1,
           "name": "Reading Journal",
@@ -337,6 +338,7 @@
         "baseVersionId": null,
         "candidateHash": "088381c74ddad7c22e34784f621c38e74b967f8c78657ce8302c4fb72e786706",
         "publishedVersionId": "vc30ecaccf1cd3607ea97e1df3b75e098",
+        "creationIntent": false,
         "spec": {
           "formatVersion": 1,
           "name": "Reading Journal",

@@ -571,6 +571,13 @@
           "max": 2147483647
         },
         {
+          "key": "creationIntentRevision",
+          "type": "integer",
+          "required": false,
+          "min": 1,
+          "max": 2147483647
+        },
+        {
           "key": "baseVersionId",
           "type": "varchar",
           "size": 36,

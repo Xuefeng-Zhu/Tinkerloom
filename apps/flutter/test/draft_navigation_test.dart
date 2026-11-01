@@ -17,6 +17,7 @@ import 'mini_app_navigation_test.dart'
 class DraftNavigationClient extends NavigationClient {
   DraftNavigationClient({super.auth});
   bool published = false;
+  bool creationIntent = false;
   Object? manifestFailure;
   final resumes = <Map<String, dynamic>>[];
 
@@ -52,7 +53,8 @@ class DraftNavigationClient extends NavigationClient {
         diagnostics: [],
         changes: [],
         enabledRuleIds: [],
-        candidateReady: true,
+        candidateReady: !creationIntent,
+        creationIntent: creationIntent,
         latestRequest: 'Make notes for my garden',
       ) as T;
     }
@@ -82,6 +84,7 @@ void main() {
   setUp(() {
     client.preview = PreviewRuntimeAdapter(notesTemplate());
     client.published = false;
+    client.creationIntent = false;
     client.manifestFailure = null;
     client.resumes.clear();
     client.calls.clear();
@@ -168,6 +171,33 @@ void main() {
     expect(find.byType(BuilderScreen), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'reopened creation intent uses create mode and manual drafts use edit mode',
+    (
+      tester,
+    ) async {
+      client.creationIntent = true;
+      await mount(tester);
+      expect(
+        tester
+            .widget<BuilderScreen>(find.byType(BuilderScreen))
+            .startFromScratch,
+        isTrue,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      client.creationIntent = false;
+      await mount(tester);
+      expect(
+        tester
+            .widget<BuilderScreen>(find.byType(BuilderScreen))
+            .startFromScratch,
+        isFalse,
+      );
+      expect(client.calls, isNot(contains('builder.generate')));
+    },
+  );
 
   testWidgets('unavailable draft hides diagnostic and never begins a draft', (
     tester,

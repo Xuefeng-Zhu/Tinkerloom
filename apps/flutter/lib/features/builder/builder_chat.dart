@@ -52,9 +52,24 @@ String builderFailureMessage(
     ].join(' ');
   }
   final details = diagnostics.join(' ').toLowerCase();
-  final requestedUnsupported = details.contains(
-    'requested capability is unavailable',
-  );
+  const newUnsupported =
+      'the ai reported that it could not complete this request.';
+  const editGuidance =
+      'edits preserve existing collections and fields. '
+      'to build a different app, start a new app.';
+  final normalizedDiagnostics = diagnostics.map((d) => d.trim().toLowerCase());
+  final requestedUnsupported =
+      failureCategory == 'unsupported' ||
+      details.contains('requested capability is unavailable') ||
+      normalizedDiagnostics.contains(newUnsupported) ||
+      normalizedDiagnostics.contains('$newUnsupported $editGuidance');
+  // Only recognize exact backend-authored guidance. Never show arbitrary model
+  // output or treat a model's refusal as proof a feature is unavailable.
+  final unsupportedEdit =
+      normalizedDiagnostics.contains('$newUnsupported $editGuidance') ||
+      normalizedDiagnostics.contains(
+        'requested capability is unavailable. $editGuidance',
+      );
   final String reason;
   if (details.contains('token limit')) {
     reason = 'The AI response ended before Tinkerloom could finish your app.';
@@ -71,7 +86,7 @@ String builderFailureMessage(
   } else if (details.contains('ai provider')) {
     reason = 'The AI service couldn’t complete the request.';
   } else if (requestedUnsupported) {
-    reason = 'This request needs a feature Tinkerloom doesn’t support yet.';
+    reason = 'The AI reported that it could not complete this request.';
   } else if (details.contains('unsupported capability') ||
       details.contains('unsupported capabilities')) {
     reason = 'The AI used a feature Tinkerloom doesn’t support.';
@@ -84,9 +99,12 @@ String builderFailureMessage(
   return [
     reason,
     if (hasPreview) 'Your last preview is still here.',
-    requestedUnsupported
-        ? 'Adjust the requested features, then try again.'
-        : 'Try again with the same request.',
+    if (unsupportedEdit)
+      'Edits preserve existing collections and fields. To build a different app, start a new app.'
+    else if (requestedUnsupported)
+      'Try adjusting the request.'
+    else
+      'Try again with the same request.',
   ].join(' ');
 }
 

@@ -85,6 +85,12 @@ extension _PresentationAdapter on Client {
     final stage =
         generation?['status'] as String? ??
         (draft?['publishedVersionId'] != null ? 'published' : 'preview ready');
+    final creationIntent =
+        draft?['creationIntent'] == true ||
+        (draft?['creationIntent'] == null &&
+            version == null &&
+            generation?['mode'] == 'create' &&
+            stage != 'preview ready');
     return BuilderSnapshot(
       appId: _id(app['id']),
       draftId: _id(app['id']),
@@ -102,8 +108,10 @@ extension _PresentationAdapter on Client {
       changes: candidate?.diff(previous) ?? [],
       enabledRuleIds: [],
       publishedVersionId: draft?['publishedVersionId'] as String?,
+      creationIntent: creationIntent,
       candidateReady:
           candidate != null &&
+          !creationIntent &&
           (generation == null ||
               stage == 'preview ready' ||
               (generation['mode'] == 'edit' &&
@@ -612,6 +620,13 @@ extension _PresentationAdapter on Client {
     String logical,
   ) async {
     String? id = args['appId'] as String?;
+    final creationIntent = args['creationIntent'] == true;
+    if (creationIntent && id != null) {
+      throw NestError(
+        category: 'invalid_request',
+        message: 'Creation intent only applies to a new app.',
+      );
+    }
     Map<String, dynamic> app;
     if (id != null)
       app = await _load(id);
@@ -651,6 +666,7 @@ extension _PresentationAdapter on Client {
       'expectedRevision': _mapOrNull(app['draft'])?['revision'] ?? 0,
       'expectedVersionId': version?['id'],
       'spec': candidate,
+      if (creationIntent) 'creationIntent': true,
     });
     _commandIds.remove('$logical:app');
     return _snapshot(_remember(response['app']));

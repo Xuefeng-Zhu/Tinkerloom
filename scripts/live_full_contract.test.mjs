@@ -456,6 +456,38 @@ test("full DTO checks reject build aliases, leaked drafts/jobs and mismatched re
     false,
   );
 });
+
+test("full DTO accepts only a boolean optional creation intent on authorized private drafts", () => {
+  const draft = {
+    revision: 1,
+    baseVersionId: null,
+    candidateHash: "b".repeat(64),
+    publishedVersionId: null,
+    spec,
+  };
+  const owner = {
+    ...app,
+    role: "owner",
+    capabilities: {
+      editDefinition: true,
+      share: true,
+      writeRecords: false,
+      archive: true,
+      revokeAccess: true,
+    },
+    draft,
+  };
+  assert.equal(validFullApp(owner), true); // Older Core response.
+  for (const creationIntent of [true, false])
+    assert.equal(validFullApp({ ...owner, draft: { ...draft, creationIntent } }), true);
+  for (const creationIntent of [null, undefined, 0, 1, "true", {}, []])
+    assert.equal(validFullApp({ ...owner, draft: { ...draft, creationIntent } }), false);
+  assert.equal(
+    validFullApp({ ...owner, draft: { ...draft, creationIntent: true, secret: "private" } }),
+    false,
+  );
+  assert.equal(validFullApp({ ...app, draft: { ...draft, creationIntent: true } }), false);
+});
 test("report allowlists reject raw bodies/headers/private codes and secret scan preserves failures and blocked checks", () => {
   const secret = "private-secret-value-123456789";
   const report = {

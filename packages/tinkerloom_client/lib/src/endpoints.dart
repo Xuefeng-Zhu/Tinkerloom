@@ -94,11 +94,13 @@ class EndpointBuilder extends _Endpoint {
   Future<BuilderSnapshot> begin(
     String workspaceId,
     String templateKey,
-    String? appId,
-  ) => caller.callServerEndpoint<BuilderSnapshot>('builder', 'begin', {
+    String? appId, {
+    bool creationIntent = false,
+  }) => caller.callServerEndpoint<BuilderSnapshot>('builder', 'begin', {
     'workspaceId': workspaceId,
     'templateKey': templateKey,
     'appId': appId,
+    if (creationIntent) 'creationIntent': true,
   });
 
   Future<BuilderSnapshot> get(String draftId) =>
